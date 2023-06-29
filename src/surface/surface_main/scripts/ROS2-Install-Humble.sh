@@ -36,14 +36,19 @@ echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-a
 sudo apt update
 sudo apt upgrade
 
-# Install galactic distro of ROS2
-# Should maybe switch to using $ROS_DISTRO
-sudo apt install ros-galactic-desktop
+# Missing Ros dependecies
+sudo apt install python3-catkin-pkg-modules
+sudo apt install python3-rosdistro-modules
+sudo apt install python3-rospkg-modules
+
+# Install humble distro of ROS2
+sudo apt install ros-humble-desktop
+sudo apt upgrade
 
 # Add setup.bash to .bashrc only if it isn't already there
 # Will have fun conflicts if you also have ros1 setup.bash in your .bashrc
-LINE='source /opt/ros/galactic/setup.bash'
+LINE='source /opt/ros/humble/setup.bash'
 if ! grep -qF "$LINE" ~/.bashrc ; 
-    then echo "$LINE" >> ~/.bashrc  ;
-    source ~/.bashrc
+    then echo "$LINE" >> ~/.bashrc ;
 fi
+source ~/.bashrc
