@@ -37,14 +37,6 @@ If you don't have `ros2_video_streamer` in the new `src` folder, run this:
 git submodule update --init --recursive
 ```
 
-### Building for VSCode users
-
-Copy `src/.vscode/tasks.json` to `.vscode/tasks.json`:
-
-```bash
-cp src/.vscode/tasks.json .vscode
-```
-
 Now, anytime you want to build, do the following:
 
 In VSCode, press `F1` and enter `Tasks: Run Task` in the field until you see the
@@ -80,7 +72,7 @@ interfaces, you'll need to run this every time you change something:
 Make sure you're updated (only on the first build or if something breaks)
 
 ```bash
-rosdep update --rosdistro=$ROS_DISTRO --include-eol-distros
+rosdep update --rosdistro=$ROS_DISTRO
 ```
 
 Install dependecies (only on the first build or if something breaks)
