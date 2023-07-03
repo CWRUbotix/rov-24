@@ -46,7 +46,7 @@ def generate_launch_description():
     )
 
     return LaunchDescription([
-        # front_cam_node,
-        # bottom_cam_node
+        front_cam_node,
+        bottom_cam_node,
         camera_switch_node
     ])
