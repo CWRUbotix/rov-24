@@ -3,7 +3,7 @@
 ## 1. Build
 
 ```bash
-cd ~/rov_24
+cd ~/rov-24
 colcon build
 ```
 
