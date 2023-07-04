@@ -6,7 +6,7 @@
             "type": "shell",
             "command": "bash",
             "args": [
-                "${workspaceFolder}/src/.vscode/easy_all.sh"
+                "${workspaceFolder}/.vscode/easy_all.sh"
             ],
             "presentation": {
                 "panel": "dedicated",
@@ -19,7 +19,7 @@
             "type": "shell",
             "command": "bash",
             "args": [
-                "${workspaceFolder}/src/.vscode/easy_build.sh"
+                "${workspaceFolder}/.vscode/easy_build.sh"
             ],
             "presentation": {
                 "panel": "dedicated",
