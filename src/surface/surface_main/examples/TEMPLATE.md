@@ -10,8 +10,6 @@ This is a template: replace, remove, and add where required. Describe here what 
 
 * **Author: John Doe**
 
-* **Maintainer: John Doe, <John@Doe.com>**
-
 ## Installation
 
 Describe any dependencies not install by rosdep
@@ -23,7 +21,7 @@ Describe the quickest way to run this software, for example:
 Run the main node with
 
 ```bash
-roslaunch ros_package_template ros_package_template.launch
+ros2 launch ros_package_template ros_package_template.launch
 ```
 
 ## Config files
@@ -32,23 +30,13 @@ Config file folder/set 1
 
 * **config_file_1.yaml** Shortly explain the content of this config file
 
-Config file folder/set 2
-
-* **...**
-
 ## Launch files
 
-* **launch_file_1.launch:** shortly explain what is launched (e.g standard simulation, simulation with gdb,...)
+* **launch_file_1_launch.py:** shortly explain what is launched (e.g standard simulation, simulation with gdb,...)
 
   Argument set 1
 
   * **`argument_1`** Short description (e.g. as commented in launch file). Default: `default_value`.
-
-  Argument set 2
-
-  * **`...`**
-
-* **...**
 
 ## Nodes
 
