@@ -21,7 +21,7 @@ Describe the quickest way to run this software, for example:
 Run the main node with
 
 ```bash
-ros2 launch ros_package_template ros_package_template.launch
+ros2 launch ros_package_template ros_package_template_launch.py
 ```
 
 ## Config files
