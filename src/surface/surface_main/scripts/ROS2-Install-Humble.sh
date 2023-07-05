@@ -54,7 +54,7 @@ fi
 # Done to suppress setup.py install depracted warnings
 # Hopefully in the next ROS release it will not be as janky
 # Seems to work fine however
-PYTHON_WARNINGS_LINE='PYTHONWARNINGS=ignore:::setuptools.command.install,ignore:::setuptools.command.easy_install,ignore:::pkg_resources"; export PYTHONWARNINGS'
+PYTHON_WARNINGS_LINE='PYTHONWARNINGS=ignore:::setuptools.command.install,ignore:::setuptools.command.easy_install,ignore:::pkg_resources; export PYTHONWARNINGS'
 if ! grep -qF "$PYTHON_WARNINGS_LINE" ~/.bashrc ; 
     then echo "$PYTHON_WARNINGS_LINE" >> ~/.bashrc ;
 fi
