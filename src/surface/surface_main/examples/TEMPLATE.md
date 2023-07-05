@@ -34,8 +34,6 @@ Config file folder/set 1
 
 * **launch_file_1_launch.py:** shortly explain what is launched (e.g standard simulation, simulation with gdb,...)
 
-  Argument set 1
-
   * **`argument_1`** Short description (e.g. as commented in launch file). Default: `default_value`.
 
 ## Nodes
