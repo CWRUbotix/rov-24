@@ -46,9 +46,17 @@ sudo apt install ros-humble-desktop
 sudo apt upgrade
 
 # Add setup.bash to .bashrc only if it isn't already there
-# Will have fun conflicts if you also have ros1 setup.bash in your .bashrc
-LINE='source /opt/ros/humble/setup.bash'
-if ! grep -qF "$LINE" ~/.bashrc ; 
-    then echo "$LINE" >> ~/.bashrc ;
+ROS_LINE='source /opt/ros/humble/setup.bash'
+if ! grep -qF "$ROS_LINE" ~/.bashrc ; 
+    then echo "$ROS_LINE" >> ~/.bashrc ;
 fi
+
+# Done to suppress setup.py install depracted warnings
+# Hopefully in the next ROS release it will not be as janky
+# Seems to work fine however
+PYTHON_WARNINGS_LINE='PYTHONWARNINGS="ignore:setup.py install is deprecated::setuptools.command.install"; export PYTHONWARNINGS'
+if ! grep -qF "$PYTHON_WARNINGS_LINE" ~/.bashrc ; 
+    then echo "$PYTHON_WARNINGS_LINE" >> ~/.bashrc ;
+fi
+
 source ~/.bashrc
