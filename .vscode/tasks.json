@@ -25,7 +25,11 @@
                 "reveal": "silent",
                 "revealProblems": "onProblem"
             },
-            "problemMatcher": []
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+              }
         }
     ]
 }
