@@ -9,7 +9,7 @@ def generate_launch_description():
         package='gui',
         executable='run_pilot',
         parameters=[
-                {'theme': LaunchConfiguration('theme', default='')}],
+                {'theme': LaunchConfiguration('theme', default='dark')}],
         remappings=[("/surface/gui/armed", "/armed"),
                     ("/surface/gui/camera_switch", "/surface/camera_switch")]
     )
