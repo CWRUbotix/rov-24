@@ -1,4 +1,4 @@
-from typing import Optional, Union
+from typing import Optional
 import rclpy
 
 from rclpy.node import Node
@@ -82,7 +82,7 @@ class KeyboardListenerNode(Node):
     def logger(self):
         return self.get_logger()
 
-    def on_press(self, key: Optional[Union[Key, KeyCode]]):
+    def on_press(self, key: Optional[Key | KeyCode]):
         try:
             if isinstance(key, KeyCode):
                 key = key.char
@@ -122,7 +122,7 @@ class KeyboardListenerNode(Node):
             self.logger.error(str(e))
             raise e
 
-    def on_release(self, key: Optional[Union[Key, KeyCode]]):
+    def on_release(self, key: Optional[Key | KeyCode]):
         try:
             if isinstance(key, KeyCode):
                 key = key.char
