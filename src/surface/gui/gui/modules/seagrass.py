@@ -35,7 +35,7 @@ class SeagrassWidget(QWidget):
         before_btns_layout.addWidget(set_all_green)
         before_btns_layout.addWidget(set_all_white)
 
-        before_layout.addWidget(QLabel("Before"), alignment=Qt.AlignCenter)
+        before_layout.addWidget(QLabel("Before"), alignment=Qt.AlignmentFlag.AlignCenter)
         before_layout.addLayout(before_btns_layout)
         before_layout.addWidget(self.before_grid.frame)
 
@@ -55,7 +55,7 @@ class SeagrassWidget(QWidget):
 
         after_bttn_layout.addWidget(match_before)
 
-        after_layout.addWidget(QLabel("After"), alignment=Qt.AlignCenter)
+        after_layout.addWidget(QLabel("After"), alignment=Qt.AlignmentFlag.AlignCenter)
         after_layout.addLayout(after_bttn_layout)
         after_layout.addWidget(self.after_grid.frame)
 
@@ -77,7 +77,7 @@ class SeagrassWidget(QWidget):
 
         # Add all sections to main layout
         root_layout.addLayout(before_layout, 1)
-        root_layout.addWidget(self.bottom_cam, 1, alignment=Qt.AlignTop)
+        root_layout.addWidget(self.bottom_cam, 1, alignment=Qt.AlignmentFlag.AlignTop)
         root_layout.addLayout(after_layout, 1)
         root_layout.addWidget(result_widget, 2)
 
@@ -105,11 +105,11 @@ class SeagrassWidget(QWidget):
 
 
 class SeagrassGrid(QWidget):
-    def __init__(self, update_result_text: Callable,
-                 set_other_button: Optional[Callable] = None):
+    def __init__(self, update_result_text: Callable[[], None],
+                 set_other_button: Optional[Callable[[int, bool], None]] = None):
         super().__init__()
 
-        self.set_other_button: Callable = set_other_button
+        self.set_other_button: Optional[Callable[[int, bool], None]] = set_other_button
 
         self.setMaximumWidth(200)
 
@@ -164,8 +164,8 @@ class SeagrassGrid(QWidget):
 
 
 class SeagrassButton(QPushButton):
-    def __init__(self, button_id: int, size: int, update_text: Callable,
-                 set_other_button: Optional[Callable] = None):
+    def __init__(self, button_id: int, size: int, update_text: Callable[[], None],
+                 set_other_button: Optional[Callable[[int, bool], None]] = None):
         super(SeagrassButton, self).__init__()
 
         self.button_id: int = button_id

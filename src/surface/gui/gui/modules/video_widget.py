@@ -35,9 +35,9 @@ class VideoWidget(QWidget):
 
         if label_text is not None:
             self.label = QLabel(label_text)
-            self.label.setAlignment(Qt.AlignHCenter)
+            self.label.setAlignment(Qt.AlignmentFlag.AlignHCenter)
             self.label.setStyleSheet('QLabel { font-size: 35px; }')
-            layout.addWidget(self.label, Qt.AlignHCenter)
+            layout.addWidget(self.label, Qt.AlignmentFlag.AlignHCenter)
 
         self.video_frame_label = QLabel()
         self.video_frame_label.setText(f'This topic had no frame: {topic}')
@@ -82,7 +82,7 @@ class VideoWidget(QWidget):
             raise Exception("Somehow not color or grayscale image.")
 
         qt_image = QImage(cv_img.data, w, h, bytes_per_line, img_format)
-        qt_image: QImage = qt_image.scaled(width, height, Qt.KeepAspectRatio)
+        qt_image: QImage = qt_image.scaled(width, height, Qt.AspectRatioMode.KeepAspectRatio)
 
         return qt_image
 
@@ -117,7 +117,7 @@ class SwitchableVideoWidget(VideoWidget):
         self.button: QPushButton = QPushButton(button_names[self.active_cam])
         self.button.setMaximumWidth(self.BUTTON_WIDTH)
         self.button.clicked.connect(lambda: self.camera_switch(True))
-        self.layout().addWidget(self.button, alignment=Qt.AlignCenter)
+        self.layout().addWidget(self.button, alignment=Qt.AlignmentFlag.AlignCenter)
 
         if controller_button_topic is not None:
             self.controller_signal.connect(self.controller_camera_switch)
@@ -157,7 +157,7 @@ class PausableVideoWidget(VideoWidget):
         self.button: QPushButton = QPushButton(self.PLAYING_TEXT)
         self.button.setMaximumWidth(self.BUTTON_WIDTH)
         self.button.clicked.connect(self.toggle)
-        self.layout().addWidget(self.button, alignment=Qt.AlignCenter)
+        self.layout().addWidget(self.button, alignment=Qt.AlignmentFlag.AlignCenter)
         self.is_paused = False
 
     @pyqtSlot(Image)

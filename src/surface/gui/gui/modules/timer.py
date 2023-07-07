@@ -11,7 +11,7 @@ class Timer(QWidget):
         self.running = False
 
         self.label = QLabel('Label')
-        self.label.setAlignment(Qt.AlignCenter)
+        self.label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.label.setFont(QFont('Arial', 36))
 
         self.toggle_btn = QPushButton('Start')
