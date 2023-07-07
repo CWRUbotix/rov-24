@@ -3,14 +3,16 @@ from threading import Thread
 
 from rclpy.node import Node
 from rclpy.executors import SingleThreadedExecutor
-from rclpy.client import SrvType
+from rclpy.client import SrvType, SrvTypeRequest, SrvTypeResponse
 import atexit
+
+from typing import Callable
 
 
 class GUIEventServer(Node):
     """Multithreaded server for processing service requests to update GUI."""
 
-    def __init__(self, srv_type: SrvType, topic: str, callback: callable):
+    def __init__(self, srv_type: SrvType, topic: str, callback: Callable[[SrvTypeRequest, SrvTypeResponse], SrvTypeResponse]):
         """
         Initialize this server with a CALLBACK for processing requests.
 
