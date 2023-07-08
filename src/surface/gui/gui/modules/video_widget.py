@@ -76,7 +76,7 @@ class VideoWidget(QWidget):
             h, w = cv_img.shape
             bytes_per_line: int = w
 
-            img_format = QImage.Format_Grayscale8
+            img_format = QImage.Format.Format_Grayscale8
 
         else:
             raise Exception("Somehow not color or grayscale image.")

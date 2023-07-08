@@ -42,7 +42,7 @@ class Logger(QWidget):
 
         self.textbox: QTextEdit = QTextEdit()
         self.textbox.setReadOnly(True)
-        self.textbox.setLineWrapMode(QTextEdit.NoWrap)
+        self.textbox.setLineWrapMode(QTextEdit.LineWrapMode.NoWrap)
         layout.addWidget(self.textbox)
 
         self.terminal_font: QFont = self.textbox.font()
@@ -63,7 +63,7 @@ class Logger(QWidget):
         if not self.checkboxes[severity_key].isChecked():
             return
 
-        self.textbox.moveCursor(QTextCursor.End)
+        self.textbox.moveCursor(QTextCursor.MoveOperation.End)
         self.textbox.setCurrentFont(self.terminal_font)
         self.textbox.setTextColor(SEVERITY_LEVELS_DICT[severity_key])
         self.textbox.insertPlainText(f'[{severity_key.name}]\t{message.msg}\n')

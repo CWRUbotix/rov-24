@@ -96,6 +96,7 @@ class TaskSelector(QWidget):
         """Handle scheduler response to request sent from gui_changed_task."""
         RcutilsLogger("task_selector.py").info(response.response)
 
+    # TODO @Ben do we still use this?
     @ pyqtSlot(TaskFeedback)
     def update_task_dropdown(self, message: TaskFeedback):
         """Update the task selector dropdown when task changed by scheduler."""
