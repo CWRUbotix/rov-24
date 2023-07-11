@@ -4,8 +4,6 @@
 sudo apt install git
 sudo apt install curl
 sudo apt install python3-pip
-sudo apt install python3-colcon-common-extensions
-sudo apt install python3-rosdep2
 
 # Install python packages that rosdep can't install
 pip install opencv-python
@@ -40,6 +38,8 @@ sudo apt upgrade
 sudo apt install python3-catkin-pkg-modules
 sudo apt install python3-rosdistro-modules
 sudo apt install python3-rospkg-modules
+sudo apt install python3-colcon-common-extensions
+sudo apt install python3-rosdep2
 
 # Install humble distro of ROS2
 sudo apt install ros-humble-desktop
