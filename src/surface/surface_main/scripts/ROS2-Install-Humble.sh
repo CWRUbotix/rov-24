@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Install git, curl, pip, colcon, and rosdep
+# Install git, curl, pip
 sudo apt install git
 sudo apt install curl
 sudo apt install python3-pip
