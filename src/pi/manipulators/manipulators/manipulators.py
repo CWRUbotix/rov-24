@@ -1,6 +1,6 @@
 import rclpy
 from rclpy.node import Node, Subscription
-from interfaces.msg import Manip
+from rov_interfaces.msg import Manip
 from manipulators.tca9555 import TCA9555
 
 

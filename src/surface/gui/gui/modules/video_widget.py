@@ -5,7 +5,7 @@ from PyQt5.QtGui import QPixmap, QImage
 from gui.event_nodes.subscriber import GUIEventSubscriber
 
 from sensor_msgs.msg import Image
-from interfaces.msg import CameraControllerSwitch
+from rov_interfaces.msg import CameraControllerSwitch
 from cv_bridge import CvBridge
 import cv2
 
