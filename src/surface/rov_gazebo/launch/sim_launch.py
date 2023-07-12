@@ -85,6 +85,8 @@ def generate_launch_description():
 
     # Not using keyboard launch file
     # TODO?
+    # I think we should probably switch over all our single
+    # Node launch files to somehting like this
     keyboard_driver = Node(
         package="keyboard_driver",
         executable="keyboard_driver_node",
