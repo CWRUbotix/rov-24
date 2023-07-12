@@ -4,7 +4,7 @@ import rclpy
 from rclpy.node import Node
 from pynput import keyboard
 from pynput.keyboard import Key, KeyCode
-from interfaces.msg import ROVControl
+from rov_interfaces.msg import ROVControl
 
 
 # key bindings
