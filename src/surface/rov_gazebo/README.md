@@ -46,3 +46,11 @@ See help message from terminal or use PS5 controller
 /manual_control
 
 /arm
+
+## Notes
+
+Might need to run this
+
+```bash
+sudo rm -rf /home/rmc/.local/lib/python3.10/site-packages/cv2/qt/plugins/
+```
