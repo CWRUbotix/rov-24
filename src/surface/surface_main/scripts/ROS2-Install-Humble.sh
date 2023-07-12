@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Upgrade First
+# Upgrade first
 sudo apt upgrade
 
 # Install git, curl, pip
@@ -62,4 +62,8 @@ if ! grep -qF "$PYTHON_WARNINGS_LINE" ~/.bashrc ;
     then echo "$PYTHON_WARNINGS_LINE" >> ~/.bashrc ;
 fi
 
+source ~/.bashrc
+
+# Start rosdep
+rosdep update
 source ~/.bashrc
