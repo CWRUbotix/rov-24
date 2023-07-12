@@ -1,0 +1,7 @@
+gui.modules.video\_widget module
+================================
+
+.. automodule:: gui.modules.video_widget
+   :members:
+   :undoc-members:
+   :show-inheritance:

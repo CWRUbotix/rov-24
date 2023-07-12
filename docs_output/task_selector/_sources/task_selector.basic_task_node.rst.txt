@@ -1,0 +1,7 @@
+task\_selector.basic\_task\_node module
+=======================================
+
+.. automodule:: task_selector.basic_task_node
+   :members:
+   :undoc-members:
+   :show-inheritance:

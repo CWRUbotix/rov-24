@@ -1,0 +1,7 @@
+task\_selector.tasks module
+===========================
+
+.. automodule:: task_selector.tasks
+   :members:
+   :undoc-members:
+   :show-inheritance:

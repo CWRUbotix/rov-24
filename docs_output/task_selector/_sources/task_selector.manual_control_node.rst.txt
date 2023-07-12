@@ -1,0 +1,7 @@
+task\_selector.manual\_control\_node module
+===========================================
+
+.. automodule:: task_selector.manual_control_node
+   :members:
+   :undoc-members:
+   :show-inheritance:

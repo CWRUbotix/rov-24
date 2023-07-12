@@ -1,0 +1,7 @@
+gui.modules.timer module
+========================
+
+.. automodule:: gui.modules.timer
+   :members:
+   :undoc-members:
+   :show-inheritance:

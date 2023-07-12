@@ -1,0 +1,15 @@
+Welcome to the documentation for pixhawk_communication
+======================================================
+
+.. toctree::
+   :maxdepth: 2
+
+   pixhawk_communication <modules>
+
+
+Indices and Search
+==================
+
+* :ref:`genindex`
+* :ref:`search`
+

@@ -1,0 +1,7 @@
+gui.operator\_app module
+========================
+
+.. automodule:: gui.operator_app
+   :members:
+   :undoc-members:
+   :show-inheritance:

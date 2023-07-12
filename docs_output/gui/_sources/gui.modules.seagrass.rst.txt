@@ -1,0 +1,7 @@
+gui.modules.seagrass module
+===========================
+
+.. automodule:: gui.modules.seagrass
+   :members:
+   :undoc-members:
+   :show-inheritance:

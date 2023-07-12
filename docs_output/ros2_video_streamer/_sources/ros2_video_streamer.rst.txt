@@ -1,0 +1,18 @@
+ros2\_video\_streamer package
+=============================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   ros2_video_streamer.ros2_video_streamer_node
+
+Module contents
+---------------
+
+.. automodule:: ros2_video_streamer
+   :members:
+   :undoc-members:
+   :show-inheritance:

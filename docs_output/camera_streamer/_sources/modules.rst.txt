@@ -1,0 +1,7 @@
+camera_streamer
+===============
+
+.. toctree::
+   :maxdepth: 4
+
+   camera_streamer

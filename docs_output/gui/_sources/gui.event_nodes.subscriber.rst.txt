@@ -1,0 +1,7 @@
+gui.event\_nodes.subscriber module
+==================================
+
+.. automodule:: gui.event_nodes.subscriber
+   :members:
+   :undoc-members:
+   :show-inheritance:

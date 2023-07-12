@@ -1,0 +1,10 @@
+camera\_streamer package
+========================
+
+Module contents
+---------------
+
+.. automodule:: camera_streamer
+   :members:
+   :undoc-members:
+   :show-inheritance:

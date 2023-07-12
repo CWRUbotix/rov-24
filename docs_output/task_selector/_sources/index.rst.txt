@@ -1,0 +1,15 @@
+Welcome to the documentation for task_selector
+==============================================
+
+.. toctree::
+   :maxdepth: 2
+
+   task_selector <modules>
+
+
+Indices and Search
+==================
+
+* :ref:`genindex`
+* :ref:`search`
+

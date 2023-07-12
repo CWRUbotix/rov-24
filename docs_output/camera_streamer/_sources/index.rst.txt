@@ -1,0 +1,15 @@
+Welcome to the documentation for camera_streamer
+================================================
+
+.. toctree::
+   :maxdepth: 2
+
+   camera_streamer <modules>
+
+
+Indices and Search
+==================
+
+* :ref:`genindex`
+* :ref:`search`
+

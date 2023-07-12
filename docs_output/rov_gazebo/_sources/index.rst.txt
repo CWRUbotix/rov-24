@@ -1,0 +1,15 @@
+Welcome to the documentation for rov_gazebo
+===========================================
+
+.. toctree::
+   :maxdepth: 2
+
+   rov_gazebo <modules>
+
+
+Indices and Search
+==================
+
+* :ref:`genindex`
+* :ref:`search`
+

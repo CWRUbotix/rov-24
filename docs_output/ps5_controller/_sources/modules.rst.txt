@@ -1,0 +1,7 @@
+ps5_controller
+==============
+
+.. toctree::
+   :maxdepth: 4
+
+   ps5_controller

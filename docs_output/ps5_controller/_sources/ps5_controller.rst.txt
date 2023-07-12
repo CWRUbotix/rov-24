@@ -1,0 +1,10 @@
+ps5\_controller package
+=======================
+
+Module contents
+---------------
+
+.. automodule:: ps5_controller
+   :members:
+   :undoc-members:
+   :show-inheritance:

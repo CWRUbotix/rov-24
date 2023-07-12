@@ -1,0 +1,7 @@
+manipulators
+============
+
+.. toctree::
+   :maxdepth: 4
+
+   manipulators

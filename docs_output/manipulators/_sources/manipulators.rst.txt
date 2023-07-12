@@ -1,0 +1,19 @@
+manipulators package
+====================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   manipulators.manip_tester
+   manipulators.manipulators
+
+Module contents
+---------------
+
+.. automodule:: manipulators
+   :members:
+   :undoc-members:
+   :show-inheritance:

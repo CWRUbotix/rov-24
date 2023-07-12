@@ -1,0 +1,15 @@
+Welcome to the documentation for ps5_controller
+===============================================
+
+.. toctree::
+   :maxdepth: 2
+
+   ps5_controller <modules>
+
+
+Indices and Search
+==================
+
+* :ref:`genindex`
+* :ref:`search`
+

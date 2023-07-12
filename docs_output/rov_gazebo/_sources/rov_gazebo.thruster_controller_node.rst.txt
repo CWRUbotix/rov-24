@@ -1,0 +1,7 @@
+rov\_gazebo.thruster\_controller\_node module
+=============================================
+
+.. automodule:: rov_gazebo.thruster_controller_node
+   :members:
+   :undoc-members:
+   :show-inheritance:

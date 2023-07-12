@@ -1,0 +1,7 @@
+task\_selector.example\_request\_client module
+==============================================
+
+.. automodule:: task_selector.example_request_client
+   :members:
+   :undoc-members:
+   :show-inheritance:

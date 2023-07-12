@@ -1,0 +1,18 @@
+rov\_gazebo package
+===================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   rov_gazebo.thruster_controller_node
+
+Module contents
+---------------
+
+.. automodule:: rov_gazebo
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -1,0 +1,24 @@
+task\_selector package
+======================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   task_selector.basic_task_node
+   task_selector.basic_task_timed_node
+   task_selector.example_request_client
+   task_selector.is_morning_node
+   task_selector.manual_control_node
+   task_selector.task_selector
+   task_selector.tasks
+
+Module contents
+---------------
+
+.. automodule:: task_selector
+   :members:
+   :undoc-members:
+   :show-inheritance:

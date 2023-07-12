@@ -1,0 +1,15 @@
+Welcome to the documentation for pi_main
+========================================
+
+.. toctree::
+   :maxdepth: 2
+
+   pi_main <modules>
+
+
+Indices and Search
+==================
+
+* :ref:`genindex`
+* :ref:`search`
+

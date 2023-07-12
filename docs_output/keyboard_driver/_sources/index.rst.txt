@@ -1,0 +1,15 @@
+Welcome to the documentation for keyboard_driver
+================================================
+
+.. toctree::
+   :maxdepth: 2
+
+   keyboard_driver <modules>
+
+
+Indices and Search
+==================
+
+* :ref:`genindex`
+* :ref:`search`
+

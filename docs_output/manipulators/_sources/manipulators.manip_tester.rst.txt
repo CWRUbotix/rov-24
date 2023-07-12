@@ -1,0 +1,7 @@
+manipulators.manip\_tester module
+=================================
+
+.. automodule:: manipulators.manip_tester
+   :members:
+   :undoc-members:
+   :show-inheritance:

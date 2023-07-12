@@ -1,0 +1,7 @@
+gui.event\_nodes.client module
+==============================
+
+.. automodule:: gui.event_nodes.client
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -1,0 +1,18 @@
+pixhawk\_communication package
+==============================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   pixhawk_communication.pixhawk_communication
+
+Module contents
+---------------
+
+.. automodule:: pixhawk_communication
+   :members:
+   :undoc-members:
+   :show-inheritance:

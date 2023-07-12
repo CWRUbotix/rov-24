@@ -1,0 +1,7 @@
+gui.pilot\_app module
+=====================
+
+.. automodule:: gui.pilot_app
+   :members:
+   :undoc-members:
+   :show-inheritance:

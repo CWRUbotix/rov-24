@@ -1,0 +1,15 @@
+Welcome to the documentation for manipulators
+=============================================
+
+.. toctree::
+   :maxdepth: 2
+
+   manipulators <modules>
+
+
+Indices and Search
+==================
+
+* :ref:`genindex`
+* :ref:`search`
+

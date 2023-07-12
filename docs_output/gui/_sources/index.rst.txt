@@ -1,0 +1,15 @@
+Welcome to the documentation for gui
+====================================
+
+.. toctree::
+   :maxdepth: 2
+
+   gui <modules>
+
+
+Indices and Search
+==================
+
+* :ref:`genindex`
+* :ref:`search`
+

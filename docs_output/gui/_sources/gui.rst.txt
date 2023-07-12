@@ -1,0 +1,29 @@
+gui package
+===========
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   gui.event_nodes
+   gui.modules
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   gui.app
+   gui.operator_app
+   gui.pilot_app
+
+Module contents
+---------------
+
+.. automodule:: gui
+   :members:
+   :undoc-members:
+   :show-inheritance:

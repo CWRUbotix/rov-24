@@ -1,0 +1,19 @@
+pi\_main package
+================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   pi_main.install_on_boot
+   pi_main.udev_copy
+
+Module contents
+---------------
+
+.. automodule:: pi_main
+   :members:
+   :undoc-members:
+   :show-inheritance:

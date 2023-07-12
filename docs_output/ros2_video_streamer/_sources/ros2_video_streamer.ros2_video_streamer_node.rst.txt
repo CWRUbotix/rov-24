@@ -1,0 +1,7 @@
+ros2\_video\_streamer.ros2\_video\_streamer\_node module
+========================================================
+
+.. automodule:: ros2_video_streamer.ros2_video_streamer_node
+   :members:
+   :undoc-members:
+   :show-inheritance:

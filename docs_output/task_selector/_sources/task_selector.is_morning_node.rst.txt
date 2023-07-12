@@ -1,0 +1,7 @@
+task\_selector.is\_morning\_node module
+=======================================
+
+.. automodule:: task_selector.is_morning_node
+   :members:
+   :undoc-members:
+   :show-inheritance:

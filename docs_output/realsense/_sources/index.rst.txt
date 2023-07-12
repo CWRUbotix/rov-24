@@ -1,0 +1,15 @@
+Welcome to the documentation for realsense
+==========================================
+
+.. toctree::
+   :maxdepth: 2
+
+   realsense <modules>
+
+
+Indices and Search
+==================
+
+* :ref:`genindex`
+* :ref:`search`
+

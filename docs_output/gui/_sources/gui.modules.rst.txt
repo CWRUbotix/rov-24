@@ -1,0 +1,23 @@
+gui.modules package
+===================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   gui.modules.arm
+   gui.modules.logger
+   gui.modules.seagrass
+   gui.modules.task_selector
+   gui.modules.timer
+   gui.modules.video_widget
+
+Module contents
+---------------
+
+.. automodule:: gui.modules
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -1,0 +1,7 @@
+gui.event\_nodes.server module
+==============================
+
+.. automodule:: gui.event_nodes.server
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -1,0 +1,7 @@
+gui.modules.arm module
+======================
+
+.. automodule:: gui.modules.arm
+   :members:
+   :undoc-members:
+   :show-inheritance:

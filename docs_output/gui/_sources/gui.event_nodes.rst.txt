@@ -1,0 +1,21 @@
+gui.event\_nodes package
+========================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   gui.event_nodes.client
+   gui.event_nodes.publisher
+   gui.event_nodes.server
+   gui.event_nodes.subscriber
+
+Module contents
+---------------
+
+.. automodule:: gui.event_nodes
+   :members:
+   :undoc-members:
+   :show-inheritance:

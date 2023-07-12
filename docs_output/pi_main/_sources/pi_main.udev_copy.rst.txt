@@ -1,0 +1,7 @@
+pi\_main.udev\_copy module
+==========================
+
+.. automodule:: pi_main.udev_copy
+   :members:
+   :undoc-members:
+   :show-inheritance:

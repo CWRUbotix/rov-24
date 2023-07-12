@@ -1,0 +1,7 @@
+manipulators.manipulators module
+================================
+
+.. automodule:: manipulators.manipulators
+   :members:
+   :undoc-members:
+   :show-inheritance:

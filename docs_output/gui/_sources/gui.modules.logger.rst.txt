@@ -1,0 +1,7 @@
+gui.modules.logger module
+=========================
+
+.. automodule:: gui.modules.logger
+   :members:
+   :undoc-members:
+   :show-inheritance:

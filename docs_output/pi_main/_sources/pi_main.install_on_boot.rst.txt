@@ -1,0 +1,7 @@
+pi\_main.install\_on\_boot module
+=================================
+
+.. automodule:: pi_main.install_on_boot
+   :members:
+   :undoc-members:
+   :show-inheritance:

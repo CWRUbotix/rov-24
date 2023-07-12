@@ -1,0 +1,7 @@
+task\_selector.basic\_task\_timed\_node module
+==============================================
+
+.. automodule:: task_selector.basic_task_timed_node
+   :members:
+   :undoc-members:
+   :show-inheritance:
