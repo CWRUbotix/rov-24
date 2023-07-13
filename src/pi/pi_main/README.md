@@ -40,7 +40,7 @@ Kills in background
 sudo systemctl stop cwrubotix_pi.service
 ```
 
-### Unistall cwrubotix_pi
+### Uninstall cwrubotix_pi
 
 ```bash
 ros2 run robot_upstart uninstall cwrubotix_pi
