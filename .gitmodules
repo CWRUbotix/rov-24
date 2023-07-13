@@ -7,3 +7,6 @@
 [submodule "src/interfaces/px4_msgs"]
 	path = src/interfaces/px4_msgs
 	url = git@github.com:PX4/px4_msgs.git
+[submodule "src/surface/rov_simulation/MicroXRCEAgent"]
+	path = src/surface/rov_simulation/MicroXRCEAgent
+	url = https://github.com/eProsima/Micro-XRCE-DDS-Agent.git
