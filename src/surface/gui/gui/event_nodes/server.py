@@ -20,7 +20,7 @@ class GUIEventServer(Node):
         Remember to use a signal to update the GUI!
         """
         # Name this node with a sanitized version of the topic
-        name: str = f'server_{re.sub(r"[^a-zA-Z0-9_]", "_", topic)}'
+        name: str = f'server{re.sub(r"[^a-zA-Z0-9_]", "_", topic)}'
         super().__init__(name, namespace="surface/gui",
                          parameter_overrides=[])
 
