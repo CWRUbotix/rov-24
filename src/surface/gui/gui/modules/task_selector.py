@@ -56,12 +56,12 @@ class TaskSelector(QWidget):
         self.scheduler_response_signal.connect(
             self.handle_scheduler_response)
         self.task_changed_client: GUIEventClient = GUIEventClient(
-            TaskRequest, 'task_request', self.scheduler_response_signal)
+            TaskRequest, '/task_request', self.scheduler_response_signal)
 
         # Server doesn't spin, so we init in main thread
         self.update_task_dropdown_signal.connect(self.update_task_dropdown)
         self.task_changed_server: GUIEventSubscriber = GUIEventSubscriber(
-            TaskFeedback, 'task_feedback', self.update_task_dropdown_signal)
+            TaskFeedback, '/task_feedback', self.update_task_dropdown_signal)
 
     def start_btn_clicked(self):
         """Tell the back about the user selecting the start button."""
