@@ -69,7 +69,7 @@ class VideoWidget(QWidget):
             h, w, ch = cv_img.shape
             bytes_per_line: int = ch * w
 
-            img_format = QImage.Format_RGB888
+            img_format = QImage.Format.Format_RGB888
 
         # Grayscale image
         elif len(cv_img.shape) == 2:
