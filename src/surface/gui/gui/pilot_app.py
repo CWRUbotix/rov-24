@@ -21,7 +21,7 @@ class PilotApp(App):
                                                 ["Front Camera",
                                                  "Bottom Camera",
                                                  "Depth Camera"],
-                                                "camera_switch")
+                                                "/camera_switch")
         layout.addWidget(self.video_area, alignment=Qt.AlignmentFlag.AlignCenter)
 
         self.arm: Arm = Arm()
