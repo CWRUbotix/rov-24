@@ -41,7 +41,7 @@ class Arm(QWidget):
 
         self.arm_publisher: GUIEventPublisher = GUIEventPublisher(
             VehicleCommand,
-            "fmu/in/vehicle_command"
+            "/fmu/in/vehicle_command"
         )
 
     def arm_clicked(self):
