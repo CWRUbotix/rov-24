@@ -16,7 +16,7 @@ ros2 run pi_main install
 sudo systemctl daemon-reload
 ```
 
-### Adding udev Rules
+## Adding udev Rules
 
 This should automatically be done by the prior command `ros2 run pi_main install`. If not copy all the .rules files from `udev_rules` in this package to the `/etc/udev/rules.d` directory to use USB devices properly.
 
