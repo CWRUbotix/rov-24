@@ -2,7 +2,7 @@
 from PyQt5.QtWidgets import QPushButton, QHBoxLayout, QWidget
 from gui.event_nodes.publisher import GUIEventPublisher
 
-from rov_interfaces.msg import Armed
+from px4_msgs.msg import VehicleCommand
 
 
 class Arm(QWidget):
@@ -40,12 +40,18 @@ class Arm(QWidget):
         layout.addWidget(disarm_button)
 
         self.arm_publisher: GUIEventPublisher = GUIEventPublisher(
-            Armed,
-            "/armed"
+            VehicleCommand,
+            "fmu/in/vehicle_command"
         )
 
     def arm_clicked(self):
-        self.arm_publisher.publish(Armed(armed=True))
+        msg = VehicleCommand()
+        msg.command = VehicleCommand.VEHICLE_CMD_COMPONENT_ARM_DISARM
+        msg.param1 = VehicleCommand.ARMING_ACTION_ARM
+        self.arm_publisher.publish(msg)
 
     def disarm_clicked(self):
-        self.arm_publisher.publish(Armed(armed=False))
+        msg = VehicleCommand()
+        msg.command = VehicleCommand.VEHICLE_CMD_COMPONENT_ARM_DISARM
+        msg.param1 = VehicleCommand.ARMING_ACTION_DISARM
+        self.arm_publisher.publish(msg)
