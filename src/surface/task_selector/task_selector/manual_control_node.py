@@ -4,8 +4,8 @@ from rclpy.action import ActionServer, CancelResponse
 from rclpy.action.server import ServerGoalHandle
 from rclpy.executors import MultiThreadedExecutor
 
-from rov_interfaces.action import BasicTask
-from rov_interfaces.msg import ROVControl, Manip, CameraControllerSwitch
+from interfaces.action import BasicTask
+from interfaces.msg import ROVControl, Manip, CameraControllerSwitch
 from sensor_msgs.msg import Joy
 
 from typing import Dict, List

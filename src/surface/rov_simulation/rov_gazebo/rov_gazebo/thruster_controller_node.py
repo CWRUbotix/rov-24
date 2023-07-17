@@ -8,7 +8,7 @@ from rclpy.node import Node, Publisher
 from std_msgs.msg import Float64
 from geometry_msgs.msg import PoseStamped
 from tf2_msgs.msg import TFMessage
-from rov_interfaces.msg import ROVControl, Armed
+from interfaces.msg import ROVControl, Armed
 
 # Range of values Pixhawk takes
 # In microseconds
