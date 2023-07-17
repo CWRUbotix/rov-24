@@ -7,8 +7,6 @@
   <maintainer email="rmc170@case.edu">Michael Carlstrom</maintainer>
   <license>Apache License 2.0</license>
 
-
-  <exec_depend>python-pymavlink</exec_depend>
   <exec_depend>ros2launch</exec_depend>
 
   <build_depend>interfaces</build_depend>
@@ -16,6 +14,8 @@
   <test_depend>ament_flake8</test_depend>
   <test_depend>ament_pep257</test_depend>
   <test_depend>python3-pytest</test_depend>
+
+  <depend>mavros</depend>
 
   <export>
     <build_type>ament_python</build_type>
