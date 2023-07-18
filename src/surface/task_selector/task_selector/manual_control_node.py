@@ -5,8 +5,9 @@ from rclpy.action.server import ServerGoalHandle
 from rclpy.executors import MultiThreadedExecutor
 
 from interfaces.action import BasicTask
-from interfaces.msg import ROVControl, Manip, CameraControllerSwitch
+from interfaces.msg import Manip, CameraControllerSwitch
 from sensor_msgs.msg import Joy
+from mavros_msgs.msg import OverrideRCIn
 
 from typing import Dict, List
 
@@ -46,6 +47,17 @@ ZERO_SPEED: int = 1500
 MAX_RANGE_SPEED: int = 400
 RANGE_SPEED: float = MAX_RANGE_SPEED*SPEED_THROTTLE
 
+# Channels for RC command
+MAX_CHANNEL: int = 8
+MIN_CHANNEL: int = 1
+
+PITCH_CHANNEL:    int = 0  # Pitch
+ROLL_CHANNEL:     int = 1  # Roll
+THROTTLE_CHANNEL: int = 2  # Z
+LATERAL_CHANNEL:  int = 3  # Y
+FORWARD_CHANNEL:  int = 4  # X
+YAW_CHANNEL:      int = 5  # Yaw
+
 
 class ManualControlNode(Node):
     _passing: bool = False
@@ -61,9 +73,9 @@ class ManualControlNode(Node):
             'manual_control',
             self.execute_callback
         )
-        self.controller_pub: Publisher = self.create_publisher(
-            ROVControl,
-            'manual_control',
+        self.rc_pub: Publisher = self.create_publisher(
+            OverrideRCIn,
+            '/mavros/rc/override',
             10
         )
         self.subscription: Subscription = self.create_subscription(
@@ -103,28 +115,24 @@ class ManualControlNode(Node):
             self.camera_toggle(msg)
 
     def joystick_to_pixhawk(self, msg: Joy):
+
         axes = msg.axes
         buttons = msg.buttons
-        rov_msg = ROVControl()
-        rov_msg.header = msg.header
+        rc_msg = OverrideRCIn()
 
         # DPad Pitch
-        rov_msg.pitch = self.joystick_profiles(axes[DPADVERT])
+        rc_msg.channels[PITCH_CHANNEL] = self.joystick_profiles(axes[DPADVERT])
         # L1/R1 Buttons for Roll
-        rov_msg.roll = self.joystick_profiles(buttons[R1] - buttons[L1])
+        rc_msg.channels[ROLL_CHANNEL] = self.joystick_profiles(buttons[R1] - buttons[L1])
         # Right Joystick Z
-
-        if axes[RJOYX] > 0:
-            rov_msg.z = 1900
-        elif axes[RJOYX] < 0:
-            rov_msg.z = 1100
+        rc_msg.channels[THROTTLE_CHANNEL] = self.joystick_profiles(axes[RJOYX])
         # Left Joystick XY
-        rov_msg.x = self.joystick_profiles(axes[LJOYX])
-        rov_msg.y = self.joystick_profiles(-axes[LJOYY])
+        rc_msg.channels[FORWARD_CHANNEL] = self.joystick_profiles(axes[LJOYX])
+        rc_msg.channels[LATERAL_CHANNEL] = self.joystick_profiles(-axes[LJOYY])
         # L2/R2 Buttons for Yaw
-        rov_msg.yaw = self.joystick_profiles((axes[R2PRESS_PERCENT] -
-                                              axes[L2PRESS_PERCENT])/2)
-        self.controller_pub.publish(rov_msg)
+        rc_msg.channels[YAW_CHANNEL] = self.joystick_profiles((axes[R2PRESS_PERCENT] -
+                                                               axes[L2PRESS_PERCENT])/2)
+        self.rc_pub.publish(rc_msg)
 
     # Used to create smoother adjustments
     def joystick_profiles(self, val: float) -> int:
@@ -148,6 +156,7 @@ class ManualControlNode(Node):
             goal_handle.succeed()
             return BasicTask.Result()
 
+    # TODO jank?
     def cancel_callback(self, goal_handle: ServerGoalHandle):
         self.get_logger().info('Received cancel request')
         self._passing = False

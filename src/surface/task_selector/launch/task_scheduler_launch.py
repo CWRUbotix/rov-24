@@ -15,7 +15,7 @@ def generate_launch_description():
         package='task_selector',
         executable='manual_control_node',
         remappings=[('/surface/manipulator_control', '/manipulator_control'),
-                    ('/surface/manual_control', '/manual_control')]
+                    ('/surface/mavros/rc/override', '/mavros/rc/override')]
     )
 
     # # example of node requesting tasks
