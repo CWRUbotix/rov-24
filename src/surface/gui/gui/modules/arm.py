@@ -1,18 +1,25 @@
 
 from PyQt5.QtWidgets import QPushButton, QHBoxLayout, QWidget
-from gui.event_nodes.publisher import GUIEventPublisher
+from PyQt5.QtCore import pyqtSignal, pyqtSlot
 
-from px4_msgs.msg import VehicleCommand
+from gui.event_nodes.client import GUIEventClient
+
+from mavros_msgs.srv import CommandBool
 
 
 class Arm(QWidget):
     """Arm widget for sending Arm Commands."""
 
+    ARMING_ACTION_ARM = True
+    ARMING_ACTION_DISARM = False
     BUTTON_WIDTH = 120
     BUTTON_HEIGHT = 60
     BUTTON_STYLESHEET = 'QPushButton { font-size: 20px; }'
 
+    signal: pyqtSignal = pyqtSignal(CommandBool.Response)
+
     def __init__(self):
+
         super().__init__()
 
         layout: QHBoxLayout = QHBoxLayout()
@@ -39,19 +46,25 @@ class Arm(QWidget):
         layout.addWidget(arm_button)
         layout.addWidget(disarm_button)
 
-        self.arm_publisher: GUIEventPublisher = GUIEventPublisher(
-            VehicleCommand,
-            "/fmu/in/vehicle_command"
+        self.signal.connect(self.arm_status)
+
+        self.arm_client: GUIEventClient = GUIEventClient(
+            CommandBool,
+            "/mavros/cmd/arming",
+            self.signal
         )
 
     def arm_clicked(self):
-        msg = VehicleCommand()
-        msg.command = VehicleCommand.VEHICLE_CMD_COMPONENT_ARM_DISARM
-        msg.param1 = VehicleCommand.ARMING_ACTION_ARM
-        self.arm_publisher.publish(msg)
+        self.client_handler(self.ARMING_ACTION_ARM)
 
     def disarm_clicked(self):
-        msg = VehicleCommand()
-        msg.command = VehicleCommand.VEHICLE_CMD_COMPONENT_ARM_DISARM
-        msg.param1 = VehicleCommand.ARMING_ACTION_DISARM
-        self.arm_publisher.publish(msg)
+        self.client_handler(self.ARMING_ACTION_DISARM)
+
+    def client_handler(self, arming: bool):
+        srv_req = CommandBool.Request()
+        srv_req.value = arming
+        self.arm_client.send_request_async(srv_req)
+
+    @pyqtSlot(CommandBool.Response)
+    def arm_status(self, res: CommandBool.Response):
+        self.arm_client.get_logger().info(str(res.result))

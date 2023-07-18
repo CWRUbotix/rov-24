@@ -9,18 +9,18 @@ import atexit
 from typing import Callable
 
 
-class GUIEventServer(Node):
-    """Multithreaded server for processing service requests to update GUI."""
+class GUIEventService(Node):
+    """Multithreaded service for processing service requests to update GUI."""
 
     def __init__(self, srv_type: SrvType, topic: str,
                  callback: Callable[[SrvTypeRequest, SrvTypeResponse], SrvTypeResponse]):
         """
-        Initialize this server with a CALLBACK for processing requests.
+        Initialize this service with a CALLBACK for processing requests.
 
         Remember to use a signal to update the GUI!
         """
         # Name this node with a sanitized version of the topic
-        name: str = f'server{re.sub(r"[^a-zA-Z0-9_]", "_", topic)}'
+        name: str = f'service{re.sub(r"[^a-zA-Z0-9_]", "_", topic)}'
         super().__init__(name, namespace="surface/gui",
                          parameter_overrides=[])
 
