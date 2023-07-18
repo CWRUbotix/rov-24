@@ -86,7 +86,7 @@ def generate_launch_description():
     # Not using keyboard launch file
     # TODO?
     # I think we should probably switch over all our single
-    # Node launch files to somehting like this
+    # Node launch files to something like this
     keyboard_driver = Node(
         package="keyboard_driver",
         executable="keyboard_driver_node",
@@ -197,17 +197,6 @@ def generate_launch_description():
         output="screen",
     )
 
-    thruster_controller = Node(
-        package="rov_gazebo",
-        executable="thruster_controller_node",
-        output="screen",
-        namespace=NS,
-        remappings=[
-            (f"/{NS}/manual_control", "/manual_control"),
-            (f"/{NS}/armed", "/armed"),
-        ],
-    )
-
     # Launches Controller
     surface_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
@@ -226,7 +215,6 @@ def generate_launch_description():
             thrust_bridge,
             cam_bridge,
             pos_bridge,
-            thruster_controller,
             surface_launch,
         ]
     )
