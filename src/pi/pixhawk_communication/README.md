@@ -8,4 +8,3 @@ For Control we use [this](https://www.ardusub.com/developers/pymavlink.html#send
 
 More information on the control is [here](https://mavlink.io/en/messages/common.html#RC_CHANNELS_OVERRIDE) and [here](https://www.ardusub.com/developers/rc-input-and-output.html)
 
-MicroXRCEAgent serial --dev /dev/ttyPixhawk
