@@ -67,4 +67,8 @@ class Arm(QWidget):
 
     @pyqtSlot(CommandBool.Response)
     def arm_status(self, res: CommandBool.Response):
-        self.arm_client.get_logger().info(str(res.result))
+        # TODO? could check against /mavros/state for confirmation
+        if res:
+            self.arm_client.get_logger().info("Has been armed or disarmed.")
+        else:
+            self.arm_client.get_logger().error("Has not armed or disarmed")
