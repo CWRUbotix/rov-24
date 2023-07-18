@@ -212,9 +212,9 @@ def generate_launch_description():
             gz_spawn_entity,
             gz_spawn_pool,
             keyboard_driver,
-            thrust_bridge,
+            # thrust_bridge,
             cam_bridge,
-            pos_bridge,
+            # pos_bridge,
             surface_launch,
         ]
     )
