@@ -1,7 +1,7 @@
 import re
 from threading import Thread
 
-from rclpy.node import Node
+from rclpy.node import Node, Client
 import rclpy
 from rclpy.client import SrvType, SrvTypeRequest, SrvTypeResponse
 
@@ -23,10 +23,11 @@ class GUIEventClient(Node):
 
         self.srv_type = srv_type
         self.topic: str = topic
+        # remove self.connected it is unused
         self.connected: bool = False
         self.signal: pyqtBoundSignal = signal
 
-        self.cli = self.create_client(srv_type, topic)
+        self.cli: Client = self.create_client(srv_type, topic)
         Thread(target=self.__connect_to_service, daemon=True,
                name=f'{self.name}_connect_to_service').start()
 
@@ -37,7 +38,7 @@ class GUIEventClient(Node):
                 'Service for GUI event client node on topic' +
                 f' {self.topic} unavailable, waiting again...')
         self.connected = True
-        self.req: SrvTypeRequest = self.srv_type.Request()
+        # self.req: SrvTypeRequest = self.srv_type.Request()
 
     def send_request_async(self, request: SrvTypeRequest):
         """Send request to server in separate thread."""
@@ -45,6 +46,7 @@ class GUIEventClient(Node):
                kwargs={'request': request},
                daemon=True, name=f'{self.name}_send_request').start()
 
+    # Should be private?
     def send_request_with_signal(self, request: SrvTypeRequest):
         """Send synchronous request to server and emit signal."""
         future = self.cli.call_async(request)
@@ -53,6 +55,7 @@ class GUIEventClient(Node):
 
         self.signal.emit(future.result())
 
+    # TODO REMOVE?
     def send_request(self, request: SrvTypeRequest) -> SrvTypeResponse:
         """Send synchronous request to server and return result."""
         future = self.cli.call_async(request)

@@ -10,7 +10,8 @@ def generate_launch_description():
         executable='run_pilot',
         parameters=[
                 {'theme': LaunchConfiguration('theme', default='dark')}],
-        remappings=[("/surface/gui/subscriber_camera_switch", "/surface/camera_switch")]
+        remappings=[("/surface/gui/camera_switch", "/surface/camera_switch"),
+                    ("/surface/gui/mavros/cmd/arming", "/mavros/cmd/arming")]
     )
 
     return LaunchDescription([gui_node])

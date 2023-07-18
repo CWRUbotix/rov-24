@@ -9,8 +9,7 @@ def generate_launch_description():
         package='gui',
         executable='run_operator',
         parameters=[
-                {'theme': LaunchConfiguration('theme', default='dark')}],
-        remappings=[("/surface/gui/publisher_fmu_in_vehicle_command", "/fmu/in/vehicle_command")]
+                {'theme': LaunchConfiguration('theme', default='dark')}]
     )
 
     return LaunchDescription([gui_node])
