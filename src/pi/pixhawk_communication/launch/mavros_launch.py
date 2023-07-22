@@ -15,7 +15,6 @@ def generate_launch_description():
             # TODO check if needed
             {"component_id": 240},
             {"plugin_allowlist": ["rc_io", "command"]}
-
         ]
     )
 
