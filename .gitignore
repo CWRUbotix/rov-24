@@ -8,6 +8,9 @@ build/
 install/
 log/
 
+# Ardusub mission files
+logs/
+
 
 # Allows custom tasks
 .vscode/*
