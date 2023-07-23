@@ -18,9 +18,6 @@ def generate_launch_description():
     world_file = "bluerov2_heavy_underwater.world"
 
     world_path: str = os.path.join(rov_gazebo_path, "worlds", world_file)
-    # mavros_params_file = os.path.join(rov_gazebo_path, "params", "sim_mavros_params.yaml")
-    # Tools/autotest/sim_vehicle.py
-    # ARDUSUB_PATH = os.path.join("~", "ardupilot", "Tools", "autotest", "sim_vehicle.py")
     # Process the URDF file
     # xacro_file = os.path.join(rov_gazebo_path, "description", "rov.xacro")
     # robot_description = Command(["xacro ", xacro_file])
@@ -63,8 +60,7 @@ def generate_launch_description():
     )
 
     start_ardusub = ExecuteProcess(
-        cmd=["ardusub", '-S', '-w', '-M', 'JSON',
-             '-I0', '--home', '33.810313,-118.39386700000001,0.0,270.0'],
+        cmd=["ardusub", '-S', '-w', '-M', 'JSON', '-I0'],
         output='screen'
     )
 
@@ -73,14 +69,14 @@ def generate_launch_description():
             package='mavros',
             executable='mavros_node',
             output='screen',
-            # mavros_node is actually many nodes, so we can't override the name
-            # name='mavros_node',
             parameters=[
                 {"system_id": 255},
                 # TODO check if needed
                 {"component_id": 240},
                 {"fcu_url": "tcp://localhost"},
-                {"gcs_url": "udp://@localhost:14550"}]
+                {"gcs_url": "udp://@localhost:14550"},
+                {"plugin_allowlist": ["rc_io", "command"]}
+            ]
     )
 
     # # Spawn entity
@@ -122,7 +118,6 @@ def generate_launch_description():
         package="keyboard_driver",
         executable="keyboard_driver_node",
         output="screen",
-        name="keyboard_driver_node",
         namespace=NS,
         remappings=[(f"/{NS}/mavros/rc/override", "/mavros/rc/override")],
     )
