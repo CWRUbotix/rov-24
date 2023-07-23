@@ -173,12 +173,16 @@ class KeyboardListenerNode(Node):
     def pub_rov_control(self):
         msg = OverrideRCIn()
 
-        msg.channels[PITCH_CHANNEL] = (self.status["pitch_up"] - self.status["pitch_down"]) * 400 + 1500
-        msg.channels[ROLL_CHANNEL] = (self.status["roll_left"] - self.status["roll_right"]) * 400 + 1500
-        msg.channels[THROTTLE_CHANNEL] = (self.status["up"] - self.status["down"]) * 400 + 1500
-        msg.channels[LATERAL_CHANNEL] = (self.status["left"] - self.status["right"]) * 400 + 1500
-        msg.channels[FORWARD_CHANNEL] = (self.status["forward"] - self.status["backward"]) * 400 + 1500
-        msg.channels[YAW_CHANNEL] = (self.status["yaw_left"] - self.status["yaw_right"]) * 400 + 1500
+        msg.channels[PITCH_CHANNEL] = (self.status["pitch_up"] - self.status["pitch_down"]) * 400
+        msg.channels[ROLL_CHANNEL] = (self.status["roll_left"] - self.status["roll_right"]) * 400
+        msg.channels[THROTTLE_CHANNEL] = (self.status["up"] - self.status["down"]) * 400
+        msg.channels[LATERAL_CHANNEL] = (self.status["left"] - self.status["right"]) * 400
+        msg.channels[FORWARD_CHANNEL] = (self.status["forward"] - self.status["backward"]) * 400
+        msg.channels[YAW_CHANNEL] = (self.status["yaw_left"] - self.status["yaw_right"]) * 400
+
+        for channel in range(YAW_CHANNEL):
+            # 1500 is no movement
+            msg.channels[channel] += 1500
 
         self.rc_pub.publish(msg)
 
