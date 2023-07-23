@@ -18,8 +18,9 @@ def generate_launch_description():
     world_file = "bluerov2_heavy_underwater.world"
 
     world_path: str = os.path.join(rov_gazebo_path, "worlds", world_file)
-    mavros_params_file = os.path.join(rov_gazebo_path, "params", "sim_mavros_params.yaml")
-    ARDUSUB_PATH = 
+    # mavros_params_file = os.path.join(rov_gazebo_path, "params", "sim_mavros_params.yaml")
+    # Tools/autotest/sim_vehicle.py
+    # ARDUSUB_PATH = os.path.join("~", "ardupilot", "Tools", "autotest", "sim_vehicle.py")
     # Process the URDF file
     # xacro_file = os.path.join(rov_gazebo_path, "description", "rov.xacro")
     # robot_description = Command(["xacro ", xacro_file])
@@ -62,7 +63,7 @@ def generate_launch_description():
     )
 
     start_ardusub = ExecuteProcess(
-        cmd=[ardusub_path, '-S', '-w', '-M', 'JSON',
+        cmd=["ardusub", '-S', '-w', '-M', 'JSON',
              '-I0', '--home', '33.810313,-118.39386700000001,0.0,270.0'],
         output='screen'
     )
@@ -74,7 +75,12 @@ def generate_launch_description():
             output='screen',
             # mavros_node is actually many nodes, so we can't override the name
             # name='mavros_node',
-            parameters=[mavros_params_file]
+            parameters=[
+                {"system_id": 255},
+                # TODO check if needed
+                {"component_id": 240},
+                {"fcu_url": "tcp://localhost"},
+                {"gcs_url": "udp://@localhost:14550"}]
     )
 
     # # Spawn entity
@@ -118,7 +124,7 @@ def generate_launch_description():
         output="screen",
         name="keyboard_driver_node",
         namespace=NS,
-        remappings=[(f"/{NS}/manual_control", "/manual_control")],
+        remappings=[(f"/{NS}/mavros/rc/override", "/mavros/rc/override")],
     )
 
     # Thrust Bridge
@@ -235,13 +241,13 @@ def generate_launch_description():
             # pool_state_publisher,
             start_gazebo,
             start_ardusub,
-            mav_ros_node
+            mav_ros_node,
             # gz_spawn_entity,
             # gz_spawn_pool,
-            # keyboard_driver,
+            keyboard_driver,
             # thrust_bridge,
             # cam_bridge,
             # pos_bridge,
-            # surface_launch,
+            surface_launch,
         ]
     )
