@@ -4,8 +4,18 @@ import rclpy
 from rclpy.node import Node
 from pynput import keyboard
 from pynput.keyboard import Key, KeyCode
-from interfaces.msg import ROVControl
+from mavros_msgs.msg import OverrideRCIn
 
+# Channels for RC command
+MAX_CHANNEL: int = 8
+MIN_CHANNEL: int = 1
+
+PITCH_CHANNEL:    int = 0  # Pitch
+ROLL_CHANNEL:     int = 1  # Roll
+THROTTLE_CHANNEL: int = 2  # Z
+LATERAL_CHANNEL:  int = 3  # Y
+FORWARD_CHANNEL:  int = 4  # X
+YAW_CHANNEL:      int = 5  # Yaw
 
 # key bindings
 FORWARD = "w"
@@ -59,8 +69,8 @@ class KeyboardListenerNode(Node):
     def __init__(self):
         super().__init__("keyboard_listener_node", parameter_overrides=[])
 
-        self.pub_status = self.create_publisher(
-            ROVControl, "manual_control", qos_profile=10
+        self.rc_pub = self.create_publisher(
+            OverrideRCIn, "/mavros/rc/override", qos_profile=10
         )
         self.logger.info(HELP_MSG)
         self.status = {
@@ -161,17 +171,16 @@ class KeyboardListenerNode(Node):
             raise e
 
     def pub_rov_control(self):
-        msg = ROVControl()
-        msg.x = (self.status["forward"] - self.status["backward"]) * 400 + 1500
-        msg.y = (self.status["left"] - self.status["right"]) * 400 + 1500
-        msg.z = (self.status["up"] - self.status["down"]) * 400 + 1500
-        msg.roll = (self.status["roll_left"] - self.status["roll_right"]) * 400 + 1500
+        msg = OverrideRCIn()
 
-        msg.pitch = (self.status["pitch_up"] - self.status["pitch_down"]) * 400 + 1500
+        msg.channels[PITCH_CHANNEL] = (self.status["pitch_up"] - self.status["pitch_down"]) * 400 + 1500
+        msg.channels[ROLL_CHANNEL] = (self.status["roll_left"] - self.status["roll_right"]) * 400 + 1500
+        msg.channels[THROTTLE_CHANNEL] = (self.status["up"] - self.status["down"]) * 400 + 1500
+        msg.channels[LATERAL_CHANNEL] = (self.status["left"] - self.status["right"]) * 400 + 1500
+        msg.channels[FORWARD_CHANNEL] = (self.status["forward"] - self.status["backward"]) * 400 + 1500
+        msg.channels[YAW_CHANNEL] = (self.status["yaw_left"] - self.status["yaw_right"]) * 400 + 1500
 
-        msg.yaw = (self.status["yaw_left"] - self.status["yaw_right"]) * 400 + 1500
-
-        self.pub_status.publish(msg)
+        self.rc_pub.publish(msg)
 
     def spin(self):
         with keyboard.Listener(
