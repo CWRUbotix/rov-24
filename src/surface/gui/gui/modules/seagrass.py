@@ -1,4 +1,4 @@
-from typing import List, Optional, Callable
+from typing import Optional, Callable
 
 from PyQt5.QtWidgets import (QWidget, QPushButton, QGridLayout, QHBoxLayout,
                              QVBoxLayout, QLabel, QFrame)
@@ -123,7 +123,7 @@ class SeagrassGrid(QWidget):
         self.frame.setLayout(grid_layout)
         self.frame.setStyleSheet("border: 1px solid gray")
 
-        self.all_buttons: List[SeagrassButton] = []
+        self.all_buttons: list[SeagrassButton] = []
         N = 8
         button_id = 0
 

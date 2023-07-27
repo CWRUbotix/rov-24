@@ -9,7 +9,7 @@ from interfaces.msg import CameraControllerSwitch
 from cv_bridge import CvBridge
 import cv2
 
-from typing import Optional, List
+from typing import Optional
 
 WIDTH = 1280
 HEIGHT = 720
@@ -94,7 +94,7 @@ class SwitchableVideoWidget(VideoWidget):
 
     controller_signal = pyqtSignal(CameraControllerSwitch)
 
-    def __init__(self, cam_topics: List[str], button_names: List[str],
+    def __init__(self, cam_topics: list[str], button_names: list[str],
                  controller_button_topic: Optional[str] = None,
                  default_cam_num: int = 0,
                  label_text: Optional[str] = None,
