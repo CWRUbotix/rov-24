@@ -1,5 +1,3 @@
-from typing import Dict
-
 from rcl_interfaces.msg import Log
 from rclpy.logging import LoggingSeverity
 
@@ -33,7 +31,7 @@ class Logger(QWidget):
         settings_layout: QHBoxLayout = QHBoxLayout()
         layout.addLayout(settings_layout)
 
-        self.checkboxes: Dict[LoggingSeverity, QCheckBox] = {}
+        self.checkboxes: dict[LoggingSeverity, QCheckBox] = {}
         for severity_key in SEVERITY_LEVELS_DICT:
             box: QCheckBox = QCheckBox(severity_key.name)
             box.setChecked(True)

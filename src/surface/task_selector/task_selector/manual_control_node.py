@@ -8,8 +8,6 @@ from interfaces.action import BasicTask
 from interfaces.msg import ROVControl, Manip, CameraControllerSwitch
 from sensor_msgs.msg import Joy
 
-from typing import Dict
-
 
 # Button meanings for PS5 Control might be different for others
 X_BUTTON:        int = 0  # Manipulator 0
@@ -87,7 +85,7 @@ class ManualControlNode(Node):
             10
         )
 
-        self.manip_buttons: Dict[int, ManipButton] = {
+        self.manip_buttons: dict[int, ManipButton] = {
             X_BUTTON: ManipButton("claw0"),
             O_BUTTON: ManipButton("claw1"),
             TRI_BUTTON: ManipButton("light")
