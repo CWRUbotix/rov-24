@@ -8,7 +8,7 @@ from interfaces.action import BasicTask
 from interfaces.msg import ROVControl, Manip, CameraControllerSwitch
 from sensor_msgs.msg import Joy
 
-from typing import Dict, List
+from typing import Dict
 
 
 # Button meanings for PS5 Control might be different for others
@@ -154,7 +154,7 @@ class ManualControlNode(Node):
         return CancelResponse.ACCEPT
 
     def manip_callback(self, msg: Joy):
-        buttons: List[int] = msg.buttons
+        buttons: list[int] = msg.buttons
 
         for button_id, manip_button in self.manip_buttons.items():
 
@@ -178,7 +178,7 @@ class ManualControlNode(Node):
 
     def camera_toggle(self, msg: Joy):
         """Cycles through connected cameras on pilot GUI using menu and pairing buttons."""
-        buttons: List[int] = msg.buttons
+        buttons: list[int] = msg.buttons
 
         if buttons[MENU] == 1:
             self.seen_right_cam = True
