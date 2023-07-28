@@ -21,7 +21,8 @@ def generate_launch_description():
             {"time_per_frame": [1, 30]}
         ],
         remappings=[("/pi/front_cam/image_raw", "/front_cam/image_raw")],
-        emulate_tty=True
+        emulate_tty=True,
+        output='screen'
     )
 
     # USB 3.0 bottom
@@ -37,7 +38,8 @@ def generate_launch_description():
             {"time_per_frame": [1, 30]}
         ],
         remappings=[("/pi/bottom_cam/image_raw", "/bottom_cam/image_raw")],
-        emulate_tty=True
+        emulate_tty=True,
+        output='screen'
     )
 
     return LaunchDescription([

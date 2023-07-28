@@ -14,7 +14,8 @@ def generate_launch_description():
         parameters=[{'communication': LaunchConfiguration('communication', default=PORT)}],
         remappings=[("/pi/armed", "/armed"),
                     ("/pi/manual_control", "/manual_control")],
-        emulate_tty=True
+        emulate_tty=True,
+        output='screen'
     )
 
     return LaunchDescription([pixhawk_com_node])

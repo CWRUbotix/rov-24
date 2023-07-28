@@ -8,7 +8,8 @@ def generate_launch_description():
     selector_node: Node = Node(
         package='task_selector',
         executable='selector',
-        emulate_tty=True
+        emulate_tty=True,
+        output='screen'
     )
 
     # JoyToHawk
@@ -17,7 +18,8 @@ def generate_launch_description():
         executable='manual_control_node',
         remappings=[('/surface/manipulator_control', '/manipulator_control'),
                     ('/surface/manual_control', '/manual_control')],
-        emulate_tty=True
+        emulate_tty=True,
+        output='screen'
     )
 
     # # example of node requesting tasks

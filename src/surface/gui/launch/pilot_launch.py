@@ -12,7 +12,8 @@ def generate_launch_description():
                 {'theme': LaunchConfiguration('theme', default='dark')}],
         remappings=[("/surface/gui/armed", "/armed"),
                     ("/surface/gui/camera_switch", "/surface/camera_switch")],
-        emulate_tty=True
+        emulate_tty=True,
+        output='screen'
     )
 
     return LaunchDescription([gui_node])
