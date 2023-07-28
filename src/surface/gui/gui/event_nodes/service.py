@@ -1,12 +1,11 @@
+import atexit
 import re
 from threading import Thread
-
-from rclpy.node import Node
-from rclpy.executors import SingleThreadedExecutor
-from rclpy.client import SrvType, SrvTypeRequest, SrvTypeResponse
-import atexit
-
 from typing import Callable
+
+from rclpy.client import SrvType, SrvTypeRequest, SrvTypeResponse
+from rclpy.executors import SingleThreadedExecutor
+from rclpy.node import Node
 
 
 class GUIEventService(Node):

@@ -1,13 +1,10 @@
-from typing import Dict
-
+from gui.event_nodes.subscriber import GUIEventSubscriber
+from PyQt5.QtCore import pyqtSignal, pyqtSlot
+from PyQt5.QtGui import QColor, QFont, QTextCursor
+from PyQt5.QtWidgets import (QCheckBox, QHBoxLayout, QTextEdit, QVBoxLayout,
+                             QWidget)
 from rcl_interfaces.msg import Log
 from rclpy.logging import LoggingSeverity
-
-from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QCheckBox, QTextEdit, QWidget
-from PyQt5.QtGui import QFont, QTextCursor, QColor
-from PyQt5.QtCore import pyqtSignal, pyqtSlot
-
-from gui.event_nodes.subscriber import GUIEventSubscriber
 
 # Dictionary linking LoggingSeverity to a QColor
 SEVERITY_LEVELS_DICT = {LoggingSeverity.UNSET: QColor(0, 0, 0),
@@ -33,7 +30,7 @@ class Logger(QWidget):
         settings_layout: QHBoxLayout = QHBoxLayout()
         layout.addLayout(settings_layout)
 
-        self.checkboxes: Dict[LoggingSeverity, QCheckBox] = {}
+        self.checkboxes: dict[LoggingSeverity, QCheckBox] = {}
         for severity_key in SEVERITY_LEVELS_DICT:
             box: QCheckBox = QCheckBox(severity_key.name)
             box.setChecked(True)

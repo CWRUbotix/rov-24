@@ -1,9 +1,9 @@
 import os
-from robot_upstart import Job
 import subprocess
 import sys
 
 from ament_index_python.packages import get_package_share_directory
+from robot_upstart import Job
 
 
 def main():

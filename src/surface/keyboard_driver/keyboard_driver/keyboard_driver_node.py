@@ -1,10 +1,10 @@
 from typing import Optional
-import rclpy
 
-from rclpy.node import Node
+import rclpy
+from mavros_msgs.msg import OverrideRCIn
 from pynput import keyboard
 from pynput.keyboard import Key, KeyCode
-from mavros_msgs.msg import OverrideRCIn
+from rclpy.node import Node
 
 # Channels for RC command
 MAX_CHANNEL: int = 8
