@@ -1,10 +1,9 @@
-from typing import List, Optional, Callable
-
-from PyQt5.QtWidgets import (QWidget, QPushButton, QGridLayout, QHBoxLayout,
-                             QVBoxLayout, QLabel, QFrame)
-from PyQt5.QtCore import Qt
+from typing import Callable, Optional
 
 from gui.modules.video_widget import PausableVideoWidget
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import (QFrame, QGridLayout, QHBoxLayout, QLabel,
+                             QPushButton, QVBoxLayout, QWidget)
 
 
 class SeagrassWidget(QWidget):
@@ -123,7 +122,7 @@ class SeagrassGrid(QWidget):
         self.frame.setLayout(grid_layout)
         self.frame.setStyleSheet("border: 1px solid gray")
 
-        self.all_buttons: List[SeagrassButton] = []
+        self.all_buttons: list[SeagrassButton] = []
         N = 8
         button_id = 0
 
