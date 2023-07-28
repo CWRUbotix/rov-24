@@ -1,16 +1,12 @@
 import rclpy
-from rclpy.node import Node, Subscription, Publisher
+from mavros_msgs.msg import OverrideRCIn
 from rclpy.action import ActionServer, CancelResponse
 from rclpy.action.server import ServerGoalHandle
 from rclpy.executors import MultiThreadedExecutor
+from sensor_msgs.msg import Joy
 
 from interfaces.action import BasicTask
-from interfaces.msg import Manip, CameraControllerSwitch
-from sensor_msgs.msg import Joy
-from mavros_msgs.msg import OverrideRCIn
-
-from typing import Dict, List
-
+from interfaces.msg import CameraControllerSwitch, Manip
 
 # Button meanings for PS5 Control might be different for others
 X_BUTTON:        int = 0  # Manipulator 0
@@ -99,7 +95,7 @@ class ManualControlNode(Node):
             10
         )
 
-        self.manip_buttons: Dict[int, ManipButton] = {
+        self.manip_buttons: dict[int, ManipButton] = {
             X_BUTTON: ManipButton("claw0"),
             O_BUTTON: ManipButton("claw1"),
             TRI_BUTTON: ManipButton("light")
@@ -163,7 +159,7 @@ class ManualControlNode(Node):
         return CancelResponse.ACCEPT
 
     def manip_callback(self, msg: Joy):
-        buttons: List[int] = msg.buttons
+        buttons: list[int] = msg.buttons
 
         for button_id, manip_button in self.manip_buttons.items():
 
@@ -187,7 +183,7 @@ class ManualControlNode(Node):
 
     def camera_toggle(self, msg: Joy):
         """Cycles through connected cameras on pilot GUI using menu and pairing buttons."""
-        buttons: List[int] = msg.buttons
+        buttons: list[int] = msg.buttons
 
         if buttons[MENU] == 1:
             self.seen_right_cam = True

@@ -1,11 +1,9 @@
-from PyQt5.QtWidgets import QGridLayout, QTabWidget, QWidget
-
-
-from gui.modules.task_selector import TaskSelector
+from gui.app import App
 from gui.modules.logger import Logger
 from gui.modules.seagrass import SeagrassWidget
+from gui.modules.task_selector import TaskSelector
 from gui.modules.timer import Timer
-from gui.app import App
+from PyQt5.QtWidgets import QGridLayout, QTabWidget, QWidget
 
 
 class OperatorApp(App):
