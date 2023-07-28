@@ -7,7 +7,8 @@ def generate_launch_description():
     # launches main task scheduler
     selector_node: Node = Node(
         package='task_selector',
-        executable='selector'
+        executable='selector',
+        emulate_tty=True
     )
 
     # JoyToHawk
@@ -15,7 +16,8 @@ def generate_launch_description():
         package='task_selector',
         executable='manual_control_node',
         remappings=[('/surface/manipulator_control', '/manipulator_control'),
-                    ('/surface/manual_control', '/manual_control')]
+                    ('/surface/manual_control', '/manual_control')],
+        emulate_tty=True
     )
 
     # # example of node requesting tasks

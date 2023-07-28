@@ -12,7 +12,8 @@ def generate_launch_description():
             {"claw1": 1},
             {"light": 2},
         ],
-        remappings=[("/pi/manipulator_control", "/manipulator_control")]
+        remappings=[("/pi/manipulator_control", "/manipulator_control")],
+        emulate_tty=True
     )
 
     return LaunchDescription([

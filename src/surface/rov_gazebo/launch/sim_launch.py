@@ -1,11 +1,11 @@
 import os
-
 from ament_index_python.packages import get_package_share_directory
+
 from launch import LaunchDescription
 from launch.actions import IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import Command
 from launch_ros.actions import Node
+from launch.substitutions import Command
 
 NS = "simulation"
 
@@ -33,6 +33,7 @@ def generate_launch_description():
         output="screen",
         parameters=[params],
         namespace=NS,
+        emulate_tty=True
     )
 
     pool_state_publisher = Node(
@@ -42,6 +43,7 @@ def generate_launch_description():
         parameters=[pool_params],
         namespace=NS,
         remappings=[(f"/{NS}/robot_description", f"/{NS}/pool_description")],
+        emulate_tty=True
     )
 
     # Launches Gazebo
@@ -66,6 +68,7 @@ def generate_launch_description():
             "true",
         ],
         namespace=NS,
+        emulate_tty=True
     )
 
     gz_spawn_pool = Node(
@@ -81,6 +84,7 @@ def generate_launch_description():
             "true",
         ],
         namespace=NS,
+        emulate_tty=True
     )
 
     # Not using keyboard launch file
@@ -94,6 +98,7 @@ def generate_launch_description():
         name="keyboard_driver_node",
         namespace=NS,
         remappings=[(f"/{NS}/manual_control", "/manual_control")],
+        emulate_tty=True
     )
 
     # Thrust Bridge
@@ -155,6 +160,7 @@ def generate_launch_description():
             ),
         ],
         output="screen",
+        emulate_tty=True
     )
 
     cam_bridge = Node(
@@ -181,6 +187,7 @@ def generate_launch_description():
             (f"/{NS}/depth_cam/points", "/depth_cam/points"),
         ],
         output="screen",
+        emulate_tty=True
     )
 
     pos_bridge = Node(
@@ -195,6 +202,7 @@ def generate_launch_description():
             ("/world/rov_simulation/dynamic_pose/info", f"/{NS}/rov_pose"),
         ],
         output="screen",
+        emulate_tty=True
     )
 
     thruster_controller = Node(
@@ -206,6 +214,7 @@ def generate_launch_description():
             (f"/{NS}/manual_control", "/manual_control"),
             (f"/{NS}/armed", "/armed"),
         ],
+        emulate_tty=True
     )
 
     # Launches Controller

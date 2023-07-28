@@ -10,7 +10,8 @@ def generate_launch_description():
         executable='run_operator',
         parameters=[
                 {'theme': LaunchConfiguration('theme', default='dark')}],
-        remappings=[("/surface/gui/armed", "/armed")]
+        remappings=[("/surface/gui/armed", "/armed")],
+        emulate_tty=True
     )
 
     return LaunchDescription([gui_node])
