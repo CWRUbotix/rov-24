@@ -9,7 +9,6 @@ sudo apt install curl
 sudo apt install python3-pip
 
 # Install python packages that rosdep can't install
-pip install opencv-python
 pip install pyserial
 pip install wiringpi
 
