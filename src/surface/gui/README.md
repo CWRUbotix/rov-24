@@ -36,9 +36,3 @@ To run watermelon mode (don't)
 ```bash
 ros2 launch gui gui_launch.py theme:=watermelon
 ```
-
-dependencies
-
-```bash
-sudo apt install qtwayland5
-```

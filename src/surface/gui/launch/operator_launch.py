@@ -1,6 +1,6 @@
 from launch import LaunchDescription
-from launch_ros.actions import Node
 from launch.substitutions import LaunchConfiguration
+from launch_ros.actions import Node
 
 
 def generate_launch_description():
@@ -9,7 +9,10 @@ def generate_launch_description():
         package='gui',
         executable='run_operator',
         parameters=[
-                {'theme': LaunchConfiguration('theme', default='dark')}]
+                {'theme': LaunchConfiguration('theme', default='dark')}],
+        remappings=[("/surface/gui/armed", "/armed")],
+        emulate_tty=True,
+        output='screen'
     )
 
     return LaunchDescription([gui_node])
