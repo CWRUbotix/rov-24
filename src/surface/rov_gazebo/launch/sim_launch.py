@@ -33,6 +33,7 @@ def generate_launch_description():
         output="screen",
         parameters=[params],
         namespace=NS,
+        emulate_tty=True
     )
 
     pool_state_publisher = Node(
@@ -42,6 +43,7 @@ def generate_launch_description():
         parameters=[pool_params],
         namespace=NS,
         remappings=[(f"/{NS}/robot_description", f"/{NS}/pool_description")],
+        emulate_tty=True
     )
 
     # Launches Gazebo
@@ -66,6 +68,7 @@ def generate_launch_description():
             "true",
         ],
         namespace=NS,
+        emulate_tty=True
     )
 
     gz_spawn_pool = Node(
@@ -81,6 +84,7 @@ def generate_launch_description():
             "true",
         ],
         namespace=NS,
+        emulate_tty=True
     )
 
     # Not using keyboard launch file
@@ -94,6 +98,7 @@ def generate_launch_description():
         name="keyboard_driver_node",
         namespace=NS,
         remappings=[(f"/{NS}/manual_control", "/manual_control")],
+        emulate_tty=True
     )
 
     # Thrust Bridge
@@ -157,31 +162,32 @@ def generate_launch_description():
     #     output="screen",
     # )
 
-    cam_bridge = Node(
-        package="ros_gz_bridge",
-        executable="parameter_bridge",
-        namespace=NS,
-        name="cam_bridge",
-        arguments=[
-            "/bottom_cam/image_raw@sensor_msgs/msg/Image@gz.msgs.Image",
-            "/bottom_cam/camera_info@sensor_msgs/msg/CameraInfo@gz.msgs.CameraInfo",
-            "/front_cam/image_raw@sensor_msgs/msg/Image@gz.msgs.Image",
-            "/front_cam/camera_info@sensor_msgs/msg/CameraInfo@gz.msgs.CameraInfo",
-            "/manip_cam/image_raw@sensor_msgs/msg/Image@gz.msgs.Image",
-            "/depth_cam@sensor_msgs/msg/Image@gz.msgs.Image",
-            "/depth_cam/points@sensor_msgs/msg/PointCloud2@gz.msgs.PointCloudPacked",
-        ],
-        remappings=[
-            (f"/{NS}/bottom_cam/image_raw", "/bottom_cam/image_raw"),
-            (f"/{NS}/bottom_cam/camera_info", "/bottom_cam/camera_info"),
-            (f"/{NS}/front_cam/image_raw", "/front_cam/image_raw"),
-            (f"/{NS}/front_cam/camera_info", "/front_cam/camera_info"),
-            (f"/{NS}/manip_cam/image_raw", "/manip_cam/image_raw"),
-            (f"/{NS}/depth_cam", "/depth_cam/image_raw"),
-            (f"/{NS}/depth_cam/points", "/depth_cam/points"),
-        ],
-        output="screen",
-    )
+    # cam_bridge = Node(
+    #     package="ros_gz_bridge",
+    #     executable="parameter_bridge",
+    #     namespace=NS,
+    #     name="cam_bridge",
+    #     arguments=[
+    #         "/bottom_cam/image_raw@sensor_msgs/msg/Image@gz.msgs.Image",
+    #         "/bottom_cam/camera_info@sensor_msgs/msg/CameraInfo@gz.msgs.CameraInfo",
+    #         "/front_cam/image_raw@sensor_msgs/msg/Image@gz.msgs.Image",
+    #         "/front_cam/camera_info@sensor_msgs/msg/CameraInfo@gz.msgs.CameraInfo",
+    #         "/manip_cam/image_raw@sensor_msgs/msg/Image@gz.msgs.Image",
+    #         "/depth_cam@sensor_msgs/msg/Image@gz.msgs.Image",
+    #         "/depth_cam/points@sensor_msgs/msg/PointCloud2@gz.msgs.PointCloudPacked",
+    #     ],
+    #     remappings=[
+    #         (f"/{NS}/bottom_cam/image_raw", "/bottom_cam/image_raw"),
+    #         (f"/{NS}/bottom_cam/camera_info", "/bottom_cam/camera_info"),
+    #         (f"/{NS}/front_cam/image_raw", "/front_cam/image_raw"),
+    #         (f"/{NS}/front_cam/camera_info", "/front_cam/camera_info"),
+    #         (f"/{NS}/manip_cam/image_raw", "/manip_cam/image_raw"),
+    #         (f"/{NS}/depth_cam", "/depth_cam/image_raw"),
+    #         (f"/{NS}/depth_cam/points", "/depth_cam/points"),
+    #     ],
+    #     output="screen",
+    #     emulate_tty=True
+    # )
 
     # pos_bridge = Node(
     #     package="ros_gz_bridge",
@@ -213,7 +219,7 @@ def generate_launch_description():
             gz_spawn_pool,
             keyboard_driver,
             # thrust_bridge,
-            cam_bridge,
+            # cam_bridge,
             # pos_bridge,
             surface_launch,
         ]
