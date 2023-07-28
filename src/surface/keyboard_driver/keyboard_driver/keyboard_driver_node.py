@@ -1,11 +1,11 @@
 from typing import Optional
-import rclpy
 
-from rclpy.node import Node
+import rclpy
 from pynput import keyboard
 from pynput.keyboard import Key, KeyCode
-from interfaces.msg import ROVControl
+from rclpy.node import Node
 
+from interfaces.msg import ROVControl
 
 # key bindings
 FORWARD = "w"

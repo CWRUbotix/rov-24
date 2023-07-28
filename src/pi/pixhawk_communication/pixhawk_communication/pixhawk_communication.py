@@ -1,10 +1,9 @@
+import rclpy
 from pymavlink import mavutil
 from pymavlink.mavutil import mavfile
-import rclpy
 from rclpy.node import Node, Subscription
 
 from interfaces.msg import Armed, ROVControl
-
 
 MAX_CHANNEL: int = 8
 MIN_CHANNEL: int = 1

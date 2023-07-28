@@ -1,13 +1,11 @@
-import qdarkstyle
-import sys
-import signal
-
-import rclpy
-from rclpy.node import Node
-
-from PyQt5.QtWidgets import QApplication
-from PyQt5.QtWidgets import QWidget
 import atexit
+import signal
+import sys
+
+import qdarkstyle
+import rclpy
+from PyQt5.QtWidgets import QApplication, QWidget
+from rclpy.node import Node
 
 
 class App(Node, QWidget):

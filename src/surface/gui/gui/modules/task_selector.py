@@ -1,16 +1,12 @@
-from task_selector.tasks import Tasks
-
-from PyQt5.QtWidgets import QGridLayout, QLabel
-from PyQt5.QtWidgets import QWidget, QPushButton
-from PyQt5.QtCore import pyqtSignal, pyqtSlot
-
 from gui.event_nodes.client import GUIEventClient
 from gui.event_nodes.subscriber import GUIEventSubscriber
-
-from interfaces.srv import TaskRequest
-from interfaces.msg import TaskFeedback
-
+from PyQt5.QtCore import pyqtSignal, pyqtSlot
+from PyQt5.QtWidgets import QGridLayout, QLabel, QPushButton, QWidget
 from rclpy.impl.rcutils_logger import RcutilsLogger
+from task_selector.tasks import Tasks
+
+from interfaces.msg import TaskFeedback
+from interfaces.srv import TaskRequest
 
 WIDTH = 200
 

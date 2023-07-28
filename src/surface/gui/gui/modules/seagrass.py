@@ -1,10 +1,9 @@
-from typing import Optional, Callable
-
-from PyQt5.QtWidgets import (QWidget, QPushButton, QGridLayout, QHBoxLayout,
-                             QVBoxLayout, QLabel, QFrame)
-from PyQt5.QtCore import Qt
+from typing import Callable, Optional
 
 from gui.modules.video_widget import PausableVideoWidget
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import (QFrame, QGridLayout, QHBoxLayout, QLabel,
+                             QPushButton, QVBoxLayout, QWidget)
 
 
 class SeagrassWidget(QWidget):
