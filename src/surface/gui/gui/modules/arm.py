@@ -1,10 +1,8 @@
 
-from PyQt5.QtWidgets import QPushButton, QHBoxLayout, QWidget
-from PyQt5.QtCore import pyqtSignal, pyqtSlot
-
 from gui.event_nodes.client import GUIEventClient
-
 from mavros_msgs.srv import CommandBool
+from PyQt5.QtCore import pyqtSignal, pyqtSlot
+from PyQt5.QtWidgets import QHBoxLayout, QPushButton, QWidget
 
 
 class Arm(QWidget):

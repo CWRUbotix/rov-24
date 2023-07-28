@@ -1,6 +1,6 @@
-from PyQt5.QtCore import QTimer, Qt
+from PyQt5.QtCore import Qt, QTimer
 from PyQt5.QtGui import QFont
-from PyQt5.QtWidgets import QLabel, QPushButton, QGridLayout, QWidget
+from PyQt5.QtWidgets import QGridLayout, QLabel, QPushButton, QWidget
 
 
 class Timer(QWidget):

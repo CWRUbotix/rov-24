@@ -1,15 +1,14 @@
-from PyQt5.QtWidgets import QLabel, QWidget, QVBoxLayout, QPushButton
-from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt
-from PyQt5.QtGui import QPixmap, QImage
+from typing import Optional
 
-from gui.event_nodes.subscriber import GUIEventSubscriber
-
-from sensor_msgs.msg import Image
-from interfaces.msg import CameraControllerSwitch
-from cv_bridge import CvBridge
 import cv2
+from cv_bridge import CvBridge
+from gui.event_nodes.subscriber import GUIEventSubscriber
+from PyQt5.QtCore import Qt, pyqtSignal, pyqtSlot
+from PyQt5.QtGui import QImage, QPixmap
+from PyQt5.QtWidgets import QLabel, QPushButton, QVBoxLayout, QWidget
+from sensor_msgs.msg import Image
 
-from typing import Optional, List
+from interfaces.msg import CameraControllerSwitch
 
 WIDTH = 1280
 HEIGHT = 720
@@ -94,7 +93,7 @@ class SwitchableVideoWidget(VideoWidget):
 
     controller_signal = pyqtSignal(CameraControllerSwitch)
 
-    def __init__(self, cam_topics: List[str], button_names: List[str],
+    def __init__(self, cam_topics: list[str], button_names: list[str],
                  controller_button_topic: Optional[str] = None,
                  default_cam_num: int = 0,
                  label_text: Optional[str] = None,
