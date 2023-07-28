@@ -9,7 +9,8 @@ def generate_launch_description():
         package='joy',
         executable='joy_node',
         namespace='surface',
-        emulate_tty=True
+        emulate_tty=True,
+        output='screen'
     )
 
     return LaunchDescription([

@@ -13,7 +13,8 @@ def generate_launch_description():
             {"light": 2},
         ],
         remappings=[("/pi/manipulator_control", "/manipulator_control")],
-        emulate_tty=True
+        emulate_tty=True,
+        output='screen'
     )
 
     return LaunchDescription([
