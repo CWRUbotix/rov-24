@@ -1,10 +1,10 @@
+import atexit
 import re
 from threading import Thread
 
+from PyQt5.QtCore import pyqtBoundSignal
 from rclpy.executors import SingleThreadedExecutor
 from rclpy.node import Node
-from PyQt5.QtCore import pyqtBoundSignal
-import atexit
 
 
 class GUIEventSubscriber(Node):

@@ -2,8 +2,9 @@ import time
 
 import rclpy
 from rclpy.node import Node
-from interfaces.srv import TaskRequest
 from task_selector.tasks import Tasks
+
+from interfaces.srv import TaskRequest
 
 
 class ExampleRequestClient(Node):

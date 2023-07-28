@@ -1,6 +1,6 @@
 
-from PyQt5.QtWidgets import QPushButton, QHBoxLayout, QWidget
 from gui.event_nodes.publisher import GUIEventPublisher
+from PyQt5.QtWidgets import QHBoxLayout, QPushButton, QWidget
 
 from interfaces.msg import Armed
 

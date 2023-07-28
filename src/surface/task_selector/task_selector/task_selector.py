@@ -1,14 +1,12 @@
 import rclpy
 from rclpy.action import ActionClient
 from rclpy.node import Node
-
-from interfaces.srv import TaskRequest
-from interfaces.msg import TaskFeedback
+from task_selector.tasks import Tasks
 
 # from interfaces.action import Example
 from interfaces.action import BasicTask
-
-from task_selector.tasks import Tasks
+from interfaces.msg import TaskFeedback
+from interfaces.srv import TaskRequest
 
 
 class TaskSelector(Node):

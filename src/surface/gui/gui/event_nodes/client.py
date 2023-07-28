@@ -1,11 +1,10 @@
 import re
 from threading import Thread
 
-from rclpy.node import Node
 import rclpy
-from rclpy.client import SrvType, SrvTypeRequest, SrvTypeResponse
-
 from PyQt5.QtCore import pyqtBoundSignal
+from rclpy.client import SrvType, SrvTypeRequest, SrvTypeResponse
+from rclpy.node import Node
 
 # Set to None for no timeout limits on service requests
 # else set to float number of seconds to limit request spinning
