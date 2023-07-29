@@ -1,6 +1,6 @@
 from launch import LaunchDescription
-from launch_ros.actions import Node
 from launch.substitutions import LaunchConfiguration
+from launch_ros.actions import Node
 
 
 def generate_launch_description():
@@ -10,8 +10,10 @@ def generate_launch_description():
         executable='run_pilot',
         parameters=[
                 {'theme': LaunchConfiguration('theme', default='dark')}],
-        remappings=[("/surface/gui/camera_switch", "/surface/camera_switch"),
-                    ("/surface/gui/mavros/cmd/arming", "/mavros/cmd/arming")]
+        remappings=[("/surface/gui/armed", "/armed"),
+                    ("/surface/gui/camera_switch", "/surface/camera_switch")],
+        emulate_tty=True,
+        output='screen'
     )
 
     return LaunchDescription([gui_node])
