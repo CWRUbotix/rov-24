@@ -9,7 +9,6 @@ sudo apt install curl
 sudo apt install python3-pip
 
 # Install python packages that rosdep can't install
-pip install opencv-python
 pip install pyserial
 pip install wiringpi
 
@@ -54,9 +53,8 @@ if ! grep -qF "$ROS_LINE" ~/.bashrc ;
     then echo "$ROS_LINE" >> ~/.bashrc ;
 fi
 
-# Done to suppress setup.py install depracted warnings
-# Hopefully in the next ROS release it will not be as janky
-# Seems to work fine however
+# Done to suppress setup.py install deprecated warnings
+# Can be removed once ROS redoes their python build system
 PYTHON_WARNINGS_LINE='PYTHONWARNINGS=ignore:::setuptools.command.install,ignore:::setuptools.command.easy_install,ignore:::pkg_resources; export PYTHONWARNINGS'
 if ! grep -qF "$PYTHON_WARNINGS_LINE" ~/.bashrc ; 
     then echo "$PYTHON_WARNINGS_LINE" >> ~/.bashrc ;

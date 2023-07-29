@@ -1,10 +1,11 @@
 import os
-from ament_index_python.packages import get_package_share_directory
 
+from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription, ExecuteProcess
+from launch.actions import ExecuteProcess, IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node
+
 # from launch.substitutions import Command
 
 NS = "simulation"
@@ -12,7 +13,7 @@ NS = "simulation"
 
 def generate_launch_description():
     rov_gazebo_path: str = get_package_share_directory("rov_gazebo")
-    ros_gz_sim_path: str = get_package_share_directory("ros_gz_sim")
+    # ros_gz_sim_path: str = get_package_share_directory("ros_gz_sim")
     surface_main_path: str = get_package_share_directory("surface_main")
 
     world_file = "bluerov2_heavy_underwater.world"
@@ -34,6 +35,7 @@ def generate_launch_description():
     #     output="screen",
     #     parameters=[params],
     #     namespace=NS,
+    #     emulate_tty=True
     # )
 
     # pool_state_publisher = Node(
@@ -43,6 +45,7 @@ def generate_launch_description():
     #     parameters=[pool_params],
     #     namespace=NS,
     #     remappings=[(f"/{NS}/robot_description", f"/{NS}/pool_description")],
+    #     emulate_tty=True
     # )
 
     # Launches Gazebo
@@ -119,7 +122,8 @@ def generate_launch_description():
         executable="keyboard_driver_node",
         output="screen",
         namespace=NS,
-        remappings=[(f"/{NS}/mavros/rc/override", "/mavros/rc/override")],
+        remappings=[(f"/{NS}/manual_control", "/manual_control")],
+        emulate_tty=True
     )
 
     # Thrust Bridge
@@ -207,6 +211,7 @@ def generate_launch_description():
     #         (f"/{NS}/depth_cam/points", "/depth_cam/points"),
     #     ],
     #     output="screen",
+    #     emulate_tty=True
     # )
 
     # pos_bridge = Node(
