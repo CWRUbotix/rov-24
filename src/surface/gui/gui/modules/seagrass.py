@@ -1,8 +1,8 @@
 from typing import Callable, Optional
 
-from gui.modules.video_widget import PausableVideoWidget
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import (QFrame, QGridLayout, QHBoxLayout, QLabel,
+from gui.modules.video_widget import PauseableVideoWidget
+from PyQt6.QtCore import Qt
+from PyQt6.QtWidgets import (QFrame, QGridLayout, QHBoxLayout, QLabel,
                              QPushButton, QVBoxLayout, QWidget)
 
 
@@ -41,7 +41,7 @@ class SeagrassWidget(QWidget):
         before_layout.addStretch()
 
         # Bottom cam
-        self.bottom_cam = PausableVideoWidget("/bottom_cam/image_raw", "Bottom Cam",
+        self.bottom_cam = PauseableVideoWidget("/bottom_cam/image_raw", "Bottom Cam",
                                               widget_width=640, widget_height=360)
 
         # After layout
