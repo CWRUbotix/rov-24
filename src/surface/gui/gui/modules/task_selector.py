@@ -1,7 +1,7 @@
 from gui.event_nodes.client import GUIEventClient
 from gui.event_nodes.subscriber import GUIEventSubscriber
-from PyQt5.QtCore import pyqtSignal, pyqtSlot
-from PyQt5.QtWidgets import QGridLayout, QLabel, QPushButton, QWidget
+from PyQt6.QtCore import pyqtSignal, pyqtSlot
+from PyQt6.QtWidgets import QGridLayout, QLabel, QPushButton, QWidget
 from rclpy.impl.rcutils_logger import RcutilsLogger
 from task_selector.tasks import Tasks
 
@@ -90,7 +90,7 @@ class TaskSelector(QWidget):
     @ pyqtSlot(TaskRequest.Response)
     def handle_scheduler_response(self, response: TaskRequest.Response):
         """Handle scheduler response to request sent from gui_changed_task."""
-        RcutilsLogger("task_selector.py").info(response.response)
+        self.task_changed_server.get_logger().info(response.response)
 
     # TODO @Ben do we still use this?
     @ pyqtSlot(TaskFeedback)
