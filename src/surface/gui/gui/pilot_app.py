@@ -1,8 +1,8 @@
 from gui.app import App
 from gui.modules.arm import Arm
 from gui.modules.video_widget import SwitchableVideoWidget
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QHBoxLayout
+from PyQt6.QtCore import Qt
+from PyQt6.QtWidgets import QHBoxLayout
 
 
 class PilotApp(App):
