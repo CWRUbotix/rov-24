@@ -2,7 +2,7 @@ import re
 from threading import Thread
 
 import rclpy
-from PyQt5.QtCore import pyqtBoundSignal
+from PyQt6.QtCore import pyqtBoundSignal
 from rclpy.client import SrvType, SrvTypeRequest, SrvTypeResponse
 from rclpy.node import Node
 

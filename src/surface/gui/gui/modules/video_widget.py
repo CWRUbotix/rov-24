@@ -4,9 +4,9 @@ import cv2
 import numpy as np
 from cv_bridge import CvBridge
 from gui.event_nodes.subscriber import GUIEventSubscriber
-from PyQt5.QtCore import Qt, pyqtSignal, pyqtSlot
-from PyQt5.QtGui import QImage, QPixmap
-from PyQt5.QtWidgets import QLabel, QPushButton, QVBoxLayout, QWidget
+from PyQt6.QtCore import Qt, pyqtSignal, pyqtSlot
+from PyQt6.QtGui import QImage, QPixmap
+from PyQt6.QtWidgets import QLabel, QPushButton, QVBoxLayout, QWidget
 from sensor_msgs.msg import Image
 
 from interfaces.msg import CameraControllerSwitch
@@ -141,7 +141,7 @@ class SwitchableVideoWidget(VideoWidget):
         self.button.setText(self.button_names[self.active_cam])
 
 
-class PausableVideoWidget(VideoWidget):
+class PauseableVideoWidget(VideoWidget):
     """A single video stream widget that can be paused and played."""
 
     BUTTON_WIDTH = 120

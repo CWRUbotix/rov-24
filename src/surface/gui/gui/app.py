@@ -2,9 +2,9 @@ import atexit
 import signal
 import sys
 
-import qdarkstyle
+import qdarktheme
 import rclpy
-from PyQt5.QtWidgets import QApplication, QWidget
+from PyQt6.QtWidgets import QApplication, QWidget
 from rclpy.node import Node
 
 
@@ -35,11 +35,12 @@ class App(Node, QWidget):
         signal.signal(signal.SIGINT, signal.SIG_DFL)
 
         if self.get_parameter('theme').get_parameter_value().string_value == "dark":
-            # https://doc.qt.io/qt-5/qwidget.html#setStyle
-            self.app.setStyleSheet(qdarkstyle.load_stylesheet_pyqt5())
+            qdarktheme.setup_theme()
         elif self.get_parameter('theme').get_parameter_value().string_value == "watermelon":
             # UGLY But WORKS
             self.app.setStyleSheet("QWidget { background-color: green; color: pink; }")
+        else:
+            qdarktheme.setup_theme("light")
 
         self.show()
-        sys.exit(self.app.exec_())
+        sys.exit(self.app.exec())
