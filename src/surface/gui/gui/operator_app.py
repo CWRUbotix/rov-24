@@ -3,7 +3,7 @@ from gui.modules.logger import Logger
 from gui.modules.seagrass import SeagrassWidget
 from gui.modules.task_selector import TaskSelector
 from gui.modules.timer import Timer
-from PyQt5.QtWidgets import QGridLayout, QTabWidget, QWidget
+from PyQt6.QtWidgets import QGridLayout, QTabWidget, QWidget
 
 
 class OperatorApp(App):

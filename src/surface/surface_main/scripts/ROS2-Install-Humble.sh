@@ -11,6 +11,7 @@ sudo apt install python3-pip
 # Install python packages that rosdep can't install
 pip install pyserial
 pip install wiringpi
+pip install PyQt6
 
 # Setting locale
 locale  # check for UTF-8
