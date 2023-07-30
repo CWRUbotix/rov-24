@@ -1,7 +1,7 @@
 from gui.event_nodes.subscriber import GUIEventSubscriber
-from PyQt5.QtCore import pyqtSignal, pyqtSlot
-from PyQt5.QtGui import QColor, QFont, QTextCursor
-from PyQt5.QtWidgets import (QCheckBox, QHBoxLayout, QTextEdit, QVBoxLayout,
+from PyQt6.QtCore import pyqtSignal, pyqtSlot
+from PyQt6.QtGui import QColor, QFont, QTextCursor
+from PyQt6.QtWidgets import (QCheckBox, QHBoxLayout, QTextEdit, QVBoxLayout,
                              QWidget)
 from rcl_interfaces.msg import Log
 from rclpy.logging import LoggingSeverity
