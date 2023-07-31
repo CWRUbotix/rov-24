@@ -42,7 +42,7 @@ class SeagrassWidget(QWidget):
 
         # Bottom cam
         self.bottom_cam = PauseableVideoWidget("/bottom_cam/image_raw", "Bottom Cam",
-                                              widget_width=640, widget_height=360)
+                                               widget_width=640, widget_height=360)
 
         # After layout
         after_layout: QVBoxLayout = QVBoxLayout()

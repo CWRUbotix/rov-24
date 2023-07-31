@@ -2,7 +2,6 @@ from gui.event_nodes.client import GUIEventClient
 from gui.event_nodes.subscriber import GUIEventSubscriber
 from PyQt6.QtCore import pyqtSignal, pyqtSlot
 from PyQt6.QtWidgets import QGridLayout, QLabel, QPushButton, QWidget
-from rclpy.impl.rcutils_logger import RcutilsLogger
 from task_selector.tasks import Tasks
 
 from interfaces.msg import TaskFeedback
