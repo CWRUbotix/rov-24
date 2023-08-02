@@ -14,6 +14,7 @@ def generate_launch_description():
             {"system_id": 255},
             # TODO check if needed
             {"component_id": 240},
+            # plugin_allowlist allows which mavros nodes get launched default is all of them.
             {"plugin_allowlist": ["rc_io", "command"]}
         ]
     )
