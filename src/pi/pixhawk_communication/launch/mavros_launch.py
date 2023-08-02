@@ -12,10 +12,9 @@ def generate_launch_description():
             # https://github.com/mavlink/mavros/issues/1632
             # Done so RC Override thinks mavros in a gcs.
             {"system_id": 255},
-            # TODO check if needed
-            {"component_id": 240},
             # plugin_allowlist allows which mavros nodes get launched default is all of them.
-            {"plugin_allowlist": ["rc_io", "command"]}
+            {"plugin_allowlist": ["rc_io", "command"]},
+            {"fcu_url", "/dev/ttyPixhawk:57600"}
         ]
     )
 
