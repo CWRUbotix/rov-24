@@ -1,10 +1,11 @@
 import rclpy
-from mavros_msgs.msg import OverrideRCIn
+# from mavros_msgs.msg import OverrideRCIn, Mavlink
 from rclpy.action import ActionServer, CancelResponse
 from rclpy.action.server import ServerGoalHandle
 from rclpy.executors import MultiThreadedExecutor
 from rclpy.node import Node, Publisher, Subscription
 from sensor_msgs.msg import Joy
+from geometry_msgs.msg import Twist, Vector3
 
 from interfaces.action import BasicTask
 from interfaces.msg import CameraControllerSwitch, Manip
@@ -36,24 +37,26 @@ DPADHOR:         int = 6
 DPADVERT:        int = 7
 
 # Brown out protection
+MAX_SPEED: float = 1
 SPEED_THROTTLE: float = 0.85
+MAX_LIMITED_SPEED: float = MAX_SPEED * SPEED_THROTTLE
 
-# Range of values Pixhawk takes
-# In microseconds
-ZERO_SPEED: int = 1500
-MAX_RANGE_SPEED: int = 400
-RANGE_SPEED: float = MAX_RANGE_SPEED*SPEED_THROTTLE
+# # Range of values Pixhawk takes
+# # In microseconds
+# ZERO_SPEED: int = 1500
+# MAX_RANGE_SPEED: int = 400
+# RANGE_SPEED: float = MAX_RANGE_SPEED*SPEED_THROTTLE
 
-# Channels for RC command
-MAX_CHANNEL: int = 8
-MIN_CHANNEL: int = 1
+# # Channels for RC command
+# MAX_CHANNEL: int = 8
+# MIN_CHANNEL: int = 1
 
-PITCH_CHANNEL:    int = 0  # Pitch
-ROLL_CHANNEL:     int = 1  # Roll
-THROTTLE_CHANNEL: int = 2  # Z
-LATERAL_CHANNEL:  int = 3  # Y
-FORWARD_CHANNEL:  int = 4  # X
-YAW_CHANNEL:      int = 5  # Yaw
+# PITCH_CHANNEL:    int = 0  # Pitch
+# ROLL_CHANNEL:     int = 1  # Roll
+# THROTTLE_CHANNEL: int = 2  # Z
+# LATERAL_CHANNEL:  int = 3  # Y
+# FORWARD_CHANNEL:  int = 4  # X
+# YAW_CHANNEL:      int = 5  # Yaw
 
 
 class ManualControlNode(Node):
@@ -70,9 +73,9 @@ class ManualControlNode(Node):
             'manual_control',
             self.execute_callback
         )
-        self.rc_pub: Publisher = self.create_publisher(
-            OverrideRCIn,
-            '/mavros/rc/override',
+        self.cmd_vel_pub: Publisher = self.create_publisher(
+            Twist,
+            '/mavros/setpoint_velocity/cmd_vel',
             10
         )
         self.subscription: Subscription = self.create_subscription(
@@ -113,27 +116,34 @@ class ManualControlNode(Node):
 
     def joystick_to_pixhawk(self, msg: Joy):
 
+        twist = Twist()
+        linear = Vector3()
+        angular = Vector3()
+
         axes = msg.axes
         buttons = msg.buttons
-        rc_msg = OverrideRCIn()
 
-        # DPad Pitch
-        rc_msg.channels[PITCH_CHANNEL] = self.joystick_profiles(axes[DPADVERT])
-        # L1/R1 Buttons for Roll
-        rc_msg.channels[ROLL_CHANNEL] = self.joystick_profiles(buttons[R1] - buttons[L1])
-        # Right Joystick Z
-        rc_msg.channels[THROTTLE_CHANNEL] = self.joystick_profiles(axes[RJOYX])
         # Left Joystick XY
-        rc_msg.channels[FORWARD_CHANNEL] = self.joystick_profiles(axes[LJOYX])
-        rc_msg.channels[LATERAL_CHANNEL] = self.joystick_profiles(-axes[LJOYY])
+        linear.x = self.joystick_profiles(axes[LJOYX])
+        linear.y = self.joystick_profiles(-axes[LJOYY])
+        # Right Joystick Z
+        linear.z = self.joystick_profiles(axes[RJOYX])
+
+        # L1/R1 Buttons for Roll
+        angular.x = self.joystick_profiles(buttons[R1] - buttons[L1])
+        # DPad Pitch
+        angular.y = self.joystick_profiles(axes[DPADVERT])
         # L2/R2 Buttons for Yaw
-        rc_msg.channels[YAW_CHANNEL] = self.joystick_profiles((axes[R2PRESS_PERCENT] -
-                                                               axes[L2PRESS_PERCENT])/2)
-        self.rc_pub.publish(rc_msg)
+        angular.z = self.joystick_profiles((axes[R2PRESS_PERCENT] -
+                                            axes[L2PRESS_PERCENT])/2)
+        twist.angular = angular
+        twist.linear = linear
+
+        self.cmd_vel_pub.publish(twist)
 
     # Used to create smoother adjustments
-    def joystick_profiles(self, val: float) -> int:
-        return ZERO_SPEED + int(RANGE_SPEED * val * abs(val))
+    def joystick_profiles(self, val: float) -> float:
+        return MAX_LIMITED_SPEED * val * abs(val)
 
     def execute_callback(self, goal_handle: ServerGoalHandle) -> BasicTask.Result:
         self.get_logger().info('Starting Manual Control')
