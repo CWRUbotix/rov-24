@@ -2,9 +2,9 @@ import os
 
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import ExecuteProcess, IncludeLaunchDescription
+from launch.actions import ExecuteProcess, GroupAction, IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch_ros.actions import Node
+from launch_ros.actions import Node, PushRosNamespace
 
 # from launch.substitutions import Command
 
@@ -13,7 +13,7 @@ NS = "simulation"
 
 def generate_launch_description():
     rov_gazebo_path: str = get_package_share_directory("rov_gazebo")
-    # ros_gz_sim_path: str = get_package_share_directory("ros_gz_sim")
+    ros_gz_sim_path: str = get_package_share_directory("ros_gz_sim")
     surface_main_path: str = get_package_share_directory("surface_main")
 
     world_file = "bluerov2_heavy_underwater.world"
@@ -48,7 +48,7 @@ def generate_launch_description():
     #     emulate_tty=True
     # )
 
-    # Launches Gazebo
+    # # Launches Gazebo
     # gazeboLaunch = IncludeLaunchDescription(
     #     PythonLaunchDescriptionSource(
     #         [os.path.join(ros_gz_sim_path, "launch", "gz_sim.launch.py")]
@@ -72,14 +72,20 @@ def generate_launch_description():
             package='mavros',
             executable='mavros_node',
             output='screen',
+            namespace='mavros',
             parameters=[
                 {"system_id": 255},
                 # TODO check if needed
                 {"component_id": 240},
                 {"fcu_url": "tcp://localhost"},
                 {"gcs_url": "udp://@localhost:14550"},
-                {"plugin_allowlist": ["rc_io", "command"]}
-            ]
+                {"plugin_allowlist": ["rc_io", "sys_status", "command"]}
+            ],
+            remappings=[
+                # (f'/{NS}/mavros/setpoint_velocity/cmd_vel',
+                #          '/mavros/setpoint_velocity/cmd_vel'),
+                        (f'/{NS}/mavros/cmd/arming', '/mavros/cmd/arming'),
+                        (f'/{NS}/mavros/rc/override', '/mavros/rc/override')]
     )
 
     # # Spawn entity
@@ -121,8 +127,8 @@ def generate_launch_description():
         package="keyboard_driver",
         executable="keyboard_driver_node",
         output="screen",
-        namespace=NS,
-        remappings=[(f"/{NS}/manual_control", "/manual_control")],
+        remappings=[(f'/{NS}/mavros/setpoint_velocity/cmd_vel',
+                     '/mavros/setpoint_velocity/cmd_vel')],
         emulate_tty=True
     )
 
@@ -235,16 +241,24 @@ def generate_launch_description():
         ),
     )
 
+    namespace_launch = GroupAction(
+        actions=[
+            PushRosNamespace(NS),
+            mav_ros_node,
+            keyboard_driver,
+        ]
+    )
+
     return LaunchDescription(
         [
             # robot_state_publisher,
             # pool_state_publisher,
+            # gazeboLaunch,
             start_gazebo,
             start_ardusub,
-            mav_ros_node,
+            namespace_launch,
             # gz_spawn_entity,
             # gz_spawn_pool,
-            keyboard_driver,
             # thrust_bridge,
             # cam_bridge,
             # pos_bridge,
