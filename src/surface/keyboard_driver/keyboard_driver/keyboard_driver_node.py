@@ -201,7 +201,7 @@ class KeyboardListenerNode(Node):
         msg.channels[FORWARD_CHANNEL] = (self.status["forward"] - self.status["backward"]) * 400
         msg.channels[YAW_CHANNEL] = (self.status["yaw_left"] - self.status["yaw_right"]) * 400
 
-        for channel in range(YAW_CHANNEL):
+        for channel in range(YAW_CHANNEL + 1):
             # 1500 is no movement
             msg.channels[channel] += 1500
 
