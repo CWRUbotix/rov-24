@@ -17,47 +17,50 @@ LATERAL_CHANNEL:  int = 3  # Y
 FORWARD_CHANNEL:  int = 4  # X
 YAW_CHANNEL:      int = 5  # Yaw
 
-# key bindings
-FORWARD = "w"
-BACKWARD = "s"
-LEFT = "a"
-RIGHT = "d"
-UP = "2"
-DOWN = "x"
 
-ROLL_LEFT = "j"
-ROLL_RIGHT = "l"
-PITCH_UP = "i"
-PITCH_DOWN = "k"
-YAW_LEFT = "h"
-YAW_RIGHT = ";"
+class Keys:
+    # key bindings
+    FORWARD = "w"
+    BACKWARD = "s"
+    LEFT = "a"
+    RIGHT = "d"
+    UP = "2"
+    DOWN = "x"
 
-HELP = "p"
+    ROLL_LEFT = "j"
+    ROLL_RIGHT = "l"
+    PITCH_UP = "i"
+    PITCH_DOWN = "k"
+    YAW_LEFT = "h"
+    YAW_RIGHT = ";"
 
-HELP_MSG = """
-Use keyboard to control ROV
+    HELP = "p"
 
-Key Bindings:
-   [2]
-   [w]            [i]
-[a][s][d]   [h][j][k][l][;]
-   [x]
+    HELP_MSG = """
+    Use keyboard to control ROV
 
-[w] = Forward
-[s] = Backward
-[a] = Left
-[d] = Right
-[2] = Up
-[x] = Down
+    Key Bindings:
+    [2]
+    [w]            [i]
+    [a][s][d]   [h][j][k][l][;]
+    [x]
 
-[j] = Roll Left
-[l] = Roll Right
-[i] = Pitch Up
-[k] = Pitch Down
-[h] = Yaw Left
-[;] = Yaw Right
+    [w] = Forward
+    [s] = Backward
+    [a] = Left
+    [d] = Right
+    [2] = Up
+    [x] = Down
 
-[p] = Show this help"""
+    [j] = Roll Left
+    [l] = Roll Right
+    [i] = Pitch Up
+    [k] = Pitch Down
+    [h] = Yaw Left
+    [;] = Yaw Right
+
+    [p] = Show this help"""
+
 
 # Range of values Pixhawk takes
 # In microseconds
@@ -72,7 +75,7 @@ class KeyboardListenerNode(Node):
         self.rc_pub = self.create_publisher(
             OverrideRCIn, "/mavros/rc/override", qos_profile=10
         )
-        self.logger.info(HELP_MSG)
+        self.logger.info(Keys.HELP_MSG)
         self.status = {
             "forward": False,
             "backward": False,
@@ -94,37 +97,45 @@ class KeyboardListenerNode(Node):
 
     def on_press(self, key: Optional[Key | KeyCode]):
         try:
+            key_name: Optional[str] = ''
             if isinstance(key, KeyCode):
-                key = key.char
+                key_name = key.char
+                if key_name is None:
+                    return
             elif isinstance(key, Key):
-                key = key.name
+                key_name = key.name
+            else:
+                return
 
-            if key == FORWARD:
-                self.status["forward"] = True
-            if key == BACKWARD:
-                self.status["backward"] = True
-            if key == LEFT:
-                self.status["left"] = True
-            if key == RIGHT:
-                self.status["right"] = True
-            if key == UP:
-                self.status["up"] = True
-            if key == DOWN:
-                self.status["down"] = True
-            if key == ROLL_LEFT:
-                self.status["roll_left"] = True
-            if key == ROLL_RIGHT:
-                self.status["roll_right"] = True
-            if key == PITCH_UP:
-                self.status["pitch_up"] = True
-            if key == PITCH_DOWN:
-                self.status["pitch_down"] = True
-            if key == YAW_LEFT:
-                self.status["yaw_left"] = True
-            if key == YAW_RIGHT:
-                self.status["yaw_right"] = True
-            if key == HELP:
-                self.logger.info(HELP_MSG)
+            match key_name:
+                case Keys.FORWARD:
+                    self.status["forward"] = True
+                case Keys.BACKWARD:
+                    self.status["backward"] = True
+                case Keys.LEFT:
+                    self.status["left"] = True
+                case Keys.RIGHT:
+                    self.status["right"] = True
+                case Keys.UP:
+                    self.status["up"] = True
+                case Keys.DOWN:
+                    self.status["down"] = True
+                case Keys.ROLL_LEFT:
+                    self.status["roll_left"] = True
+                case Keys.ROLL_RIGHT:
+                    self.status["roll_right"] = True
+                case Keys.PITCH_UP:
+                    self.status["pitch_up"] = True
+                case Keys.PITCH_DOWN:
+                    self.status["pitch_down"] = True
+                case Keys.YAW_LEFT:
+                    self.status["yaw_left"] = True
+                case Keys.YAW_RIGHT:
+                    self.status["yaw_right"] = True
+                case Keys.HELP:
+                    self.logger.info(Keys.HELP_MSG)
+                case _:
+                    return
 
             self.pub_rov_control()
 
@@ -134,35 +145,45 @@ class KeyboardListenerNode(Node):
 
     def on_release(self, key: Optional[Key | KeyCode]):
         try:
+            key_name: Optional[str] = ''
             if isinstance(key, KeyCode):
-                key = key.char
+                key_name = key.char
+                if key_name is None:
+                    return
             elif isinstance(key, Key):
-                key = key.name
+                key_name = key.name
+            else:
+                return
 
-            if key == FORWARD:
-                self.status["forward"] = False
-            if key == BACKWARD:
-                self.status["backward"] = False
-            if key == LEFT:
-                self.status["left"] = False
-            if key == RIGHT:
-                self.status["right"] = False
-            if key == UP:
-                self.status["up"] = False
-            if key == DOWN:
-                self.status["down"] = False
-            if key == ROLL_LEFT:
-                self.status["roll_left"] = False
-            if key == ROLL_RIGHT:
-                self.status["roll_right"] = False
-            if key == PITCH_UP:
-                self.status["pitch_up"] = False
-            if key == PITCH_DOWN:
-                self.status["pitch_down"] = False
-            if key == YAW_LEFT:
-                self.status["yaw_left"] = False
-            if key == YAW_RIGHT:
-                self.status["yaw_right"] = False
+            match key_name:
+                case Keys.FORWARD:
+                    self.status["forward"] = False
+                case Keys.BACKWARD:
+                    self.status["backward"] = False
+                case Keys.LEFT:
+                    self.status["left"] = False
+                case Keys.RIGHT:
+                    self.status["right"] = False
+                case Keys.UP:
+                    self.status["up"] = False
+                case Keys.DOWN:
+                    self.status["down"] = False
+                case Keys.ROLL_LEFT:
+                    self.status["roll_left"] = False
+                case Keys.ROLL_RIGHT:
+                    self.status["roll_right"] = False
+                case Keys.PITCH_UP:
+                    self.status["pitch_up"] = False
+                case Keys.PITCH_DOWN:
+                    self.status["pitch_down"] = False
+                case Keys.YAW_LEFT:
+                    self.status["yaw_left"] = False
+                case Keys.YAW_RIGHT:
+                    self.status["yaw_right"] = False
+                case Keys.HELP:
+                    self.logger.info(Keys.HELP_MSG)
+                case _:
+                    return
 
             self.pub_rov_control()
 

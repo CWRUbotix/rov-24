@@ -8,6 +8,7 @@ def generate_launch_description():
     gui_node: Node = Node(
         package='gui',
         executable='run_operator',
+        namespace='gui',
         parameters=[
                 {'theme': LaunchConfiguration('theme', default='dark')}],
         remappings=[("/surface/gui/armed", "/armed")],
