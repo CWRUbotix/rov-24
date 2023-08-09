@@ -20,8 +20,7 @@ class GUIEventServer(Node):
         """
         # Name this node with a sanitized version of the topic
         name: str = f'server{re.sub(r"[^a-zA-Z0-9_]", "_", topic)}'
-        super().__init__(name, namespace="surface/gui",
-                         parameter_overrides=[])
+        super().__init__(name, parameter_overrides=[])
 
         self.srv = self.create_service(srv_type, topic, callback)
 
