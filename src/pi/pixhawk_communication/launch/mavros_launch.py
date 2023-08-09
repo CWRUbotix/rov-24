@@ -14,10 +14,10 @@ def generate_launch_description():
             # Done so RC Override thinks mavros in a gcs.
             {"system_id": 255},
             # plugin_allowlist allows which mavros nodes get launched default is all of them.
-            {"plugin_allowlist": ["setpoint_velocity", "command"]},
+            {"plugin_allowlist": ["rc_io", "command"]},
             {"fcu_url", "/dev/ttyPixhawk:57600"}
         ],
-        remappings=[('/pi/mavros/setpoint_velocity/cmd_vel', '/mavros/setpoint_velocity/cmd_vel'),
+        remappings=[('/pi/mavros/rc/override', '/mavros/rc/override'),
                     ('/pi/mavros/cmd/arming', '/mavros/cmd/arming')]
     )
 
