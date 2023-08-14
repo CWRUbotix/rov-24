@@ -1,11 +1,12 @@
+from array import array
+
 import rclpy
-# from mavros_msgs.msg import OverrideRCIn, Mavlink
+from mavros_msgs.msg import OverrideRCIn
 from rclpy.action import ActionServer, CancelResponse
 from rclpy.action.server import ServerGoalHandle
 from rclpy.executors import MultiThreadedExecutor
 from rclpy.node import Node, Publisher, Subscription
 from sensor_msgs.msg import Joy
-from geometry_msgs.msg import Twist, Vector3
 
 from interfaces.action import BasicTask
 from interfaces.msg import CameraControllerSwitch, Manip
@@ -37,26 +38,24 @@ DPADHOR:         int = 6
 DPADVERT:        int = 7
 
 # Brown out protection
-MAX_SPEED: float = 1
 SPEED_THROTTLE: float = 0.85
-MAX_LIMITED_SPEED: float = MAX_SPEED * SPEED_THROTTLE
 
-# # Range of values Pixhawk takes
-# # In microseconds
-# ZERO_SPEED: int = 1500
-# MAX_RANGE_SPEED: int = 400
-# RANGE_SPEED: float = MAX_RANGE_SPEED*SPEED_THROTTLE
+# Range of values Pixhawk takes
+# In microseconds
+ZERO_SPEED: int = 1500
+MAX_RANGE_SPEED: int = 400
+RANGE_SPEED: float = MAX_RANGE_SPEED*SPEED_THROTTLE
 
-# # Channels for RC command
-# MAX_CHANNEL: int = 8
-# MIN_CHANNEL: int = 1
+# Channels for RC command
+MAX_CHANNEL: int = 8
+MIN_CHANNEL: int = 1
 
-# PITCH_CHANNEL:    int = 0  # Pitch
-# ROLL_CHANNEL:     int = 1  # Roll
-# THROTTLE_CHANNEL: int = 2  # Z
-# LATERAL_CHANNEL:  int = 3  # Y
-# FORWARD_CHANNEL:  int = 4  # X
-# YAW_CHANNEL:      int = 5  # Yaw
+PITCH_CHANNEL:    int = 0  # Pitch
+ROLL_CHANNEL:     int = 1  # Roll
+THROTTLE_CHANNEL: int = 2  # Z
+LATERAL_CHANNEL:  int = 3  # Y
+FORWARD_CHANNEL:  int = 4  # X
+YAW_CHANNEL:      int = 5  # Yaw
 
 
 class ManualControlNode(Node):
@@ -72,9 +71,9 @@ class ManualControlNode(Node):
             'manual_control',
             self.execute_callback
         )
-        self.cmd_vel_pub: Publisher = self.create_publisher(
-            Twist,
-            '/mavros/setpoint_velocity/cmd_vel',
+        self.rc_pub: Publisher = self.create_publisher(
+            OverrideRCIn,
+            '/mavros/rc/override',
             10
         )
         self.subscription: Subscription = self.create_subscription(
@@ -115,34 +114,35 @@ class ManualControlNode(Node):
 
     def joystick_to_pixhawk(self, msg: Joy):
 
-        twist = Twist()
-        linear = Vector3()
-        angular = Vector3()
+        rc_msg = OverrideRCIn()
 
-        axes = msg.axes
-        buttons = msg.buttons
+        axes: array[float] = msg.axes
+        buttons: array[int] = msg.buttons
 
-        # Left Joystick XY
-        linear.x = self.joystick_profiles(axes[LJOYX])
-        linear.y = self.joystick_profiles(-axes[LJOYY])
-        # Right Joystick Z
-        linear.z = self.joystick_profiles(axes[RJOYX])
+        # DPad Pitch
+        rc_msg.channels[PITCH_CHANNEL] = self.joystick_profiles(axes[DPADVERT])
 
         # L1/R1 Buttons for Roll
-        angular.x = self.joystick_profiles(buttons[R1] - buttons[L1])
-        # DPad Pitch
-        angular.y = self.joystick_profiles(axes[DPADVERT])
-        # L2/R2 Buttons for Yaw
-        angular.z = self.joystick_profiles((axes[R2PRESS_PERCENT] -
-                                            axes[L2PRESS_PERCENT])/2)
-        twist.angular = angular
-        twist.linear = linear
+        rc_msg.channels[ROLL_CHANNEL] = self.joystick_profiles(buttons[R1] - buttons[L1])
 
-        self.cmd_vel_pub.publish(twist)
+        # Right Joystick Z
+        rc_msg.channels[THROTTLE_CHANNEL] = self.joystick_profiles(axes[RJOYX])
+
+        # Left Joystick X
+        rc_msg.channels[FORWARD_CHANNEL] = self.joystick_profiles(axes[LJOYX])
+
+        # Left Joystick Y
+        rc_msg.channels[LATERAL_CHANNEL] = self.joystick_profiles(-axes[LJOYY])
+
+        # L2/R2 Buttons for Yaw
+        rc_msg.channels[YAW_CHANNEL] = self.joystick_profiles((axes[R2PRESS_PERCENT] -
+                                                               axes[L2PRESS_PERCENT])/2)
+
+        self.rc_pub.publish(rc_msg)
 
     # Used to create smoother adjustments
-    def joystick_profiles(self, val: float) -> float:
-        return MAX_LIMITED_SPEED * val * abs(val)
+    def joystick_profiles(self, val: float) -> int:
+        return int(RANGE_SPEED * val * abs(val)) + ZERO_SPEED
 
     def execute_callback(self, goal_handle: ServerGoalHandle) -> BasicTask.Result:
         self.get_logger().info('Starting Manual Control')
@@ -169,7 +169,7 @@ class ManualControlNode(Node):
         return CancelResponse.ACCEPT
 
     def manip_callback(self, msg: Joy):
-        buttons: list[int] = msg.buttons
+        buttons: array[int] = msg.buttons
 
         for button_id, manip_button in self.manip_buttons.items():
 
@@ -193,7 +193,7 @@ class ManualControlNode(Node):
 
     def camera_toggle(self, msg: Joy):
         """Cycles through connected cameras on pilot GUI using menu and pairing buttons."""
-        buttons: list[int] = msg.buttons
+        buttons: array[int] = msg.buttons
 
         if buttons[MENU] == 1:
             self.seen_right_cam = True
