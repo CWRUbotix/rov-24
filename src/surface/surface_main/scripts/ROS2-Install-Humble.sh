@@ -13,6 +13,7 @@ pip install pyserial
 pip install wiringpi
 pip install PyQt6
 pip install pyqtdarktheme
+pip install opencv-python
 
 # Setting locale
 locale  # check for UTF-8
