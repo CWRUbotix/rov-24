@@ -14,8 +14,7 @@ class TaskSelector(Node):
     def __init__(self):
         # creation of a Node with its name as input
         super().__init__('task_selector',
-                         parameter_overrides=[],
-                         namespace='surface')
+                         parameter_overrides=[])
 
         # create service to handle requests for task switching
         self.request_server = self.create_service(
