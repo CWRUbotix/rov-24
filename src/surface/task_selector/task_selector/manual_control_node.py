@@ -7,7 +7,6 @@ from rclpy.action.server import ServerGoalHandle
 from rclpy.executors import MultiThreadedExecutor
 from rclpy.node import Node, Publisher, Subscription
 from sensor_msgs.msg import Joy
-# from geometry_msgs.msg import Twist, Vector3
 
 from interfaces.action import BasicTask
 from interfaces.msg import CameraControllerSwitch, Manip
@@ -117,8 +116,8 @@ class ManualControlNode(Node):
 
         rc_msg = OverrideRCIn()
 
-        axes = msg.axes
-        buttons = msg.buttons
+        axes: array[float] = msg.axes
+        buttons: array[int] = msg.buttons
 
         # DPad Pitch
         rc_msg.channels[PITCH_CHANNEL] = self.joystick_profiles(axes[DPADVERT])
