@@ -1,3 +1,5 @@
+from array import array
+
 import rclpy
 from mavros_msgs.msg import OverrideRCIn
 from rclpy.action import ActionServer, CancelResponse
@@ -168,7 +170,7 @@ class ManualControlNode(Node):
         return CancelResponse.ACCEPT
 
     def manip_callback(self, msg: Joy):
-        buttons: list[int] = msg.buttons
+        buttons: array[int] = msg.buttons
 
         for button_id, manip_button in self.manip_buttons.items():
 
@@ -192,7 +194,7 @@ class ManualControlNode(Node):
 
     def camera_toggle(self, msg: Joy):
         """Cycles through connected cameras on pilot GUI using menu and pairing buttons."""
-        buttons: list[int] = msg.buttons
+        buttons: array[int] = msg.buttons
 
         if buttons[MENU] == 1:
             self.seen_right_cam = True
