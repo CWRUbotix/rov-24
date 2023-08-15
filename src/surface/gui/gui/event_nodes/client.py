@@ -21,7 +21,7 @@ class GUIEventClient(Node):
 
         self.srv_type = srv_type
         self.topic: str = topic
-        # remove self.connected it is unused
+        # remove self.connected it is unused?
         self.connected: bool = False
         self.signal: pyqtBoundSignal = signal
 
@@ -51,7 +51,12 @@ class GUIEventClient(Node):
         rclpy.spin_until_future_complete(
             self, future, timeout_sec=TIMEOUT_SEC)
 
-        self.signal.emit(future.result())
+        try:
+            self.signal.emit(future.result())
+        except TypeError as e:
+            self.get_logger().error(future.result())
+            self.get_logger().error(str(e))
+            self.get_logger().error("Future returned None")
 
     # TODO REMOVE?
     def send_request(self, request: SrvTypeRequest) -> SrvTypeResponse:
