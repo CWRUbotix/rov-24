@@ -5,6 +5,7 @@ from rclpy.action import ActionServer, CancelResponse
 from rclpy.action.server import ServerGoalHandle
 from rclpy.executors import MultiThreadedExecutor
 from rclpy.node import Node, Publisher, Subscription
+from rclpy.qos import qos_profile_system_default, qos_profile_sensor_data
 from sensor_msgs.msg import Joy
 
 from interfaces.action import BasicTask
@@ -62,27 +63,27 @@ class ManualControlNode(Node):
         self.controller_pub: Publisher = self.create_publisher(
             ROVControl,
             'manual_control',
-            10
+            qos_profile_system_default
         )
         self.subscription: Subscription = self.create_subscription(
             Joy,
             'joy',
             self.controller_callback,
-            100
+            qos_profile_sensor_data
         )
 
         # Manipulators
         self.manip_publisher: Publisher = self.create_publisher(
             Manip,
             'manipulator_control',
-            10
+            qos_profile_system_default
         )
 
         # Cameras
         self.camera_toggle_publisher = self.create_publisher(
             CameraControllerSwitch,
             "camera_switch",
-            10
+            qos_profile_system_default
         )
 
         self.manip_buttons: dict[int, ManipButton] = {

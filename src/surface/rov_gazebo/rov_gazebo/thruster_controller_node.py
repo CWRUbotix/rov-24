@@ -5,6 +5,7 @@ import time
 import rclpy
 from geometry_msgs.msg import PoseStamped, Twist, Vector3
 from rclpy.node import Node, Publisher
+from rclpy.qos import qos_profile_system_default
 from std_msgs.msg import Float64
 from tf2_msgs.msg import TFMessage
 
@@ -41,17 +42,17 @@ class ThrusterControllerNode(Node):
                 f"{ns}/model/rov/joint/thruster_{thruster}_body_blade_joint/cmd_thrust"
             )
             self.thruster_publishers.append(
-                self.create_publisher(Float64, topic, qos_profile=10)
+                self.create_publisher(Float64, topic, qos_profile_system_default)
             )
 
         self.sub_keyboard = self.create_subscription(
-            ROVControl, "/manual_control", self.control_callback, qos_profile=10
+            ROVControl, "/manual_control", self.control_callback, qos_profile_system_default
         )
         self.pos_sub = self.create_subscription(
-            TFMessage, "/simulation/rov_pose", self.pos_callback, qos_profile=10
+            TFMessage, "/simulation/rov_pose", self.pos_callback, qos_profile_system_default
         )
         self.arm_sub = self.create_subscription(
-            Armed, "/armed", self.arm_callback, qos_profile=10
+            Armed, "/armed", self.arm_callback, qos_profile_system_default
         )
         self.is_armed = False
         self.control_msg = Twist()

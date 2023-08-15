@@ -4,6 +4,7 @@ import rclpy
 from pynput import keyboard
 from pynput.keyboard import Key, KeyCode
 from rclpy.node import Node
+from rclpy.qos import qos_profile_system_default
 
 from interfaces.msg import ROVControl
 
@@ -63,7 +64,7 @@ class KeyboardListenerNode(Node):
         super().__init__("keyboard_listener_node", parameter_overrides=[])
 
         self.pub_status = self.create_publisher(
-            ROVControl, "manual_control", qos_profile=10
+            ROVControl, "manual_control", qos_profile_system_default
         )
         self.logger.info(Keys.HELP_MSG)
         self.status = {
