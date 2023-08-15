@@ -13,6 +13,8 @@ pip install pyserial
 pip install wiringpi
 pip install PyQt6
 pip install pyqtdarktheme
+pip install numpy
+pip install numpy --upgrade  # Make sure numpy is up-do-date to avoid https://github.com/opencv/opencv-python/issues/885
 pip install opencv-python
 
 # Setting locale
