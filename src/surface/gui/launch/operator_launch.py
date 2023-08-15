@@ -11,7 +11,6 @@ def generate_launch_description():
         namespace='gui',
         parameters=[
                 {'theme': LaunchConfiguration('theme', default='dark')}],
-        remappings=[("/surface/gui/armed", "/armed")],
         emulate_tty=True,
         output='screen'
     )
