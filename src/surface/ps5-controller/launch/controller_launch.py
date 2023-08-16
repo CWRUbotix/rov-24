@@ -8,7 +8,8 @@ def generate_launch_description():
     controller_node: Node = Node(
         package='joy',
         executable='joy_node',
-        namespace='surface'
+        emulate_tty=True,
+        output='screen'
     )
 
     return LaunchDescription([

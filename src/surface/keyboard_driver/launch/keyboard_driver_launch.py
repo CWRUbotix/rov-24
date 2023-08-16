@@ -10,6 +10,7 @@ def generate_launch_description():
                 executable="keyboard_driver_node",
                 output="screen",
                 name="keyboard_driver_node",
+                emulate_tty=True
             ),
         ]
     )

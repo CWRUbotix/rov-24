@@ -1,14 +1,15 @@
-from typing import List
 
-import time
 import copy
+import time
+
 import rclpy
-from geometry_msgs.msg import Twist, Vector3
+from geometry_msgs.msg import PoseStamped, Twist, Vector3
 from rclpy.node import Node, Publisher
+from rclpy.qos import qos_profile_system_default
 from std_msgs.msg import Float64
-from geometry_msgs.msg import PoseStamped
 from tf2_msgs.msg import TFMessage
-from interfaces.msg import ROVControl, Armed
+
+from interfaces.msg import Armed, ROVControl
 
 # Range of values Pixhawk takes
 # In microseconds
@@ -34,24 +35,24 @@ class ThrusterControllerNode(Node):
         self.angular_scale = 1
         self.multiplier = 3
 
-        self.thruster_publishers: List[Publisher] = []
+        self.thruster_publishers: list[Publisher] = []
         ns: str = self.get_namespace()
         for thruster in self.thrusters:
             topic = (
                 f"{ns}/model/rov/joint/thruster_{thruster}_body_blade_joint/cmd_thrust"
             )
             self.thruster_publishers.append(
-                self.create_publisher(Float64, topic, qos_profile=10)
+                self.create_publisher(Float64, topic, qos_profile_system_default)
             )
 
         self.sub_keyboard = self.create_subscription(
-            ROVControl, "/manual_control", self.control_callback, qos_profile=10
+            ROVControl, "/manual_control", self.control_callback, qos_profile_system_default
         )
         self.pos_sub = self.create_subscription(
-            TFMessage, "/simulation/rov_pose", self.pos_callback, qos_profile=10
+            TFMessage, "/simulation/rov_pose", self.pos_callback, qos_profile_system_default
         )
         self.arm_sub = self.create_subscription(
-            Armed, "/armed", self.arm_callback, qos_profile=10
+            Armed, "/armed", self.arm_callback, qos_profile_system_default
         )
         self.is_armed = False
         self.control_msg = Twist()
@@ -112,7 +113,7 @@ class ThrusterControllerNode(Node):
         thrust_list = self.stablize(msg, thrust_list)
         self.publish_thrust(thrust_list)
 
-    def x_control(self, speed: float, thrust_list: List[float]):
+    def x_control(self, speed: float, thrust_list: list[float]):
         thrust = speed * self.multiplier
         thrust_list[0] += thrust
         thrust_list[1] -= thrust
@@ -120,7 +121,7 @@ class ThrusterControllerNode(Node):
         thrust_list[3] += thrust
         return thrust_list
 
-    def y_control(self, speed: float, thrust_list: List[float]):
+    def y_control(self, speed: float, thrust_list: list[float]):
         thrust = speed * self.multiplier
         thrust_list[0] -= thrust
         thrust_list[1] -= thrust
@@ -128,7 +129,7 @@ class ThrusterControllerNode(Node):
         thrust_list[3] -= thrust
         return thrust_list
 
-    def z_control(self, speed: float, thrust_list: List[float]):
+    def z_control(self, speed: float, thrust_list: list[float]):
         thrust = speed * self.multiplier
         thrust_list[4] += thrust
         thrust_list[5] += thrust
@@ -136,7 +137,7 @@ class ThrusterControllerNode(Node):
         thrust_list[7] += thrust
         return thrust_list
 
-    def roll_control(self, speed: float, thrust_list: List[float]):
+    def roll_control(self, speed: float, thrust_list: list[float]):
         thrust = speed * self.multiplier
         thrust_list[4] -= thrust
         thrust_list[5] += thrust
@@ -144,7 +145,7 @@ class ThrusterControllerNode(Node):
         thrust_list[7] += thrust
         return thrust_list
 
-    def pitch_control(self, speed: float, thrust_list: List[float]):
+    def pitch_control(self, speed: float, thrust_list: list[float]):
         thrust = speed * self.multiplier
         thrust_list[4] -= thrust
         thrust_list[5] -= thrust
@@ -152,7 +153,7 @@ class ThrusterControllerNode(Node):
         thrust_list[7] += thrust
         return thrust_list
 
-    def yaw_control(self, speed: float, thrust_list: List[float]):
+    def yaw_control(self, speed: float, thrust_list: list[float]):
         thrust = speed * self.multiplier
         thrust_list[0] -= thrust
         thrust_list[1] -= thrust
@@ -160,7 +161,7 @@ class ThrusterControllerNode(Node):
         thrust_list[3] += thrust
         return thrust_list
 
-    def stablize(self, control_msg: Twist, thrust_list: List[float]):
+    def stablize(self, control_msg: Twist, thrust_list: list[float]):
         coeff = 30
         pid = self.get_pid(control_msg, self.pose, self.prev_pose)
         if control_msg.linear.x == 0.0 and control_msg.linear.y == 0.0:
@@ -236,7 +237,7 @@ class ThrusterControllerNode(Node):
 
         return pid_val_list
 
-    def publish_thrust(self, thrust_list: List[float]):
+    def publish_thrust(self, thrust_list: list[float]):
         for i in range(len(self.thrusters)):
             self.thruster_publishers[i].publish(Float64(data=thrust_list[i]))
 

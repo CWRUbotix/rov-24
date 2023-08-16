@@ -12,7 +12,7 @@ NS = "simulation"
 
 def generate_launch_description():
     rov_gazebo_path: str = get_package_share_directory("rov_gazebo")
-    ros_ign_gazebo_path: str = get_package_share_directory("ros_ign_gazebo")
+    ros_gz_sim_path: str = get_package_share_directory("ros_gz_sim")
     surface_main_path: str = get_package_share_directory("surface_main")
 
     world_path: str = os.path.join(rov_gazebo_path, "worlds", "world.sdf")
@@ -33,6 +33,7 @@ def generate_launch_description():
         output="screen",
         parameters=[params],
         namespace=NS,
+        emulate_tty=True
     )
 
     pool_state_publisher = Node(
@@ -42,19 +43,20 @@ def generate_launch_description():
         parameters=[pool_params],
         namespace=NS,
         remappings=[(f"/{NS}/robot_description", f"/{NS}/pool_description")],
+        emulate_tty=True
     )
 
     # Launches Gazebo
     gazeboLaunch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            [os.path.join(ros_ign_gazebo_path, "launch", "ign_gazebo.launch.py")]
+            [os.path.join(ros_gz_sim_path, "launch", "gz_sim.launch.py")]
         ),
-        launch_arguments={"ign_args": world_path}.items(),
+        launch_arguments={"gz_args": world_path}.items(),
     )
 
     # Spawn entity
-    ignition_spawn_entity = Node(
-        package="ros_ign_gazebo",
+    gz_spawn_entity = Node(
+        package="ros_gz_sim",
         executable="create",
         output="screen",
         arguments=[
@@ -66,10 +68,11 @@ def generate_launch_description():
             "true",
         ],
         namespace=NS,
+        emulate_tty=True
     )
 
-    ignition_spawn_pool = Node(
-        package="ros_ign_gazebo",
+    gz_spawn_pool = Node(
+        package="ros_gz_sim",
         executable="create",
         output="screen",
         arguments=[
@@ -81,9 +84,13 @@ def generate_launch_description():
             "true",
         ],
         namespace=NS,
+        emulate_tty=True
     )
 
     # Not using keyboard launch file
+    # TODO?
+    # I think we should probably switch over all our single
+    # Node launch files to somehting like this
     keyboard_driver = Node(
         package="keyboard_driver",
         executable="keyboard_driver_node",
@@ -91,31 +98,32 @@ def generate_launch_description():
         name="keyboard_driver_node",
         namespace=NS,
         remappings=[(f"/{NS}/manual_control", "/manual_control")],
+        emulate_tty=True
     )
 
     # Thrust Bridge
     thrust_bridge = Node(
-        package="ros_ign_bridge",
+        package="ros_gz_bridge",
         executable="parameter_bridge",
         namespace=NS,
         name="thrust_bridge",
         arguments=[
             "/model/rov/joint/thruster_top_front_left_body_blade_joint/cmd_thrust"
-            "@std_msgs/msg/Float64@ignition.msgs.Double",
+            "@std_msgs/msg/Float64@gz.msgs.Double",
             "/model/rov/joint/thruster_top_front_right_body_blade_joint/cmd_thrust"
-            "@std_msgs/msg/Float64@ignition.msgs.Double",
+            "@std_msgs/msg/Float64@gz.msgs.Double",
             "/model/rov/joint/thruster_top_back_left_body_blade_joint/cmd_thrust"
-            "@std_msgs/msg/Float64@ignition.msgs.Double",
+            "@std_msgs/msg/Float64@gz.msgs.Double",
             "/model/rov/joint/thruster_top_back_right_body_blade_joint/cmd_thrust"
-            "@std_msgs/msg/Float64@ignition.msgs.Double",
+            "@std_msgs/msg/Float64@gz.msgs.Double",
             "/model/rov/joint/thruster_bottom_front_left_body_blade_joint/cmd_thrust"
-            "@std_msgs/msg/Float64@ignition.msgs.Double",
+            "@std_msgs/msg/Float64@gz.msgs.Double",
             "/model/rov/joint/thruster_bottom_front_right_body_blade_joint/cmd_thrust"
-            "@std_msgs/msg/Float64@ignition.msgs.Double",
+            "@std_msgs/msg/Float64@gz.msgs.Double",
             "/model/rov/joint/thruster_bottom_back_left_body_blade_joint/cmd_thrust"
-            "@std_msgs/msg/Float64@ignition.msgs.Double",
+            "@std_msgs/msg/Float64@gz.msgs.Double",
             "/model/rov/joint/thruster_bottom_back_right_body_blade_joint/cmd_thrust"
-            "@std_msgs/msg/Float64@ignition.msgs.Double",
+            "@std_msgs/msg/Float64@gz.msgs.Double",
         ],
         remappings=[
             (
@@ -152,21 +160,22 @@ def generate_launch_description():
             ),
         ],
         output="screen",
+        emulate_tty=True
     )
 
     cam_bridge = Node(
-        package="ros_ign_bridge",
+        package="ros_gz_bridge",
         executable="parameter_bridge",
         namespace=NS,
         name="cam_bridge",
         arguments=[
-            "/bottom_cam/image_raw@sensor_msgs/msg/Image@ignition.msgs.Image",
-            "/bottom_cam/camera_info@sensor_msgs/msg/CameraInfo@ignition.msgs.CameraInfo",
-            "/front_cam/image_raw@sensor_msgs/msg/Image@ignition.msgs.Image",
-            "/front_cam/camera_info@sensor_msgs/msg/CameraInfo@ignition.msgs.CameraInfo",
-            "/manip_cam/image_raw@sensor_msgs/msg/Image@ignition.msgs.Image",
-            "/depth_cam@sensor_msgs/msg/Image@ignition.msgs.Image",
-            "/depth_cam/points@sensor_msgs/msg/PointCloud2@ignition.msgs.PointCloudPacked",
+            "/bottom_cam/image_raw@sensor_msgs/msg/Image@gz.msgs.Image",
+            "/bottom_cam/camera_info@sensor_msgs/msg/CameraInfo@gz.msgs.CameraInfo",
+            "/front_cam/image_raw@sensor_msgs/msg/Image@gz.msgs.Image",
+            "/front_cam/camera_info@sensor_msgs/msg/CameraInfo@gz.msgs.CameraInfo",
+            "/manip_cam/image_raw@sensor_msgs/msg/Image@gz.msgs.Image",
+            "/depth_cam@sensor_msgs/msg/Image@gz.msgs.Image",
+            "/depth_cam/points@sensor_msgs/msg/PointCloud2@gz.msgs.PointCloudPacked",
         ],
         remappings=[
             (f"/{NS}/bottom_cam/image_raw", "/bottom_cam/image_raw"),
@@ -178,20 +187,22 @@ def generate_launch_description():
             (f"/{NS}/depth_cam/points", "/depth_cam/points"),
         ],
         output="screen",
+        emulate_tty=True
     )
 
     pos_bridge = Node(
-        package="ros_ign_bridge",
+        package="ros_gz_bridge",
         executable="parameter_bridge",
         namespace=NS,
         name="pos_bridge",
         arguments=[
-            "/world/rov_simulation/dynamic_pose/info@tf2_msgs/msg/TFMessage@ignition.msgs.Pose_V",
+            "/world/rov_simulation/dynamic_pose/info@tf2_msgs/msg/TFMessage@gz.msgs.Pose_V",
         ],
         remappings=[
             ("/world/rov_simulation/dynamic_pose/info", f"/{NS}/rov_pose"),
         ],
         output="screen",
+        emulate_tty=True
     )
 
     thruster_controller = Node(
@@ -203,6 +214,7 @@ def generate_launch_description():
             (f"/{NS}/manual_control", "/manual_control"),
             (f"/{NS}/armed", "/armed"),
         ],
+        emulate_tty=True
     )
 
     # Launches Controller
@@ -217,8 +229,8 @@ def generate_launch_description():
             robot_state_publisher,
             pool_state_publisher,
             gazeboLaunch,
-            ignition_spawn_entity,
-            ignition_spawn_pool,
+            gz_spawn_entity,
+            gz_spawn_pool,
             keyboard_driver,
             thrust_bridge,
             cam_bridge,
