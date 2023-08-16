@@ -1,9 +1,8 @@
-from PyQt5.QtWidgets import QHBoxLayout
-from PyQt5.QtCore import Qt
-
-from gui.modules.video_widget import SwitchableVideoWidget
-from gui.modules.arm import Arm
 from gui.app import App
+from gui.modules.arm import Arm
+from gui.modules.video_widget import SwitchableVideoWidget
+from PyQt6.QtCore import Qt
+from PyQt6.QtWidgets import QHBoxLayout
 
 
 class PilotApp(App):
@@ -21,11 +20,12 @@ class PilotApp(App):
                                                 ["Front Camera",
                                                  "Bottom Camera",
                                                  "Depth Camera"],
-                                                "camera_switch")
-        layout.addWidget(self.video_area, alignment=Qt.AlignCenter)
+                                                "/camera_switch")
+        layout.addWidget(self.video_area, alignment=Qt.AlignmentFlag.AlignCenter)
 
         self.arm: Arm = Arm()
-        layout.addWidget(self.arm, alignment=Qt.AlignRight | Qt.AlignBottom)
+        layout.addWidget(self.arm,
+                         alignment=Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignBottom)
 
 
 def run_gui_pilot():

@@ -2,7 +2,6 @@ import os
 import shutil
 import sys
 
-
 if __name__ == '__main__':
     share_dir = sys.argv[1]
 

@@ -1,11 +1,10 @@
 import re
 from threading import Thread
 
-from rclpy.node import Node
 import rclpy
+from PyQt6.QtCore import pyqtBoundSignal
 from rclpy.client import SrvType, SrvTypeRequest, SrvTypeResponse
-
-from PyQt5.QtCore import pyqtBoundSignal
+from rclpy.node import Node
 
 # Set to None for no timeout limits on service requests
 # else set to float number of seconds to limit request spinning
@@ -17,9 +16,8 @@ class GUIEventClient(Node):
 
     def __init__(self, srv_type: SrvType, topic: str, signal: pyqtBoundSignal):
         # Name this node with a sanitized version of the topic
-        self.name: str = f'gui_event_client_{re.sub(r"[^a-zA-Z0-9_]", "_", topic)}'
-        super().__init__(self.name, namespace="surface/gui",
-                         parameter_overrides=[])
+        self.name: str = f'client{re.sub(r"[^a-zA-Z0-9_]", "_", topic)}'
+        super().__init__(self.name, parameter_overrides=[])
 
         self.srv_type = srv_type
         self.topic: str = topic

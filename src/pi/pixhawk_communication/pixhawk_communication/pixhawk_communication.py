@@ -1,10 +1,10 @@
+import rclpy
 from pymavlink import mavutil
 from pymavlink.mavutil import mavfile
-import rclpy
 from rclpy.node import Node, Subscription
+from rclpy.qos import qos_profile_system_default
 
 from interfaces.msg import Armed, ROVControl
-
 
 MAX_CHANNEL: int = 8
 MIN_CHANNEL: int = 1
@@ -26,13 +26,13 @@ class PixhawkCommunication(Node):
             Armed,
             'armed',
             self.arm_callback,
-            1
+            qos_profile_system_default
         )
         self.rov_control_sub: Subscription = self.create_subscription(
             ROVControl,
             'manual_control',
             self.rov_control_callback,
-            100
+            qos_profile_system_default
         )
         self.declare_parameter('connection', '/dev/ttyPixhawk')
         communication: str = self.get_parameter('connection').get_parameter_value().string_value

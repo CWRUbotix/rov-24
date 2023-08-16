@@ -1,10 +1,10 @@
 import time
 
 import rclpy
-from rclpy.node import Node
 from rclpy.action import ActionServer, CancelResponse
 from rclpy.action.server import ServerGoalHandle
 from rclpy.executors import MultiThreadedExecutor
+from rclpy.node import Node
 
 from interfaces.action import BasicTask
 
@@ -13,8 +13,7 @@ class BasicTaskTimedNode(Node):
 
     def __init__(self):
         super().__init__('basic_task_timed',
-                         parameter_overrides=[],
-                         namespace='surface')
+                         parameter_overrides=[])
         self._action_server = ActionServer(
             self,
             BasicTask,

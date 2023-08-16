@@ -1,15 +1,15 @@
+from array import array
+
 import rclpy
-from rclpy.node import Node, Subscription, Publisher
 from rclpy.action import ActionServer, CancelResponse
 from rclpy.action.server import ServerGoalHandle
 from rclpy.executors import MultiThreadedExecutor
-
-from interfaces.action import BasicTask
-from interfaces.msg import ROVControl, Manip, CameraControllerSwitch
+from rclpy.node import Node, Publisher, Subscription
+from rclpy.qos import qos_profile_system_default, qos_profile_sensor_data
 from sensor_msgs.msg import Joy
 
-from typing import Dict, List
-
+from interfaces.action import BasicTask
+from interfaces.msg import CameraControllerSwitch, Manip, ROVControl
 
 # Button meanings for PS5 Control might be different for others
 X_BUTTON:        int = 0  # Manipulator 0
@@ -52,8 +52,7 @@ class ManualControlNode(Node):
 
     def __init__(self):
         super().__init__('manual_control_node',
-                         parameter_overrides=[],
-                         namespace='surface')
+                         parameter_overrides=[])
         # TODO would Service make more sense then Actions?
         self._action_server: ActionServer = ActionServer(
             self,
@@ -64,30 +63,30 @@ class ManualControlNode(Node):
         self.controller_pub: Publisher = self.create_publisher(
             ROVControl,
             'manual_control',
-            10
+            qos_profile_system_default
         )
         self.subscription: Subscription = self.create_subscription(
             Joy,
             'joy',
             self.controller_callback,
-            100
+            qos_profile_sensor_data
         )
 
         # Manipulators
         self.manip_publisher: Publisher = self.create_publisher(
             Manip,
             'manipulator_control',
-            10
+            qos_profile_system_default
         )
 
         # Cameras
         self.camera_toggle_publisher = self.create_publisher(
             CameraControllerSwitch,
             "camera_switch",
-            10
+            qos_profile_system_default
         )
 
-        self.manip_buttons: Dict[int, ManipButton] = {
+        self.manip_buttons: dict[int, ManipButton] = {
             X_BUTTON: ManipButton("claw0"),
             O_BUTTON: ManipButton("claw1"),
             TRI_BUTTON: ManipButton("light")
@@ -154,7 +153,7 @@ class ManualControlNode(Node):
         return CancelResponse.ACCEPT
 
     def manip_callback(self, msg: Joy):
-        buttons: List[int] = msg.buttons
+        buttons: array[int] = msg.buttons
 
         for button_id, manip_button in self.manip_buttons.items():
 
@@ -178,7 +177,7 @@ class ManualControlNode(Node):
 
     def camera_toggle(self, msg: Joy):
         """Cycles through connected cameras on pilot GUI using menu and pairing buttons."""
-        buttons: List[int] = msg.buttons
+        buttons: array[int] = msg.buttons
 
         if buttons[MENU] == 1:
             self.seen_right_cam = True
