@@ -9,12 +9,12 @@ from rclpy.node import Node, Service
 
 
 class GUIEventServer(Node):
-    """Multithreaded service for processing service requests to update GUI."""
+    """Multithreaded server for processing server requests to update GUI."""
 
     def __init__(self, srv_type: SrvType, topic: str,
                  callback: Callable[[SrvTypeRequest, SrvTypeResponse], SrvTypeResponse]):
         """
-        Initialize this service with a CALLBACK for processing requests.
+        Initialize this server with a CALLBACK for processing requests.
 
         Remember to use a signal to update the GUI!
         """
