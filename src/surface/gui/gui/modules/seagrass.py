@@ -1,10 +1,9 @@
-from typing import List, Optional, Callable
+from typing import Callable, Optional
 
-from PyQt5.QtWidgets import (QWidget, QPushButton, QGridLayout, QHBoxLayout,
-                             QVBoxLayout, QLabel, QFrame)
-from PyQt5.QtCore import Qt
-
-from gui.modules.video_widget import PausableVideoWidget
+from gui.modules.video_widget import PauseableVideoWidget
+from PyQt6.QtCore import Qt
+from PyQt6.QtWidgets import (QFrame, QGridLayout, QHBoxLayout, QLabel,
+                             QPushButton, QVBoxLayout, QWidget)
 
 
 class SeagrassWidget(QWidget):
@@ -35,15 +34,15 @@ class SeagrassWidget(QWidget):
         before_btns_layout.addWidget(set_all_green)
         before_btns_layout.addWidget(set_all_white)
 
-        before_layout.addWidget(QLabel("Before"), alignment=Qt.AlignCenter)
+        before_layout.addWidget(QLabel("Before"), alignment=Qt.AlignmentFlag.AlignCenter)
         before_layout.addLayout(before_btns_layout)
         before_layout.addWidget(self.before_grid.frame)
 
         before_layout.addStretch()
 
         # Bottom cam
-        self.bottom_cam = PausableVideoWidget("/bottom_cam/image_raw", "Bottom Cam",
-                                              widget_width=640, widget_height=360)
+        self.bottom_cam = PauseableVideoWidget("/bottom_cam/image_raw", "Bottom Cam",
+                                               widget_width=640, widget_height=360)
 
         # After layout
         after_layout: QVBoxLayout = QVBoxLayout()
@@ -55,7 +54,7 @@ class SeagrassWidget(QWidget):
 
         after_bttn_layout.addWidget(match_before)
 
-        after_layout.addWidget(QLabel("After"), alignment=Qt.AlignCenter)
+        after_layout.addWidget(QLabel("After"), alignment=Qt.AlignmentFlag.AlignCenter)
         after_layout.addLayout(after_bttn_layout)
         after_layout.addWidget(self.after_grid.frame)
 
@@ -77,7 +76,7 @@ class SeagrassWidget(QWidget):
 
         # Add all sections to main layout
         root_layout.addLayout(before_layout, 1)
-        root_layout.addWidget(self.bottom_cam, 1, alignment=Qt.AlignTop)
+        root_layout.addWidget(self.bottom_cam, 1, alignment=Qt.AlignmentFlag.AlignTop)
         root_layout.addLayout(after_layout, 1)
         root_layout.addWidget(result_widget, 2)
 
@@ -105,11 +104,11 @@ class SeagrassWidget(QWidget):
 
 
 class SeagrassGrid(QWidget):
-    def __init__(self, update_result_text: Callable,
-                 set_other_button: Optional[Callable] = None):
+    def __init__(self, update_result_text: Callable[[], None],
+                 set_other_button: Optional[Callable[[int, bool], None]] = None):
         super().__init__()
 
-        self.set_other_button: Callable = set_other_button
+        self.set_other_button: Optional[Callable[[int, bool], None]] = set_other_button
 
         self.setMaximumWidth(200)
 
@@ -123,7 +122,7 @@ class SeagrassGrid(QWidget):
         self.frame.setLayout(grid_layout)
         self.frame.setStyleSheet("border: 1px solid gray")
 
-        self.all_buttons: List[SeagrassButton] = []
+        self.all_buttons: list[SeagrassButton] = []
         N = 8
         button_id = 0
 
@@ -164,8 +163,8 @@ class SeagrassGrid(QWidget):
 
 
 class SeagrassButton(QPushButton):
-    def __init__(self, button_id: int, size: int, update_text: Callable,
-                 set_other_button: Optional[Callable] = None):
+    def __init__(self, button_id: int, size: int, update_text: Callable[[], None],
+                 set_other_button: Optional[Callable[[int, bool], None]] = None):
         super(SeagrassButton, self).__init__()
 
         self.button_id: int = button_id

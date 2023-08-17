@@ -5,7 +5,7 @@
   <!-- Need argument to get from launch file -->
   <xacro:property name="params_path" value="$(arg params_path)"/> 
   <!-- Need seperate property for xacro inorder processing -->
-  <xacro:property name="params" value="${load_yaml(params_path)}"/> 
+  <xacro:property name="params" value="${xacro.load_yaml(params_path)}"/> 
   <!-- Read in the yaml dict as mp (short for model parameters) -->
 
   <xacro:property name="rov_description" value="${params['rov_description']}"/>

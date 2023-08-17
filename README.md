@@ -33,11 +33,9 @@ corresponding option appear. Click or hit enter on that option.
 Now select `🏃‍♂️ ROS All` to run all dependency download and building scripts.
 
 This whole process should become `F1`, `Enter`, `Enter` once you've done it once,
-although the magic of symlink should mean you won't need to build again for most
-things.
+although the magic of symlink should mean you won't need to build again for most things.
 
-If you're working on package metadata (e.g. `package.xml`) or interfaces, you'll
-need to run `🏃‍♂️ ROS Quick Build` every time you change something.
+If you're working on package metadata (e.g. `package.xml`) or interfaces, you'll need to run `🏃‍♂️ ROS Quick Build` or use `Control + Shift + B` every time you change something.
 
 ### Automatic building for non-VSCode heathens
 
