@@ -11,9 +11,11 @@ def generate_launch_description():
         namespace="mavros",
         parameters=[
             # https://github.com/mavlink/mavros/issues/1632
-            # Done so RC Override thinks mavros in a gcs.
+            # Set the system_id to 255 so mavros_node is treated as
+            # Ground Control Station (GCS). To use RC control it needs to
+            # receive a signal from a GCS.
             {"system_id": 255},
-            # plugin_allowlist allows which mavros nodes get launched default is all of them.
+            # plugin_allowlist allows which mavros nodes get launched. The default is all of them.
             {"plugin_allowlist": ["sys_status", "rc_io", "command"]},
             {"fcu_url": "/dev/ttyPixhawk"}
         ],

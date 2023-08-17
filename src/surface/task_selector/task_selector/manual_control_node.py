@@ -114,7 +114,6 @@ class ManualControlNode(Node):
             self.camera_toggle(msg)
 
     def joystick_to_pixhawk(self, msg: Joy):
-
         rc_msg = OverrideRCIn()
 
         axes: array[float] = msg.axes
