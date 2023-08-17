@@ -1,7 +1,8 @@
 import rclpy
-from rclpy.node import Node, Subscription
-from interfaces.msg import Manip
 from manipulators.tca9555 import TCA9555
+from rclpy.node import Node, Subscription
+from rclpy.qos import qos_profile_system_default
+from interfaces.msg import Manip
 
 
 class Manipulator(Node):
@@ -14,7 +15,7 @@ class Manipulator(Node):
             Manip,
             'manipulator_control',
             self.manip_callback,
-            100
+            qos_profile_system_default
         )
 
         self.declare_parameters(

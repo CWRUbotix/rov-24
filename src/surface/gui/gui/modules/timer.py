@@ -1,6 +1,6 @@
-from PyQt5.QtCore import QTimer, Qt
-from PyQt5.QtGui import QFont
-from PyQt5.QtWidgets import QLabel, QPushButton, QGridLayout, QWidget
+from PyQt6.QtCore import Qt, QTimer
+from PyQt6.QtGui import QFont
+from PyQt6.QtWidgets import QGridLayout, QLabel, QPushButton, QWidget
 
 
 class Timer(QWidget):
@@ -11,7 +11,7 @@ class Timer(QWidget):
         self.running = False
 
         self.label = QLabel('Label')
-        self.label.setAlignment(Qt.AlignCenter)
+        self.label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.label.setFont(QFont('Arial', 36))
 
         self.toggle_btn = QPushButton('Start')

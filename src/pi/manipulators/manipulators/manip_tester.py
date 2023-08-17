@@ -4,12 +4,12 @@ Need to run this command.
 
 sudo chmod a+rw /dev/i2c-*
 link to permanant solution
-this solution worked
 https://unix.stackexchange.com/questions/147494/how-can-i-set-device-rw-permissions-permanently-on-raspbian
 """
 
-from manipulators.tca9555 import TCA9555
 import time
+
+from manipulators.tca9555 import TCA9555
 
 
 def main():

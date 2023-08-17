@@ -1,16 +1,11 @@
-from task_selector.tasks import Tasks
-
-from PyQt5.QtWidgets import QGridLayout, QLabel
-from PyQt5.QtWidgets import QWidget, QPushButton
-from PyQt5.QtCore import pyqtSignal, pyqtSlot
-
 from gui.event_nodes.client import GUIEventClient
 from gui.event_nodes.subscriber import GUIEventSubscriber
+from PyQt6.QtCore import pyqtSignal, pyqtSlot
+from PyQt6.QtWidgets import QGridLayout, QLabel, QPushButton, QWidget
+from task_selector.tasks import Tasks
 
-from interfaces.srv import TaskRequest
 from interfaces.msg import TaskFeedback
-
-from rclpy.impl.rcutils_logger import RcutilsLogger
+from interfaces.srv import TaskRequest
 
 WIDTH = 200
 
@@ -56,12 +51,12 @@ class TaskSelector(QWidget):
         self.scheduler_response_signal.connect(
             self.handle_scheduler_response)
         self.task_changed_client: GUIEventClient = GUIEventClient(
-            TaskRequest, 'task_request', self.scheduler_response_signal)
+            TaskRequest, '/task_request', self.scheduler_response_signal)
 
         # Server doesn't spin, so we init in main thread
         self.update_task_dropdown_signal.connect(self.update_task_dropdown)
         self.task_changed_server: GUIEventSubscriber = GUIEventSubscriber(
-            TaskFeedback, 'task_feedback', self.update_task_dropdown_signal)
+            TaskFeedback, '/task_feedback', self.update_task_dropdown_signal)
 
     def start_btn_clicked(self):
         """Tell the back about the user selecting the start button."""
@@ -94,8 +89,9 @@ class TaskSelector(QWidget):
     @ pyqtSlot(TaskRequest.Response)
     def handle_scheduler_response(self, response: TaskRequest.Response):
         """Handle scheduler response to request sent from gui_changed_task."""
-        RcutilsLogger("task_selector.py").info(response.response)
+        self.task_changed_server.get_logger().info(response.response)
 
+    # TODO @Ben do we still use this?
     @ pyqtSlot(TaskFeedback)
     def update_task_dropdown(self, message: TaskFeedback):
         """Update the task selector dropdown when task changed by scheduler."""

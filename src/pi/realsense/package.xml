@@ -10,7 +10,9 @@
   <test_depend>ament_flake8</test_depend>
   <test_depend>ament_pep257</test_depend>
   <test_depend>python3-pytest</test_depend>
-
+  
+  <exec_depend>librealsense2</exec_depend>
+  <exec_depend>realsense2_camera</exec_depend>
   <exec_depend>ros2launch</exec_depend>
 
   <export>

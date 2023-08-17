@@ -1,8 +1,8 @@
 import rclpy
-from rclpy.node import Node
 from rclpy.action import ActionServer
 from rclpy.action.server import ServerGoalHandle
 from rclpy.executors import MultiThreadedExecutor
+from rclpy.node import Node
 
 from interfaces.action import Example
 
@@ -11,8 +11,7 @@ class IsMorning(Node):
 
     def __init__(self):
         super().__init__('good_morning_sayer',
-                         parameter_overrides=[],
-                         namespace='surface')
+                         parameter_overrides=[])
         self._action_server = ActionServer(
             self,
             Example,
