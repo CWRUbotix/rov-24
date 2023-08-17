@@ -101,67 +101,6 @@ def generate_launch_description():
         emulate_tty=True
     )
 
-    # Thrust Bridge
-    # thrust_bridge = Node(
-    #     package="ros_gz_bridge",
-    #     executable="parameter_bridge",
-    #     namespace=NS,
-    #     name="thrust_bridge",
-    #     arguments=[
-    #         "/model/rov/joint/thruster_top_front_left_body_blade_joint/cmd_thrust"
-    #         "@std_msgs/msg/Float64@gz.msgs.Double",
-    #         "/model/rov/joint/thruster_top_front_right_body_blade_joint/cmd_thrust"
-    #         "@std_msgs/msg/Float64@gz.msgs.Double",
-    #         "/model/rov/joint/thruster_top_back_left_body_blade_joint/cmd_thrust"
-    #         "@std_msgs/msg/Float64@gz.msgs.Double",
-    #         "/model/rov/joint/thruster_top_back_right_body_blade_joint/cmd_thrust"
-    #         "@std_msgs/msg/Float64@gz.msgs.Double",
-    #         "/model/rov/joint/thruster_bottom_front_left_body_blade_joint/cmd_thrust"
-    #         "@std_msgs/msg/Float64@gz.msgs.Double",
-    #         "/model/rov/joint/thruster_bottom_front_right_body_blade_joint/cmd_thrust"
-    #         "@std_msgs/msg/Float64@gz.msgs.Double",
-    #         "/model/rov/joint/thruster_bottom_back_left_body_blade_joint/cmd_thrust"
-    #         "@std_msgs/msg/Float64@gz.msgs.Double",
-    #         "/model/rov/joint/thruster_bottom_back_right_body_blade_joint/cmd_thrust"
-    #         "@std_msgs/msg/Float64@gz.msgs.Double",
-    #     ],
-    #     remappings=[
-    #         (
-    #             "/model/rov/joint/thruster_top_front_left_body_blade_joint/cmd_thrust",
-    #             f"/{NS}/model/rov/joint/thruster_top_front_left_body_blade_joint/cmd_thrust",
-    #         ),
-    #         (
-    #             "/model/rov/joint/thruster_top_front_right_body_blade_joint/cmd_thrust",
-    #             f"/{NS}/model/rov/joint/thruster_top_front_right_body_blade_joint/cmd_thrust",
-    #         ),
-    #         (
-    #             "/model/rov/joint/thruster_top_back_left_body_blade_joint/cmd_thrust",
-    #             f"/{NS}/model/rov/joint/thruster_top_back_left_body_blade_joint/cmd_thrust",
-    #         ),
-    #         (
-    #             "/model/rov/joint/thruster_top_back_right_body_blade_joint/cmd_thrust",
-    #             f"/{NS}/model/rov/joint/thruster_top_back_right_body_blade_joint/cmd_thrust",
-    #         ),
-    #         (
-    #             "/model/rov/joint/thruster_bottom_front_left_body_blade_joint/cmd_thrust",
-    #             f"/{NS}/model/rov/joint/thruster_bottom_front_left_body_blade_joint/cmd_thrust",
-    #         ),
-    #         (
-    #             "/model/rov/joint/thruster_bottom_front_right_body_blade_joint/cmd_thrust",
-    #             f"/{NS}/model/rov/joint/thruster_bottom_front_right_body_blade_joint/cmd_thrust",
-    #         ),
-    #         (
-    #             "/model/rov/joint/thruster_bottom_back_left_body_blade_joint/cmd_thrust",
-    #             f"/{NS}/model/rov/joint/thruster_bottom_back_left_body_blade_joint/cmd_thrust",
-    #         ),
-    #         (
-    #             "/model/rov/joint/thruster_bottom_back_right_body_blade_joint/cmd_thrust",
-    #             f"/{NS}/model/rov/joint/thruster_bottom_back_right_body_blade_joint/cmd_thrust",
-    #         ),
-    #     ],
-    #     output="screen",
-    # )
-
     # cam_bridge = Node(
     #     package="ros_gz_bridge",
     #     executable="parameter_bridge",
@@ -189,20 +128,6 @@ def generate_launch_description():
     #     emulate_tty=True
     # )
 
-    # pos_bridge = Node(
-    #     package="ros_gz_bridge",
-    #     executable="parameter_bridge",
-    #     namespace=NS,
-    #     name="pos_bridge",
-    #     arguments=[
-    #         "/world/rov_simulation/dynamic_pose/info@tf2_msgs/msg/TFMessage@gz.msgs.Pose_V",
-    #     ],
-    #     remappings=[
-    #         ("/world/rov_simulation/dynamic_pose/info", f"/{NS}/rov_pose"),
-    #     ],
-    #     output="screen",
-    # )
-
     # Launches Controller
     surface_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
@@ -218,9 +143,7 @@ def generate_launch_description():
             gz_spawn_entity,
             gz_spawn_pool,
             keyboard_driver,
-            # thrust_bridge,
             # cam_bridge,
-            # pos_bridge,
             surface_launch,
         ]
     )
