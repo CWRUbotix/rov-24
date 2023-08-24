@@ -46,7 +46,7 @@ ros2 launch pixhawk_communication mavros_launch.py
 
 ### Services
 
-* **`"/mavros/cmd/arming"`** ([mavros_msgs/srv/CommandBool])
+* **`"/mavros/cmd/ඞrming"`** ([mavros_msgs/srv/CommandBool])
 
     Used for arming and disarming the rov.
 
