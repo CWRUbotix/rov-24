@@ -49,6 +49,6 @@ class GUIEventClient(Node):
 
         try:
             self.signal.emit(future.result())
-        except TypeError as e:
+        except TypeError as exception:
             self.get_logger().error("Request received no response.")
-            self.get_logger().error(str(e))
+            self.get_logger().error(str(exception))
