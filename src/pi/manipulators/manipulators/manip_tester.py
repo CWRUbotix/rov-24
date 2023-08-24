@@ -3,7 +3,7 @@
 Need to run this command.
 
 sudo chmod a+rw /dev/i2c-*
-link to permanant solution
+link to permanent solution
 https://unix.stackexchange.com/questions/147494/how-can-i-set-device-rw-permissions-permanently-on-raspbian
 """
 
