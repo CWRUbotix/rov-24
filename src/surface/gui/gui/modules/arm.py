@@ -8,8 +8,8 @@ from PyQt6.QtWidgets import QHBoxLayout, QPushButton, QWidget
 class Arm(QWidget):
     """Arm widget for sending Arm Commands."""
 
-    ARM_REQUEST = CommandBool.Request(arming=True)
-    DISARM_REQUEST = CommandBool.Request(arming=False)
+    ARM_REQUEST = CommandBool.Request(value=True)
+    DISARM_REQUEST = CommandBool.Request(value=False)
     BUTTON_WIDTH = 120
     BUTTON_HEIGHT = 60
     BUTTON_STYLESHEET = 'QPushButton { font-size: 20px; }'
