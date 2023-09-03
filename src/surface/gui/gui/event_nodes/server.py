@@ -5,11 +5,11 @@ from typing import Callable
 
 from rclpy.client import SrvType, SrvTypeRequest, SrvTypeResponse
 from rclpy.executors import SingleThreadedExecutor
-from rclpy.node import Node
+from rclpy.node import Node, Service
 
 
 class GUIEventServer(Node):
-    """Multithreaded server for processing service requests to update GUI."""
+    """Multithreaded server for processing server requests to update GUI."""
 
     def __init__(self, srv_type: SrvType, topic: str,
                  callback: Callable[[SrvTypeRequest, SrvTypeResponse], SrvTypeResponse]):
@@ -22,7 +22,7 @@ class GUIEventServer(Node):
         name: str = f'server{re.sub(r"[^a-zA-Z0-9_]", "_", topic)}'
         super().__init__(name, parameter_overrides=[])
 
-        self.srv = self.create_service(srv_type, topic, callback)
+        self.srv: Service = self.create_service(srv_type, topic, callback)
 
         custom_executor = SingleThreadedExecutor()
         custom_executor.add_node(self)

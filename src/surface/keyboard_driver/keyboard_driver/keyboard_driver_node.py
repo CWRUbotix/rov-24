@@ -100,9 +100,9 @@ class KeyboardListenerNode(Node):
 
             self.pub_rov_control()
 
-        except Exception as e:
-            self.get_logger().error(str(e))
-            raise e
+        except Exception as exception:
+            self.get_logger().error(str(exception))
+            raise exception
 
     def on_release(self, key: Optional[Key | KeyCode]):
         try:
@@ -123,9 +123,9 @@ class KeyboardListenerNode(Node):
 
             self.pub_rov_control()
 
-        except Exception as e:
-            self.get_logger().error(str(e))
-            raise e
+        except Exception as exception:
+            self.get_logger().error(str(exception))
+            raise exception
 
     def pub_rov_control(self):
         msg = ROVControl()

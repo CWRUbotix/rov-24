@@ -41,9 +41,9 @@ class Manipulator(Node):
         pin = self._parameters[manip_id].get_parameter_value().integer_value
 
         if activated:
-            self.gpio.set_bits(bits=(pin))
+            self.gpio.set_bits(bits=pin)
         else:
-            self.gpio.unset_bits(bits=(pin))
+            self.gpio.unset_bits(bits=pin)
 
 
 def main():

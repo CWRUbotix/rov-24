@@ -1,17 +1,23 @@
 
-from gui.event_nodes.publisher import GUIEventPublisher
+from gui.event_nodes.client import GUIEventClient
+from mavros_msgs.srv import CommandBool
+from PyQt6.QtCore import pyqtSignal, pyqtSlot
 from PyQt6.QtWidgets import QHBoxLayout, QPushButton, QWidget
-from interfaces.msg import Armed
 
 
 class Arm(QWidget):
     """Arm widget for sending Arm Commands."""
 
+    ARM_REQUEST = CommandBool.Request(value=True)
+    DISARM_REQUEST = CommandBool.Request(value=False)
     BUTTON_WIDTH = 120
     BUTTON_HEIGHT = 60
     BUTTON_STYLESHEET = 'QPushButton { font-size: 20px; }'
 
+    signal: pyqtSignal = pyqtSignal(CommandBool.Response)
+
     def __init__(self):
+
         super().__init__()
 
         layout: QHBoxLayout = QHBoxLayout()
@@ -38,13 +44,24 @@ class Arm(QWidget):
         layout.addWidget(arm_button)
         layout.addWidget(disarm_button)
 
-        self.arm_publisher: GUIEventPublisher = GUIEventPublisher(
-            Armed,
-            "/armed"
+        self.signal.connect(self.arm_status)
+
+        self.arm_client: GUIEventClient = GUIEventClient(
+            CommandBool,
+            "/mavros/cmd/arming",
+            self.signal
         )
 
     def arm_clicked(self):
-        self.arm_publisher.publish(Armed(armed=True))
+        self.arm_client.send_request_async(self.ARM_REQUEST)
 
     def disarm_clicked(self):
-        self.arm_publisher.publish(Armed(armed=False))
+        self.arm_client.send_request_async(self.DISARM_REQUEST)
+
+    @pyqtSlot(CommandBool.Response)
+    def arm_status(self, res: CommandBool.Response):
+        # TODO? could check against /mavros/state for confirmation
+        if res:
+            self.arm_client.get_logger().info("Has been armed or disarmed.")
+        else:
+            self.arm_client.get_logger().error("Has not armed or disarmed")
