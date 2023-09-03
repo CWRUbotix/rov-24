@@ -30,8 +30,6 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "action/Example.action"
   "action/BasicTask.action"
   "msg/TaskFeedback.msg"
-  "msg/ROVControl.msg"
-  "msg/Armed.msg"
   "msg/Manip.msg"
   "msg/CameraControllerSwitch.msg"
   DEPENDENCIES std_msgs

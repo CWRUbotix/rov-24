@@ -90,7 +90,7 @@ def generate_launch_description():
     # Not using keyboard launch file
     # TODO?
     # I think we should probably switch over all our single
-    # Node launch files to somehting like this
+    # Node launch files to something like this
     keyboard_driver = Node(
         package="keyboard_driver",
         executable="keyboard_driver_node",
@@ -101,121 +101,32 @@ def generate_launch_description():
         emulate_tty=True
     )
 
-    # Thrust Bridge
-    thrust_bridge = Node(
-        package="ros_gz_bridge",
-        executable="parameter_bridge",
-        namespace=NS,
-        name="thrust_bridge",
-        arguments=[
-            "/model/rov/joint/thruster_top_front_left_body_blade_joint/cmd_thrust"
-            "@std_msgs/msg/Float64@gz.msgs.Double",
-            "/model/rov/joint/thruster_top_front_right_body_blade_joint/cmd_thrust"
-            "@std_msgs/msg/Float64@gz.msgs.Double",
-            "/model/rov/joint/thruster_top_back_left_body_blade_joint/cmd_thrust"
-            "@std_msgs/msg/Float64@gz.msgs.Double",
-            "/model/rov/joint/thruster_top_back_right_body_blade_joint/cmd_thrust"
-            "@std_msgs/msg/Float64@gz.msgs.Double",
-            "/model/rov/joint/thruster_bottom_front_left_body_blade_joint/cmd_thrust"
-            "@std_msgs/msg/Float64@gz.msgs.Double",
-            "/model/rov/joint/thruster_bottom_front_right_body_blade_joint/cmd_thrust"
-            "@std_msgs/msg/Float64@gz.msgs.Double",
-            "/model/rov/joint/thruster_bottom_back_left_body_blade_joint/cmd_thrust"
-            "@std_msgs/msg/Float64@gz.msgs.Double",
-            "/model/rov/joint/thruster_bottom_back_right_body_blade_joint/cmd_thrust"
-            "@std_msgs/msg/Float64@gz.msgs.Double",
-        ],
-        remappings=[
-            (
-                "/model/rov/joint/thruster_top_front_left_body_blade_joint/cmd_thrust",
-                f"/{NS}/model/rov/joint/thruster_top_front_left_body_blade_joint/cmd_thrust",
-            ),
-            (
-                "/model/rov/joint/thruster_top_front_right_body_blade_joint/cmd_thrust",
-                f"/{NS}/model/rov/joint/thruster_top_front_right_body_blade_joint/cmd_thrust",
-            ),
-            (
-                "/model/rov/joint/thruster_top_back_left_body_blade_joint/cmd_thrust",
-                f"/{NS}/model/rov/joint/thruster_top_back_left_body_blade_joint/cmd_thrust",
-            ),
-            (
-                "/model/rov/joint/thruster_top_back_right_body_blade_joint/cmd_thrust",
-                f"/{NS}/model/rov/joint/thruster_top_back_right_body_blade_joint/cmd_thrust",
-            ),
-            (
-                "/model/rov/joint/thruster_bottom_front_left_body_blade_joint/cmd_thrust",
-                f"/{NS}/model/rov/joint/thruster_bottom_front_left_body_blade_joint/cmd_thrust",
-            ),
-            (
-                "/model/rov/joint/thruster_bottom_front_right_body_blade_joint/cmd_thrust",
-                f"/{NS}/model/rov/joint/thruster_bottom_front_right_body_blade_joint/cmd_thrust",
-            ),
-            (
-                "/model/rov/joint/thruster_bottom_back_left_body_blade_joint/cmd_thrust",
-                f"/{NS}/model/rov/joint/thruster_bottom_back_left_body_blade_joint/cmd_thrust",
-            ),
-            (
-                "/model/rov/joint/thruster_bottom_back_right_body_blade_joint/cmd_thrust",
-                f"/{NS}/model/rov/joint/thruster_bottom_back_right_body_blade_joint/cmd_thrust",
-            ),
-        ],
-        output="screen",
-        emulate_tty=True
-    )
-
-    cam_bridge = Node(
-        package="ros_gz_bridge",
-        executable="parameter_bridge",
-        namespace=NS,
-        name="cam_bridge",
-        arguments=[
-            "/bottom_cam/image_raw@sensor_msgs/msg/Image@gz.msgs.Image",
-            "/bottom_cam/camera_info@sensor_msgs/msg/CameraInfo@gz.msgs.CameraInfo",
-            "/front_cam/image_raw@sensor_msgs/msg/Image@gz.msgs.Image",
-            "/front_cam/camera_info@sensor_msgs/msg/CameraInfo@gz.msgs.CameraInfo",
-            "/manip_cam/image_raw@sensor_msgs/msg/Image@gz.msgs.Image",
-            "/depth_cam@sensor_msgs/msg/Image@gz.msgs.Image",
-            "/depth_cam/points@sensor_msgs/msg/PointCloud2@gz.msgs.PointCloudPacked",
-        ],
-        remappings=[
-            (f"/{NS}/bottom_cam/image_raw", "/bottom_cam/image_raw"),
-            (f"/{NS}/bottom_cam/camera_info", "/bottom_cam/camera_info"),
-            (f"/{NS}/front_cam/image_raw", "/front_cam/image_raw"),
-            (f"/{NS}/front_cam/camera_info", "/front_cam/camera_info"),
-            (f"/{NS}/manip_cam/image_raw", "/manip_cam/image_raw"),
-            (f"/{NS}/depth_cam", "/depth_cam/image_raw"),
-            (f"/{NS}/depth_cam/points", "/depth_cam/points"),
-        ],
-        output="screen",
-        emulate_tty=True
-    )
-
-    pos_bridge = Node(
-        package="ros_gz_bridge",
-        executable="parameter_bridge",
-        namespace=NS,
-        name="pos_bridge",
-        arguments=[
-            "/world/rov_simulation/dynamic_pose/info@tf2_msgs/msg/TFMessage@gz.msgs.Pose_V",
-        ],
-        remappings=[
-            ("/world/rov_simulation/dynamic_pose/info", f"/{NS}/rov_pose"),
-        ],
-        output="screen",
-        emulate_tty=True
-    )
-
-    thruster_controller = Node(
-        package="rov_gazebo",
-        executable="thruster_controller_node",
-        output="screen",
-        namespace=NS,
-        remappings=[
-            (f"/{NS}/manual_control", "/manual_control"),
-            (f"/{NS}/armed", "/armed"),
-        ],
-        emulate_tty=True
-    )
+    # cam_bridge = Node(
+    #     package="ros_gz_bridge",
+    #     executable="parameter_bridge",
+    #     namespace=NS,
+    #     name="cam_bridge",
+    #     arguments=[
+    #         "/bottom_cam/image_raw@sensor_msgs/msg/Image@gz.msgs.Image",
+    #         "/bottom_cam/camera_info@sensor_msgs/msg/CameraInfo@gz.msgs.CameraInfo",
+    #         "/front_cam/image_raw@sensor_msgs/msg/Image@gz.msgs.Image",
+    #         "/front_cam/camera_info@sensor_msgs/msg/CameraInfo@gz.msgs.CameraInfo",
+    #         "/manip_cam/image_raw@sensor_msgs/msg/Image@gz.msgs.Image",
+    #         "/depth_cam@sensor_msgs/msg/Image@gz.msgs.Image",
+    #         "/depth_cam/points@sensor_msgs/msg/PointCloud2@gz.msgs.PointCloudPacked",
+    #     ],
+    #     remappings=[
+    #         (f"/{NS}/bottom_cam/image_raw", "/bottom_cam/image_raw"),
+    #         (f"/{NS}/bottom_cam/camera_info", "/bottom_cam/camera_info"),
+    #         (f"/{NS}/front_cam/image_raw", "/front_cam/image_raw"),
+    #         (f"/{NS}/front_cam/camera_info", "/front_cam/camera_info"),
+    #         (f"/{NS}/manip_cam/image_raw", "/manip_cam/image_raw"),
+    #         (f"/{NS}/depth_cam", "/depth_cam/image_raw"),
+    #         (f"/{NS}/depth_cam/points", "/depth_cam/points"),
+    #     ],
+    #     output="screen",
+    #     emulate_tty=True
+    # )
 
     # Launches Controller
     surface_launch = IncludeLaunchDescription(
@@ -232,10 +143,7 @@ def generate_launch_description():
             gz_spawn_entity,
             gz_spawn_pool,
             keyboard_driver,
-            thrust_bridge,
-            cam_bridge,
-            pos_bridge,
-            thruster_controller,
+            # cam_bridge,
             surface_launch,
         ]
     )

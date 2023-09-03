@@ -37,7 +37,7 @@ def generate_launch_description():
     pixhawk_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([
             os.path.join(
-                pixhawk_path, 'launch', 'pixhawk_com_launch.py'
+                pixhawk_path, 'launch', 'mavros_launch.py'
             )
         ])
     )

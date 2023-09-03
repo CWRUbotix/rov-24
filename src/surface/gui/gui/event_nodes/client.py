@@ -3,11 +3,12 @@ from threading import Thread
 
 import rclpy
 from PyQt6.QtCore import pyqtBoundSignal
-from rclpy.client import SrvType, SrvTypeRequest, SrvTypeResponse
-from rclpy.node import Node
+from rclpy.client import SrvType, SrvTypeRequest
+from rclpy.node import Client, Node
 
 # Set to None for no timeout limits on service requests
 # else set to float number of seconds to limit request spinning
+# TODO? Should be param of each Client
 TIMEOUT_SEC: float = 1.0
 
 
@@ -21,10 +22,9 @@ class GUIEventClient(Node):
 
         self.srv_type = srv_type
         self.topic: str = topic
-        self.connected: bool = False
         self.signal: pyqtBoundSignal = signal
 
-        self.cli = self.create_client(srv_type, topic)
+        self.cli: Client = self.create_client(srv_type, topic)
         Thread(target=self.__connect_to_service, daemon=True,
                name=f'{self.name}_connect_to_service').start()
 
@@ -34,27 +34,21 @@ class GUIEventClient(Node):
             self.get_logger().info(
                 'Service for GUI event client node on topic' +
                 f' {self.topic} unavailable, waiting again...')
-        self.connected = True
-        self.req: SrvTypeRequest = self.srv_type.Request()
 
     def send_request_async(self, request: SrvTypeRequest):
         """Send request to server in separate thread."""
-        Thread(target=self.send_request_with_signal,
+        Thread(target=self.__send_request_with_signal,
                kwargs={'request': request},
                daemon=True, name=f'{self.name}_send_request').start()
 
-    def send_request_with_signal(self, request: SrvTypeRequest):
+    def __send_request_with_signal(self, request: SrvTypeRequest):
         """Send synchronous request to server and emit signal."""
         future = self.cli.call_async(request)
         rclpy.spin_until_future_complete(
             self, future, timeout_sec=TIMEOUT_SEC)
 
-        self.signal.emit(future.result())
-
-    def send_request(self, request: SrvTypeRequest) -> SrvTypeResponse:
-        """Send synchronous request to server and return result."""
-        future = self.cli.call_async(request)
-        rclpy.spin_until_future_complete(
-            self, future, timeout_sec=TIMEOUT_SEC)
-
-        return future.result()
+        try:
+            self.signal.emit(future.result())
+        except TypeError as exception:
+            self.get_logger().error("Request received no response.")
+            self.get_logger().error(str(exception))

@@ -16,7 +16,7 @@ setup(
         (os.path.join('share', package_name, 'launch'),
          glob('launch/*launch.[pxy][yma]*'))
     ],
-    install_requires=['setuptools', 'pymavlink'],
+    install_requires=['setuptools'],
     zip_safe=True,
     maintainer='Michael Carlstrom',
     maintainer_email='rmc@carlstrom.com',
@@ -24,8 +24,6 @@ setup(
     license='Apache License 2.0',
     tests_require=['pytest'],
     entry_points={
-        'console_scripts': [
-            'pixhawk_com = pixhawk_communication.pixhawk_communication:main',
-        ],
+        'console_scripts': [],
     },
 )
