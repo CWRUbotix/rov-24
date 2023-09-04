@@ -1,7 +1,7 @@
 # MATE ROV 2023-24
 
 <a href="https://github.com/cwruRobotics/rov-24/actions"><img src="https://github.com/cwruRobotics/rov-24/workflows/Continuous Integration/badge.svg" alt="Build Status"></a>
-<a href=" https://opensource.org/licenses/Apache-2.0"><img src="https://img.shields.io/badge/License-Apache%202.0-blue.svg" alt="Build Status"></a>
+<a href=" https://opensource.org/licenses/Apache-2.0"><img src="https://img.shields.io/badge/License-Apache%202.0-blue.svg" alt="Apache License"></a>
 
 ## Setup
 
