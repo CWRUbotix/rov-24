@@ -82,10 +82,8 @@ def generate_launch_description():
                 {"plugin_allowlist": ["rc_io", "sys_status", "command"]}
             ],
             remappings=[
-                # (f'/{NS}/mavros/setpoint_velocity/cmd_vel',
-                #          '/mavros/setpoint_velocity/cmd_vel'),
-                        (f'/{NS}/mavros/cmd/arming', '/mavros/cmd/arming'),
-                        (f'/{NS}/mavros/rc/override', '/mavros/rc/override')]
+                    (f'/{NS}/mavros/cmd/arming', '/mavros/cmd/arming'),
+                    (f'/{NS}/mavros/rc/override', '/mavros/rc/override')]
     )
 
     # # Spawn entity
