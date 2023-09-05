@@ -8,8 +8,8 @@ from PyQt6.QtWidgets import QHBoxLayout, QPushButton, QWidget
 class Arm(QWidget):
     """Arm widget for sending Arm Commands."""
 
-    ARMING_ACTION_ARM = True
-    ARMING_ACTION_DISARM = False
+    ARM_REQUEST = CommandBool.Request(value=True)
+    DISARM_REQUEST = CommandBool.Request(value=False)
     BUTTON_WIDTH = 120
     BUTTON_HEIGHT = 60
     BUTTON_STYLESHEET = 'QPushButton { font-size: 20px; }'
@@ -53,15 +53,10 @@ class Arm(QWidget):
         )
 
     def arm_clicked(self):
-        self.client_handler(self.ARMING_ACTION_ARM)
+        self.arm_client.send_request_async(self.ARM_REQUEST)
 
     def disarm_clicked(self):
-        self.client_handler(self.ARMING_ACTION_DISARM)
-
-    def client_handler(self, arming: bool):
-        srv_req = CommandBool.Request()
-        srv_req.value = arming
-        self.arm_client.send_request_async(srv_req)
+        self.arm_client.send_request_async(self.DISARM_REQUEST)
 
     @pyqtSlot(CommandBool.Response)
     def arm_status(self, res: CommandBool.Response):

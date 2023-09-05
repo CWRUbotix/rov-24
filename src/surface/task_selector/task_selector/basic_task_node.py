@@ -11,8 +11,7 @@ class BasicTaskNode(Node):
 
     def __init__(self):
         super().__init__('basic_task_node',
-                         parameter_overrides=[],
-                         namespace='surface')
+                         parameter_overrides=[])
         self._action_server = ActionServer(
             self,
             BasicTask,

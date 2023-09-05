@@ -5,24 +5,24 @@ from typing import Callable
 
 from rclpy.client import SrvType, SrvTypeRequest, SrvTypeResponse
 from rclpy.executors import SingleThreadedExecutor
-from rclpy.node import Node
+from rclpy.node import Node, Service
 
 
-class GUIEventService(Node):
-    """Multithreaded service for processing service requests to update GUI."""
+class GUIEventServer(Node):
+    """Multithreaded server for processing server requests to update GUI."""
 
     def __init__(self, srv_type: SrvType, topic: str,
                  callback: Callable[[SrvTypeRequest, SrvTypeResponse], SrvTypeResponse]):
         """
-        Initialize this service with a CALLBACK for processing requests.
+        Initialize this server with a CALLBACK for processing requests.
 
         Remember to use a signal to update the GUI!
         """
         # Name this node with a sanitized version of the topic
-        name: str = f'service{re.sub(r"[^a-zA-Z0-9_]", "_", topic)}'
+        name: str = f'server{re.sub(r"[^a-zA-Z0-9_]", "_", topic)}'
         super().__init__(name, parameter_overrides=[])
 
-        self.srv = self.create_service(srv_type, topic, callback)
+        self.srv: Service = self.create_service(srv_type, topic, callback)
 
         custom_executor = SingleThreadedExecutor()
         custom_executor.add_node(self)
