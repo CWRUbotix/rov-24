@@ -1,7 +1,7 @@
 import rclpy
 from manipulators.tca9555 import TCA9555
 from rclpy.node import Node, Subscription
-
+from rclpy.qos import qos_profile_system_default
 from interfaces.msg import Manip
 
 
@@ -15,7 +15,7 @@ class Manipulator(Node):
             Manip,
             'manipulator_control',
             self.manip_callback,
-            100
+            qos_profile_system_default
         )
 
         self.declare_parameters(
@@ -41,9 +41,9 @@ class Manipulator(Node):
         pin = self._parameters[manip_id].get_parameter_value().integer_value
 
         if activated:
-            self.gpio.set_bits(bits=(pin))
+            self.gpio.set_bits(bits=pin)
         else:
-            self.gpio.unset_bits(bits=(pin))
+            self.gpio.unset_bits(bits=pin)
 
 
 def main():

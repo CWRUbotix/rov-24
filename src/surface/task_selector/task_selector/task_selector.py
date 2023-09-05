@@ -1,6 +1,7 @@
 import rclpy
 from rclpy.action import ActionClient
 from rclpy.node import Node
+from rclpy.qos import qos_profile_system_default
 from task_selector.tasks import Tasks
 
 # from interfaces.action import Example
@@ -14,15 +15,14 @@ class TaskSelector(Node):
     def __init__(self):
         # creation of a Node with its name as input
         super().__init__('task_selector',
-                         parameter_overrides=[],
-                         namespace='surface')
+                         parameter_overrides=[])
 
         # create service to handle requests for task switching
         self.request_server = self.create_service(
             TaskRequest, '/task_request', self.request_task_callback)
 
         self.feedback_server = self.create_publisher(
-            TaskFeedback, '/task_feedback', 10)
+            TaskFeedback, '/task_feedback', qos_profile_system_default)
 
         # instantiates new action clients with inputs of node,
         # action type, action name

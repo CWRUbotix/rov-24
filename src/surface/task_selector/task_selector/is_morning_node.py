@@ -11,8 +11,7 @@ class IsMorning(Node):
 
     def __init__(self):
         super().__init__('good_morning_sayer',
-                         parameter_overrides=[],
-                         namespace='surface')
+                         parameter_overrides=[])
         self._action_server = ActionServer(
             self,
             Example,
