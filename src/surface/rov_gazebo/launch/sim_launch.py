@@ -159,7 +159,7 @@ def generate_launch_description():
     #     emulate_tty=True
     # )
 
-    # Launches Controller
+    # Launches Surface Nodes
     surface_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             [os.path.join(surface_main_path, "launch", "surface_all_nodes_launch.py")]
