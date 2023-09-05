@@ -73,7 +73,7 @@ class KeyboardListenerNode(Node):
         super().__init__("keyboard_listener_node", parameter_overrides=[])
 
         self.rc_pub = self.create_publisher(
-            OverrideRCIn, "/mavros/rc/override", qos_profile=10
+            OverrideRCIn, "/mavros/rc/override", qos_profile_system_default
         )
         self.get_logger().info(HELP_MSG)
         self.status = {
@@ -140,16 +140,18 @@ class KeyboardListenerNode(Node):
     def pub_rov_control(self):
         msg = OverrideRCIn()
 
-        msg.channels[PITCH_CHANNEL] = (self.status["pitch_up"] - self.status["pitch_down"]) * 400
-        msg.channels[ROLL_CHANNEL] = (self.status["roll_left"] - self.status["roll_right"]) * 400
-        msg.channels[THROTTLE_CHANNEL] = (self.status["up"] - self.status["down"]) * 400
-        msg.channels[LATERAL_CHANNEL] = (self.status["left"] - self.status["right"]) * 400
-        msg.channels[FORWARD_CHANNEL] = (self.status["forward"] - self.status["backward"]) * 400
-        msg.channels[YAW_CHANNEL] = (self.status["yaw_left"] - self.status["yaw_right"]) * 400
+        msg.channels[PITCH_CHANNEL] = self.status["pitch_up"] - self.status["pitch_down"]
+        msg.channels[ROLL_CHANNEL] = self.status["roll_left"] - self.status["roll_right"]
+        msg.channels[THROTTLE_CHANNEL] = self.status["up"] - self.status["down"]
+        msg.channels[LATERAL_CHANNEL] = self.status["left"] - self.status["right"]
+        msg.channels[FORWARD_CHANNEL] = self.status["forward"] - self.status["backward"]
+        msg.channels[YAW_CHANNEL] = self.status["yaw_left"] - self.status["yaw_right"]
 
         for channel in range(YAW_CHANNEL + 1):
+
+            msg.channels[channel] *= RANGE_SPEED
             # 1500 is no movement
-            msg.channels[channel] += 1500
+            msg.channels[channel] += ZERO_SPEED
 
         self.rc_pub.publish(msg)
 
