@@ -83,7 +83,8 @@ def generate_launch_description():
             ],
             remappings=[
                     (f'/{NS}/mavros/cmd/arming', '/mavros/cmd/arming'),
-                    (f'/{NS}/mavros/rc/override', '/mavros/rc/override')]
+                    (f'/{NS}/mavros/rc/override', '/mavros/rc/override')],
+            emulate_tty=True
     )
 
     # # Spawn entity
