@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # Upgrade first
+sudo apt-get update
 sudo apt upgrade
 
 # Install git, curl, pip
@@ -16,6 +17,7 @@ pip install pyqtdarktheme
 pip install numpy
 pip install numpy --upgrade  # Make sure numpy is up-do-date to avoid https://github.com/opencv/opencv-python/issues/885
 pip install opencv-python
+pip install opencv-python-headless
 
 # Setting locale
 locale  # check for UTF-8
@@ -41,7 +43,7 @@ echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-a
 sudo apt update
 sudo apt upgrade
 
-# Missing Ros dependecies
+# Missing ROS dependecies
 sudo apt install python3-catkin-pkg-modules
 sudo apt install python3-rosdistro-modules
 sudo apt install python3-rospkg-modules
