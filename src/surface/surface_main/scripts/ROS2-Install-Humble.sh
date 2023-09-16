@@ -16,6 +16,7 @@ pip install pyqtdarktheme
 pip install numpy
 pip install numpy --upgrade  # Make sure numpy is up-do-date to avoid https://github.com/opencv/opencv-python/issues/885
 pip install opencv-python
+pip install opencv-python-headless
 
 # Setting locale
 locale  # check for UTF-8
