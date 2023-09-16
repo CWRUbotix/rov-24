@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # Upgrade first
+sudo apt-get update
 sudo apt upgrade
 
 # Install git, curl, pip
