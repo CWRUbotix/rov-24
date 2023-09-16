@@ -43,7 +43,7 @@ echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-a
 sudo apt update
 sudo apt upgrade
 
-# Missing Ros dependecies
+# Missing ROS dependecies
 sudo apt install python3-catkin-pkg-modules
 sudo apt install python3-rosdistro-modules
 sudo apt install python3-rospkg-modules
