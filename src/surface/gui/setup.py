@@ -17,7 +17,8 @@ setup(
         (os.path.join('share', package_name, 'launch'),
          glob('launch/*launch.[pxy][yma]*'))
     ],
-    install_requires=['setuptools', 'pyqt6', 'pyqtdarktheme', 'opencv-python'],
+    install_requires=['setuptools', 'pyqt6', 'pyqtdarktheme', 'opencv-python',
+                      'opencv-python-headless'],
     zip_safe=True,
     maintainer='Benjamin Poulin',
     maintainer_email='bwp18@case.edu',
