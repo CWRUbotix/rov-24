@@ -6,10 +6,6 @@ This is the package for all our msg, srv, and action definitions.
 
 ## Msg files
 
-[Armed.msg](msg/Armed.msg)
-
-Used for communicating Arm/Disarm command to pixhawk.
-
 [CameraControllerSwitch.msg](msg/CameraControllerSwitch.msg)
 
 Used for toggling through camera feeds in the pilot gui.
@@ -17,10 +13,6 @@ Used for toggling through camera feeds in the pilot gui.
 [Manip.msg](msg/Manip.msg)
 
 Used for toggling manipulators on and off.
-
-[ROVControl.msg](msg/ROVControl.msg)
-
-Used for communicating movement direction of rov in physical and simulation.
 
 [TaskFeedback.msg](msg/TaskFeedback.msg)
 

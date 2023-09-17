@@ -12,6 +12,7 @@ Currently launches our regular cameras.
 `ls /dev/v4l/by-path` for usb slot based symlinks
 
 * **Author: Noah Mollerstuen**
+* **Author: Benjamin Poulin**
 
 ## Usage
 
