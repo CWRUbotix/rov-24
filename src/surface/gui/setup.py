@@ -6,7 +6,7 @@ package_name = 'gui'
 
 setup(
     name=package_name,
-    version='0.0.0',
+    version='1.0.0',
     packages=[package_name, os.path.join(package_name, 'modules'),
               os.path.join(package_name, 'event_nodes')],
     data_files=[
