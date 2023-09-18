@@ -8,8 +8,6 @@ https://github.com/leggedrobotics/ros_best_practices/blob/main/ros_package_templ
 
 This is a template: replace, remove, and add where required. Describe here what this package does and what it's meant for in a few sentences.
 
-* **Author: John Doe**
-
 ## Installation
 
 Describe any dependencies not install by rosdep
