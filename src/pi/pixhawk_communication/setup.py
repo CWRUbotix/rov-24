@@ -1,6 +1,7 @@
-from setuptools import setup
-from glob import glob
 import os
+from glob import glob
+
+from setuptools import setup
 
 package_name = 'pixhawk_communication'
 
