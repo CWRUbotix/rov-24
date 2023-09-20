@@ -6,7 +6,6 @@ This package interfaces with the [Realsense](https://www.intelrealsense.com/dept
 
 [Realsense docs](https://dev.intelrealsense.com/docs/compiling-librealsense-for-linux-ubuntu-guide)
 
-
 ## Usage
 
 Launch the package with:
@@ -19,14 +18,13 @@ ros2 launch realsense realsense_launch.py
 
 * **realsense_launch.py:** launches the Realsense interface and starts publishing frames
 
-
 ## Published Topics
 
-* **`/depth_cam/image_raw`** ([sensor_msg/Image]())
+* **`/depth_cam/image_raw`** ([sensor_msgs/Image])
 
     Regular color camera frames
 
-* **`/depth_cam/camera_info`** ([sensor_msg/CameraInfo])
+* **`/depth_cam/camera_info`** ([sensor_msgs/CameraInfo])
 
     Details about the camera (frame size, etc.)
 
@@ -34,7 +32,6 @@ ros2 launch realsense realsense_launch.py
 
     Orientation of the camera??? It's magic
 
-
 [sensor_msgs/Image]: http://docs.ros.org/en/api/sensor_msgs/html/msg/Image.html
-[sensor_msg/CameraInfo]: http://docs.ros.org/en/melodic/api/sensor_msgs/html/msg/CameraInfo.html
+[sensor_msgs/CameraInfo]: http://docs.ros.org/en/melodic/api/sensor_msgs/html/msg/CameraInfo.html
 [realsense2_camera_msgs/Extrinsincs]: https://github.com/IntelRealSense/realsense-ros/blob/ros2-development/realsense2_camera_msgs/msg/Extrinsics.msg

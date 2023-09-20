@@ -7,6 +7,7 @@ This package launches the rest of the Pi packages. It should be run on Pi boot u
 [Tutorial followed](https://roboticsbackend.com/make-ros-launch-start-on-boot-with-robot_upstart/)
 
 ## Installation
+
 You need to run these commands to get the launch file running on Pi boot:
 
 ```bash
@@ -21,7 +22,6 @@ These commands should be run in the `src` folder after a colcon build in the wor
 
 WARNING: Python packages must be installed with sudo for startup code to see them.
 
-
 ### Adding udev Rules
 
 This should automatically be done by the prior command `ros2 run pi_main install`. If not, copy all the .rules files from `udev_rules` in this package to the `/etc/udev/rules.d` directory to use USB devices properly.
@@ -30,8 +30,8 @@ This should automatically be done by the prior command `ros2 run pi_main install
 
 [Tutorial followed](https://roboticsbackend.com/make-ros-launch-start-on-boot-with-robot_upstart/)
 
-
 ### Testing without Rebooting
+
 Installing & setting up this package creates a startup task called `cwrubotix_pi`. You can manually start and stop this task.
 
 You should run the `cwrubotix_pi` task in the foreground for testing (**make sure to kill the background task first - see below**):
@@ -39,7 +39,6 @@ You should run the `cwrubotix_pi` task in the foreground for testing (**make sur
 ```bash
 sudo cwrubotix_pi-start
 ```
-
 
 To run the `cwrubotix_pi` task in the background (happens on Pi startup):
 
@@ -60,5 +59,5 @@ ros2 run robot_upstart uninstall cwrubotix_pi
 ```
 
 ## Launch files
-- **pi_launch.py**: launch the manipulators, camera streaming, and pixhawk packages
 
+- **pi_launch.py**: launch the manipulators, camera streaming, and pixhawk packages
