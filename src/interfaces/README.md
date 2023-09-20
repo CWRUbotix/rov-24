@@ -33,7 +33,3 @@ BasicTask responds with a string.
 [Example.action](action/Example.action)
 
 An example action.
-
-* **Author: Benjamin Poulin**
-* **Author: Eric Yarnot**
-* **Author: Michael Carlstrom**
