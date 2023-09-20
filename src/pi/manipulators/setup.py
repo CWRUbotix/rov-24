@@ -1,8 +1,8 @@
 import os
-from glob import glob
-from setuptools import setup
 import sys
+from glob import glob
 
+from setuptools import setup
 
 major_num = sys.version_info[0]
 minor_num = sys.version_info[1]
