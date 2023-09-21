@@ -12,7 +12,7 @@ class GUIEventServer(Node):
     """Multithreaded server for processing server requests to update GUI."""
 
     def __init__(self, srv_type: SrvType, topic: str,
-                 callback: Callable[[SrvTypeRequest, SrvTypeResponse], SrvTypeResponse]):
+                    callback: Callable[[SrvTypeRequest, SrvTypeResponse], SrvTypeResponse]):
         """
         Initialize this server with a CALLBACK for processing requests.
 

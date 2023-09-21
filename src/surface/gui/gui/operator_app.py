@@ -39,4 +39,5 @@ class OperatorApp(App):
 
 
 def run_gui_operator():
-    OperatorApp().run_gui()
+    with OperatorApp() as app:
+        app.run_gui()
