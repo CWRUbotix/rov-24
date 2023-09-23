@@ -29,5 +29,4 @@ class PilotApp(App):
 
 
 def run_gui_pilot():
-    with PilotApp() as app:
-        app.run_gui()
+    PilotApp().run_gui()

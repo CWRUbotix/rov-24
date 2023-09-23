@@ -1,3 +1,4 @@
+import atexit
 import signal
 import sys
 
@@ -19,11 +20,7 @@ class App(QWidget):
         self.node.declare_parameter('theme', '')
         self.resize(1850, 720)
 
-    def __enter__(self):
-        return self
-
-    def __exit__(self, *_):
-        rclpy.shutdown()
+        atexit.register(rclpy.shutdown)
 
     def run_gui(self):
         # Kills with Control + C
@@ -39,4 +36,4 @@ class App(QWidget):
         # Clean up resources
         self.node.destroy_node()
         self.show()
-        sys.exit(self.app.exec())
+        self.app.exec()
