@@ -28,11 +28,11 @@ ros2 launch gui pilot_launch.py
 
 * **operator_launch.py:** This launches the operator gui.
 
-  * **`theme`** Color of theme used by the gui options are `dark`, `light`, `watermelon`. Default: `dark`.
+  * **`theme`** : Theme used by the gui; options are `dark`, `light`, `watermelon`. Default: `dark`.
 
 * **pilot_launch.py:** This launches the pilot gui.
 
-  * **`theme`** Color of theme used by the gui options are `dark`, `light`, `watermelon`. Default: `dark`.
+  * **`theme`** : Theme used by the gui; options are `dark`, `light`, `watermelon`. Default: `dark`.
 
 ## Event Nodes
 
@@ -94,7 +94,7 @@ A simple start and stop timer that counts down from 15 minutes.
 
 ### Video Widget
 
-A widget do display video. There are two subclasses of the video widget. One adds pausing the video stream and the other enables toggling between video feeds.
+A widget to display video. There are two subclasses of the video widget: `PauseableVideoWidget` adds pausing the video stream and `SwitchableVideoWidget` enables toggling between video feeds.
 
 #### Subscribed Topics
 
