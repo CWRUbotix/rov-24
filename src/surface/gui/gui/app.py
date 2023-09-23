@@ -33,7 +33,8 @@ class App(QWidget):
             self.app.setStyleSheet("QWidget { background-color: green; color: pink; }")
         else:
             qdarktheme.setup_theme("light")
-        # Clean up resources
+        # Delete node now that we've used it to get params
         self.node.destroy_node()
+
         self.show()
         self.app.exec()
