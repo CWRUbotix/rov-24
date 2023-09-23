@@ -37,4 +37,6 @@ class App(QWidget):
         self.node.destroy_node()
 
         self.show()
+
+        # TODO: when the app closes it causes an error. Make not cause error?
         self.app.exec()
