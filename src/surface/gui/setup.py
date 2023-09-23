@@ -8,7 +8,7 @@ package_name = 'gui'
 setup(
     name=package_name,
     version='1.0.0',
-    packages=[package_name, os.path.join(package_name, 'modules'),
+    packages=[package_name, os.path.join(package_name, 'widgets'),
               os.path.join(package_name, 'event_nodes')],
     data_files=[
         ('share/ament_index/resource_index/packages',

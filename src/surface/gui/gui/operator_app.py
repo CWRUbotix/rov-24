@@ -1,8 +1,8 @@
 from gui.app import App
-from gui.modules.logger import Logger
-from gui.modules.seagrass import SeagrassWidget
-from gui.modules.task_selector import TaskSelector
-from gui.modules.timer import Timer
+from gui.widgets.logger import Logger
+from gui.widgets.seagrass import SeagrassWidget
+from gui.widgets.task_selector import TaskSelector
+from gui.widgets.timer import Timer
 from PyQt6.QtWidgets import QGridLayout, QTabWidget, QWidget
 
 
