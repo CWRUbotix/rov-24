@@ -2,7 +2,7 @@
 
 ## Overview
 
-This package is for all the code related go the driver station gui. The gui is comprised of our custom widgets found in the gui/modules folder. For connecting our gui with the rest of the ROS network we have implemented nodes which communicate between pyqt and ROS found in gui/event_nodes. Lastly we have the app.py which is the a custom super class which inherits from ROS Node and PyQT QWidget. Then operator_app.py and pilot_app.py inherit from App to make each custom gui.
+This package is for all the code related go the driver station gui. The gui is comprised of our custom widgets found in the gui/widgets folder. For connecting our gui with the rest of the ROS network we have implemented nodes which communicate between pyqt and ROS found in gui/event_nodes. Lastly we have the app.py which is the a custom super class which inherits from ROS Node and PyQT QWidget. Then operator_app.py and pilot_app.py inherit from App to make each custom gui.
 
 ## Installation
 
@@ -52,7 +52,7 @@ Multithreaded server for processing server requests to update GUI.
 
 Multithreaded subscriber for receiving messages to the GUI.
 
-## Modules
+## Widgets
 
 ### Arm
 
