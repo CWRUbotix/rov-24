@@ -30,4 +30,6 @@ Reads keyboard input to control robots.
 
 #### Published Topics
 
-TODO (this is still using the dear ROVControl msg)
+* **`/manual_control`** (ROVControl - an old, deleted message type)
+
+    Outdated ROV movement instructions 
