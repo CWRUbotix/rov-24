@@ -1,6 +1,6 @@
 # Task Selector
 
-TODO REWRITE WHEN THIS WHOLE PACKAGE CHANGES
+TODO: REWRITE WHEN THIS WHOLE PACKAGE CHANGES
 
 A graph of the nodes used in the task scheduler
 
