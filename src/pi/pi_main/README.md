@@ -1,12 +1,14 @@
 # Pi Main
 
+## Overview
+
+This package launches the rest of the Pi packages. It should be run on Pi boot up.
+
 [Tutorial followed](https://roboticsbackend.com/make-ros-launch-start-on-boot-with-robot_upstart/)
 
-Commands to be run to get launch file running on pi on boot.
+## Installation
 
-Should be in run src folder after a colcon build in the ws folder.
-
-Warning need to install python packages with sudo.
+You need to run these commands to get the launch file running on Pi boot:
 
 ```bash
 ros2 run pi_main install 
@@ -16,32 +18,46 @@ ros2 run pi_main install
 sudo systemctl daemon-reload
 ```
 
+These commands should be run in the `src` folder after a colcon build in the workspace folder.
+
+WARNING: Python packages must be installed with sudo for startup code to see them.
+
 ### Adding udev Rules
 
-This should automatically be done by the prior command `ros2 run pi_main install`. If not copy all the .rules files from `udev_rules` in this package to the `/etc/udev/rules.d` directory to use USB devices properly.
+This should automatically be done by the prior command `ros2 run pi_main install`. If not, copy all the .rules files from `udev_rules` in this package to the `/etc/udev/rules.d` directory to use USB devices properly.
 
-### For Testing without Rebooting
+## Usage
 
-Runs in foreground for testing
+[Tutorial followed](https://roboticsbackend.com/make-ros-launch-start-on-boot-with-robot_upstart/)
+
+### Testing without Rebooting
+
+Installing & setting up this package creates a startup task called `cwrubotix_pi`. You can manually start and stop this task.
+
+You should run the `cwrubotix_pi` task in the foreground for testing (**make sure to kill the background task first - see below**):
 
 ```bash
 sudo cwrubotix_pi-start
 ```
 
-Runs in background
+To run the `cwrubotix_pi` task in the background (happens on Pi startup):
 
 ```bash
 sudo systemctl start cwrubotix_pi.service
 ```
 
-Kills in background
+To kill the `cwrubotix_pi` background task (**do this before starting the foreground task**):
 
 ```bash
 sudo systemctl stop cwrubotix_pi.service
 ```
 
-### Unistall cwrubotix_pi
+To completely uninstall the `cwrubotix_pi` task:
 
 ```bash
 ros2 run robot_upstart uninstall cwrubotix_pi
 ```
+
+## Launch files
+
+- **pi_launch.py**: launch the manipulators, camera streaming, and pixhawk packages

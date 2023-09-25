@@ -1,12 +1,13 @@
-from setuptools import setup
-from glob import glob
 import os
+from glob import glob
+
+from setuptools import setup
 
 package_name = 'camera_streamer'
 
 setup(
     name=package_name,
-    version='0.0.0',
+    version='1.0.0',
     packages=[package_name],
     data_files=[
         ('share/ament_index/resource_index/packages',
@@ -20,7 +21,7 @@ setup(
     zip_safe=True,
     maintainer='Noah Mollerstuen',
     maintainer_email='noah@mollerstuen.com',
-    description='contains camera information aswell as camera launch files',
+    description='contains camera information as well as camera launch files',
     license='Apaches License 2.0',
     tests_require=['pytest'],
     entry_points={
