@@ -31,6 +31,7 @@ class GUIEventClient(Node):
     def __connect_to_service(self):
         """Connect this client to a server in a separate thread; set self.connected when done."""
         while not self.cli.wait_for_service(timeout_sec=TIMEOUT_SEC):
+            # TODO this f strings looks janky
             self.get_logger().info(
                 'Service for GUI event client node on topic' +
                 f' {self.topic} unavailable, waiting again...')

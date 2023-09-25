@@ -2,10 +2,12 @@
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>interfaces</name>
-  <version>0.0.0</version>
+  <version>1.0.0</version>
   <description>MATE ROV Custom ROS Interfaces</description>
   <maintainer email="bwp18@case.edu">Benjamin Poulin</maintainer>
-  <maintainer email="ery12@case.edu">ericy</maintainer>
+  <maintainer email="ery12@case.edu">Eric Yarnot</maintainer>
+  <maintainer email="rmc170@case.edu">Michael Carlstrom</maintainer>
+
   <license>Apache License 2.0</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>

@@ -14,8 +14,6 @@ We communicate to the Pixhawk by using [mavros](https://github.com/mavlink/mavro
 
 To set up a Pixhawk USB port use [this](https://docs.px4.io/main/en/companion_computer/pixhawk_companion.html) guide.
 
-* **Author: Michael Carlstrom**
-
 ## Installation
 
 Install geographiclib dependencies.
