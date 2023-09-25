@@ -20,6 +20,16 @@ Run the main node with
 ros2 launch surface_main surface_all_nodes_launch.py
 ```
 
+or run just operator or just pilot nodes with
+
+```bash
+ros2 launch surface_main surface_operator_launch.py
+```
+
+```bash
+ros2 launch surface_main surface_pilot_launch.py
+```
+
 ## Launch files
 
 * **surface_all_nodes_launch.py:** Launches all surface nodes.

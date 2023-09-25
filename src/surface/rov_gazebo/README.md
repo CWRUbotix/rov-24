@@ -1,5 +1,7 @@
 # Gazebo Simulation
-<!--TODO When ever this works ;(-->
+
+TODO: REWRITE THIS WHEN THIS PACKAGE WORKS
+
 ## 1. Build
 
 ```bash
