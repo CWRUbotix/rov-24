@@ -8,38 +8,35 @@ from PyQt6.QtWidgets import QApplication, QWidget
 from rclpy.node import Node
 
 
-class App(Node, QWidget):
+class App(QWidget):
     """Main app window."""
 
     def __init__(self, node_name: str):
         self.app: QApplication = QApplication(sys.argv)
         rclpy.init()
+        super().__init__()
+        self.node = Node(node_name, parameter_overrides=[])
 
-        super().__init__(
-            node_name=node_name,
-            parameter_overrides=[])
-        super(QWidget, self).__init__()
-
-        self.declare_parameter('theme', '')
+        self.node.declare_parameter('theme', '')
         self.resize(1850, 720)
 
-        def kill():
-            self.destroy_node()
-            rclpy.shutdown()
-
-        atexit.register(kill)
+        atexit.register(rclpy.shutdown)
 
     def run_gui(self):
         # Kills with Control + C
         signal.signal(signal.SIGINT, signal.SIG_DFL)
 
-        if self.get_parameter('theme').get_parameter_value().string_value == "dark":
+        if self.node.get_parameter('theme').get_parameter_value().string_value == "dark":
             qdarktheme.setup_theme()
-        elif self.get_parameter('theme').get_parameter_value().string_value == "watermelon":
+        elif self.node.get_parameter('theme').get_parameter_value().string_value == "watermelon":
             # UGLY But WORKS
             self.app.setStyleSheet("QWidget { background-color: green; color: pink; }")
         else:
             qdarktheme.setup_theme("light")
+        # Delete node now that we've used it to get params
+        self.node.destroy_node()
 
         self.show()
-        sys.exit(self.app.exec())
+
+        # TODO: when the app closes it causes an error. Make not cause error?
+        self.app.exec()

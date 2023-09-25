@@ -1,8 +1,8 @@
 import os
-from glob import glob
-from setuptools import setup
 import sys
+from glob import glob
 
+from setuptools import setup
 
 major_num = sys.version_info[0]
 minor_num = sys.version_info[1]
@@ -11,7 +11,7 @@ package_name = 'manipulators'
 
 setup(
     name=package_name,
-    version='0.0.0',
+    version='1.0.0',
     packages=[package_name],
     data_files=[
         ('share/ament_index/resource_index/packages',
@@ -25,8 +25,8 @@ setup(
     ],
     install_requires=['setuptools', 'bitstring', 'wiringpi'],
     zip_safe=True,
-    maintainer='taz',
-    maintainer_email='tzupfer@gmail.com',
+    maintainer='Georgia Martinez, Michael Carlstrom',
+    maintainer_email='gcm49@case.edu, rmc170@case.edu',
     description='Code for manipulators',
     license='Apache 2.0',
     tests_require=['pytest'],
