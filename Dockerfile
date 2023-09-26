@@ -2,24 +2,22 @@ FROM osrf/ros:humble-desktop-full
 
 SHELL ["/bin/bash", "-c"] 
 
-# Black Magic for sshkeys
-ARG ssh_prv_key
-ARG ssh_pub_key
-ARG email
-RUN mkdir -p -m 0600 ~/.ssh && ssh-keyscan github.com >> ~/.ssh/known_hosts
+# # Black Magic for sshkeys
+# ARG ssh_prv_key
+# ARG ssh_pub_key
+# RUN mkdir -p -m 0600 ~/.ssh && ssh-keyscan github.com >> ~/.ssh/known_hosts
 
-# Authorize SSH Host
-RUN mkdir -p /root/.ssh && \
-    chmod 0700 /root/.ssh
+# # Authorize SSH Host
+# RUN mkdir -p /root/.ssh && \
+#     chmod 0700 /root/.ssh
 
-# Add the keys and set permissions
-RUN echo "$ssh_prv_key" > /root/.ssh/id_rsa && \
-    echo "$ssh_pub_key" > /root/.ssh/id_rsa.pub && \
-    chmod 600 /root/.ssh/id_rsa && \
-    chmod 600 /root/.ssh/id_rsa.pub
+# # Add the keys and set permissions
+# RUN echo "$ssh_prv_key" > /root/.ssh/id_rsa && \
+#     echo "$ssh_pub_key" > /root/.ssh/id_rsa.pub && \
+#     chmod 600 /root/.ssh/id_rsa && \
+#     chmod 600 /root/.ssh/id_rsa.pub
 
-# # Sets default email for commiting
-RUN git config --global user.email "$email"
+# RUN  echo "    IdentityFile ~/.ssh/id_rsa" >> /etc/ssh/ssh_config
 
 RUN source /opt/ros/humble/setup.sh \
     && rosdep update
@@ -31,7 +29,8 @@ WORKDIR /rov-24
 
 COPY . .
 
-RUN git pull
+# Sets up git config
+# COPY .gitconfig ~/.gitconfig
 
 # Installs ROS dependencies
 RUN source /opt/ros/humble/setup.sh \
@@ -46,5 +45,5 @@ RUN source /opt/ros/humble/setup.sh \
 
 COPY src/surface/surface_main/scripts/ros2_entrypoint.sh /ros_entrypoint.sh
 
-# sudo docker build . -t rov-24 --build-arg ssh_prv_key="$(cat ~/.ssh/id_ed25519)" --build-arg ssh_pub_key="$(cat ~/.ssh/id_ed25519.pub)" --build-arg email="$(git config user.email)"
+# sudo docker build . -t rov-24 --build-arg ssh_prv_key="$(cat ~/.ssh/id_ed25519)"
 # sudo docker run -it rov-24
