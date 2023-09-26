@@ -44,7 +44,7 @@ RUN source /opt/ros/humble/setup.sh \
     && PYTHONWARNINGS=ignore:::setuptools.command.install,ignore:::setuptools.command.easy_install,ignore:::pkg_resources; export PYTHONWARNINGS\
     && colcon build --symlink-install
 
-# ENTRYPOINT ["ls"]
+COPY src/surface/surface_main/scripts/ros2_entrypoint.sh /ros_entrypoint.sh
 
 # sudo docker build . -t rov-24 --build-arg ssh_prv_key="$(cat ~/.ssh/id_ed25519)" --build-arg ssh_pub_key="$(cat ~/.ssh/id_ed25519.pub)" --build-arg email="$(git config user.email)"
 # sudo docker run -it rov-24
