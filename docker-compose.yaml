@@ -1,0 +1,6 @@
+version: '3.7'
+services:
+  test:
+    image: rov-24
+    volumes:
+      - ~/.ssh:/home/user/.ssh:ro
