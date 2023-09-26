@@ -4,3 +4,5 @@ services:
     image: rov-24
     volumes:
       - ~/.ssh:/home/user/.ssh:ro
+    stdin_open: true
+    tty: true
