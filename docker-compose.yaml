@@ -1,7 +1,7 @@
 version: '3.9'
 services:
   container:
-    image: rov-24
+    image: rov-24:latest
     volumes:
       - ~/.ssh:/home/user/.ssh:ro
     stdin_open: true
