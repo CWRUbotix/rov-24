@@ -2,23 +2,6 @@ FROM osrf/ros:humble-desktop-full
 
 SHELL ["/bin/bash", "-c"] 
 
-# # Black Magic for sshkeys
-# ARG ssh_prv_key
-# ARG ssh_pub_key
-# RUN mkdir -p -m 0600 ~/.ssh && ssh-keyscan github.com >> ~/.ssh/known_hosts
-
-# # Authorize SSH Host
-# RUN mkdir -p /root/.ssh && \
-#     chmod 0700 /root/.ssh
-
-# # Add the keys and set permissions
-# RUN echo "$ssh_prv_key" > /root/.ssh/id_rsa && \
-#     echo "$ssh_pub_key" > /root/.ssh/id_rsa.pub && \
-#     chmod 600 /root/.ssh/id_rsa && \
-#     chmod 600 /root/.ssh/id_rsa.pub
-
-# RUN  echo "    IdentityFile ~/.ssh/id_rsa" >> /etc/ssh/ssh_config
-
 RUN source /opt/ros/humble/setup.sh \
     && rosdep update
 
@@ -28,9 +11,6 @@ RUN sudo apt install python3-pip -y
 WORKDIR /rov-24
 
 COPY . .
-
-# Sets up git config
-# COPY .gitconfig ~/.gitconfig
 
 # Installs ROS dependencies
 RUN source /opt/ros/humble/setup.sh \
@@ -45,5 +25,5 @@ RUN source /opt/ros/humble/setup.sh \
 
 COPY src/surface/surface_main/scripts/ros2_entrypoint.sh /ros_entrypoint.sh
 
-# sudo docker build . -t rov-24 --build-arg ssh_prv_key="$(cat ~/.ssh/id_ed25519)"
+# sudo docker build . -t rov-24 
 # sudo docker run -it rov-24
