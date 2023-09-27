@@ -3,7 +3,7 @@ from PyQt6.QtCore import pyqtSignal, pyqtSlot
 from PyQt6.QtGui import QColor, QFont, QTextCursor
 from PyQt6.QtWidgets import (QCheckBox, QHBoxLayout, QTextEdit, QVBoxLayout,
                              QWidget)
-from rcl_interfaces.msg import Log
+from rcl_rov_msgs.msg import Log
 from rclpy.logging import LoggingSeverity
 
 # Dictionary linking LoggingSeverity to a QColor
