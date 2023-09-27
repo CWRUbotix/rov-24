@@ -12,6 +12,8 @@ WORKDIR /rov-24
 
 COPY . .
 
+# TODO install these before the copy to save time?
+
 # Installs ROS dependencies
 RUN source /opt/ros/humble/setup.sh \
     && rosdep install --from-paths src --ignore-src -r -y
