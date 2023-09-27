@@ -1,0 +1,8 @@
+{
+    "name" : "ROV",
+    "dockerComposeFile": ["../docker-compose.yaml"],
+    "service": "ros",
+    "workspaceFolder": "/rov-24",
+    "shutdownAction": "stopCompose",
+    "postStartCommand": "source /ros_entrypoint.sh"
+}

@@ -2,7 +2,10 @@ version: '3.9'
 services:
   ros:
     build: .
+    environment:
+      - DISPLAY=${DISPLAY}
     volumes:
       - ~/.ssh:/home/user/.ssh:ro
-    stdin_open: true
+      - /tmp/.X11-unix:/tmp/.X11-unix
     tty: true
+    stdin_open: true
