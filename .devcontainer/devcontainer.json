@@ -8,7 +8,7 @@
     // "postStartCommand": "export PYTHONWARNINGS=ignore:::setuptools.command.install,ignore:::setuptools.command.easy_install,ignore:::pkg_resources && . /rov-24/install/setup.sh"
     "customizations": {
         "vscode" : {
-            "extensions": ["ms-iot.vscode-ros"]
+            "extensions": ["ms-python.flake8"]
         }
     }
 }
