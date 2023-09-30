@@ -1,7 +1,7 @@
 version: '3.9'
 services:
   ros:
-    build: .
+    image: ghcr.io/cwrurobotics/rov-24:docker
     environment:
       - DISPLAY=${DISPLAY}
     volumes:

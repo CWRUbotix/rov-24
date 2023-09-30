@@ -1,6 +1,7 @@
 {
     "name" : "ROV",
-    "image": "ghcr.io/cwrurobotics/rov-24:docker",
+    "dockerComposeFile": ["../docker-compose.yaml"],
+    "service": "ros",
     "workspaceFolder": "/rov-24",
     "customizations": {
         "vscode" : {
