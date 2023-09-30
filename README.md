@@ -10,20 +10,10 @@
 [Follow this environment setup guide!](https://github.com/cwruRobotics/rov-24/wiki/Environment-Setup)
 
 Then create a workspace:
-
-If you're using VSCode, access WSL by opening VSCode, pressing `ctrl`+`` ` `` (below the `esc` key), clicking the dropdown arrow on the right and selecting `Ubuntu (WSL)`. You can also view your WSL files by opening `File Explorer > Linux (bottom left) > Ubuntu > home > your Ubuntu username`.
-
-```bash
-git clone --recurse-submodules git@github.com:cwruRobotics/rov-24.git
-```
+<!-- 
+If you're using VSCode, access WSL by opening VSCode, pressing `ctrl`+`` ` `` (below the `esc` key), clicking the dropdown arrow on the right and selecting `Ubuntu (WSL)`. You can also view your WSL files by opening `File Explorer > Linux (bottom left) > Ubuntu > home > your Ubuntu username`. -->
 
 If you've never contributed to a git repository before, you might receive an error message saying you don't have access. In that case visit [this tutorial](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/about-ssh) to set up SSH for local GitHub access.
-
-If you don't have `ros2_video_streamer` in the `src` folder, run this:
-
-```bash
-git submodule update --init --recursive
-```
 
 Now, anytime you want to build, do the following:
 
