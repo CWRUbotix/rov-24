@@ -1,38 +1,45 @@
-
-import rclpy
-from std_msgs.msg import Bool
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel
-from PyQt5.QtGui import QColor, QPalette
-
 ## /flooding (boolean) (True is flooding)
-
+import rclpy
+from rov_msgs.msg import Flooding
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel
+from PyQt5.QtGui import QPainter, QColor
+from gui.event_nodes.subscriber import GUIEventSubscriber
+from PyQt6.QtCore import pyqtSignal
 
 class FloodVisual(QWidget):
     def __init__(self):
         super().__init__()
+        
+        self.signal: pyqtSignal = pyqtSignal(Flooding.flooding)
+        self.signal.connect(self.refresh)
+        self.subscription: GUIEventSubscriber = GUIEventSubscriber(Flooding, '/flooding', signal, 10)
 
-        rclpy.init()
-        self.node = rclpy.create_node('flood_warning')
-        self.subscription = self.node.create_subscription(Bool, '/flooding', self.callback, 10)
-        
-        # GUI initialization
-        self.init_ui()
-        
-    def init_ui(self):
+        self.indicator = IndicatorWidget(self)
         self.layout = QVBoxLayout()
         self.label = QLabel('Indicator')
         self.layout.addWidget(self.label)
-        self.set_palette_color(QColor(255, 0, 0))  # Default color is red
+        self.layout.addWidget(self.indicator)
         self.setLayout(self.layout)
 
-    def set_palette_color(self, color):
-        palette = QPalette()
-        palette.setColor(QPalette.Window, color)
-        self.label.setAutoFillBackground(True)
-        self.label.setPalette(palette)
+    def refresh(self, msg):
+        self.indicator.set_status(msg.flooding)
 
-    def callback(self, msg):
-        if msg.data:
-            self.set_palette_color(QColor(0, 255, 0))  # Green when the topic is true
-        else:
-            self.set_palette_color(QColor(255, 0, 0))  # Red when the topic is false
+class IndicatorWidget(QWidget):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.status = False
+
+    def set_status(self, status):
+        self.status = status
+        self.update()  # Redraw the widget
+
+    def paintEvent(self, event):
+        painter = QPainter(self)
+        painter.setRenderHint(QPainter.Antialiasing)
+        rect = self.contentsRect()
+        color = QColor(0, 255, 0) if self.status else QColor(255, 0, 0)
+
+        # Draw the circular light
+        painter.setBrush(color)
+        painter.drawEllipse(rect)
+        painter.end()

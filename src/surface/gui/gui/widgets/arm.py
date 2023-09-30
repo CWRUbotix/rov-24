@@ -17,7 +17,6 @@ class Arm(QWidget):
     signal: pyqtSignal = pyqtSignal(CommandBool.Response)
 
     def __init__(self):
-
         super().__init__()
 
         layout: QHBoxLayout = QHBoxLayout()
