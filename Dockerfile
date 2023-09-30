@@ -25,7 +25,9 @@ RUN source /opt/ros/humble/setup.sh \
     && PYTHONWARNINGS=ignore:::setuptools.command.install,ignore:::setuptools.command.easy_install,ignore:::pkg_resources; export PYTHONWARNINGS\
     && colcon build --symlink-install
 
-COPY src/surface/surface_main/scripts/ros2_entrypoint.sh /ros_entrypoint.sh
+
+RUN echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc ;
+RUN echo "$export PYTHONWARNINGS=ignore:::setuptools.command.install,ignore:::setuptools.command.easy_install,ignore:::pkg_resources" >> ~/.bashrc ;
 
 # sudo docker build . -t rov-24 
 # sudo docker run -it rov-24
