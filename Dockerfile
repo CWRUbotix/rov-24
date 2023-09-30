@@ -8,6 +8,10 @@ RUN source /opt/ros/humble/setup.sh \
 RUN sudo apt update -y
 RUN sudo apt install python3-pip -y
 
+RUN echo "source /rov-24/install/setup.bash" >> ~/.bashrc ;
+RUN echo "$export PYTHONWARNINGS=ignore:::setuptools.command.install,ignore:::setuptools.command.easy_install,ignore:::pkg_resources" >> ~/.bashrc ;
+RUN git config --global --add url."git@github.com:".insteadOf "https://github.com/"
+
 WORKDIR /rov-24
 
 COPY . .
@@ -22,7 +26,3 @@ RUN for d in src/pi/*/ src/surface/*/; do pip install -e "$d"; done
 RUN source /opt/ros/humble/setup.sh \
     && PYTHONWARNINGS=ignore:::setuptools.command.install,ignore:::setuptools.command.easy_install,ignore:::pkg_resources; export PYTHONWARNINGS\
     && colcon build --symlink-install
-
-
-RUN echo "source /rov-24/install/setup.bash" >> ~/.bashrc ;
-RUN echo "$export PYTHONWARNINGS=ignore:::setuptools.command.install,ignore:::setuptools.command.easy_install,ignore:::pkg_resources" >> ~/.bashrc ;
