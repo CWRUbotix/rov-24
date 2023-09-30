@@ -1,8 +1,0 @@
-#!/bin/bash
-set -e
-
-# setup ros2 environment
-export PYTHONWARNINGS=ignore:::setuptools.command.install,ignore:::setuptools.command.easy_install,ignore:::pkg_resources
-# source "/opt/ros/$ROS_DISTRO/setup.bash"
-source /rov-24/install/setup.bash --
-exec "$@"
