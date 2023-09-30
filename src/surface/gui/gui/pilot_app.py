@@ -24,9 +24,8 @@ class PilotApp(App):
                                                 "/camera_switch")
         layout.addWidget(self.video_area, alignment=Qt.AlignmentFlag.AlignCenter)
 
-        # self.floodWidget: FloodVisual = FloodVisual()
-
-        # layout.addWidget(self.floodWidget, alignment= Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignTop)
+        self.floodWidget: FloodVisual = FloodVisual()
+        layout.addWidget(self.floodWidget, alignment= Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignTop)
 
         self.arm: Arm = Arm()
         layout.addWidget(self.arm,
