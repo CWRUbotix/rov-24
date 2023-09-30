@@ -6,7 +6,7 @@ from rclpy.action.server import ServerGoalHandle
 from rclpy.executors import MultiThreadedExecutor
 from rclpy.node import Node
 
-from interfaces.action import BasicTask
+from rov_msgs.action import BasicTask
 
 
 class BasicTaskTimedNode(Node):
