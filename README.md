@@ -9,7 +9,7 @@
 
 [Follow this environment setup guide!](https://github.com/cwruRobotics/rov-24/wiki/Environment-Setup)
 
-Then create a workspace:
+<!-- Then create a workspace: -->
 <!-- 
 If you're using VSCode, access WSL by opening VSCode, pressing `ctrl`+`` ` `` (below the `esc` key), clicking the dropdown arrow on the right and selecting `Ubuntu (WSL)`. You can also view your WSL files by opening `File Explorer > Linux (bottom left) > Ubuntu > home > your Ubuntu username`. -->
 
