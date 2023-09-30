@@ -4,7 +4,7 @@ import rclpy
 from rclpy.node import Node
 from task_selector.tasks import Tasks
 
-from interfaces.srv import TaskRequest
+from rov_msgs.srv import TaskRequest
 
 
 class ExampleRequestClient(Node):
