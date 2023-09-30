@@ -6,7 +6,7 @@ from pynput.keyboard import Key, KeyCode
 from rclpy.node import Node
 from rclpy.qos import qos_profile_system_default
 
-from interfaces.msg import ROVControl
+from rov_msgs.msg import ROVControl
 
 
 # key bindings

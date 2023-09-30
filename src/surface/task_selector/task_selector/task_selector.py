@@ -4,10 +4,10 @@ from rclpy.node import Node
 from rclpy.qos import qos_profile_system_default
 from task_selector.tasks import Tasks
 
-# from interfaces.action import Example
-from interfaces.action import BasicTask
-from interfaces.msg import TaskFeedback
-from interfaces.srv import TaskRequest
+# from rov_msgs.action import Example
+from rov_msgs.action import BasicTask
+from rov_msgs.msg import TaskFeedback
+from rov_msgs.srv import TaskRequest
 
 
 class TaskSelector(Node):

@@ -4,8 +4,8 @@ from PyQt6.QtCore import pyqtSignal, pyqtSlot
 from PyQt6.QtWidgets import QGridLayout, QLabel, QPushButton, QWidget
 from task_selector.tasks import Tasks
 
-from interfaces.msg import TaskFeedback
-from interfaces.srv import TaskRequest
+from rov_msgs.msg import TaskFeedback
+from rov_msgs.srv import TaskRequest
 
 WIDTH = 200
 

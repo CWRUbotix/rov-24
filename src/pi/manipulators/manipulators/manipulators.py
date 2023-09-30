@@ -2,7 +2,7 @@ import rclpy
 from manipulators.tca9555 import TCA9555
 from rclpy.node import Node, Subscription
 from rclpy.qos import qos_profile_system_default
-from interfaces.msg import Manip
+from rov_msgs.msg import Manip
 
 
 class Manipulator(Node):
