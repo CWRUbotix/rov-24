@@ -12,8 +12,6 @@ WORKDIR /rov-24
 
 COPY . .
 
-# TODO install these before the copy to save time?
-
 # Installs ROS dependencies
 RUN source /opt/ros/humble/setup.sh \
     && rosdep install --from-paths src --ignore-src -r -y
@@ -26,8 +24,5 @@ RUN source /opt/ros/humble/setup.sh \
     && colcon build --symlink-install
 
 
-RUN echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc ;
+RUN echo "source /rov-24/install/setup.bash" >> ~/.bashrc ;
 RUN echo "$export PYTHONWARNINGS=ignore:::setuptools.command.install,ignore:::setuptools.command.easy_install,ignore:::pkg_resources" >> ~/.bashrc ;
-
-# sudo docker build . -t rov-24 
-# sudo docker run -it rov-24
