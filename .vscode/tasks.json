@@ -30,6 +30,20 @@
                 "kind": "build",
                 "isDefault": true
               }
-        }
+        },
+        {
+            "label": "Docker Pull",
+            "type": "shell",
+            "command": "sudo docker pull ghcr.io/cwrurobotics/rov-24:docker",
+          },
+          {
+            "label": "Docker Build",
+            "command": "${command:remote-containers.rebuildNoCacheAndReopenInContainer}"
+          },
+          {
+            "label": "Docker Rebuild",
+            "dependsOrder": "sequence",
+            "dependsOn": ["Docker Pull", "Docker Build"]
+          }
     ]
 }
