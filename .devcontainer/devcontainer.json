@@ -1,5 +1,6 @@
 {
     "name" : "ROV",
+    // "onCreateCommand": "sudo docker pull ghcr.io/cwrurobotics/rov-24:docker",
     "image": "ghcr.io/cwrurobotics/rov-24:docker",
     "containerEnv": {
         "DISPLAY": "${localEnv:DISPLAY}"
