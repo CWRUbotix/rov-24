@@ -41,6 +41,9 @@
             "command": "${command:remote-containers.rebuildNoCacheAndReopenInContainer}"
           },
           {
+            // Runs Docker Pull and then Docker Build
+            // This is done because the default behavior of Docker Build
+            // does not repull the docker image from github.
             "label": "Docker Rebuild",
             "dependsOrder": "sequence",
             "dependsOn": ["Docker Pull", "Docker Build"],

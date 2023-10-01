@@ -20,7 +20,6 @@ RUN git config --global --add url."https://github.com/".insteadOf "git@github.co
 RUN git submodule update --init
 RUN git config --global --add url."git@github.com:".insteadOf "https://github.com/"
 
-
 # Installs ROS dependencies
 RUN source /opt/ros/humble/setup.sh \
     && rosdep install --from-paths src --ignore-src -r -y
