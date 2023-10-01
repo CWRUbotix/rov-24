@@ -6,6 +6,7 @@ RUN . /opt/ros/humble/setup.sh \
 RUN sudo apt-get update -y
 RUN sudo apt-get install python3-pip -y
 
+# TODO for future nerd doing this via ENTRYPOINT would be better but, I could not get ENTRYPOINT to play with VsCODE.
 RUN echo "source /rov-24/install/setup.bash" >> ~/.bashrc ;
 RUN echo "$export PYTHONWARNINGS=ignore:::setuptools.command.install,ignore:::setuptools.command.easy_install,ignore:::pkg_resources" >> ~/.bashrc ;
 
