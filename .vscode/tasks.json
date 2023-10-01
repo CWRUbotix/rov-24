@@ -43,7 +43,8 @@
           {
             "label": "Docker Rebuild",
             "dependsOrder": "sequence",
-            "dependsOn": ["Docker Pull", "Docker Build"]
+            "dependsOn": ["Docker Pull", "Docker Build"],
+            "problemMatcher": []
           }
     ]
 }
