@@ -5,8 +5,8 @@ SHELL ["/bin/bash", "-c"]
 RUN source /opt/ros/humble/setup.sh \
     && rosdep update
 
-RUN sudo apt update -y
-RUN sudo apt install python3-pip -y
+RUN sudo apt-get update -y
+RUN sudo apt-get install python3-pip -y
 
 RUN echo "source /rov-24/install/setup.bash" >> ~/.bashrc ;
 RUN echo "$export PYTHONWARNINGS=ignore:::setuptools.command.install,ignore:::setuptools.command.easy_install,ignore:::pkg_resources" >> ~/.bashrc ;
