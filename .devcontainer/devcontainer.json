@@ -14,5 +14,6 @@
         "vscode" : {
             "extensions": ["ms-python.flake8", "ms-azuretools.vscode-docker"]
         }
-    }
+    },
+    "privileged": true
 }
