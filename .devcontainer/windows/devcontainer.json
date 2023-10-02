@@ -1,13 +1,11 @@
 {
-    "name" : "ROV",
-    // "onCreateCommand": "sudo docker pull ghcr.io/cwrurobotics/rov-24:docker",
+    "name" : "ROV Windows",
     "image": "ghcr.io/cwrurobotics/rov-24:docker",
     "containerEnv": {
         "DISPLAY": "${localEnv:DISPLAY}"
     },
     "mounts": [
-        "type=bind,source=/home/${localEnv:USER}/.ssh,target=/root/.ssh,readonly",
-        "source=/tmp/.X11-unix,target=/tmp/.X11-unix,type=bind,consistency=cached"
+        "type=bind,source=${localEnb:HOME}\\${localEnv:USER}.ssh,target=/root/.ssh,readonly"
       ],
     "workspaceFolder": "/rov-24",
     "customizations": {
