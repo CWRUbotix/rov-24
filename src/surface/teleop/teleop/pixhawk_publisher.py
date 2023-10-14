@@ -32,7 +32,7 @@ class PixhawkInstruction:
     yaw:      int = 0
     roll:     int = 0
 
-    def map(self, mapping_function: function):
+    def map(self, mapping_function):
         self.forward  = mapping_function(self.forward)
         self.vertical = mapping_function(self.vertical)
         self.lateral  = mapping_function(self.lateral)
