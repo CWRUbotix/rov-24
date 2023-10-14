@@ -26,7 +26,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'manual_control_node = teleop.manual_control_node:main'
+            'manual_control_node = teleop.manual_control_node:main',
+            'auto_docking_node = teleop.auto_docking_node:main'
         ],
     },
 )
