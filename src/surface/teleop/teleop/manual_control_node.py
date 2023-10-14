@@ -8,7 +8,7 @@ from sensor_msgs.msg import Joy
 
 from rov_msgs.msg import CameraControllerSwitch, Manip
 
-from publishers.pixhawk_publisher import PixhawkInstruction, PixhawkPublisher
+from teleop.pixhawk_publisher import PixhawkInstruction, PixhawkPublisher
 
 # Button meanings for PS5 Control might be different for others
 X_BUTTON:        int = 0  # Manipulator 0
