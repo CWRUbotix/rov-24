@@ -49,10 +49,6 @@ class TaskSelector(QWidget):
 
     def start_btn_clicked(self):
         """Tell the back about the user selecting the start button."""
-        # Cancel change if task changer hasn't connected yet
-        if not self.task_controller.connected:
-            return
-
         self.task_controller.get_logger().info(
             'GUI changed task to: Auto Docking')
 
@@ -63,10 +59,6 @@ class TaskSelector(QWidget):
 
     def stop_btn_clicked(self):
         """Tell the back about the user selecting the manual control button."""
-        # Cancel change if task changer hasn't connected yet
-        if not self.task_controller.connected:
-            return
-
         self.task_controller.get_logger().info(
             'GUI changed task to: Manual Control')
 
@@ -78,6 +70,6 @@ class TaskSelector(QWidget):
     @pyqtSlot(TaskControl.Response)
     def handle_scheduler_response(self, response: TaskControl.Response):
         """Handle scheduler response to request sent from gui_changed_task."""
-        self.task_changed_server.get_logger().info('Auto docking is now running'
+        self.task_controller.get_logger().info('Auto docking is now running'
                                                    if response.is_running else
                                                    'Auto docking is no longer running')
