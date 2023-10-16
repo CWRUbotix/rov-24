@@ -22,6 +22,8 @@ class AutoDocker(Node):
         self.running = request.start
         response.is_running = self.running
 
+        return response
+
 def main():
     rclpy.init()
     auto_docker = AutoDocker()
