@@ -15,3 +15,4 @@ def test_joystick_profiles():
     # Not nice possible values
     assert node.joystick_profiles(0.34) == 1539.904
     assert node.joystick_profiles(-0.6) == 1377.6
+    rclpy.shutdown()
