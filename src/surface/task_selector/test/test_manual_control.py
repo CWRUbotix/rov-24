@@ -3,8 +3,7 @@ import rclpy
 
 
 def test_joystick_profiles():
-    """Unit test for the joystick_profiles function"""
-
+    """Unit test for the joystick_profiles function."""
     rclpy.init()
     node = ManualControlNode()
     # Nice boundary values
