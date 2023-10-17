@@ -34,7 +34,10 @@
         {
             "label": "Docker Pull",
             "type": "shell",
-            "command": "sudo docker pull ghcr.io/cwrurobotics/rov-24:docker",
+            "command": "bash",
+            "args": [
+                "${workspaceFolder}/.vscode/docker_pull.sh"
+            ],
           },
           {
             "label": "Docker Build",
