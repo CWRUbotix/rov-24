@@ -38,6 +38,9 @@ jobs:
           key: ccache-${{ matrix.ROS_DISTRO }}-${{ matrix.ROS_REPO }}-${{github.run_id}}
           restore-keys: |
             ccache-${{ matrix.ROS_DISTRO }}-${{ matrix.ROS_REPO }}-
+  
+      # Crazy one liner for install python dependencies
+      - run: for d in src/pi/*/ src/surface/*/; do pip install -e "$d"; do
       - uses: 'ros-industrial/industrial_ci@master' # run industrial_ci
         env: # either pass all entries explicitly
           ROS_DISTRO: ${{ matrix.ROS_DISTRO }}
