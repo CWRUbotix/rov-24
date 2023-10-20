@@ -47,7 +47,6 @@ jobs:
           ROS_DISTRO: ${{ matrix.ROS_DISTRO }}
           ROS_REPO: ${{ matrix.ROS_REPO }}
           # Crazy one liner for install python dependencies
-          global:
-            - AFTER_INSTALL_TARGET_DEPENDENCIES='for d in src/pi/*/ src/surface/*/; do pip install -e "$d"; done'
+          global: AFTER_INSTALL_TARGET_DEPENDENCIES='for d in src/pi/*/ src/surface/*/; do pip install -e "$d"; done'
         # with: # or pass the full matrix as config
         #    config: ${{toJSON(matrix)}}
