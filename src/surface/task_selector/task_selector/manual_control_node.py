@@ -6,7 +6,7 @@ from rclpy.action import ActionServer, CancelResponse
 from rclpy.action.server import ServerGoalHandle
 from rclpy.executors import MultiThreadedExecutor
 from rclpy.node import Node, Publisher, Subscription
-from rclpy.qos import qos_profile_system_default, qos_profile_sensor_data
+from rclpy.qos import qos_profile_sensor_data, qos_profile_system_default
 from sensor_msgs.msg import Joy
 
 from rov_msgs.action import BasicTask
@@ -219,3 +219,5 @@ def main():
     manual_control = ManualControlNode()
     executor = MultiThreadedExecutor()
     rclpy.spin(manual_control, executor=executor)
+    manual_control.destroy_node()
+    rclpy.shutdown()

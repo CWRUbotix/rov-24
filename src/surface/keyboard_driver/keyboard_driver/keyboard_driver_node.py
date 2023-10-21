@@ -1,14 +1,15 @@
 from typing import Optional
 
 import rclpy
+from mavros_msgs.msg import OverrideRCIn
 from pynput import keyboard
 from pynput.keyboard import Key, KeyCode
 from rclpy.node import Node
 from rclpy.qos import qos_profile_system_default
-
-from mavros_msgs.msg import OverrideRCIn
-from task_selector.manual_control_node import (PITCH_CHANNEL, ROLL_CHANNEL, THROTTLE_CHANNEL, 
-                                               LATERAL_CHANNEL, FORWARD_CHANNEL, YAW_CHANNEL)
+from task_selector.manual_control_node import (FORWARD_CHANNEL,
+                                               LATERAL_CHANNEL, PITCH_CHANNEL,
+                                               ROLL_CHANNEL, THROTTLE_CHANNEL,
+                                               YAW_CHANNEL)
 
 # key bindings
 FORWARD = "w"
