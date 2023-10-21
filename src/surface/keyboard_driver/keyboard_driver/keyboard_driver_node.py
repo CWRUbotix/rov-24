@@ -64,7 +64,7 @@ class KeyboardListenerNode(Node):
         super().__init__("keyboard_listener_node", parameter_overrides=[])
 
         self.pub_status = self.create_publisher(
-            OverrideRCIn, "/mavros/rc/override'", qos_profile_system_default
+            OverrideRCIn, "/mavros/rc/override", qos_profile_system_default
         )
         self.get_logger().info(HELP_MSG)
         self.status = {
