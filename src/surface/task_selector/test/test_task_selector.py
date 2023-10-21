@@ -5,7 +5,6 @@ import rclpy
 
 def test_manual_control_instantiation():
     """Unit test for the Task Selector instantiation."""
-    rclpy.init()
     # TaskSelector blocks waiting for Manual Control Client
     main()
     TaskSelector()
