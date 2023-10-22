@@ -11,8 +11,9 @@ from rclpy.node import Node
 class App(QWidget):
     """Main app window."""
 
+    app: QApplication = QApplication([])
+
     def __init__(self, node_name: str):
-        self.app: QApplication = QApplication(sys.argv)
         if not rclpy.ok():
             rclpy.init()
         super().__init__()
