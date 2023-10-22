@@ -12,7 +12,6 @@
   <test_depend>python3-pytest</test_depend>
 
   <exec_depend>ros2launch</exec_depend>
-  <exec_depend>python3-opencv</exec_depend>
 
   <depend>mavros</depend>
   <exec_depend>rov_msgs</exec_depend>
