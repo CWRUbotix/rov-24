@@ -1,6 +1,5 @@
 import atexit
 import signal
-import sys
 
 import qdarktheme
 import rclpy
