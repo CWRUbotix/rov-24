@@ -19,7 +19,7 @@ setup(
          glob('launch/*launch.[pxy][yma]*'))
     ],
     install_requires=['setuptools', 'pyqt6', 'pyqtdarktheme', 'opencv-python>=4.8.1',
-                      'opencv-python-headless'],
+                      'opencv-python-headless', 'numpy>=1.26'],
     zip_safe=True,
     maintainer='Benjamin Poulin',
     maintainer_email='bwp18@case.edu',
