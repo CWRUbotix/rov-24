@@ -48,9 +48,9 @@ jobs:
           ROS_REPO: ${{ matrix.ROS_REPO }}
           # Install missing libxcb for PyQt
           # Crazy one liner for install python dependencies
-          AFTER_INSTALL_TARGET_DEPENDENCIES: 'sudo apt-get install "^libxcb.*-dev" libx11-xcb-dev libglu1-mesa-dev libxrender-dev libxi-dev libxkbcommon-dev libxkbcommon-x11-dev -y && for d in /root/target_ws/src/rov-24/src/pi/*/ /root/target_ws/src/rov-24/src/surface/*/; do pip install -e "$d"; done'
+          AFTER_INSTALL_TARGET_DEPENDENCIES: 'sudo apt-get install libxinerama libxcb-util -y && for d in /root/target_ws/src/rov-24/src/pi/*/ /root/target_ws/src/rov-24/src/surface/*/; do pip install -e "$d"; done'
           PYLINT_CHECK: true
           PYLINT_EXCLUDE: TCA9555
-          DISPLAY: 0
+          QT_DEBUG_PLUGINS: 1
         # with: # or pass the full matrix as config
         #    config: ${{toJSON(matrix)}}
