@@ -1,3 +1,4 @@
+from array import array
 from typing import Optional
 
 import rclpy
@@ -131,12 +132,16 @@ class KeyboardListenerNode(Node):
 
     def pub_rov_control(self):
         msg = OverrideRCIn()
-        msg.channels[FORWARD_CHANNEL] = (self.status[FORWARD] - self.status[BACKWARD]) * 400 + 1500
-        msg.channels[LATERAL_CHANNEL] = (self.status[LEFT] - self.status[RIGHT]) * 400 + 1500
-        msg.channels[THROTTLE_CHANNEL] = (self.status[UP] - self.status[DOWN]) * 400 + 1500
-        msg.channels[ROLL_CHANNEL] = (self.status[ROLL_LEFT] - self.status[ROLL_RIGHT]) * 400 + 1500
-        msg.channels[PITCH_CHANNEL] = (self.status[PITCH_UP] - self.status[PITCH_DOWN]) * 400 + 1500
-        msg.channels[YAW_CHANNEL] = (self.status[YAW_LEFT] - self.status[YAW_RIGHT]) * 400 + 1500
+
+        channels = array('B', [1500, 1500, 1500, 1500, 1500, 1500])
+        channels[FORWARD_CHANNEL] += (self.status[FORWARD] - self.status[BACKWARD]) * 400
+        channels[LATERAL_CHANNEL] += (self.status[LEFT] - self.status[RIGHT]) * 400
+        channels[THROTTLE_CHANNEL] += (self.status[UP] - self.status[DOWN]) * 400
+        channels[ROLL_CHANNEL] += (self.status[ROLL_LEFT] - self.status[ROLL_RIGHT]) * 400
+        channels[PITCH_CHANNEL] += (self.status[PITCH_UP] - self.status[PITCH_DOWN]) * 400
+        channels[YAW_CHANNEL] += (self.status[YAW_LEFT] - self.status[YAW_RIGHT]) * 400
+
+        msg.channels = channels
 
         self.pub_status.publish(msg)
 
