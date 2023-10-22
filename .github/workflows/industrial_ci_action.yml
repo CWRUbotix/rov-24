@@ -44,6 +44,7 @@ jobs:
   
       - uses: 'ros-industrial/industrial_ci@master' # run industrial_ci
         env: # either pass all entries explicitly
+          # TODO when docker is done can run it on our custom docker container (I think this will improve performance)
           ROS_DISTRO: ${{ matrix.ROS_DISTRO }}
           ROS_REPO: ${{ matrix.ROS_REPO }}
           # Install missing libxcb for PyQt
