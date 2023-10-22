@@ -21,7 +21,11 @@ class App(QWidget):
         self.node.declare_parameter('theme', '')
         self.resize(1850, 720)
 
-        atexit.register(rclpy.shutdown)
+        atexit.register(self.clean_shutdown)
+
+    def clean_shutdown(self):
+        if rclpy.ok():
+            rclpy.shutdown()
 
     def run_gui(self):
         # Kills with Control + C
