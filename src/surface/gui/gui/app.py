@@ -11,6 +11,7 @@ class App(QWidget):
     """Main app window."""
 
     app: QApplication = QApplication([])
+    exec_started: bool = False
 
     def __init__(self, node_name: str):
         if not rclpy.ok():
@@ -44,4 +45,5 @@ class App(QWidget):
         self.show()
 
         # TODO: when the app closes it causes an error. Make not cause error?
-        self.app.exec()
+        if not self.exec_started:
+            self.app.exec()
