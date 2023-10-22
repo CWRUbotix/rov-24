@@ -13,7 +13,8 @@ class App(QWidget):
 
     def __init__(self, node_name: str):
         self.app: QApplication = QApplication(sys.argv)
-        rclpy.init()
+        if not rclpy.ok():
+            rclpy.init()
         super().__init__()
         self.node = Node(node_name, parameter_overrides=[])
 
