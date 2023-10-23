@@ -52,6 +52,6 @@ jobs:
           AFTER_INSTALL_TARGET_DEPENDENCIES_EMBED: 'for d in /root/target_ws/src/rov-24/src/pi/*/ /root/target_ws/src/rov-24/src/surface/*/; do pip install -e "$d"; done'
           PYLINT_CHECK: true
           PYLINT_EXCLUDE: TCA9555
-          QT_QPA_PLATFORM: 'offscreen'
+          DISPLAY: 0
         # with: # or pass the full matrix as config
         #    config: ${{toJSON(matrix)}}
