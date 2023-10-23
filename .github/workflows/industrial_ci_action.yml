@@ -53,6 +53,5 @@ jobs:
           AFTER_INSTALL_TARGET_DEPENDENCIES_EMBED: 'sudo apt-get install libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-randr0 libxcb-render-util0 libxcb-xinerama0 libxcb-xfixes0 x11-utils libxkbcommon-x11-0 libxcb-cursor0 xvfb -y && for d in /root/target_ws/src/rov-24/src/pi/*/ /root/target_ws/src/rov-24/src/surface/*/; do pip install -e "$d"; done'
           PYLINT_CHECK: true
           PYLINT_EXCLUDE: TCA9555
-          DISPLAY: ':99.0'
           # with: # or pass the full matrix as config
           #    config: ${{toJSON(matrix)}}
