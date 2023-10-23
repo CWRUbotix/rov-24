@@ -50,7 +50,7 @@ jobs:
           # Install missing libxcb for PyQt
           # Crazy one liner for install python dependencies
           AFTER_INSTALL_TARGET_DEPENDENCIES_EMBED: 'for d in /root/target_ws/src/rov-24/src/pi/*/ /root/target_ws/src/rov-24/src/surface/*/; do pip install -e "$d"; done'
-          AFTER_BUILD_TARGET_WORKSPACE: 'rosenv && ros2 run gui run_pilot'
+          AFTER_BUILD_TARGET_WORKSPACE: 'rosenv && sudo apt-get install libxcb-cursor0 -y && ros2 run gui run_pilot'
           PYLINT_CHECK: true
           PYLINT_EXCLUDE: TCA9555
           QT_DEBUG_PLUGINS: 1
