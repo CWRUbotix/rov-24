@@ -1,6 +1,11 @@
+import pytest
 from gui.pilot_app import PilotApp
+from pytestqt.qtbot import QtBot
 
 
-def test_pilot_app_instantiation():
+@pytest.fixture
+def test_app_instantiation(qtbot: QtBot):
     """Unit test for PilotApp instantiation."""
-    PilotApp()
+    app = PilotApp()
+    app.show()
+    qtbot.addWiget(app)
