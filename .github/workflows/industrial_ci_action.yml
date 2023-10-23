@@ -50,6 +50,6 @@ jobs:
           # Install missing dpes for PyQt
           # https://pytest-qt.readthedocs.io/en/latest/troubleshooting.html
           # Crazy one liner for install python dependencies
-          AFTER_INSTALL_TARGET_DEPENDENCIES_EMBED: 'sudo apt-get install xvfb -y && for d in /root/target_ws/src/rov-24/src/pi/*/ /root/target_ws/src/rov-24/src/surface/*/; do pip install -e "$d"; done'
+          AFTER_INSTALL_TARGET_DEPENDENCIES_EMBED: 'sudo apt-get install libxcb-cursor0 xvfb -y && for d in /root/target_ws/src/rov-24/src/pi/*/ /root/target_ws/src/rov-24/src/surface/*/; do pip install -e "$d"; done'
           # with: # or pass the full matrix as config
           #    config: ${{toJSON(matrix)}}
