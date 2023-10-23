@@ -1,21 +1,15 @@
-import os
 from typing import Optional
 
 import cv2
 from cv2.typing import MatLike
 from cv_bridge import CvBridge
 from gui.event_nodes.subscriber import GUIEventSubscriber
-from PyQt6.QtCore import QLibraryInfo, Qt, pyqtSignal, pyqtSlot
+from PyQt6.QtCore import Qt, pyqtSignal, pyqtSlot
 from PyQt6.QtGui import QImage, QPixmap
 from PyQt6.QtWidgets import QLabel, QPushButton, QVBoxLayout, QWidget
 from sensor_msgs.msg import Image
 
 from rov_msgs.msg import CameraControllerSwitch
-
-os.environ["QT_QPA_PLATFORM_PLUGIN_PATH"] = QLibraryInfo.path(
-    QLibraryInfo.LibraryPath.PluginsPath
-)
-
 
 WIDTH = 1280
 HEIGHT = 720
