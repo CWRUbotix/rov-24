@@ -6,6 +6,10 @@ This package launches the rest of the Pi packages. It should be run on Pi boot u
 
 [Tutorial followed](https://roboticsbackend.com/make-ros-launch-start-on-boot-with-robot_upstart/)
 
+## Setup
+
+If something ever happens to the pi follow [this](https://www.jeffgeerling.com/blog/2020/how-flash-raspberry-pi-os-compute-module-4-emmc-usbboot) tutorial on reflashing it.
+
 ## Installation
 
 You need to run these commands to get the launch file running on Pi boot:
