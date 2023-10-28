@@ -34,10 +34,10 @@
         {
             "label": "Docker Pull",
             "type": "shell",
-            "command": "bash",
-            "args": [
-                "${workspaceFolder}/.vscode/docker_pull.sh"
-            ],
+            "command": "sudo docker pull ghcr.io/cwrurobotics/rov-24:docker",
+            "windows": {
+                "command": "docker pull ghcr.io/cwrurobotics/rov-24:docker"
+            }
           },
           {
             "label": "Docker Build",
@@ -50,7 +50,11 @@
             "label": "Docker Rebuild",
             "dependsOrder": "sequence",
             "dependsOn": ["Docker Pull", "Docker Build"],
-            "problemMatcher": []
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "silent",
+                "revealProblems": "onProblem"
+            },
           }
     ]
 }
