@@ -50,4 +50,4 @@ On receiving a msg it toggles a manipulator on or off.
 
 Sends on and off signals to the IC2 board to confirm it is working. There is no ROS features being used.
 
-[msg/Manip]:../../interfaces/msg/Manip.msg
+[msg/Manip]:../../rov_msgs/msg/Manip.msg

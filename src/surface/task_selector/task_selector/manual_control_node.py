@@ -9,8 +9,8 @@ from rclpy.node import Node, Publisher, Subscription
 from rclpy.qos import qos_profile_system_default, qos_profile_sensor_data
 from sensor_msgs.msg import Joy
 
-from interfaces.action import BasicTask
-from interfaces.msg import CameraControllerSwitch, Manip
+from rov_msgs.action import BasicTask
+from rov_msgs.msg import CameraControllerSwitch, Manip
 
 # Button meanings for PS5 Control might be different for others
 X_BUTTON:        int = 0  # Manipulator 0
