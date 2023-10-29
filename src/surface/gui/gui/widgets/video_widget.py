@@ -9,7 +9,7 @@ from PyQt6.QtGui import QImage, QPixmap
 from PyQt6.QtWidgets import QLabel, QPushButton, QVBoxLayout, QWidget
 from sensor_msgs.msg import Image
 
-from interfaces.msg import CameraControllerSwitch
+from rov_msgs.msg import CameraControllerSwitch
 
 WIDTH = 1280
 HEIGHT = 720
