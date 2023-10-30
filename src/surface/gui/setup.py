@@ -18,14 +18,14 @@ setup(
         (os.path.join('share', package_name, 'launch'),
          glob('launch/*launch.[pxy][yma]*'))
     ],
-    install_requires=['setuptools', 'pyqt6', 'pyqtdarktheme', 'opencv-python',
-                      'opencv-python-headless'],
+    install_requires=['setuptools', 'pyqt6', 'pyqtdarktheme', 'opencv-python>=4.8.1',
+                      'numpy>=1.26', 'pytest-qt', 'pytest-xvfb'],
     zip_safe=True,
     maintainer='Benjamin Poulin',
     maintainer_email='bwp18@case.edu',
     description='MATE ROV GUI and related ROS nodes',
     license='Apache License 2.0',
-    tests_require=['pytest'],
+    tests_require=['pytest', 'pytest-qt', 'pytest-xvfb'],
     entry_points={
         'console_scripts': ['run_pilot = gui.pilot_app:run_gui_pilot',
                             'run_operator = gui.operator_app:run_gui_operator'],

@@ -1,5 +1,7 @@
 # manipulators
 
+<!-- TODO rewrite -->
+
 ## Overview
 
 This package is used to toggle manipulators plugged into the I2C bus on the motherboard.
