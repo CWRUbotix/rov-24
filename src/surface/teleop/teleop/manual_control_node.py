@@ -1,9 +1,9 @@
-from array import array
+from collections.abc import MutableSequence
 
 import rclpy
 from rclpy.executors import MultiThreadedExecutor
 from rclpy.node import Node, Publisher, Subscription
-from rclpy.qos import qos_profile_system_default, qos_profile_sensor_data
+from rclpy.qos import qos_profile_sensor_data, qos_profile_system_default
 from sensor_msgs.msg import Joy
 
 from rov_msgs.msg import CameraControllerSwitch, Manip
@@ -79,8 +79,8 @@ class ManualControlNode(Node):
         self.camera_toggle(msg)
 
     def joystick_to_pixhawk(self, msg: Joy):
-        axes: array[float] = msg.axes
-        buttons: array[int] = msg.buttons
+        axes: MutableSequence[float] = msg.axes
+        buttons: MutableSequence[int] = msg.buttons
 
         instruction = PixhawkInstruction(
             pitch    = axes[DPADVERT],            # DPad
@@ -97,7 +97,7 @@ class ManualControlNode(Node):
         self.pixhawk_publisher.publish_instruction(instruction)
 
     def manip_callback(self, msg: Joy):
-        buttons: array[int] = msg.buttons
+        buttons: MutableSequence[int] = msg.buttons
 
         for button_id, manip_button in self.manip_buttons.items():
             just_pressed: bool = False
@@ -120,7 +120,7 @@ class ManualControlNode(Node):
 
     def camera_toggle(self, msg: Joy):
         """Cycles through connected cameras on pilot GUI using menu and pairing buttons."""
-        buttons: array[int] = msg.buttons
+        buttons: MutableSequence[int] = msg.buttons
 
         if buttons[MENU] == 1:
             self.seen_right_cam = True

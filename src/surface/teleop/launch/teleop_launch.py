@@ -24,7 +24,8 @@ def generate_launch_description():
     auto_docking_node: Node = Node(
         package='teleop',
         executable='auto_docking_node',
-        remappings=[('/surface/mavros/rc/override', '/mavros/rc/override')],
+        remappings=[('/surface/manipulator_control', '/manipulator_control'),
+                    ('/surface/mavros/rc/override', '/mavros/rc/override')],
         emulate_tty=True,
         output='screen'
     )
