@@ -44,7 +44,6 @@ jobs:
   
       - uses: 'ros-industrial/industrial_ci@master' # run industrial_ci
         env: # either pass all entries explicitly
-          # TODO when docker is done can run it on our custom docker container (I think this will improve performance)
           DOCKER_IMAGE: ghcr.io/cwrurobotics/rov-24:docker
           ROS_REPO: ${{ matrix.ROS_REPO }}
           # Install missing libxcb-cursor0 xvfb for PyQt
