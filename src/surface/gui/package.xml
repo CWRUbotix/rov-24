@@ -13,9 +13,9 @@
 
   <exec_depend>ros2launch</exec_depend>
   <exec_depend>ros2run</exec_depend>
+  <exec_depend>rov_msgs</exec_depend>
 
   <depend>mavros</depend>
-  <exec_depend>rov_msgs</exec_depend>
 
   <export>
     <build_type>ament_python</build_type>
