@@ -12,7 +12,7 @@ def generate_launch_description():
         output='screen'
     )
 
-    # JoyToHawk
+    # Manual Control
     manual_control_node: Node = Node(
         package='task_selector',
         executable='manual_control_node',
