@@ -13,20 +13,59 @@ This package launches the rest of the Pi packages. It should be run on Pi boot u
 If something ever happens to the pi follow [this](https://www.jeffgeerling.com/blog/2020/how-flash-raspberry-pi-os-compute-module-4-emmc-usbboot) tutorial on reflashing it.
 
 ### Setup Pi SSH access over Ethernet
-- Using mouse and keyboard, connect to the pi and edit `/etc/netplan/50-cloud-init.yaml`. It should look like this:
-```
-network:
-    ethernets:
-        eth0:
-            dhcp4: no
-            addresses: [192.168.2.1/24]
-            gateway4: 192.168.2.2
-            optional: true
-    version: 2
-```
-- On windows, setup your ethernet settings by following [this tutorial](https://www.trendnet.com/press/resource-library/how-to-set-static-ip-address). You should set your static ip address to 192.168.2.1
-- Connct the pi to your PC with an ethernet cable
-- SSH to rov@192.168.2.1
+
+1. Using a monitor keyboard, connect to the pi and edit `/etc/netplan/50-cloud-init.yaml`. Either use a flash drive to replace that file with the version below or type it out by hand (sorry):
+
+    ```yaml
+    network:
+        ethernets:
+            eth0:
+                dhcp4: no
+                addresses: [192.168.2.1/24]
+                optional: true
+                nameservers:
+                    addresses: [8.8.8.8]
+                routes:
+                - to: default
+                    via: 192.168.2.2
+        version: 2
+    ```
+
+2. On the pi, run `sudo netplan try`, then press enter to accept the changes.
+
+3. Connect the pi to your PC with an ethernet cable
+
+4. On Windows, search "view network connections" in the search bar, this should bring you to the control panel.
+
+    ![Screenshot of the control panel Network Connections page showing a wifi and an ethernet adapter](images/1-control-panel.png)
+
+5. Right click on your wifi adapter and click on "Properties".
+
+    ![Screenshot of the right click menu of a wifi adapter with "Properties" underlined](images/2-wifi-properties-button.png)
+
+6. Go to the "sharing" tab.
+
+    ![Wifi Properties window with the sharing tab underlined](images/3-wifi-sharing.png)
+
+7. Check both checkboxes, and accept any popups. If there is a dropdown menu, select your ethernet adapter. Press "OK".
+
+    ![Wifi Properties window both checkboxes checked](images/4-wifi-sharing-checkboxes.png)
+
+8. Now right click on your ethernet adapter and choose "Properties".
+
+    ![Screenshot of the right click menu of an ethernet adapter with "Properties" underlined](images/5-ethernet-properties-button.png)
+
+9. Double click on "Internet Protocol Version 4".
+
+    ![Screenshot of the ethernet properties window with "Internet Protocol Version 4" highlighted](images/6-ethernet-properties-items.png)
+
+10. Set the IP address to "192.168.2.2". Set the subnet mask to "255.255.255.0".
+
+    ![Screenshot of the ipv4 properties window showing the IP address and subnet mask](images/7-ipv4-properties.png)
+
+11. In the windows terminal, run `ssh rov@192.168.2.1` The password should be `rov12345`.
+
+12. You are now connected to the pi! You should be able to `ping google.com` and see a reply, indicating that the pi has access to the internet.
 
 ## Installation
 
