@@ -36,13 +36,14 @@ R2PRESS_PERCENT: int = 5
 DPADHOR:         int = 6
 DPADVERT:        int = 7
 
+
 class ManualControlNode(Node):
     def __init__(self):
         super().__init__('manual_control_node',
                          parameter_overrides=[])
-        
+
         self.pixhawk_publisher = PixhawkPublisher(self)
-        
+
         self.subscription: Subscription = self.create_subscription(
             Joy,
             'joy',
@@ -83,14 +84,14 @@ class ManualControlNode(Node):
         buttons: MutableSequence[int] = msg.buttons
 
         instruction = PixhawkInstruction(
-            pitch    = axes[DPADVERT],            # DPad
-            roll     = buttons[R1] - buttons[L1], # L1/R1 buttons
-            vertical = axes[RJOYX],               # Right Joystick Z
-            forward  = axes[LJOYX],               # Left Joystick X
-            lateral  = -axes[LJOYY],              # Left Joystick Y
-            yaw      = (axes[R2PRESS_PERCENT] - axes[L2PRESS_PERCENT]) / 2 # L2/R2 buttons
+            pitch    = int(axes[DPADVERT]),            # DPad
+            roll     = buttons[R1] - buttons[L1],      # L1/R1 buttons
+            vertical = int(axes[RJOYX]),               # Right Joystick Z
+            forward  = int(axes[LJOYX]),               # Left Joystick X
+            lateral  = int(-axes[LJOYY]),              # Left Joystick Y
+            yaw      = int((axes[R2PRESS_PERCENT] - axes[L2PRESS_PERCENT]) / 2)  # L2/R2 buttons
         )
-        
+
         # Smooth out adjustments
         instruction.map(lambda value: value * abs(value))
 
