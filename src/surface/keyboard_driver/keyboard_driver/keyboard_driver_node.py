@@ -1,13 +1,16 @@
+from array import array
 from typing import Optional
 
 import rclpy
+from mavros_msgs.msg import OverrideRCIn
 from pynput import keyboard
 from pynput.keyboard import Key, KeyCode
 from rclpy.node import Node
 from rclpy.qos import qos_profile_system_default
-
-from rov_msgs.msg import ROVControl
-
+from task_selector.manual_control_node import (FORWARD_CHANNEL,
+                                               LATERAL_CHANNEL, PITCH_CHANNEL,
+                                               ROLL_CHANNEL, THROTTLE_CHANNEL,
+                                               YAW_CHANNEL)
 
 # key bindings
 FORWARD = "w"
@@ -63,7 +66,7 @@ class KeyboardListenerNode(Node):
         super().__init__("keyboard_listener_node", parameter_overrides=[])
 
         self.pub_status = self.create_publisher(
-            ROVControl, "manual_control", qos_profile_system_default
+            OverrideRCIn, "/mavros/rc/override", qos_profile_system_default
         )
         self.get_logger().info(HELP_MSG)
         self.status = {
@@ -128,15 +131,17 @@ class KeyboardListenerNode(Node):
             raise exception
 
     def pub_rov_control(self):
-        msg = ROVControl()
-        msg.x = (self.status[FORWARD] - self.status[BACKWARD]) * 400 + 1500
-        msg.y = (self.status[LEFT] - self.status[RIGHT]) * 400 + 1500
-        msg.z = (self.status[UP] - self.status[DOWN]) * 400 + 1500
-        msg.roll = (self.status[ROLL_LEFT] - self.status[ROLL_RIGHT]) * 400 + 1500
+        msg = OverrideRCIn()
 
-        msg.pitch = (self.status[PITCH_UP] - self.status[PITCH_DOWN]) * 400 + 1500
+        channels = array('B', [1500, 1500, 1500, 1500, 1500, 1500])
+        channels[FORWARD_CHANNEL] += (self.status[FORWARD] - self.status[BACKWARD]) * 400
+        channels[LATERAL_CHANNEL] += (self.status[LEFT] - self.status[RIGHT]) * 400
+        channels[THROTTLE_CHANNEL] += (self.status[UP] - self.status[DOWN]) * 400
+        channels[ROLL_CHANNEL] += (self.status[ROLL_LEFT] - self.status[ROLL_RIGHT]) * 400
+        channels[PITCH_CHANNEL] += (self.status[PITCH_UP] - self.status[PITCH_DOWN]) * 400
+        channels[YAW_CHANNEL] += (self.status[YAW_LEFT] - self.status[YAW_RIGHT]) * 400
 
-        msg.yaw = (self.status[YAW_LEFT] - self.status[YAW_RIGHT]) * 400 + 1500
+        msg.channels = channels
 
         self.pub_status.publish(msg)
 
