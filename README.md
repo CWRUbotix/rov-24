@@ -9,11 +9,6 @@
 
 <!-- [Follow this environment setup guide!](https://github.com/cwruRobotics/rov-24/wiki/Environment-Setup) -->
 
-<!-- Run the following command to enable gui applications through docker.
-
-```bash
-xhost +local:docker 
-``` -->
 
 Start by opening up a terminal and navigating to where you want the code to be saved and entering the following command.
 
@@ -59,6 +54,10 @@ Then install the Dev Containers VsCode extension.
 
 To open the container use `F1` to open the command bar and use `Tasks: Runs Task`. Then from the Task selection choose `Docker Rebuild`. This will build and run the docker container. Make sure to choose `ROV Windows` for which type to run.
 
+To add your ssh keys into the container follow [this](https://code.visualstudio.com/remote/advancedcontainers/sharing-git-credentials) guide.
+
+To get gui support inside docker download [this](https://sourceforge.net/projects/vcxsrv/files/latest/download).
+
 ##### WSL
 
 Follow [this](https://learn.microsoft.com/en-us/windows/wsl/install) guide to install WSL.
@@ -80,6 +79,8 @@ Start by installing docker from [here](https://www.docker.com/get-started/).
 Then install the Dev Containers VsCode extension.
 
 To open the container use `F1` to open the command bar and use `Tasks: Runs Task`. Then from the Task selection choose `Docker Rebuild`. This will build and run the docker container. Make sure to choose `ROV macOS` for which type to run.
+
+<!-- TODO ssh key and xserver testing on mac -->
 
 ## Test environment
 

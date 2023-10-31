@@ -1,18 +1,12 @@
 {
     "name" : "ROV Windows",
     "image": "ghcr.io/cwrurobotics/rov-24:docker",
-    "containerEnv": {
-        "DISPLAY": "${localEnv:DISPLAY}"
-    },
-    "mounts": [
-        // "type=bind,source=${localEnv:USERPROFILE}\\.ssh,target=/root/.ssh,readonly",
-        // "source=\\tmp\\.X11-unix,target=/tmp/.X11-unix,type=bind,consistency=cached"
-      ],
     "workspaceFolder": "/rov-24",
     "customizations": {
         "vscode" : {
             "extensions": ["ms-python.flake8", "ms-azuretools.vscode-docker", "streetsidesoftware.code-spell-checker"]
         }
     },
-    "privileged": true
+    "privileged": true,
+    "runArgs": [ "-e", "DISPLAY=host.docker.internal:0"]
 }
