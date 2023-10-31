@@ -22,7 +22,7 @@ RUN sudo apt-get install usbutils -y
 RUN echo "source /rov-24/install/setup.bash" >> ~/.bashrc ;
 RUN echo "$export PYTHONWARNINGS=ignore:::setuptools.command.install,ignore:::setuptools.command.easy_install,ignore:::pkg_resources" >> ~/.bashrc ;
 
-WORKDIR /rov-24
+WORKDIR /root/rov-24
 
 COPY . .
 
