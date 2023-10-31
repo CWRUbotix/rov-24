@@ -22,8 +22,6 @@ Now, anytime you want to build, do the following:
 In VSCode, press `F1` and enter `Tasks: Run Task` in the field until you see the
 corresponding option appear. Click or hit enter on that option.
 
-Now select `🏃‍♂️ ROS All` to run all dependency download and building scripts.
-
 This whole process should become `F1`, `Enter`, `Enter` once you've done it once,
 although the magic of symlink should mean you won't need to build again for most things.
 
@@ -33,42 +31,12 @@ If you're working on package metadata (e.g. `package.xml`) or rov_msgs, you'll n
 
 Run this command from your workspace folder
 
-```bash
-. src/.vscode/easy_all.sh
-```
-
 The magic of symlink should mean you won't need to build again for most
 things, but if you're working on package metadata (e.g. `package.xml`) or
 rov_msgs, you'll need to run this every time you change something:
 
 ```bash
 . src/.vscode/easy_build.sh
-```
-
-### Manual building
-
-Make sure you're updated (only on the first build or if something breaks)
-
-```bash
-rosdep update --rosdistro=$ROS_DISTRO
-```
-
-Install dependencies (only on the first build or if something breaks)
-
-```bash
-rosdep install --from-paths src --ignore-src -r -y
-```
-
-Build (every time)
-
-```bash
-colcon build --symlink-install
-```
-
-Source your overlay (every time)
-
-```bash
-. install/setup.sh
 ```
 
 ## Directory Structure
