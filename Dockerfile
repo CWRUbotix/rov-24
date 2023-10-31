@@ -3,11 +3,13 @@ FROM osrf/ros:humble-desktop-full
 RUN . /opt/ros/humble/setup.sh \
     && rosdep update
 
+RUN sudo apt-get update -y
+
 # Install missing libxcb-cursor0 xvfb for PyQt unit testing
 # https://pytest-qt.readthedocs.io/en/latest/troubleshooting.html
 RUN sudo apt-get install libxcb-cursor0 xvfb -y
 
-RUN sudo apt-get update -y
+# Install pip
 RUN sudo apt-get install python3-pip -y
 
 # Install Video for Linux
