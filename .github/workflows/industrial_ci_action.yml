@@ -45,7 +45,6 @@ jobs:
       - uses: 'ros-industrial/industrial_ci@master' # run industrial_ci
         env: # either pass all entries explicitly
           DOCKER_IMAGE: ghcr.io/cwrurobotics/rov-24:docker
-          ROS_REPO: ${{ matrix.ROS_REPO }}
-          # Install missing libxcb-cursor0 xvfb for PyQt
-          # https://pytest-qt.readthedocs.io/en/latest/troubleshooting.html
-          AFTER_INSTALL_TARGET_DEPENDENCIES_EMBED: 'sudo apt-get install libxcb-cursor0 xvfb -y'
+          ROS_REPO: ${{ matrix.ROS_REPO }}          
+          # Crazy one liner for install python dependencies
+          AFTER_INSTALL_TARGET_DEPENDENCIES_EMBED: 'for d in /root/target_ws/src/rov-24/src/pi/*/ /root/target_ws/src/rov-24/src/surface/*/; do pip install -e "$d"; done'
