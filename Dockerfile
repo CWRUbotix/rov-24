@@ -19,7 +19,7 @@ RUN sudo apt-get install v4l-utils -y
 RUN sudo apt-get install usbutils -y
 
 # TODO for future nerd doing this via ENTRYPOINT would be better but, I could not get ENTRYPOINT to play with VsCODE.
-RUN echo "source /rov-24/install/setup.bash" >> ~/.bashrc ;
+RUN echo "source /root/rov-24/install/setup.bash" >> ~/.bashrc ;
 RUN echo "$export PYTHONWARNINGS=ignore:::setuptools.command.install,ignore:::setuptools.command.easy_install,ignore:::pkg_resources" >> ~/.bashrc ;
 
 WORKDIR /root/rov-24
