@@ -2,19 +2,6 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "🏃‍♂️ ROS All",
-            "type": "shell",
-            "command": "bash",
-            "args": [
-                "${workspaceFolder}/.vscode/easy_all.sh"
-            ],
-            "presentation": {
-                "reveal": "silent",
-                "revealProblems": "onProblem"
-            },
-            "problemMatcher": []
-        },
-        {
             "label": "🏃‍♂️ ROS Quick Build",
             "type": "shell",
             "command": "bash",
