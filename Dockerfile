@@ -26,17 +26,17 @@ WORKDIR /root/rov-24
 
 COPY . .
 
-# Git submodule stuff
-RUN git config --global --add url."https://github.com/".insteadOf "git@github.com:"
-RUN git submodule update --init
-RUN git config --global --add url."git@github.com:".insteadOf "https://github.com/"
+# # Git submodule stuff
+# RUN git config --global --add url."https://github.com/".insteadOf "git@github.com:"
+# RUN git submodule update --init
+# RUN git config --global --add url."git@github.com:".insteadOf "https://github.com/"
 
 # Installs ROS dependencies
 RUN . /opt/ros/humble/setup.sh \
     && rosdep install --from-paths src --ignore-src -r -y
 
 # Crazy one liner for install python dependencies
-RUN for d in src/pi/*/ src/surface/*/; do pip install -e "$d"; done
+RUN for d in src/pi/*/ src/surface/*/; do sudo pip install -e "$d"; done
 
 RUN . /opt/ros/humble/setup.sh \
     && PYTHONWARNINGS=ignore:::setuptools.command.install,ignore:::setuptools.command.easy_install,ignore:::pkg_resources; export PYTHONWARNINGS\
