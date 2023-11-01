@@ -9,7 +9,6 @@
 
 <!-- [Follow this environment setup guide!](https://github.com/cwruRobotics/rov-24/wiki/Environment-Setup) -->
 
-
 Start by opening up a terminal and navigating to where you want the code to be saved and entering the following command.
 
 ```bash
@@ -29,6 +28,8 @@ Start by installing docker from [here](https://www.docker.com/get-started/).
 Then install the Dev Containers VsCode extension.
 
 To open the container use `F1` to open the command bar and use `Tasks: Runs Task`. Then from the Task selection choose `Docker Rebuild`. This will build and run the docker container. Make sure to choose `ROV Linux` for which type to run.
+
+For gui apps run `xhost + local:docker` before launching docker or add to `.bashrc`.
 
 ##### Bare Metal
 
