@@ -41,4 +41,4 @@ RUN . /opt/ros/humble/setup.sh \
 # Start by finding all files ending in config
 # Then removes file paths without "git"
 # Then removes the 'sshCommand line from each file'
-RUN  find . -name "*config" | grep git | while read -r   line; do sed -i '/sshCommand/d' $line done
+RUN  find . -name "*config" | grep git | while read -r line; do sed -i '/sshCommand/d' $line done
