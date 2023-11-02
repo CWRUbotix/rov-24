@@ -57,7 +57,11 @@ To open the container use `F1` to open the command bar and use `Tasks: Runs Task
 
 To add your ssh keys into the container follow [this](https://code.visualstudio.com/remote/advancedcontainers/sharing-git-credentials) guide.
 
-To get gui support inside docker download [this](https://sourceforge.net/projects/vcxsrv/files/latest/download).
+If this doesn't work try running `ssh -v git@github.com`
+
+if get_agent_identities is empty you will likely need to download a newer version of OpenSSH from [here](https://github.com/PowerShell/Win32-OpenSSH/releases/tag/v9.4.0.0p1-Beta). Download the .msi file. Once download double click to update it. You might need to do the previous step again.
+
+<!-- To get gui support inside docker download [this](https://sourceforge.net/projects/vcxsrv/files/latest/download). -->
 
 ##### WSL
 
