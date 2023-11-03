@@ -24,11 +24,13 @@
             "command": "sudo docker pull ghcr.io/cwrurobotics/rov-24:docker",
             "windows": {
                 "command": "docker pull ghcr.io/cwrurobotics/rov-24:docker"
-            }
+            },
+            "hide": true
           },
           {
             "label": "Docker Build",
-            "command": "${command:remote-containers.rebuildNoCacheAndReopenInContainer}"
+            "command": "${command:remote-containers.rebuildNoCacheAndReopenInContainer}",
+            "hide": true
           },
           {
             // Runs Docker Pull and then Docker Build
