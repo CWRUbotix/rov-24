@@ -7,7 +7,7 @@
     "mounts": [
         // "type=bind,source=/home/${localEnv:USER}/.ssh,target=/root/.ssh,readonly",
         // "source=/tmp/.X11-unix,target=/tmp/.X11-unix,type=bind,consistency=cached"
-      ],
+    ],
     "workspaceFolder": "/root/rov-24",
     "customizations": {
         "vscode" : {
