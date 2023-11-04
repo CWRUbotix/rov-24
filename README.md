@@ -61,7 +61,15 @@ If this doesn't work try running `ssh -v git@github.com`
 
 if get_agent_identities is empty you will likely need to download a newer version of OpenSSH from [here](https://github.com/PowerShell/Win32-OpenSSH/releases/tag/v9.4.0.0p1-Beta). Download the .msi file. Once download double click to update it. You might need to do the previous step again.
 
-<!-- To get gui support inside docker download [this](https://sourceforge.net/projects/vcxsrv/files/latest/download). -->
+To get gui support inside docker download [this](https://sourceforge.net/projects/vcxsrv/files/latest/download).
+
+Then run XLaunch from the Windows Start Menu.
+
+![Screenshot of the settings for Xlaunch](/doc/images/VcXsrv.png)
+
+Then open up Command Prompt and type `ipconfig`.
+
+Then in the terminal of the docker container use `export DISPLAY={IPV$ of WSL}:0.0`
 
 ##### WSL
 
