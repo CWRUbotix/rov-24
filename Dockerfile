@@ -3,7 +3,6 @@ FROM osrf/ros:humble-desktop-full
 RUN . /opt/ros/humble/setup.sh \
     && rosdep update
 
-RUN sudo apt-get update -y
 
 # Install missing libxcb-cursor0 xvfb for PyQt unit testing
 # https://pytest-qt.readthedocs.io/en/latest/troubleshooting.html
@@ -17,6 +16,10 @@ RUN sudo apt-get install v4l-utils -y
 
 # Install lsusb
 RUN sudo apt-get install usbutils -y
+
+
+RUN sudo apt-get update -y
+RUN sudo apt-get upgrade -y
 
 # TODO for future nerd doing this via ENTRYPOINT would be better but, I could not get ENTRYPOINT to play with VsCODE.
 RUN echo "source /root/rov-24/install/setup.bash" >> ~/.bashrc ;
