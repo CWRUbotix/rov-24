@@ -7,11 +7,9 @@
 
 ### First-time setup
 
-[Follow this environment setup guide!](https://github.com/cwruRobotics/rov-24/wiki/Environment-Setup)
+<!-- [Follow this environment setup guide!](https://github.com/cwruRobotics/rov-24/wiki/Environment-Setup) -->
 
-Then create a workspace:
-
-If you're using VSCode, access WSL by opening VSCode, pressing `ctrl`+`` ` `` (below the `esc` key), clicking the dropdown arrow on the right and selecting `Ubuntu (WSL)`. You can also view your WSL files by opening `File Explorer > Linux (bottom left) > Ubuntu > home > your Ubuntu username`.
+Start by opening up a terminal and navigating to where you want the code to be saved and entering the following command.
 
 ```bash
 git clone --recurse-submodules git@github.com:cwruRobotics/rov-24.git
@@ -19,31 +17,105 @@ git clone --recurse-submodules git@github.com:cwruRobotics/rov-24.git
 
 If you've never contributed to a git repository before, you might receive an error message saying you don't have access. In that case visit [this tutorial](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/about-ssh) to set up SSH for local GitHub access.
 
-If you don't have `ros2_video_streamer` in the `src` folder, run this:
+After cloning the code we need to set up our IDE VsCode if you already have it great. Otherwise follow [this](https://code.visualstudio.com/download) tutorial.
+
+#### Linux
+
+##### Docker
+
+Start by installing docker from [here](https://www.docker.com/get-started/).
+
+Then install the Dev Containers VsCode extension.
+
+To open the container use `F1` to open the command bar and use `Tasks: Runs Task`. Then from the Task selection choose `Docker Rebuild`. This will build and run the docker container. Make sure to choose `ROV Linux` for which type to run.
+
+For gui apps run `xhost + local:docker` before launching docker or add to `.bashrc`.
+
+##### Bare Metal
+
+To enter the directory use
 
 ```bash
-git submodule update --init --recursive
+cd rov-24
 ```
+
+For bare metal installation run the following command.
+
+```bash
+source .\src\surface\surface_main\scripts\ROS2-Install-Humble.sh
+```
+
+#### Windows
+
+##### Docker
+
+Start by installing docker from [here](https://www.docker.com/get-started/).
+
+Then install the Dev Containers VsCode extension.
+
+To open the container use `F1` to open the command bar and use `Tasks: Runs Task`. Then from the Task selection choose `Docker Rebuild`. This will build and run the docker container. Make sure to choose `ROV Windows` for which type to run.
+
+To add your ssh keys into the container follow [this](https://code.visualstudio.com/remote/advancedcontainers/sharing-git-credentials) guide.
+
+If this doesn't work try running `ssh -v git@github.com`
+
+if get_agent_identities is empty you will likely need to download a newer version of OpenSSH from [here](https://github.com/PowerShell/Win32-OpenSSH/releases/tag/v9.4.0.0p1-Beta). Download the .msi file. Once download double click to update it. You might need to do the previous step again.
+
+<!-- To get gui support inside docker download [this](https://sourceforge.net/projects/vcxsrv/files/latest/download). -->
+
+##### WSL
+
+Follow [this](https://learn.microsoft.com/en-us/windows/wsl/install) guide to install WSL.
+
+After WSL has been installed follow [this](https://code.visualstudio.com/docs/remote/wsl) guide to get VsCode and WSL to properly communicate and open up the rov-24 folder.
+
+Then run the following install script.
+
+```bash
+source .\src\surface\surface_main\scripts\ROS2-Install-Humble.sh
+```
+
+#### macOS
+
+##### Docker
+
+Start by installing docker from [here](https://www.docker.com/get-started/).
+
+Then install the Dev Containers VsCode extension.
+
+To open the container use `F1` to open the command bar and use `Tasks: Runs Task`. Then from the Task selection choose `Docker Rebuild`. This will build and run the docker container. Make sure to choose `ROV macOS` for which type to run.
+
+<!-- TODO ssh key and xserver testing on mac -->
+
+## Test environment
+
+After running the script open a terminal and run
+
+```bash
+ros2 run demo_nodes_cpp talker
+```
+
+Open a second terminal and run
+
+```bash
+ros2 run demo_nodes_py listener
+```
+
+## Convenience stuff
 
 Now, anytime you want to build, do the following:
 
 In VSCode, press `F1` and enter `Tasks: Run Task` in the field until you see the
 corresponding option appear. Click or hit enter on that option.
 
-Now select `🏃‍♂️ ROS All` to run all dependency download and building scripts.
-
 This whole process should become `F1`, `Enter`, `Enter` once you've done it once,
 although the magic of symlink should mean you won't need to build again for most things.
 
 If you're working on package metadata (e.g. `package.xml`) or rov_msgs, you'll need to run `🏃‍♂️ ROS Quick Build` or use `Control + Shift + B` every time you change something.
 
-### Automatic building for non-VSCode heathens
+<!-- ### Automatic building for non-VSCode heathens
 
 Run this command from your workspace folder
-
-```bash
-. src/.vscode/easy_all.sh
-```
 
 The magic of symlink should mean you won't need to build again for most
 things, but if you're working on package metadata (e.g. `package.xml`) or
@@ -51,33 +123,7 @@ rov_msgs, you'll need to run this every time you change something:
 
 ```bash
 . src/.vscode/easy_build.sh
-```
-
-### Manual building
-
-Make sure you're updated (only on the first build or if something breaks)
-
-```bash
-rosdep update --rosdistro=$ROS_DISTRO
-```
-
-Install dependencies (only on the first build or if something breaks)
-
-```bash
-rosdep install --from-paths src --ignore-src -r -y
-```
-
-Build (every time)
-
-```bash
-colcon build --symlink-install
-```
-
-Source your overlay (every time)
-
-```bash
-. install/setup.sh
-```
+``` -->
 
 ## Directory Structure
 

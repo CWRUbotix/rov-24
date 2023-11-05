@@ -1,3 +1,4 @@
+from array import array
 from typing import Optional
 
 import rclpy
@@ -6,18 +7,10 @@ from pynput import keyboard
 from pynput.keyboard import Key, KeyCode
 from rclpy.node import Node
 from rclpy.qos import qos_profile_system_default
-
-# Channels for RC command
-MAX_CHANNEL: int = 8
-MIN_CHANNEL: int = 1
-
-PITCH_CHANNEL:    int = 0  # Pitch
-ROLL_CHANNEL:     int = 1  # Roll
-THROTTLE_CHANNEL: int = 2  # Z
-LATERAL_CHANNEL:  int = 3  # Y
-FORWARD_CHANNEL:  int = 4  # X
-YAW_CHANNEL:      int = 5  # Yaw
-
+from task_selector.manual_control_node import (FORWARD_CHANNEL,
+                                               LATERAL_CHANNEL, PITCH_CHANNEL,
+                                               ROLL_CHANNEL, THROTTLE_CHANNEL,
+                                               YAW_CHANNEL)
 
 # key bindings
 FORWARD = "w"
@@ -140,18 +133,15 @@ class KeyboardListenerNode(Node):
     def pub_rov_control(self):
         msg = OverrideRCIn()
 
-        msg.channels[PITCH_CHANNEL] = self.status["pitch_up"] - self.status["pitch_down"]
-        msg.channels[ROLL_CHANNEL] = self.status["roll_left"] - self.status["roll_right"]
-        msg.channels[THROTTLE_CHANNEL] = self.status["up"] - self.status["down"]
-        msg.channels[LATERAL_CHANNEL] = self.status["left"] - self.status["right"]
-        msg.channels[FORWARD_CHANNEL] = self.status["forward"] - self.status["backward"]
-        msg.channels[YAW_CHANNEL] = self.status["yaw_left"] - self.status["yaw_right"]
+        channels = array('B', [1500, 1500, 1500, 1500, 1500, 1500])
+        channels[FORWARD_CHANNEL] += (self.status[FORWARD] - self.status[BACKWARD]) * 400
+        channels[LATERAL_CHANNEL] += (self.status[LEFT] - self.status[RIGHT]) * 400
+        channels[THROTTLE_CHANNEL] += (self.status[UP] - self.status[DOWN]) * 400
+        channels[ROLL_CHANNEL] += (self.status[ROLL_LEFT] - self.status[ROLL_RIGHT]) * 400
+        channels[PITCH_CHANNEL] += (self.status[PITCH_UP] - self.status[PITCH_DOWN]) * 400
+        channels[YAW_CHANNEL] += (self.status[YAW_LEFT] - self.status[YAW_RIGHT]) * 400
 
-        for channel in range(YAW_CHANNEL + 1):
-
-            msg.channels[channel] *= RANGE_SPEED
-            # 1500 is no movement
-            msg.channels[channel] += ZERO_SPEED
+        msg.channels = channels
 
         self.rc_pub.publish(msg)
 
