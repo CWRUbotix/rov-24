@@ -69,7 +69,7 @@ Then run XLaunch from the Windows Start Menu.
 
 Then open up Command Prompt and type `ipconfig`.
 
-Then in the terminal of the docker container use `export DISPLAY={IPV$ of WSL}:0.0`
+Then in the terminal of the docker container use `export DISPLAY={IPV4 of WSL}:0.0`
 
 ##### WSL
 
