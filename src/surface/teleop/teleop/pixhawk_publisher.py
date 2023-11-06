@@ -25,6 +25,12 @@ FORWARD_CHANNEL:  int = 4  # X
 YAW_CHANNEL:      int = 5  # Yaw
 
 
+# TODO:
+# Replace PixhawkPublisher with function in PixhawkInstruction that returns OverrideRCIn
+# Make map() private
+# Confirm fields of dataclasses are not static (test it!)
+# Add PixhawkInstruction factory that accepts mapping function
+
 @dataclass
 class PixhawkInstruction:
     """Store movement instructions for the Pixhawk."""

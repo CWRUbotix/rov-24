@@ -46,7 +46,6 @@ class TaskSelector(QWidget):
         self.task_controller: GUIEventClient = GUIEventClient(
             TaskControl, '/auto_docker_control', self.scheduler_response_signal)
 
-
     def start_btn_clicked(self):
         """Tell the back about the user selecting the start button."""
         self.task_controller.get_logger().info(
