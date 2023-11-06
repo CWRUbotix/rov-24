@@ -5,8 +5,6 @@
 
 ## Setup
 
-### First-time setup
-
 <!-- [Follow this environment setup guide!](https://github.com/cwruRobotics/rov-24/wiki/Environment-Setup) -->
 
 Start by opening up a terminal and navigating to where you want the code to be saved and entering the following command.
@@ -17,21 +15,23 @@ git clone --recurse-submodules git@github.com:cwruRobotics/rov-24.git
 
 If you've never contributed to a git repository before, you might receive an error message saying you don't have access. In that case visit [this tutorial](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/about-ssh) to set up SSH for local GitHub access.
 
-After cloning the code we need to set up our IDE VsCode if you already have it great. Otherwise follow [this](https://code.visualstudio.com/download) tutorial.
+After cloning the code, we need to set up our IDE: VSCode. If you already have it, great. Otherwise follow [this](https://code.visualstudio.com/download) tutorial.
 
-#### Linux
+### Linux
 
-##### Docker
+#### Docker
 
 Start by installing docker from [here](https://www.docker.com/get-started/).
 
-Then install the Dev Containers VsCode extension.
+Then install the Dev Containers VSCode extension.
 
 To open the container use `F1` to open the command bar and use `Tasks: Runs Task`. Then from the Task selection choose `Docker Rebuild`. This will build and run the docker container. Make sure to choose `ROV Linux` for which type to run.
 
 For gui apps run `xhost + local:docker` before launching docker or add to `.bashrc`.
 
-##### Bare Metal
+To reopen after a build Go to File > Open Recent /stuff/rov-24 \[Dev Container]
+
+#### Bare Metal
 
 To enter the directory use
 
@@ -45,13 +45,13 @@ For bare metal installation run the following command.
 source .\src\surface\surface_main\scripts\ROS2-Install-Humble.sh
 ```
 
-#### Windows
+### Windows
 
-##### Docker
+#### Docker
 
 Start by installing docker from [here](https://www.docker.com/get-started/).
 
-Then install the Dev Containers VsCode extension.
+Then install the Dev Containers VSCode extension.
 
 To open the container use `F1` to open the command bar and use `Tasks: Runs Task`. Then from the Task selection choose `Docker Rebuild`. This will build and run the docker container. Make sure to choose `ROV Windows` for which type to run.
 
@@ -59,7 +59,7 @@ To add your ssh keys into the container follow [this](https://code.visualstudio.
 
 If this doesn't work try running `ssh -v git@github.com`
 
-if get_agent_identities is empty you will likely need to download a newer version of OpenSSH from [here](https://github.com/PowerShell/Win32-OpenSSH/releases/tag/v9.4.0.0p1-Beta). Download the .msi file. Once download double click to update it. You might need to do the previous step again.
+If get_agent_identities from the prior command is empty you will likely need to download a newer version of OpenSSH from [here](https://github.com/PowerShell/Win32-OpenSSH/releases/tag/v9.4.0.0p1-Beta). Download the .msi file. Once download double click to update it. You might need to do the previous step again.
 
 To get gui support inside docker download [this](https://sourceforge.net/projects/vcxsrv/files/latest/download).
 
@@ -69,13 +69,15 @@ Then run XLaunch from the Windows Start Menu.
 
 Then open up Command Prompt and type `ipconfig`.
 
-Then in the terminal of the docker container use `export DISPLAY={IPV4 of WSL}:0.0`
+Then in the terminal of the docker container use `export DISPLAY={IPV4 of WSL}:0.0` where the IPV4 is from the `ipconfig` command.
 
-##### WSL
+To reopen after a build Go to File > Open Recent /stuff/rov-24 \[Dev Container]
+
+#### WSL
 
 Follow [this](https://learn.microsoft.com/en-us/windows/wsl/install) guide to install WSL.
 
-After WSL has been installed follow [this](https://code.visualstudio.com/docs/remote/wsl) guide to get VsCode and WSL to properly communicate and open up the rov-24 folder.
+After WSL has been installed follow [this](https://code.visualstudio.com/docs/remote/wsl) guide to get VSCode and WSL to properly communicate and navigate to the rov-24 folder.
 
 Then run the following install script.
 
@@ -83,15 +85,17 @@ Then run the following install script.
 source .\src\surface\surface_main\scripts\ROS2-Install-Humble.sh
 ```
 
-#### macOS
+### macOS
 
-##### Docker
+#### Docker
 
 Start by installing docker from [here](https://www.docker.com/get-started/).
 
-Then install the Dev Containers VsCode extension.
+Then install the Dev Containers VSCode extension.
 
 To open the container use `F1` to open the command bar and use `Tasks: Runs Task`. Then from the Task selection choose `Docker Rebuild`. This will build and run the docker container. Make sure to choose `ROV macOS` for which type to run.
+
+To reopen after a build Go to File > Open Recent /stuff/rov-24 \[Dev Container]
 
 <!-- TODO ssh key and xserver testing on mac -->
 
@@ -109,7 +113,7 @@ Open a second terminal and run
 ros2 run demo_nodes_py listener
 ```
 
-## Convenience stuff
+## Building with Colcon
 
 Now, anytime you want to build, do the following:
 
