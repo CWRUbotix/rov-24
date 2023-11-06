@@ -18,6 +18,9 @@ RUN sudo apt-get install v4l-utils -y
 # Install lsusb
 RUN sudo apt-get install usbutils -y
 
+# Install nano
+RUN sudo apt-get nano -y
+
 RUN sudo apt-get update -y
 RUN sudo apt-get upgrade -y
 
