@@ -3,6 +3,22 @@
 <a href="https://github.com/cwruRobotics/rov-24/actions"><img src="https://github.com/cwruRobotics/rov-24/workflows/Continuous Integration/badge.svg" alt="Build Status"></a>
 <a href=" https://opensource.org/licenses/Apache-2.0"><img src="https://img.shields.io/badge/License-Apache%202.0-blue.svg" alt="Apache License"></a>
 
+# Table of Contents
+
+1. [Setup](#setup)
+    1. [Linux](#linux)
+        1. [Docker](#docker)
+        2. [Bare Metal](#bare-metal)
+    2. [Windows](#windows)
+        1. [Docker](#docker-1)
+        2. [WSL](#wsl)
+    3. [macOS](#macos)
+        1. [Docker](#docker-2)
+2. [Test Environment](#test-environment)
+3. [Code Building](#building-with-colcon)
+4. [Directory Structure](#directory-structure)
+5. [Documentation Structure](#documentation-structure)
+
 ## Setup
 
 <!-- [Follow this environment setup guide!](https://github.com/cwruRobotics/rov-24/wiki/Environment-Setup) -->
