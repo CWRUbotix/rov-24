@@ -21,8 +21,6 @@
 
 ## Setup
 
-<!-- [Follow this environment setup guide!](https://github.com/cwruRobotics/rov-24/wiki/Environment-Setup) -->
-
 Start by opening up a terminal and navigating to where you want the code to be saved and entering the following command.
 
 ```bash
