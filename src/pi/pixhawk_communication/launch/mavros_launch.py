@@ -17,7 +17,7 @@ def generate_launch_description():
             {"system_id": 255},
             # plugin_allowlist allows which mavros nodes get launched. The default is all of them.
             {"plugin_allowlist": ["sys_status", "rc_io", "command"]},
-            {"fcu_url": "/dev/ttyPixhawk"}
+            {"fcu_url": "/dev/ttyACM0"}
         ],
         remappings=[('/pi/mavros/rc/override', '/mavros/rc/override'),
                     ('/pi/mavros/cmd/arming', '/mavros/cmd/arming')]
