@@ -111,7 +111,8 @@ To open the container use `F1` to open the command bar and use `Tasks: Runs Task
 
 To reopen after a build Go to File > Open Recent /stuff/rov-24 \[Dev Container]
 
-<!-- TODO ssh key and xserver testing on mac -->
+<!-- Xserver testing on mac TODO ssh keys work -->
+<!-- https://gist.github.com/cschiewek/246a244ba23da8b9f0e7b11a68bf3285 -->
 
 ## Test environment
 
