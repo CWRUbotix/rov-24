@@ -1,6 +1,6 @@
 {
     "name" : "ROV Windows",
-    "image": "ghcr.io/cwrurobotics/rov-24:docker",
+    "image": "ghcr.io/cwrurobotics/rov-24:main",
     "containerEnv": {  
         "DISPLAY": "${localEnv:DISPLAY}"
     },
