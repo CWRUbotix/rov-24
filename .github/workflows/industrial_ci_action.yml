@@ -44,7 +44,7 @@ jobs:
   
       - uses: 'ros-industrial/industrial_ci@master' # run industrial_ci
         env: # either pass all entries explicitly
-          DOCKER_IMAGE: ghcr.io/cwrurobotics/rov-24:docker
+          DOCKER_IMAGE: ghcr.io/cwrurobotics/rov-24:main
           ROS_REPO: ${{ matrix.ROS_REPO }}          
           # Crazy one liner for install python dependencies
           AFTER_INSTALL_TARGET_DEPENDENCIES_EMBED: 'for d in /root/target_ws/src/rov-24/src/pi/*/ /root/target_ws/src/rov-24/src/surface/*/; do pip install -e "$d"; done'
