@@ -35,11 +35,15 @@ After cloning the code, we need to set up our IDE: VSCode. If you already have i
 
 #### Docker
 
-Start by installing docker from [here](https://www.docker.com/get-started/).
+Start by installing docker engine from [here](https://docs.docker.com/engine/install/ubuntu/).
+
+Set your permissions based on [this](https://docs.docker.com/engine/install/linux-postinstall/) guide.
+
+Restart.
 
 Then install the Dev Containers VSCode extension.
 
-To open the container use `F1` to open the command bar and use `Tasks: Runs Task`. Then from the Task selection choose `Docker Rebuild`. This will build and run the docker container. Make sure to choose `ROV Linux` for which type to run.
+To open the container use `F1` or `ctrl+shift+p` to open the command bar and use `Tasks: Runs Task`. Then from the Task selection choose `Docker Rebuild`. This will build and run the docker container. Make sure to choose `ROV Linux` for which type to run.
 
 For gui apps run `xhost + local:docker` before launching docker or add to `.bashrc`.
 
@@ -67,7 +71,7 @@ Start by installing docker from [here](https://www.docker.com/get-started/).
 
 Then install the Dev Containers VSCode extension.
 
-To open the container use `F1` to open the command bar and use `Tasks: Runs Task`. Then from the Task selection choose `Docker Rebuild`. This will build and run the docker container. Make sure to choose `ROV Windows` for which type to run.
+To open the container use `F1` or `ctrl+shift+p` to open the command bar and use `Tasks: Runs Task`. Then from the Task selection choose `Docker Rebuild`. This will build and run the docker container. Make sure to choose `ROV Windows` for which type to run.
 
 To add your ssh keys into the container follow [this](https://code.visualstudio.com/remote/advancedcontainers/sharing-git-credentials) guide.
 
@@ -107,7 +111,7 @@ Start by installing docker from [here](https://www.docker.com/get-started/).
 
 Then install the Dev Containers VSCode extension.
 
-To open the container use `F1` to open the command bar and use `Tasks: Runs Task`. Then from the Task selection choose `Docker Rebuild`. This will build and run the docker container. Make sure to choose `ROV macOS` for which type to run.
+To open the container use `F1` or `ctrl+shift+p` to open the command bar and use `Tasks: Runs Task`. Then from the Task selection choose `Docker Rebuild`. This will build and run the docker container. Make sure to choose `ROV macOS` for which type to run.
 
 To reopen after a build Go to File > Open Recent /stuff/rov-24 \[Dev Container]
 
@@ -132,7 +136,7 @@ ros2 run demo_nodes_py listener
 
 Now, anytime you want to build, do the following:
 
-In VSCode, press `F1` and enter `Tasks: Run Task` in the field until you see the
+In VSCode, press `F1` or `ctrl+shift+p` and enter `Tasks: Run Task` in the field until you see the
 corresponding option appear. Click or hit enter on that option.
 
 This whole process should become `F1`, `Enter`, `Enter` once you've done it once,
