@@ -77,7 +77,7 @@ If get_agent_identities from the prior command is empty you will likely need to 
 
 To get gui support inside docker download [this](https://sourceforge.net/projects/vcxsrv/files/latest/download).
 
-Then run XLaunch from the Windows Start Menu.
+Then run XLaunch from the Windows Start Menu. Make the settings look like this:
 
 ![Screenshot of the settings for Xlaunch](/doc/images/VcXsrv.png)
 
