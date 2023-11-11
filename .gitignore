@@ -9,7 +9,6 @@ build/
 install/
 log/
 
-
 # Allows custom tasks
 .vscode/*
 !.vscode/tasks.json
