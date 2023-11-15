@@ -23,9 +23,10 @@ def main():
 
     file_location = pathlib.Path(__file__).parent.resolve()
     udev_script = os.path.join(file_location, 'udev_copy.py')
+    cmd = ['/usr/bin/sudo'] + ['/usr/bin/python'] + [udev_script] + [pi_main_share]
+
     try:
-        p = subprocess.run(['sudo'] + ['python'] + [udev_script] + [pi_main_share],
-                           capture_output=True, check=True)
+        p = subprocess.run(cmd, capture_output=True, check=True)
     except subprocess.CalledProcessError as e:
         print(e.stderr)
         sys.exit(1)
