@@ -1,9 +1,10 @@
 import os
-import subprocess
 import sys
+import subprocess
+import pathlib
 
 from ament_index_python.packages import get_package_share_directory
-from robot_upstart import Job
+from robot_upstart.job import Job
 
 
 def main():
@@ -20,14 +21,20 @@ def main():
 
     os.symlink(launch_src, launch_dst)
 
-    udev_script = os.path.join(pi_main_share, 'udev_copy', 'udev_copy.py')
+    file_location = pathlib.Path(__file__).parent.resolve()
+    udev_script = os.path.join(file_location, 'udev_copy.py')
 
-    major_num = sys.version_info[0]
-    minor_num = sys.version_info[1]
-    udev_script = os.path.join(os.path.dirname(os.path.abspath(pi_main_share)), '../', 'lib',
-                               f'python{major_num}.{minor_num}',
-                               'site-packages', 'pi_main', 'udev_copy.py')
-    subprocess.call(['/usr/bin/sudo', 'python3', udev_script, pi_main_share])
+    cmd = ['/usr/bin/sudo'] + ['/usr/bin/python3'] + [udev_script] + [pi_main_share]
+
+    try:
+        p = subprocess.run(cmd, capture_output=True, check=True)
+    # Logs Error
+    except subprocess.CalledProcessError as e:
+        print(e.stderr)
+        sys.exit(1)
+
+    # Success Message
+    print(p.stdout.decode())
 
     cwrubotix_job = Job(name='cwrubotix_pi', rmw='rmw_cyclonedds_cpp')
     cwrubotix_job.symlink = True
