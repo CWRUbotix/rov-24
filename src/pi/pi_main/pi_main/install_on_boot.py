@@ -21,11 +21,10 @@ def main():
     os.symlink(launch_src, launch_dst)
 
     file_location = pathlib.Path(__file__).parent.resolve()
-
     udev_script = os.path.join(file_location, 'udev_copy.py')
 
-    p = subprocess.run(['sudo'] + ['python'] + [udev_script] + [pi_main_share], capture_output=True,
-                       check=True)
+    p = subprocess.run(['sudo'] + ['python'] + [udev_script] + [pi_main_share],
+                       capture_output=True, check=True)
 
     print(p.stdout.decode())
 
