@@ -23,6 +23,12 @@ def main():
 
     file_location = pathlib.Path(__file__).parent.resolve()
     udev_script = os.path.join(file_location, 'udev_copy.py')
+
+    print(os.listdir("/usr/bin"))
+
+    print()
+    print()
+
     cmd = ['/usr/bin/sudo'] + ['/usr/bin/python3'] + [udev_script] + [pi_main_share]
 
     try:
