@@ -1,3 +1,4 @@
+from gettext import install
 import os
 import sys
 import subprocess
@@ -33,10 +34,13 @@ def main():
         print(e.stderr)
         sys.exit(1)
 
-    # Success Message
+    # Sucess Message
     print(p.stdout.decode())
 
-    cwrubotix_job = Job(name='cwrubotix_pi', rmw='rmw_cyclonedds_cpp')
+    install_path = os.path.join(pi_main_share, "..", "..")
+    workspace_path = os.path.join(install_path, "setup.bash")
+    cwrubotix_job = Job(name='cwrubotix_pi', rmw='rmw_cyclonedds_cpp',
+                        workspace_setup=workspace_path)
     cwrubotix_job.symlink = True
     cwrubotix_job.uninstall()
     cwrubotix_job.add(package='pi_main', filename='launch/pi.launch.py')
