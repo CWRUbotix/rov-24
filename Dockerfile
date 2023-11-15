@@ -1,6 +1,6 @@
-FROM osrf/ros:humble-desktop-full
+FROM osrf/ros:iron-desktop-full
 
-RUN . /opt/ros/humble/setup.sh \
+RUN . /opt/ros/iron/setup.sh \
     && rosdep update
 
 RUN sudo apt-get update -y
@@ -33,13 +33,13 @@ WORKDIR /root/rov-24
 COPY . .
 
 # Installs ROS dependencies
-RUN . /opt/ros/humble/setup.sh \
+RUN . /opt/ros/iron/setup.sh \
     && rosdep install --from-paths src --ignore-src -r -y
 
 # Crazy one liner for install python dependencies
 RUN for d in src/pi/*/ src/surface/*/; do sudo pip install -e "$d"; done
 
-RUN . /opt/ros/humble/setup.sh \
+RUN . /opt/ros/iron/setup.sh \
     && PYTHONWARNINGS=ignore:::setuptools.command.install,ignore:::setuptools.command.easy_install,ignore:::pkg_resources; export PYTHONWARNINGS\
     && colcon build --symlink-install
 
