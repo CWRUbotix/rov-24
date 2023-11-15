@@ -23,8 +23,12 @@ def main():
     file_location = pathlib.Path(__file__).parent.resolve()
     udev_script = os.path.join(file_location, 'udev_copy.py')
 
-    p = subprocess.run(['sudo'] + ['python'] + [udev_script] + [pi_main_share],
-                       capture_output=True, check=True)
+    try:
+        p = subprocess.run(['sudo'] + ['python'] + [udev_script] + [pi_main_share],
+                           capture_output=True, check=True)
+    except subprocess.CalledProcessError as e:
+        print(e)
+        assert False
 
     print(p.stdout.decode())
 
