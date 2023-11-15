@@ -52,3 +52,5 @@ jobs:
           # Crazy one liner for install pyqt testing and python dependencies
           # Add export CMAKE_PREFIX_PATH=/root/target_ws/rov-24/install/setup.bash
           AFTER_INSTALL_TARGET_DEPENDENCIES_EMBED: 'sudo apt-get install libxcb-cursor0 xvfb -y && for d in /root/target_ws/src/rov-24/src/pi/*/ /root/target_ws/src/rov-24/src/surface/*/; do pip install -e "$d"; done && export CMAKE_PREFIX_PATH=/root/target_ws/rov-24/install/setup.bash'
+          # Used to disable submodule tests which might not be passing
+          NOT_TEST_DOWNSTREAM: true
