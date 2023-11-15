@@ -2,10 +2,10 @@ import os
 
 from pi_main.install_on_boot import main
 
-EXPECTED_SYSTEM_FILES = ["/etc/ros/humble/cwrubotix_pi.d/.installed_files",
-                         "/etc/ros/humble/cwrubotix_pi.d/pi.launch.py",
-                         "/etc/systemd/system/multi-user.target.wants/cwrubotix_pi.service",
-                         "/lib/systemd/system/cwrubotix_pi.service",
+ROS_DISTRO = os.getenv("ROS_DISTRO")
+
+EXPECTED_SYSTEM_FILES = [f"/etc/ros/{ROS_DISTRO}/cwrubotix_pi.d/.installed_files",
+                         f"/etc/ros/{ROS_DISTRO}/cwrubotix_pi.d/pi.launch.py",
                          "/usr/sbin/cwrubotix_pi-start",
                          "/usr/sbin/cwrubotix_pi-stop"]
 
