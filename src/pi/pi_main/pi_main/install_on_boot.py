@@ -1,4 +1,3 @@
-from gettext import install
 import os
 import sys
 import subprocess
@@ -34,7 +33,7 @@ def main():
         print(e.stderr)
         sys.exit(1)
 
-    # Sucess Message
+    # Success Message
     print(p.stdout.decode())
 
     install_path = os.path.join(pi_main_share, "..", "..")
