@@ -14,9 +14,11 @@ def test_install_on_boot():
     """Test that file copying and systemd are made."""
     main()
 
+    # Test for rules files being copied correctly
     actual_rules_files = set(os.listdir(os.path.join("/etc", "udev", "rules.d")))
     expected_rules_files = set(["i2c.rules", "camera.rules", "pixhawk.rules"])
     assert expected_rules_files.issubset(actual_rules_files)
 
+    # Checks for files created by robot_upstart
     for file in EXPECTED_SYSTEM_FILES:
         assert os.path.isfile(file)
