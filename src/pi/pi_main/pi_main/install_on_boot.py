@@ -1,4 +1,5 @@
 import os
+import sys
 import subprocess
 import pathlib
 
@@ -22,14 +23,14 @@ def main():
 
     file_location = pathlib.Path(__file__).parent.resolve()
     udev_script = os.path.join(file_location, 'udev_copy.py')
-
     try:
         p = subprocess.run(['sudo'] + ['python'] + [udev_script] + [pi_main_share],
                            capture_output=True, check=True)
     except subprocess.CalledProcessError as e:
-        print(e)
-        assert False
+        print(e.stderr)
+        sys.exit(1)
 
+    # Sucess Message
     print(p.stdout.decode())
 
     cwrubotix_job = Job(name='cwrubotix_pi', rmw='rmw_cyclonedds_cpp')
