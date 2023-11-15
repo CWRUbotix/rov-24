@@ -27,6 +27,7 @@ def main():
 
     try:
         p = subprocess.run(cmd, capture_output=True, check=True)
+    # Logs Error
     except subprocess.CalledProcessError as e:
         print(e.stderr)
         sys.exit(1)
