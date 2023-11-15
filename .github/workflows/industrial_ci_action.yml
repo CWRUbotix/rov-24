@@ -29,9 +29,6 @@ jobs:
       CCACHE_DIR: "${{ github.workspace }}/.ccache" # directory for ccache (and how we enable ccache in industrial_ci)
     steps:
       - uses: actions/checkout@v4 # clone target repository
-        with:
-          # Clone submodules as well
-          submodules: 'true'
       - uses: actions/cache@v3 # fetch/store the directory used by ccache before/after the ci run
         with:
           path: ${{ env.CCACHE_DIR }}
@@ -50,5 +47,6 @@ jobs:
           # https://pytest-qt.readthedocs.io/en/latest/troubleshooting.html
           # Added back so testing without Dockerfile can be done
           # Crazy one liner for install pyqt testing and python dependencies
-          # Add export CMAKE_PREFIX_PATH=/root/target_ws/rov-24/install/setup.bash
-          AFTER_INSTALL_TARGET_DEPENDENCIES_EMBED: 'sudo apt-get install libxcb-cursor0 xvfb -y && for d in /root/target_ws/src/rov-24/src/pi/*/ /root/target_ws/src/rov-24/src/surface/*/; do pip install -e "$d"; done && export CMAKE_PREFIX_PATH=/root/target_ws/rov-24/install/setup.bash'
+          AFTER_INSTALL_TARGET_DEPENDENCIES_EMBED: 'sudo apt-get install libxcb-cursor0 xvfb -y && for d in /root/target_ws/src/rov-24/src/pi/*/ /root/target_ws/src/rov-24/src/surface/*/; do pip install -e "$d"; done'
+          # Used for running our CI but don't necessarily want to run others failing unit tests (ej. robot_upstart)
+          UPSTREAM_WORKSPACE: 'github.com:clearpathrobotics/robot_upstart#foxy-devel'
