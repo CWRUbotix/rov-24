@@ -1,8 +1,5 @@
 FROM osrf/ros:humble-desktop-full
 
-RUN . /opt/ros/humble/setup.sh \
-    && rosdep update
-
 RUN sudo apt-get update -y
 
 # Install missing libxcb-cursor0 xvfb for PyQt unit testing
