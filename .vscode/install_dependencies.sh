@@ -9,4 +9,6 @@ sudo apt-get update -y
 . /opt/ros/humble/setup.sh && rosdep install --from-paths src --ignore-src -r -y
 
 # Crazy one liner for install python dependencies
-for d in src/pi/*/ src/surface/*/; do sudo pip install -e "$d"; done
+for d in src/pi/*/ src/surface/*/; do pip install -e "$d"; done
+# Delete generated files
+rm -rf $(find . | grep .egg-info)
