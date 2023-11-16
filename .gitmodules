@@ -1,6 +1,6 @@
 [submodule "src/surface/ros2_video_streamer"]
 	path = src/surface/ros2_video_streamer
 	url = git@github.com:cwruRobotics/ros2_video_streamer.git
-[submodule "src/pi/flir_camera_driver"]
-	path = src/pi/flir_camera_driver
+[submodule "src/surface/flir_camera_driver"]
+	path = src/surface/flir_camera_driver
 	url = git@github.com:ros-drivers/flir_camera_driver.git
