@@ -57,6 +57,52 @@
                 "reveal": "silent",
                 "revealProblems": "onProblem"
             },
-          }
+          },
+          {
+            "label": "Setup ROS Environment",
+            "type": "shell",
+            "command": "bash",
+            "args": [
+                "${workspaceFolder}/.vscode/ros2_install.sh"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Install Dependencies",
+            "type": "shell",
+            "command": "bash",
+            "args": [
+                "${workspaceFolder}/.vscode/install_dependencies.sh"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Setup ROV Environment",
+            "type": "shell",
+            "command": "bash",
+            "args": [
+                "${workspaceFolder}/.vscode/rov_setup.sh"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "First Time Setup",
+            "dependsOrder": "sequence",
+            "dependsOn": ["Setup ROS Environment", "Install Dependencies", "Setup ROV Environment"],
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "silent",
+                "revealProblems": "onProblem"
+            },
+          },
+          {
+            "label": "Setup Pi Environment",
+            "type": "shell",
+            "command": "bash",
+            "args": [
+                "${workspaceFolder}/.vscode/pi_setup.sh"
+            ],
+            "problemMatcher": []
+        },
     ]
 }
