@@ -50,7 +50,7 @@ class VideoWidget(QWidget):
             Image, topic, self.handle_frame_signal)
 
     @pyqtSlot(Image)
-    def handle_frame(self, frame: Image):
+    def handle_frame(self, frame: Image) -> None:
         cv_image: MatLike = self.cv_bridge.imgmsg_to_cv2(
             frame, desired_encoding='passthrough')
 
@@ -131,10 +131,10 @@ class SwitchableVideoWidget(VideoWidget):
                                                             self.controller_signal)
 
     @pyqtSlot(CameraControllerSwitch)
-    def controller_camera_switch(self, switch: CameraControllerSwitch):
+    def controller_camera_switch(self, switch: CameraControllerSwitch) -> None:
         self.camera_switch(switch.toggle_right)
 
-    def camera_switch(self, toggle_right: bool):
+    def camera_switch(self, toggle_right: bool) -> None:
         if toggle_right:
             self.active_cam = (self.active_cam + 1) % self.num_of_cams
         else:
@@ -172,11 +172,11 @@ class PauseableVideoWidget(VideoWidget):
         self.is_paused = False
 
     @pyqtSlot(Image)
-    def handle_frame(self, frame: Image):
+    def handle_frame(self, frame: Image) -> None:
         if not self.is_paused:
             super().handle_frame(frame)
 
-    def toggle(self):
+    def toggle(self) -> None:
         """Toggle whether this widget is paused or playing."""
         self.is_paused = not self.is_paused
         self.button.setText(self.PAUSED_TEXT if self.is_paused else self.PLAYING_TEXT)

@@ -6,7 +6,7 @@ from ament_index_python.packages import get_package_share_directory
 from robot_upstart import Job
 
 
-def main():
+def main() -> None:
     pi_main_share = get_package_share_directory('pi_main')
 
     launch_dir = os.path.join(pi_main_share, 'launch')

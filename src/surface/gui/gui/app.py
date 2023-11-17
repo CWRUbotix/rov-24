@@ -23,11 +23,11 @@ class App(QWidget):
 
         atexit.register(self.clean_shutdown)
 
-    def clean_shutdown(self):
+    def clean_shutdown(self) -> None:
         if rclpy.ok():
             rclpy.shutdown()
 
-    def run_gui(self):
+    def run_gui(self) -> None:
         # Kills with Control + C
         signal.signal(signal.SIGINT, signal.SIG_DFL)
 

@@ -38,5 +38,5 @@ class OperatorApp(App):
         root_layout.addWidget(tabs)
 
 
-def run_gui_operator():
+def run_gui_operator() -> None:
     OperatorApp().run_gui()

@@ -52,14 +52,14 @@ class Arm(QWidget):
             self.signal
         )
 
-    def arm_clicked(self):
+    def arm_clicked(self) -> None:
         self.arm_client.send_request_async(self.ARM_REQUEST)
 
-    def disarm_clicked(self):
+    def disarm_clicked(self) -> None:
         self.arm_client.send_request_async(self.DISARM_REQUEST)
 
     @pyqtSlot(CommandBool.Response)
-    def arm_status(self, res: CommandBool.Response):
+    def arm_status(self, res: CommandBool.Response) -> None:
         # TODO? could check against /mavros/state for confirmation
         if res:
             self.arm_client.get_logger().info("Has been armed or disarmed.")
