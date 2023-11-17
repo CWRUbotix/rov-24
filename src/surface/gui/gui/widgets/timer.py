@@ -4,7 +4,7 @@ from PyQt6.QtWidgets import QGridLayout, QLabel, QPushButton, QWidget
 
 
 class Timer(QWidget):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
 
         self.seconds_left = 15 * 60
