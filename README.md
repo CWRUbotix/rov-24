@@ -144,6 +144,10 @@ although the magic of symlink should mean you won't need to build again for most
 
 If you're working on package metadata (e.g. `package.xml`) or rov_msgs, you'll need to run `🏃‍♂️ ROS Quick Build` or use `Control + Shift + B` every time you change something.
 
+If you want to run our unit tests use this command `colcon test --event-handlers=console_direct+`.
+
+It runs the tests and pipes the output to the terminal.
+
 <!-- ### Automatic building for non-VSCode heathens
 
 Run this command from your workspace folder
