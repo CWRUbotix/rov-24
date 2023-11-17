@@ -22,7 +22,7 @@ setup(
         (os.path.join('share', package_name, 'udev_copy'),
          glob('pi_main/udev_copy.py'))
     ],
-    install_requires=['setuptools', 'flake8 >= 6.1'],
+    install_requires=['setuptools', 'flake8==5.0.4'],
     zip_safe=True,
     maintainer='Michael Carlstrom',
     maintainer_email='rmc170@case.edu',
