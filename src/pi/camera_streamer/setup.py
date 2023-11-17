@@ -17,7 +17,7 @@ setup(
         (os.path.join('share', package_name, 'launch'),
          glob('launch/*launch.[pxy][yma]*'))
     ],
-    install_requires=['setuptools'],
+    install_requires=['setuptools', 'mypy >= 1.7'],
     zip_safe=True,
     maintainer='Noah Mollerstuen',
     maintainer_email='noah@mollerstuen.com',
