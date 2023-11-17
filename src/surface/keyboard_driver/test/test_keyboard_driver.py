@@ -1,4 +1,4 @@
-from keyboard_driver.keyboard_driver_node import KeyboardListenerNode
+import keyboard_driver
 import rclpy
 import pytest
 
@@ -7,5 +7,5 @@ import pytest
 def test_keyboard_listener_instantiation() -> None:
     """Unit test for KeyboardListenerNode instantiation."""
     rclpy.init()
-    KeyboardListenerNode()
+    keyboard_driver.keyboard_driver.KeyboardListenerNode()
     rclpy.shutdown()
