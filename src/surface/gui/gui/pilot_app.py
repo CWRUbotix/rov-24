@@ -28,5 +28,5 @@ class PilotApp(App):
                          alignment=Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignBottom)
 
 
-def run_gui_pilot():
+def run_gui_pilot() -> None:
     PilotApp().run_gui()

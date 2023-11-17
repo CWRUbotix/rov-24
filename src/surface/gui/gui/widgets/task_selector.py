@@ -59,7 +59,7 @@ class TaskSelector(QWidget):
         # self.task_changed_server: GUIEventSubscriber = GUIEventSubscriber(
         #     TaskFeedback, '/task_feedback', self.update_task_dropdown_signal)
 
-    def start_btn_clicked(self):
+    def start_btn_clicked(self) -> None:
         """Tell the back about the user selecting the start button."""
         # Cancel change if task changer hasn't connected yet
         # if not self.task_changed_client.connected:
@@ -73,7 +73,7 @@ class TaskSelector(QWidget):
         self.task_changed_client.send_request_async(
             TaskRequest.Request(task_id=Tasks.AUTO_DOCKING.value))
 
-    def manual_control_btn_clicked(self):
+    def manual_control_btn_clicked(self) -> None:
         """Tell the back about the user selecting the manual control button."""
         # Cancel change if task changer hasn't connected yet
         # if not self.task_changed_client.connected:
