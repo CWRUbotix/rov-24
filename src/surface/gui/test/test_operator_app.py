@@ -1,5 +1,5 @@
 import pytest
-import gui.operator_app import OperatorApp
+from gui.operator_app import OperatorApp
 from pytestqt.qtbot import QtBot
 
 
