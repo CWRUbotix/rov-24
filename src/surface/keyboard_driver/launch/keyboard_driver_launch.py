@@ -1,9 +1,9 @@
-import launch
+from launch.launch_description import LaunchDescription
 import launch_ros.actions
 
 
-def generate_launch_description() -> launch.launch_description.LaunchDescription:
-    return launch.launch_description.LaunchDescription(
+def generate_launch_description() -> LaunchDescription:
+    return LaunchDescription(
         [
             launch_ros.actions.Node(
                 package="keyboard_driver",
