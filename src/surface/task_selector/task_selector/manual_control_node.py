@@ -62,7 +62,7 @@ YAW_CHANNEL:      int = 5  # Yaw
 class ManualControlNode(Node):
     _passing: bool = False
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__('manual_control_node',
                          parameter_overrides=[])
         # TODO would Service make more sense then Actions?

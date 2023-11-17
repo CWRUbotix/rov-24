@@ -7,7 +7,7 @@ from PyQt6.QtWidgets import QGridLayout, QTabWidget, QWidget
 
 
 class OperatorApp(App):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__('operator_gui_node')
 
         self.setWindowTitle('Operator GUI - CWRUbotix ROV 2024')

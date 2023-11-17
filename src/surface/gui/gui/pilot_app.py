@@ -6,7 +6,7 @@ from PyQt6.QtWidgets import QHBoxLayout
 
 
 class PilotApp(App):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__('pilot_gui_node')
 
         self.setWindowTitle('Pilot GUI - CWRUbotix ROV 2024')

@@ -12,7 +12,7 @@ class App(QWidget):
 
     app: QApplication = QApplication([])
 
-    def __init__(self, node_name: str):
+    def __init__(self, node_name: str) -> None:
         if not rclpy.ok():
             rclpy.init()
         super().__init__()

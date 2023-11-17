@@ -1,8 +1,8 @@
-from launch import LaunchDescription
+from launch.launch_description import LaunchDescription
 from launch_ros.actions import Node
 
 
-def generate_launch_description():
+def generate_launch_description() -> LaunchDescription:
 
     mavros_node = Node(
         package="mavros",
