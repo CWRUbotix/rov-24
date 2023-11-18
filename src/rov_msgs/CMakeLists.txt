@@ -32,6 +32,8 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/TaskFeedback.msg"
   "msg/Manip.msg"
   "msg/CameraControllerSwitch.msg"
+  "msg/VehicleState.msg"
+  "msg/Heartbeat.msg"
   DEPENDENCIES std_msgs
 )
 
