@@ -19,10 +19,10 @@ class TaskSelector(Node):
 
         # create service to handle requests for task switching
         self.request_server = self.create_service(
-            TaskRequest, '/task_request', self.request_task_callback)
+            TaskRequest, 'task_request', self.request_task_callback)
 
         self.feedback_server = self.create_publisher(
-            TaskFeedback, '/task_feedback', qos_profile_system_default)
+            TaskFeedback, 'task_feedback', qos_profile_system_default)
 
         # instantiates new action clients with inputs of node,
         # action type, action name
@@ -103,18 +103,19 @@ class TaskSelector(Node):
     #         self.morning_response_callback)
 
     # Checks if goal was accepted
-    def basic_response_callback(self, future):
-        goal_handle = future.result()
-        if not goal_handle.accepted:
-            self.get_logger().info('Goal rejected')
-            return
+    # TODO what type is future?
+    # def basic_response_callback(self, future):
+    #     goal_handle = future.result()
+    #     if not goal_handle.accepted:
+    #         self.get_logger().info('Goal rejected')
+    #         return
 
-        self.get_logger().info('Goal accepted')
+    #     self.get_logger().info('Goal accepted')
 
-        self._goal_handle = goal_handle
+    #     self._goal_handle = goal_handle
 
-        self._get_result_future = goal_handle.get_result_async()
-        self._get_result_future.add_done_callback(self.basic_result_callback)
+    #     self._get_result_future = goal_handle.get_result_async()
+    #     self._get_result_future.add_done_callback(self.basic_result_callback)
 
     # def morning_response_callback(self, future):
     #     goal_handle = future.result()
@@ -128,6 +129,7 @@ class TaskSelector(Node):
     #     self._get_result_future.add_done_callback(self.morning_result_callback)
 
     # Notify us that task is finished
+    # TODO what type is future?
     def basic_result_callback(self, future):
         self.get_logger().info("Task finished")
         self.active = False
@@ -139,6 +141,7 @@ class TaskSelector(Node):
     #     self.active = False
 
     # Logs feedback from action server
+    # TODO what type is feedback_msg?
     def feedback_callback(self, feedback_msg):
         feedback = feedback_msg.feedback
         self.get_logger().info(
@@ -156,6 +159,7 @@ class TaskSelector(Node):
         future.add_done_callback(self.cancel_done)
 
     # Logs if goal was canceled
+    # TODO what type is future?
     def cancel_done(self, future):
         cancel_response = future.result()
         if len(cancel_response.goals_canceling) > 0:

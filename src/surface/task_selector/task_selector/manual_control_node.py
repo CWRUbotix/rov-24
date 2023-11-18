@@ -1,4 +1,4 @@
-from array import array
+from collections.abc import MutableSequence
 
 import rclpy
 from mavros_msgs.msg import OverrideRCIn
@@ -6,7 +6,7 @@ from rclpy.action import ActionServer, CancelResponse
 from rclpy.action.server import ServerGoalHandle
 from rclpy.executors import MultiThreadedExecutor
 from rclpy.node import Node, Publisher, Subscription
-from rclpy.qos import qos_profile_system_default, qos_profile_sensor_data
+from rclpy.qos import qos_profile_sensor_data, qos_profile_system_default
 from sensor_msgs.msg import Joy
 
 from rov_msgs.action import BasicTask
@@ -74,7 +74,7 @@ class ManualControlNode(Node):
         )
         self.rc_pub: Publisher = self.create_publisher(
             OverrideRCIn,
-            '/mavros/rc/override',
+            'mavros/rc/override',
             qos_profile_system_default
         )
         self.subscription: Subscription = self.create_subscription(
@@ -116,8 +116,8 @@ class ManualControlNode(Node):
     def joystick_to_pixhawk(self, msg: Joy):
         rc_msg = OverrideRCIn()
 
-        axes: array[float] = msg.axes
-        buttons: array[int] = msg.buttons
+        axes: MutableSequence[float] = msg.axes
+        buttons: MutableSequence[int] = msg.buttons
 
         # DPad Pitch
         rc_msg.channels[PITCH_CHANNEL] = self.joystick_profiles(axes[DPADVERT])
@@ -169,7 +169,7 @@ class ManualControlNode(Node):
         return CancelResponse.ACCEPT
 
     def manip_callback(self, msg: Joy):
-        buttons: array[int] = msg.buttons
+        buttons: MutableSequence[int] = msg.buttons
 
         for button_id, manip_button in self.manip_buttons.items():
 
@@ -193,7 +193,7 @@ class ManualControlNode(Node):
 
     def camera_toggle(self, msg: Joy):
         """Cycles through connected cameras on pilot GUI using menu and pairing buttons."""
-        buttons: array[int] = msg.buttons
+        buttons: MutableSequence[int] = msg.buttons
 
         if buttons[MENU] == 1:
             self.seen_right_cam = True

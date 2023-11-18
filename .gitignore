@@ -2,12 +2,12 @@
 __pycache__/
 *.py[cod]
 *$py.class
+*.egg-info
 
 # ROS build files
 build/
 install/
 log/
-
 
 # Allows custom tasks
 .vscode/*
