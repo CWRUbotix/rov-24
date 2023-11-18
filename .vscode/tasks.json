@@ -39,13 +39,13 @@
                 "command": "docker pull ghcr.io/cwrurobotics/rov-24:main"
             },
             "hide": true
-          },
-          {
+        },
+        {
             "label": "Docker Build",
             "command": "${command:remote-containers.rebuildNoCacheAndReopenInContainer}",
             "hide": true
-          },
-          {
+        },
+        {
             // Runs Docker Pull and then Docker Build
             // This is done because the default behavior of Docker Build
             // does not repull the docker image from github.
@@ -57,9 +57,9 @@
                 "reveal": "silent",
                 "revealProblems": "onProblem"
             },
-          },
-          {
-            "label": "Setup ROS Environment",
+        },
+        {
+            "label": "Install ROS",
             "type": "shell",
             "command": "bash",
             "args": [
@@ -77,25 +77,26 @@
             "problemMatcher": []
         },
         {
-            "label": "Setup ROV Environment",
+            "label": "Setup MATE ROV Environment",
             "type": "shell",
             "command": "bash",
             "args": [
                 "${workspaceFolder}/.vscode/rov_setup.sh"
             ],
-            "problemMatcher": []
+            "problemMatcher": [],
+            "hide": true
         },
         {
-            "label": "First Time Setup",
+            "label": "Setup Surface Environment",
             "dependsOrder": "sequence",
-            "dependsOn": ["Setup ROS Environment", "Install Dependencies", "Setup ROV Environment"],
+            "dependsOn": ["Install ROS", "Install Dependencies", "Setup MATE ROV Environment"],
             "problemMatcher": [],
             "presentation": {
                 "reveal": "silent",
                 "revealProblems": "onProblem"
             },
-          },
-          {
+        },
+        {
             "label": "Setup Pi Environment",
             "type": "shell",
             "command": "bash",
