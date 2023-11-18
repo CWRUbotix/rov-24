@@ -1,0 +1,31 @@
+import rclpy
+from rclpy.node import Node
+from rclpy.qos import qos_profile_system_default
+from rclpy.executors import MultiThreadedExecutor
+
+from rov_msgs.msg import Heartbeat
+
+PUBLISH_RATE = 2  # Hz
+
+class HeartbeatNode(Node):
+    def __init__(self):
+        super().__init__("heartbeat_node", parameter_overrides=[])
+
+        self.publisher = self.create_publisher(
+            Heartbeat, "pi_heartbeat", qos_profile_system_default
+        )
+
+        self.timer = self.create_timer(1 / PUBLISH_RATE, self.timer_callback)
+
+    def timer_callback(self):
+        self.publisher.publish(Heartbeat())
+
+def main():
+    rclpy.init()
+    vehicle_manager = HeartbeatNode()
+    executor = MultiThreadedExecutor()
+    rclpy.spin(vehicle_manager, executor=executor)
+
+
+if __name__ == "__main__":
+    main()

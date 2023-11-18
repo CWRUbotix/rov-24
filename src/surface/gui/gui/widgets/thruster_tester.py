@@ -1,4 +1,4 @@
-from mavros_msgs.srv import CommandLong
+from mavros_msgs.srv import CommandLong, ParamGet, ParamSet
 from PyQt6.QtWidgets import QVBoxLayout, QGridLayout, QPushButton, QWidget, QLabel, QLineEdit
 from PyQt6.QtGui import QIntValidator
 from PyQt6.QtCore import pyqtSignal, pyqtSlot
@@ -10,10 +10,12 @@ class ThrusterTester(QWidget):
     """Widget to command the pixhawk to test the thrusters, and reassign thruster ports"""
 
     TEST_LENGTH: float = 2.0  # time between adjecent tests of individual thrusters
-    TEST_THROTTLE: float = 0.50  # 20%
+    TEST_THROTTLE: float = 0.50  # 50%
     MOTOR_COUNT = 8
 
-    resposne_signal: pyqtSignal = pyqtSignal(CommandLong.Response)
+    command_resposne_signal: pyqtSignal = pyqtSignal(CommandLong.Response)
+    param_get_resposne_signal: pyqtSignal = pyqtSignal(ParamGet.Response)
+    param_set_resposne_signal: pyqtSignal = pyqtSignal(ParamSet.Response)
 
     def __init__(self):
         super().__init__()
@@ -21,10 +23,23 @@ class ThrusterTester(QWidget):
         self.client: GUIEventClient = GUIEventClient(
             CommandLong,
             "/mavros/cmd/command",
-            self.resposne_signal
+            self.command_resposne_signal
         )
+        self.command_resposne_signal.connect(self.command_response_handler)
 
-        self.resposne_signal.connect(self.response_handler)
+        self.client: GUIEventClient = GUIEventClient(
+            ParamGet,
+            "/mavros/param/get",
+            self.param_get_resposne_signal
+        )
+        self.param_get_resposne_signal.connect(self.param_get_response_handler)
+
+        self.client: GUIEventClient = GUIEventClient(
+            ParamSet,
+            "/mavros/param/set",
+            self.param_set_resposne_signal
+        )
+        self.param_get_resposne_signal.connect(self.param_set_response_handler)
 
         layout: QVBoxLayout = QVBoxLayout()
         self.setLayout(layout)
@@ -105,5 +120,13 @@ class ThrusterTester(QWidget):
         pass
 
     @pyqtSlot(CommandLong.Response)
-    def response_handler(self, res: CommandLong.Response):
+    def command_response_handler(self, res: CommandLong.Response):
         self.client.get_logger().debug(f"Test response: {res.success}, {res.result}")
+
+    @pyqtSlot(ParamGet.Response)
+    def param_get_response_handler(self, res: ParamGet.Response):
+        pass
+
+    @pyqtSlot(ParamSet.Response)
+    def param_set_response_handler(self, res: ParamSet.Response):
+        pass
