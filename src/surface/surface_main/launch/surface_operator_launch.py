@@ -31,7 +31,7 @@ def generate_launch_description():
 
     namespace_launch = GroupAction(
         actions=[
-            PushRosNamespace("/surface"),
+            PushRosNamespace("surface"),
             gui_launch,
             task_selector_launch,
         ]
