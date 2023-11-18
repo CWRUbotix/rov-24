@@ -148,6 +148,8 @@ If you want to run our unit tests use this command `colcon test --event-handlers
 
 It runs the tests and pipes the output to the terminal.
 
+If you install the flake8 and mypy extension they should help enforce the linters.
+
 <!-- ### Automatic building for non-VSCode heathens
 
 Run this command from your workspace folder
