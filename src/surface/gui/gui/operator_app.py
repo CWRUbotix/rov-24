@@ -1,6 +1,6 @@
 from gui.app import App
 from gui.widgets.logger import Logger
-from gui.modules.float_comm import FloatComm
+from gui.widgets.float_comm import FloatComm
 from gui.widgets.seagrass import SeagrassWidget
 from gui.widgets.task_selector import TaskSelector
 from gui.widgets.timer import Timer
