@@ -15,11 +15,19 @@ class MinimalPublisher(Node):
         self.i = 0
 
     def timer_callback(self):
+        detect1, detect2, detect3 = 2,4,6
         h = lgpio.gpiochip_open(0)
+        lgpio.gpio_claim_input(h,detect1)
+        lgpio.gpio_claim_input(h,detect2)
+        lgpio.gpio_claim_input(h,detect3)
+        data1 = lgpio.gpio_read(h,detect1)
+        data2 = lgpio.gpio_read(h,detect2)
+        data3 = lgpio.gpio_read(h,detect3)
+
         msg = String()
-        msg.data = 'Hello World: %d' % self.i
-        self.publisher_.publish(msg)
-        self.get_logger().info('Publishing: "%s"' % msg.data)
+        # msg.data = 'Hello World: %d' % self.i
+        # self.publisher_.publish(msg)
+        # self.get_logger().info('Publishing: "%s"' % msg.data)
         self.i += 1
 
 
