@@ -10,15 +10,15 @@ from launch_ros.actions import PushRosNamespace
 def generate_launch_description():
     NS = 'pi'
     # Manipulator Controller
-    manip_path: str = get_package_share_directory('manipulators')
-
-    manip_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource([
-            os.path.join(
-                manip_path, 'launch', 'manip_launch.py'
-            )
-        ])
-    )
+    # manip_path: str = get_package_share_directory('manipulators')
+    #
+    # manip_launch = IncludeLaunchDescription(
+    #     PythonLaunchDescriptionSource([
+    #         os.path.join(
+    #             manip_path, 'launch', 'manip_launch.py'
+    #         )
+    #     ])
+    # )
 
     # Camera Streamer
     cam_path: str = get_package_share_directory('camera_streamer')
@@ -57,7 +57,7 @@ def generate_launch_description():
     namespace_launch = GroupAction(
         actions=[
             PushRosNamespace(NS),
-            manip_launch,
+            # manip_launch,
             pixhawk_launch,
             cam_launch,
             # realsense_launch
