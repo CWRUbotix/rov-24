@@ -1,7 +1,7 @@
 import serial
 import rclpy
 from rclpy.node import Node
-from interfaces.msg import FloatCommand
+from rov_msgs.msg import FloatCommand
 
 
 class SerialReader(Node):
