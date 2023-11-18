@@ -39,13 +39,13 @@
                 "command": "docker pull ghcr.io/cwrurobotics/rov-24:main"
             },
             "hide": true
-          },
-          {
+        },
+        {
             "label": "Docker Build",
             "command": "${command:remote-containers.rebuildNoCacheAndReopenInContainer}",
             "hide": true
-          },
-          {
+        },
+        {
             // Runs Docker Pull and then Docker Build
             // This is done because the default behavior of Docker Build
             // does not repull the docker image from github.
@@ -57,6 +57,53 @@
                 "reveal": "silent",
                 "revealProblems": "onProblem"
             },
-          }
+        },
+        {
+            "label": "Install ROS",
+            "type": "shell",
+            "command": "bash",
+            "args": [
+                "${workspaceFolder}/.vscode/ros2_install.sh"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Install Dependencies",
+            "type": "shell",
+            "command": "bash",
+            "args": [
+                "${workspaceFolder}/.vscode/install_dependencies.sh"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Setup MATE ROV Environment",
+            "type": "shell",
+            "command": "bash",
+            "args": [
+                "${workspaceFolder}/.vscode/rov_setup.sh"
+            ],
+            "problemMatcher": [],
+            "hide": true
+        },
+        {
+            "label": "Setup Surface Environment",
+            "dependsOrder": "sequence",
+            "dependsOn": ["Install ROS", "Install Dependencies", "Setup MATE ROV Environment"],
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "silent",
+                "revealProblems": "onProblem"
+            },
+        },
+        {
+            "label": "Setup Pi Environment",
+            "type": "shell",
+            "command": "bash",
+            "args": [
+                "${workspaceFolder}/.vscode/pi_setup.sh"
+            ],
+            "problemMatcher": []
+        },
     ]
 }

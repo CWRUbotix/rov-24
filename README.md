@@ -51,17 +51,7 @@ To reopen after a build Go to File > Open Recent /stuff/rov-24 \[Dev Container]
 
 #### Bare Metal
 
-To enter the directory use
-
-```bash
-cd rov-24
-```
-
-For bare metal installation run the following command.
-
-```bash
-source .\src\surface\surface_main\scripts\ROS2-Install-Humble.sh
-```
+To run the install script use `F1` or `ctrl+shift+p` to open the command bar and use `Tasks: Runs Task`. Then from the Task selection choose `First Time Setup`. This will install ROS and all our dependencies.
 
 ### Windows
 
@@ -97,11 +87,9 @@ Follow [this](https://learn.microsoft.com/en-us/windows/wsl/install) guide to in
 
 After WSL has been installed follow [this](https://code.visualstudio.com/docs/remote/wsl) guide to get VSCode and WSL to properly communicate and navigate to the rov-24 folder.
 
-Then run the following install script.
+Then run the install script.
 
-```bash
-source .\src\surface\surface_main\scripts\ROS2-Install-Humble.sh
-```
+To run the install script use `F1` or `ctrl+shift+p` to open the command bar and use `Tasks: Runs Task`. Then from the Task selection choose `First Time Setup`. This will install ROS and all our dependencies.
 
 ### macOS
 
