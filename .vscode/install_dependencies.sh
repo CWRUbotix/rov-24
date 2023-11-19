@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 # Update ROS dependencies
 . /opt/ros/humble/setup.sh && rosdep update
 sudo apt-get update -y
