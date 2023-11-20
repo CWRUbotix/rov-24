@@ -9,9 +9,9 @@ from launch_ros.actions import PushRosNamespace
 
 def generate_launch_description() -> LaunchDescription:
     NS = 'pi'
-    # # Manipulator Controller
+    # Manipulator Controller
     # manip_path: str = get_package_share_directory('manipulators')
-
+    #
     # manip_launch = IncludeLaunchDescription(
     #     PythonLaunchDescriptionSource([
     #         os.path.join(
