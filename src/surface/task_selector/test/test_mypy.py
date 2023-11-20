@@ -1,6 +1,7 @@
-from ament_mypy.main import main
 import os
+
 import pytest
+from ament_mypy.main import main
 
 
 @pytest.mark.mypy
