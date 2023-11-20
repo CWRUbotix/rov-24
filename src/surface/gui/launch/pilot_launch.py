@@ -1,10 +1,10 @@
-from launch import LaunchDescription
 from launch.actions import GroupAction
+from launch.launch_description import LaunchDescription
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node, PushRosNamespace
 
 
-def generate_launch_description():
+def generate_launch_description() -> LaunchDescription:
     """Asynchronously launches pilot's gui node."""
     gui_node: Node = Node(
         package='gui',

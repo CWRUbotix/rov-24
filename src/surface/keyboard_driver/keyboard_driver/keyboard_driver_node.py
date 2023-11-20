@@ -62,7 +62,7 @@ RANGE_SPEED: int = 400
 
 
 class KeyboardListenerNode(Node):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__("keyboard_listener_node", parameter_overrides=[])
 
         self.pub_status = self.create_publisher(
@@ -84,9 +84,9 @@ class KeyboardListenerNode(Node):
             YAW_RIGHT: False,
         }
 
-    def on_press(self, key: Optional[Key | KeyCode]):
+    def on_press(self, key: Optional[Key | KeyCode]) -> None:
         try:
-            key_name: Optional[str] = ''
+            key_name: str = ''
             if isinstance(key, KeyCode):
                 key_name = key.char
                 if key_name is None:
@@ -107,9 +107,9 @@ class KeyboardListenerNode(Node):
             self.get_logger().error(str(exception))
             raise exception
 
-    def on_release(self, key: Optional[Key | KeyCode]):
+    def on_release(self, key: Optional[Key | KeyCode]) -> None:
         try:
-            key_name: Optional[str] = ''
+            key_name: str = ''
             if isinstance(key, KeyCode):
                 key_name = key.char
                 if key_name is None:
@@ -130,7 +130,7 @@ class KeyboardListenerNode(Node):
             self.get_logger().error(str(exception))
             raise exception
 
-    def pub_rov_control(self):
+    def pub_rov_control(self) -> None:
         msg = OverrideRCIn()
 
         channels = array('B', [1500, 1500, 1500, 1500, 1500, 1500])
@@ -145,7 +145,7 @@ class KeyboardListenerNode(Node):
 
         self.pub_status.publish(msg)
 
-    def spin(self):
+    def spin(self) -> None:
         with keyboard.Listener(
             on_press=self.on_press, on_release=self.on_release
         ) as listener:
@@ -153,7 +153,7 @@ class KeyboardListenerNode(Node):
                 rclpy.spin_once(self, timeout_sec=0.1)
 
 
-def main():
+def main() -> None:
     rclpy.init()
     KeyboardListenerNode().spin()
 
