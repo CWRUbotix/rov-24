@@ -19,10 +19,10 @@ class TaskSelector(Node):
 
         # create service to handle requests for task switching
         self.request_server = self.create_service(
-            TaskRequest, '/task_request', self.request_task_callback)
+            TaskRequest, 'task_request', self.request_task_callback)
 
         self.feedback_server = self.create_publisher(
-            TaskFeedback, '/task_feedback', qos_profile_system_default)
+            TaskFeedback, 'task_feedback', qos_profile_system_default)
 
         # instantiates new action clients with inputs of node,
         # action type, action name
