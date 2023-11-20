@@ -158,6 +158,16 @@ All packages to be installed on the pi compute module live in the `pi` directory
 
 All packages to be installed on the float live in the `float` directory.
 
+## Namespaces
+
+All nodes running on the pi will be in the pi namespace.
+
+All nodes running on the surface will be in the surface namespace.
+
+Any topics or services communicating across will be renamed first into the tether namespace.
+
+![Picture of rqt with namespaces](/doc/images/namespaces.png)
+
 ## Documentation Structure
 
 Documentation will take place at 3 levels:
