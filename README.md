@@ -130,7 +130,13 @@ corresponding option appear. Click or hit enter on that option.
 This whole process should become `F1`, `Enter`, `Enter` once you've done it once,
 although the magic of symlink should mean you won't need to build again for most things.
 
-If you're working on package metadata (e.g. `package.xml`) or rov_msgs, you'll need to run `🏃‍♂️ ROS Quick Build` or use `Control + Shift + B` every time you change something.
+If you're working on package's `setup.py` or rov_msgs, you'll need to run `🏃‍♂️ ROS Quick Build` or use `Control + Shift + B` every time you change something.
+
+If you want to run our unit tests use this command `colcon test --event-handlers=console_direct+`.
+
+It runs the tests and pipes the output to the terminal.
+
+If you install the flake8 and mypy extension they should help enforce the linters.
 
 <!-- ### Automatic building for non-VSCode heathens
 
