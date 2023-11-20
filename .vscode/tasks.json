@@ -11,8 +11,7 @@
             "presentation": {
                 "reveal": "silent",
                 "revealProblems": "onProblem"
-            },
-            "problemMatcher": []
+            }
         },
         {
             "label": "🏃‍♂️ ROS Quick Build",
@@ -25,12 +24,24 @@
                 "reveal": "silent",
                 "revealProblems": "onProblem"
             },
-            "problemMatcher": [],
             "group": {
                 "kind": "build",
                 "isDefault": true
-              }
+            }
         },
+        {
+            "label": "Run Unit Tests",
+            "type": "shell",
+            "command": "colcon test --event-handlers=console_direct+",
+            "presentation": {
+                "reveal": "silent",
+                "revealProblems": "onProblem"
+            },
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            }
+        }, 
         {
             "label": "Docker Pull",
             "type": "shell",
@@ -52,7 +63,6 @@
             "label": "Docker Rebuild",
             "dependsOrder": "sequence",
             "dependsOn": ["Docker Pull", "Docker Build"],
-            "problemMatcher": [],
             "presentation": {
                 "reveal": "silent",
                 "revealProblems": "onProblem"
@@ -65,7 +75,10 @@
             "args": [
                 "${workspaceFolder}/.vscode/ros2_install.sh"
             ],
-            "problemMatcher": []
+            "presentation": {
+                "reveal": "silent",
+                "revealProblems": "onProblem"
+            },
         },
         {
             "label": "Install Dependencies",
@@ -74,7 +87,10 @@
             "args": [
                 "${workspaceFolder}/.vscode/install_dependencies.sh"
             ],
-            "problemMatcher": []
+            "presentation": {
+                "reveal": "silent",
+                "revealProblems": "onProblem"
+            },
         },
         {
             "label": "Setup MATE ROV Environment",
@@ -83,14 +99,12 @@
             "args": [
                 "${workspaceFolder}/.vscode/rov_setup.sh"
             ],
-            "problemMatcher": [],
             "hide": true
         },
         {
             "label": "Setup Surface Environment",
             "dependsOrder": "sequence",
             "dependsOn": ["Install ROS", "Install Dependencies", "Setup MATE ROV Environment"],
-            "problemMatcher": [],
             "presentation": {
                 "reveal": "silent",
                 "revealProblems": "onProblem"
@@ -103,7 +117,10 @@
             "args": [
                 "${workspaceFolder}/.vscode/pi_setup.sh"
             ],
-            "problemMatcher": []
-        },
+            "presentation": {
+                "reveal": "silent",
+                "revealProblems": "onProblem"
+            },
+        }
     ]
 }
