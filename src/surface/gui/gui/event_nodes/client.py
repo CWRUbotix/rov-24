@@ -17,7 +17,7 @@ class GUIEventClient(Node):
 
     def __init__(self, srv_type: SrvType, topic: str, signal: pyqtBoundSignal):
         # Name this node with a sanitized version of the topic
-        self.name: str = f'client{re.sub(r"[^a-zA-Z0-9_]", "_", topic)}'
+        self.name: str = f'client_{re.sub(r"[^a-zA-Z0-9_]", "_", topic)}'
         super().__init__(self.name, parameter_overrides=[])
 
         self.srv_type = srv_type

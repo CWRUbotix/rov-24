@@ -48,7 +48,7 @@ class Arm(QWidget):
 
         self.arm_client: GUIEventClient = GUIEventClient(
             CommandBool,
-            "/mavros/cmd/arming",
+            "mavros/cmd/arming",
             self.signal
         )
 
