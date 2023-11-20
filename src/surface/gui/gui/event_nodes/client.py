@@ -28,7 +28,7 @@ class GUIEventClient(Node):
         Thread(target=self.__connect_to_service, daemon=True,
                name=f'{self.name}_connect_to_service').start()
 
-    def __connect_to_service(self):
+    def __connect_to_service(self) -> None:
         """Connect this client to a server in a separate thread."""
         while not self.cli.wait_for_service(timeout_sec=TIMEOUT_SEC):
             # TODO this f strings looks janky
@@ -36,13 +36,13 @@ class GUIEventClient(Node):
                 'Service for GUI event client node on topic' +
                 f' {self.topic} unavailable, waiting again...')
 
-    def send_request_async(self, request: SrvTypeRequest):
+    def send_request_async(self, request: SrvTypeRequest) -> None:
         """Send request to server in separate thread."""
         Thread(target=self.__send_request_with_signal,
                kwargs={'request': request},
                daemon=True, name=f'{self.name}_send_request').start()
 
-    def __send_request_with_signal(self, request: SrvTypeRequest):
+    def __send_request_with_signal(self, request: SrvTypeRequest) -> None:
         """Send synchronous request to server and emit signal."""
         future = self.cli.call_async(request)
         rclpy.spin_until_future_complete(
