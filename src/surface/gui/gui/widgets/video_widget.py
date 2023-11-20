@@ -23,7 +23,7 @@ class VideoWidget(QWidget):
 
     def __init__(self, topic: str, label_text: Optional[str] = None,
                  widget_width: int = WIDTH, widget_height: int = HEIGHT,
-                 swap_rb_channels: bool = False):
+                 swap_rb_channels: bool = False) -> None:
         super().__init__()
 
         self.widget_width: int = widget_width
@@ -50,7 +50,7 @@ class VideoWidget(QWidget):
             Image, topic, self.handle_frame_signal)
 
     @pyqtSlot(Image)
-    def handle_frame(self, frame: Image):
+    def handle_frame(self, frame: Image) -> None:
         cv_image: MatLike = self.cv_bridge.imgmsg_to_cv2(
             frame, desired_encoding='passthrough')
 
@@ -74,7 +74,7 @@ class VideoWidget(QWidget):
         # Grayscale image
         elif len(cv_img.shape) == 2:
             h, w = cv_img.shape
-            bytes_per_line: int = w
+            bytes_per_line = w
 
             img_format = QImage.Format.Format_Grayscale8
 
@@ -82,7 +82,7 @@ class VideoWidget(QWidget):
             raise Exception("Somehow not color or grayscale image.")
 
         qt_image = QImage(cv_img.data, w, h, bytes_per_line, img_format)
-        qt_image: QImage = qt_image.scaled(width, height, Qt.AspectRatioMode.KeepAspectRatio)
+        qt_image = qt_image.scaled(width, height, Qt.AspectRatioMode.KeepAspectRatio)
 
         return qt_image
 
@@ -117,7 +117,12 @@ class SwitchableVideoWidget(VideoWidget):
         self.button: QPushButton = QPushButton(button_names[self.active_cam])
         self.button.setMaximumWidth(self.BUTTON_WIDTH)
         self.button.clicked.connect(lambda: self.camera_switch(True))
-        self.layout().addWidget(self.button, alignment=Qt.AlignmentFlag.AlignCenter)
+
+        layout = self.layout()
+        if isinstance(layout, QVBoxLayout):
+            layout.addWidget(self.button, alignment=Qt.AlignmentFlag.AlignCenter)
+        else:
+            self.camera_subscriber.get_logger().error("Missing Layout")
 
         if controller_button_topic is not None:
             self.controller_signal.connect(self.controller_camera_switch)
@@ -126,10 +131,10 @@ class SwitchableVideoWidget(VideoWidget):
                                                             self.controller_signal)
 
     @pyqtSlot(CameraControllerSwitch)
-    def controller_camera_switch(self, switch: CameraControllerSwitch):
+    def controller_camera_switch(self, switch: CameraControllerSwitch) -> None:
         self.camera_switch(switch.toggle_right)
 
-    def camera_switch(self, toggle_right: bool):
+    def camera_switch(self, toggle_right: bool) -> None:
         if toggle_right:
             self.active_cam = (self.active_cam + 1) % self.num_of_cams
         else:
@@ -150,22 +155,28 @@ class PauseableVideoWidget(VideoWidget):
 
     def __init__(self, cam_topic: str, label_text: Optional[str] = None,
                  widget_width: int = WIDTH, widget_height: int = HEIGHT,
-                 swap_rb_channels: bool = False):
+                 swap_rb_channels: bool = False) -> None:
         super().__init__(cam_topic, label_text, widget_width,
                          widget_height, swap_rb_channels)
 
         self.button: QPushButton = QPushButton(self.PLAYING_TEXT)
         self.button.setMaximumWidth(self.BUTTON_WIDTH)
         self.button.clicked.connect(self.toggle)
-        self.layout().addWidget(self.button, alignment=Qt.AlignmentFlag.AlignCenter)
+
+        layout = self.layout()
+        if isinstance(layout, QVBoxLayout):
+            layout.addWidget(self.button, alignment=Qt.AlignmentFlag.AlignCenter)
+        else:
+            self.camera_subscriber.get_logger().error("Missing Layout")
+
         self.is_paused = False
 
     @pyqtSlot(Image)
-    def handle_frame(self, frame: Image):
+    def handle_frame(self, frame: Image) -> None:
         if not self.is_paused:
             super().handle_frame(frame)
 
-    def toggle(self):
+    def toggle(self) -> None:
         """Toggle whether this widget is paused or playing."""
         self.is_paused = not self.is_paused
         self.button.setText(self.PAUSED_TEXT if self.is_paused else self.PLAYING_TEXT)
