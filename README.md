@@ -132,6 +132,12 @@ although the magic of symlink should mean you won't need to build again for most
 
 If you're working on package's `setup.py` or rov_msgs, you'll need to run `🏃‍♂️ ROS Quick Build` or use `Control + Shift + B` every time you change something.
 
+If you want to run our unit tests use this command `colcon test --event-handlers=console_direct+`.
+
+It runs the tests and pipes the output to the terminal.
+
+If you install the flake8 and mypy extension they should help enforce the linters.
+
 <!-- ### Automatic building for non-VSCode heathens
 
 Run this command from your workspace folder

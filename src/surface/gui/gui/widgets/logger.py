@@ -20,7 +20,7 @@ class Logger(QWidget):
 
     print_log_signal: pyqtSignal = pyqtSignal(Log)
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
 
         layout: QVBoxLayout = QVBoxLayout()
