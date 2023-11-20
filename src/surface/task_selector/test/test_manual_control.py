@@ -1,18 +1,19 @@
-from task_selector.manual_control_node import ManualControlNode, ZERO_SPEED, RANGE_SPEED
 import rclpy
+from task_selector.manual_control_node import ManualControlNode, ZERO_SPEED, RANGE_SPEED
 
 
-def test_manual_control_instantiation():
+def test_manual_control_instantiation() -> None:
     """Unit test for the Manual Control instantiation."""
     rclpy.init()
     ManualControlNode()
     rclpy.shutdown()
 
 
-def test_joystick_profiles():
+def test_joystick_profiles() -> None:
     """Unit test for the joystick_profiles function."""
     rclpy.init()
     node = ManualControlNode()
+
     # Nice boundary values
     assert node.joystick_profiles(0) == ZERO_SPEED
     assert node.joystick_profiles(1) == (ZERO_SPEED + RANGE_SPEED)
