@@ -74,7 +74,11 @@
             "command": "bash",
             "args": [
                 "${workspaceFolder}/.vscode/ros2_install.sh"
-            ]
+            ],
+            "presentation": {
+                "reveal": "silent",
+                "revealProblems": "onProblem"
+            },
         },
         {
             "label": "Install Dependencies",
@@ -82,7 +86,11 @@
             "command": "bash",
             "args": [
                 "${workspaceFolder}/.vscode/install_dependencies.sh"
-            ]
+            ],
+            "presentation": {
+                "reveal": "silent",
+                "revealProblems": "onProblem"
+            },
         },
         {
             "label": "Setup MATE ROV Environment",
@@ -108,7 +116,11 @@
             "command": "bash",
             "args": [
                 "${workspaceFolder}/.vscode/pi_setup.sh"
-            ]
+            ],
+            "presentation": {
+                "reveal": "silent",
+                "revealProblems": "onProblem"
+            },
         }
     ]
 }
