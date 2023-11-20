@@ -14,13 +14,13 @@ class PilotApp(App):
         layout: QHBoxLayout = QHBoxLayout()
         self.setLayout(layout)
 
-        self.video_area = SwitchableVideoWidget(["/front_cam/image_raw",
-                                                 "/bottom_cam/image_raw",
-                                                 "/camera/color/image_raw"],
+        self.video_area = SwitchableVideoWidget(["front_cam/image_raw",
+                                                 "bottom_cam/image_raw",
+                                                 "camera/color/image_raw"],
                                                 ["Front Camera",
                                                  "Bottom Camera",
                                                  "Depth Camera"],
-                                                "/camera_switch")
+                                                "camera_switch")
         layout.addWidget(self.video_area, alignment=Qt.AlignmentFlag.AlignCenter)
 
         self.arm: Arm = Arm()
