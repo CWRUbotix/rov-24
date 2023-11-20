@@ -10,7 +10,7 @@ EXPECTED_SYSTEM_FILES = [f"/etc/ros/{ROS_DISTRO}/cwrubotix_pi.d/.installed_files
                          "/usr/sbin/cwrubotix_pi-stop"]
 
 
-def test_install_on_boot():
+def test_install_on_boot() -> None:
     """Test that file copying and systemd are made."""
     main()
 
