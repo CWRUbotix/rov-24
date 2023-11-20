@@ -16,8 +16,9 @@ def generate_launch_description() -> LaunchDescription:
     manual_control_node: Node = Node(
         package='task_selector',
         executable='manual_control_node',
-        remappings=[('/surface/manipulator_control', '/manipulator_control'),
-                    ('/surface/mavros/rc/override', '/mavros/rc/override')],
+        remappings=[('/surface/manipulator_control', '/tether/manipulator_control'),
+                    ('/surface/mavros/rc/override', '/tether/mavros/rc/override'),
+                    ('/tether/mavros/rc/override', '/surface/mavros/rc/override')],
         emulate_tty=True,
         output='screen'
     )
