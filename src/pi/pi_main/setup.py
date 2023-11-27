@@ -18,11 +18,9 @@ setup(
         (os.path.join('share', package_name, 'launch'),
          glob('launch/*launch.[pxy][yma]*')),
         (os.path.join('share', package_name, 'udev_rules'),
-         glob('udev_rules/*')),
-        (os.path.join('share', package_name, 'udev_copy'),
-         glob('pi_main/udev_copy.py'))
+         glob('udev_rules/*'))
     ],
-    install_requires=['setuptools'],
+    install_requires=['setuptools', 'flake8==4.0.1', 'mypy >= 1.7'],
     zip_safe=True,
     maintainer='Michael Carlstrom',
     maintainer_email='rmc170@case.edu',
