@@ -1,8 +1,8 @@
-from launch import LaunchDescription
+from launch.launch_description import LaunchDescription
 from launch_ros.actions import Node
 
 
-def generate_launch_description():
+def generate_launch_description() -> LaunchDescription:
 
     # launches main task scheduler
     # selector_node: Node = Node(
@@ -15,8 +15,8 @@ def generate_launch_description():
     manual_control_node: Node = Node(
         package='teleop',
         executable='manual_control_node',
-        remappings=[('/surface/manipulator_control', '/manipulator_control'),
-                    ('/surface/mavros/rc/override', '/mavros/rc/override')],
+        remappings=[('/surface/manipulator_control', '/tether/manipulator_control'),
+                    ('/surface/mavros/rc/override', '/tether/mavros/rc/override')],
         emulate_tty=True,
         output='screen'
     )
@@ -24,8 +24,8 @@ def generate_launch_description():
     auto_docking_node: Node = Node(
         package='teleop',
         executable='auto_docking_node',
-        remappings=[('/surface/manipulator_control', '/manipulator_control'),
-                    ('/surface/mavros/rc/override', '/mavros/rc/override')],
+        remappings=[('/surface/manipulator_control', '/tether/manipulator_control'),
+                    ('/surface/mavros/rc/override', '/tether/mavros/rc/override')],
         emulate_tty=True,
         output='screen'
     )

@@ -11,8 +11,7 @@
             "presentation": {
                 "reveal": "silent",
                 "revealProblems": "onProblem"
-            },
-            "problemMatcher": []
+            }
         },
         {
             "label": "🏃‍♂️ ROS Quick Build",
@@ -25,11 +24,103 @@
                 "reveal": "silent",
                 "revealProblems": "onProblem"
             },
-            "problemMatcher": [],
             "group": {
                 "kind": "build",
                 "isDefault": true
-              }
+            }
+        },
+        {
+            "label": "Run Unit Tests",
+            "type": "shell",
+            "command": "colcon test --event-handlers=console_direct+",
+            "presentation": {
+                "reveal": "silent",
+                "revealProblems": "onProblem"
+            },
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            }
+        }, 
+        {
+            "label": "Docker Pull",
+            "type": "shell",
+            "command": "sudo docker pull ghcr.io/cwrurobotics/rov-24:main",
+            "windows": {
+                "command": "docker pull ghcr.io/cwrurobotics/rov-24:main"
+            },
+            "hide": true
+        },
+        {
+            "label": "Docker Build",
+            "command": "${command:remote-containers.rebuildNoCacheAndReopenInContainer}",
+            "hide": true
+        },
+        {
+            // Runs Docker Pull and then Docker Build
+            // This is done because the default behavior of Docker Build
+            // does not repull the docker image from github.
+            "label": "Docker Rebuild",
+            "dependsOrder": "sequence",
+            "dependsOn": ["Docker Pull", "Docker Build"],
+            "presentation": {
+                "reveal": "silent",
+                "revealProblems": "onProblem"
+            },
+        },
+        {
+            "label": "Install ROS",
+            "type": "shell",
+            "command": "bash",
+            "args": [
+                "${workspaceFolder}/.vscode/ros2_install.sh"
+            ],
+            "presentation": {
+                "reveal": "silent",
+                "revealProblems": "onProblem"
+            },
+        },
+        {
+            "label": "Install Dependencies",
+            "type": "shell",
+            "command": "bash",
+            "args": [
+                "${workspaceFolder}/.vscode/install_dependencies.sh"
+            ],
+            "presentation": {
+                "reveal": "silent",
+                "revealProblems": "onProblem"
+            },
+        },
+        {
+            "label": "Setup MATE ROV Environment",
+            "type": "shell",
+            "command": "bash",
+            "args": [
+                "${workspaceFolder}/.vscode/rov_setup.sh"
+            ],
+            "hide": true
+        },
+        {
+            "label": "Setup Surface Environment",
+            "dependsOrder": "sequence",
+            "dependsOn": ["Install ROS", "Install Dependencies", "Setup MATE ROV Environment"],
+            "presentation": {
+                "reveal": "silent",
+                "revealProblems": "onProblem"
+            },
+        },
+        {
+            "label": "Setup Pi Environment",
+            "type": "shell",
+            "command": "bash",
+            "args": [
+                "${workspaceFolder}/.vscode/pi_setup.sh"
+            ],
+            "presentation": {
+                "reveal": "silent",
+                "revealProblems": "onProblem"
+            },
         }
     ]
 }

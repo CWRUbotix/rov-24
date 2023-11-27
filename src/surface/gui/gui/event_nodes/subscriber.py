@@ -14,7 +14,7 @@ class GUIEventSubscriber(Node):
     def __init__(self, msg_type: type, topic: str, signal: pyqtBoundSignal,
                  qos_profile: QoSProfile = qos_profile_system_default):
         # Name this node with a sanitized version of the topic
-        name: str = f'subscriber{re.sub(r"[^a-zA-Z0-9_]", "_", topic)}'
+        name: str = f'subscriber_{re.sub(r"[^a-zA-Z0-9_]", "_", topic)}'
         super().__init__(name, parameter_overrides=[])
 
         self.subscription = self.create_subscription(

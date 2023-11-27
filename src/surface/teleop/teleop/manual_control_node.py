@@ -97,7 +97,7 @@ class ManualControlNode(Node):
 
         self.pixhawk_publisher.publish_instruction(instruction)
 
-    def manip_callback(self, msg: Joy):
+    def manip_callback(self, msg: Joy) -> None:
         buttons: MutableSequence[int] = msg.buttons
 
         for button_id, manip_button in self.manip_buttons.items():
@@ -119,7 +119,7 @@ class ManualControlNode(Node):
 
             manip_button.last_button_state = just_pressed
 
-    def camera_toggle(self, msg: Joy):
+    def camera_toggle(self, msg: Joy) -> None:
         """Cycles through connected cameras on pilot GUI using menu and pairing buttons."""
         buttons: MutableSequence[int] = msg.buttons
 
@@ -136,13 +136,13 @@ class ManualControlNode(Node):
 
 
 class ManipButton:
-    def __init__(self, claw: str):
+    def __init__(self, claw: str) -> None:
         self.claw: str = claw
         self.last_button_state: bool = False
         self.is_active: bool = False
 
 
-def main():
+def main() -> None:
     rclpy.init()
     manual_control = ManualControlNode()
     executor = MultiThreadedExecutor()
