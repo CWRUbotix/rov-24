@@ -4,14 +4,6 @@
 
 This package is for launching all of our surface code. It also includes the install script for ROS.
 
-## Installation
-
-To install ROS
-
-```bash
-source ROS2-Install-Humble.sh
-```
-
 ## Usage
 
 Run the main node with
