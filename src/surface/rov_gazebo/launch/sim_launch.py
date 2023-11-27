@@ -1,16 +1,16 @@
 import os
-from ament_index_python.packages import get_package_share_directory
 
-from launch import LaunchDescription
+from ament_index_python.packages import get_package_share_directory
 from launch.actions import IncludeLaunchDescription
+from launch.launch_description import LaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch_ros.actions import Node
 from launch.substitutions import Command
+from launch_ros.actions import Node
 
 NS = "simulation"
 
 
-def generate_launch_description():
+def generate_launch_description() -> LaunchDescription:
     rov_gazebo_path: str = get_package_share_directory("rov_gazebo")
     ros_gz_sim_path: str = get_package_share_directory("ros_gz_sim")
     surface_main_path: str = get_package_share_directory("surface_main")

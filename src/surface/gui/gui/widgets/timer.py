@@ -4,7 +4,7 @@ from PyQt6.QtWidgets import QGridLayout, QLabel, QPushButton, QWidget
 
 
 class Timer(QWidget):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
 
         self.seconds_left = 15 * 60
@@ -36,37 +36,37 @@ class Timer(QWidget):
 
         self.update_label()
 
-    def update_timer(self):
+    def update_timer(self) -> None:
         self.seconds_left -= 1
         self.update_label()
         if self.seconds_left == 0:
             self.stop_timer()
 
-    def update_label(self):
+    def update_label(self) -> None:
         minutes = self.seconds_left // 60
         seconds = self.seconds_left % 60
         self.label.setText(f"{str(minutes).zfill(2)}:{str(seconds).zfill(2)}")
 
-    def toggle_timer(self):
+    def toggle_timer(self) -> None:
         if self.running:
             self.stop_timer()
         else:
             self.start_timer()
 
-    def start_timer(self):
+    def start_timer(self) -> None:
         if self.seconds_left == 0:
             return
         self.running = True
         self.timer.start(1000)
         self.toggle_btn.setText("Pause")
 
-    def stop_timer(self):
+    def stop_timer(self) -> None:
         self.running = False
         self.timer.stop()
         self.toggle_btn.setChecked(False)
         self.toggle_btn.setText("Start")
 
-    def reset_timer(self):
+    def reset_timer(self) -> None:
         self.seconds_left = 15 * 60
         self.stop_timer()
         self.update_label()
