@@ -51,7 +51,7 @@ class ThrusterTester(QWidget):
 
         pin_number_validator = QIntValidator()
         pin_number_validator.setRange(0, 7)
-        
+
         for i in range(8):
             pin_label = QLabel(str(i))
             pin_label.setMaximumWidth(20)
@@ -82,11 +82,11 @@ class ThrusterTester(QWidget):
 
     def test_motor_for_time(self, motor_index: int, throttle: float, duration: float):
         """Run a motor for an (approximate) length of time, blocking
-        Based on https://github.com/mavlink/qgroundcontrol/blob/f79b466ffe166649e5a889596bc992721a8cdbd9/src/Vehicle/Vehicle.cc
+        Based on https://github.com/mavlink/qgroundcontrol/blob/f79b466/src/Vehicle/Vehicle.cc
 
         Args:
             motor_index (int): A motor index, from 1 to 8
-            throttle (float): A float from -1 to 1, with -1 being full reverse and 1 being full forward
+            throttle (float): A float from -1 to 1, where -1 is full reverse and 1 is full forward
             duration (float): Time in seconds to run the motor
         """
         throttle = max(min(throttle, 1.0), -1.0)  # Clamp the throttle between -1 and 1
@@ -94,19 +94,19 @@ class ThrusterTester(QWidget):
 
         start_time = time.time()
         while time.time() - start_time < duration:
-                self.client.send_request_async(
-                    CommandLong.Request(
-                        command=209, # MAV_CMD_DO_MOTOR_TEST
-                        param1=float(motor_index), # Motor number
-                        param2=0.0, # MOTOR_TEST_THROTTLE_PERCENT
-                        param3=float(throttle_percent),
-                        param4=0.0,  # Time between tests
-                        param5=0.0,  # Number of motors to test
-                        param6=2.0  # MOTOR_TEST_ORDER_BOARD
-                    )
+            self.client.send_request_async(
+                CommandLong.Request(
+                    command=209,  # MAV_CMD_DO_MOTOR_TEST
+                    param1=float(motor_index),  # Motor number
+                    param2=0.0,  # MOTOR_TEST_THROTTLE_PERCENT
+                    param3=float(throttle_percent),
+                    param4=0.0,  # Time between tests
+                    param5=0.0,  # Number of motors to test
+                    param6=2.0  # MOTOR_TEST_ORDER_BOARD
                 )
+            )
 
-                time.sleep(0.05)
+            time.sleep(0.05)
 
     def send_test_message(self):
         self.client.get_logger().info("Testing thrusters")
@@ -114,7 +114,6 @@ class ThrusterTester(QWidget):
         for motor_index in range(1, 9):
             self.test_motor_for_time(motor_index, self.TEST_THROTTLE, self.TEST_LENGTH)
             self.test_motor_for_time(motor_index, 0.0, 0.5)
-
 
     def send_pin_assignments(self):
         pass

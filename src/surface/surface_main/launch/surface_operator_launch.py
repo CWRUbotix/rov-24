@@ -29,6 +29,15 @@ def generate_launch_description():
         ]),
     )
 
+    # Launches Vehicle Manager
+    # vehicle_manager_launch = IncludeLaunchDescription(
+    #     PythonLaunchDescriptionSource([
+    #         os.path.join(
+    #             task_selector_path, 'launch', 'task_scheduler_launch.py'
+    #         )
+    #     ]),
+    # )
+
     namespace_launch = GroupAction(
         actions=[
             PushRosNamespace("surface"),

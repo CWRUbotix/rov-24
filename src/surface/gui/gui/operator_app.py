@@ -7,7 +7,6 @@ from gui.widgets.timer import Timer
 from PyQt6.QtWidgets import QGridLayout, QTabWidget, QWidget
 
 
-
 class OperatorApp(App):
     def __init__(self):
         super().__init__('operator_gui_node')
