@@ -6,7 +6,10 @@ def generate_launch_description():
     heartbeat_node = Node(
         package="vehicle_manager",
         executable="connection_manager_node",
-        remappings=[("/surface/mavros/state", "/tether/mavros/state")],
+        remappings=[
+            ("/surface/mavros/state", "/tether/mavros/state"),
+            ("/surface/pi_heartbeat", "/tether/pi_heartbeat")
+            ],
         emulate_tty=True,
         output='screen'
     )

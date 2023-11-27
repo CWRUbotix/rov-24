@@ -11,6 +11,8 @@ def generate_launch_description() -> LaunchDescription:
 
     gui_path: str = get_package_share_directory('gui')
     task_selector_path: str = get_package_share_directory('task_selector')
+    vehicle_manager_path: str = get_package_share_directory('vehicle_manager')
+
     # Launches Gui
     gui_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([
@@ -30,19 +32,20 @@ def generate_launch_description() -> LaunchDescription:
     )
 
     # Launches Vehicle Manager
-    # vehicle_manager_launch = IncludeLaunchDescription(
-    #     PythonLaunchDescriptionSource([
-    #         os.path.join(
-    #             task_selector_path, 'launch', 'task_scheduler_launch.py'
-    #         )
-    #     ]),
-    # )
+    vehicle_manager_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([
+            os.path.join(
+                vehicle_manager_path, 'launch', 'vehicle_manager_launch.py'
+            )
+        ]),
+    )
 
     namespace_launch = GroupAction(
         actions=[
             PushRosNamespace("surface"),
             gui_launch,
             task_selector_launch,
+            vehicle_manager_launch
         ]
     )
 
