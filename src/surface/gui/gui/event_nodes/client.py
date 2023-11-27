@@ -34,10 +34,9 @@ class GUIEventClient(Node):
     def __connect_to_service(self) -> None:
         """Connect this client to a server in a separate thread."""
         while not self.cli.wait_for_service(timeout_sec=self.timeout):
-            # TODO this f strings looks janky
             self.get_logger().info(
-                'Service for GUI event client node on topic' +
-                f' {self.topic} unavailable, waiting again...')
+                ('Service for GUI event client node on topic',
+                 f' {self.topic} unavailable, waiting again...'))
 
     def send_request_async(self, request: SrvTypeRequest) -> None:
         """Send request to server in separate thread."""
