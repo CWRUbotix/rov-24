@@ -1,8 +1,8 @@
-from launch import LaunchDescription
+from launch.launch_description import LaunchDescription
 from launch_ros.actions import Node
 
 
-def generate_launch_description():
+def generate_launch_description() -> LaunchDescription:
 
     mavros_node = Node(
         package="mavros",
@@ -19,8 +19,8 @@ def generate_launch_description():
             {"plugin_allowlist": ["sys_status", "rc_io", "command"]},
             {"fcu_url": "/dev/ttyPixhawk"}
         ],
-        remappings=[('/pi/mavros/rc/override', '/mavros/rc/override'),
-                    ('/pi/mavros/cmd/arming', '/mavros/cmd/arming')]
+        remappings=[('/pi/mavros/rc/override', '/tether/mavros/rc/override'),
+                    ('/pi/mavros/cmd/arming', '/tether/mavros/cmd/arming')]
     )
 
     return LaunchDescription([

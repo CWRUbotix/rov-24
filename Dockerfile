@@ -1,8 +1,5 @@
 FROM osrf/ros:iron-desktop-full
 
-RUN . /opt/ros/iron/setup.sh \
-    && rosdep update
-
 RUN sudo apt-get update -y
 
 # Install missing libxcb-cursor0 xvfb for PyQt unit testing
@@ -24,20 +21,16 @@ RUN sudo apt-get install nano -y
 RUN sudo apt-get update -y
 RUN sudo apt-get upgrade -y
 
-# TODO for future nerd to do this via ENTRYPOINT which be better but, I could not get ENTRYPOINT to play with VsCODE.
-RUN echo "source /root/rov-24/install/setup.bash" >> ~/.bashrc ;
-RUN echo "$export PYTHONWARNINGS=ignore:::setuptools.command.install,ignore:::setuptools.command.easy_install,ignore:::pkg_resources" >> ~/.bashrc ;
-
 WORKDIR /root/rov-24
 
 COPY . .
 
-# Installs ROS dependencies
-RUN . /opt/ros/iron/setup.sh \
-    && rosdep install --from-paths src --ignore-src -r -y
+# TODO for future nerd to do this via ENTRYPOINT which be better but, I could not get ENTRYPOINT to play with VsCODE.
+RUN . /root/rov-24/.vscode/rov_setup.sh
+RUN echo "$export PYTHONWARNINGS=ignore:::setuptools.command.install,ignore:::setuptools.command.easy_install,ignore:::pkg_resources" >> ~/.bashrc ;
 
-# Crazy one liner for install python dependencies
-RUN for d in src/pi/*/ src/surface/*/; do sudo pip install -e "$d"; done
+# Installs ROS and python dependencies
+RUN . /root/rov-24/.vscode/install_dependencies.sh
 
 RUN . /opt/ros/iron/setup.sh \
     && PYTHONWARNINGS=ignore:::setuptools.command.install,ignore:::setuptools.command.easy_install,ignore:::pkg_resources; export PYTHONWARNINGS\
