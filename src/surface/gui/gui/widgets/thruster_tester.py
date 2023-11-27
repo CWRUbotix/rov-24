@@ -17,7 +17,7 @@ class ThrusterTester(QWidget):
     param_get_resposne_signal: pyqtSignal = pyqtSignal(ParamGet.Response)
     param_set_resposne_signal: pyqtSignal = pyqtSignal(ParamSet.Response)
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
 
         self.client: GUIEventClient = GUIEventClient(
@@ -80,7 +80,7 @@ class ThrusterTester(QWidget):
         layout.addWidget(pin_assignment_button)
         layout.addWidget(test_button)
 
-    def test_motor_for_time(self, motor_index: int, throttle: float, duration: float):
+    def test_motor_for_time(self, motor_index: int, throttle: float, duration: float) -> None:
         """Run a motor for an (approximate) length of time, blocking
         Based on https://github.com/mavlink/qgroundcontrol/blob/f79b466/src/Vehicle/Vehicle.cc
 
