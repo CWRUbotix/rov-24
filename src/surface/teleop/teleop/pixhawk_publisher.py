@@ -35,42 +35,33 @@ YAW_CHANNEL:      int = 5  # Yaw
 class PixhawkInstruction:
     """Store movement instructions for the Pixhawk."""
 
-    forward:  int = 0
-    vertical: int = 0
-    lateral:  int = 0
-    pitch:    int = 0
-    yaw:      int = 0
-    roll:     int = 0
+    forward:  float = 0
+    vertical: float = 0
+    lateral:  float = 0
+    pitch:    float = 0
+    yaw:      float = 0
+    roll:     float = 0
 
-    def map(self, mapping_function: Callable[[int], int]) -> None:
-        self.forward  = mapping_function(self.forward)
-        self.vertical = mapping_function(self.vertical)
-        self.lateral  = mapping_function(self.lateral)
-        self.pitch    = mapping_function(self.pitch)
-        self.yaw      = mapping_function(self.yaw)
-        self.roll     = mapping_function(self.roll)
+    def apply(self, function_to_apply: Callable[[float], float]) -> None:
+        """Apply a function to each dimension of this PixhawkInstruction."""
+        self.forward  = function_to_apply(self.forward)
+        self.vertical = function_to_apply(self.vertical)
+        self.lateral  = function_to_apply(self.lateral)
+        self.pitch    = function_to_apply(self.pitch)
+        self.yaw      = function_to_apply(self.yaw)
+        self.roll     = function_to_apply(self.roll)
 
-
-class PixhawkPublisher:
-    def __init__(self, node: Node):
-        """Create a Pixhawk movement instruction publisher on the provided node."""
-        self.rc_pub: Publisher = node.create_publisher(
-            OverrideRCIn,
-            '/mavros/rc/override',
-            qos_profile_system_default
-        )
-
-    def publish_instruction(self, instruction: PixhawkInstruction):
-        """Publish the provided movement instruction to the Pixhawk."""
+    def to_override_rc_in(self) -> OverrideRCIn:
+        """Convert this PixhawkInstruction to an rc_msg with the appropriate channels array."""
         rc_msg = OverrideRCIn()
 
-        instruction.map(lambda value: int(RANGE_SPEED * value) + ZERO_SPEED)
+        self.apply(lambda value: int(RANGE_SPEED * value) + ZERO_SPEED)
 
-        rc_msg.channels[PITCH_CHANNEL]    = instruction.pitch
-        rc_msg.channels[ROLL_CHANNEL]     = instruction.roll
-        rc_msg.channels[THROTTLE_CHANNEL] = instruction.vertical
-        rc_msg.channels[FORWARD_CHANNEL]  = instruction.forward
-        rc_msg.channels[LATERAL_CHANNEL]  = instruction.lateral
-        rc_msg.channels[YAW_CHANNEL]      = instruction.yaw
+        rc_msg.channels[PITCH_CHANNEL]    = self.pitch
+        rc_msg.channels[ROLL_CHANNEL]     = self.roll
+        rc_msg.channels[THROTTLE_CHANNEL] = self.vertical
+        rc_msg.channels[FORWARD_CHANNEL]  = self.forward
+        rc_msg.channels[LATERAL_CHANNEL]  = self.lateral
+        rc_msg.channels[YAW_CHANNEL]      = self.yaw
 
-        self.rc_pub.publish(rc_msg)
+        return rc_msg
