@@ -3,29 +3,34 @@ from rclpy.node import Node
 
 from rov_msgs.msg import Manip
 
-import lgpio
+from smbus2 import SMBus
+
+TCA9555_ADDRESS = 0x20
 
 
-class MinimalSubscriber(Node):
+class Manipulator(Node):
 
-    def __init__(self):
-        super().__init__('minimal_subscriber',
+    def __init__(self) -> None:
+        super().__init__('manipulator',
                          parameter_overrides=[])
+
         self.subscription = self.create_subscription(
             Manip,
             'topic',
-            self.listener_callback,
+            self.manip_callback,
             10)
-        i2c = lgpio.i2c_open()
 
-    def listener_callback(self, msg):
-        self.get_logger().info('I heard: "%s"' % msg.data)
+        with SMBus(TCA9555_ADDRESS) as bus:
+            pass
+
+    def manip_callback(self, msg: Manip) -> None:
+        pass
 
 
-def main(args=None):
+def main(args=None) -> None:
     rclpy.init(args=args)
 
-    minimal_subscriber = MinimalSubscriber()
+    minimal_subscriber = Manipulator()
 
     rclpy.spin(minimal_subscriber)
 
