@@ -7,7 +7,7 @@ from ament_index_python.packages import get_package_share_directory
 from robot_upstart.job import Job
 
 
-def main():
+def main() -> None:
     pi_main_share = get_package_share_directory('pi_main')
 
     launch_dir = os.path.join(pi_main_share, 'launch')
@@ -24,7 +24,7 @@ def main():
     file_location = pathlib.Path(__file__).parent.resolve()
     udev_script = os.path.join(file_location, 'udev_copy.py')
 
-    cmd = ['/usr/bin/sudo'] + ['/usr/bin/python3'] + [udev_script] + [pi_main_share]
+    cmd = ['/usr/bin/sudo', '/usr/bin/python3', udev_script, pi_main_share]
 
     try:
         p = subprocess.run(cmd, capture_output=True, check=True)

@@ -10,11 +10,12 @@ EXPECTED_SYSTEM_FILES = [f"/etc/ros/{ROS_DISTRO}/cwrubotix_pi.d/.installed_files
                          "/usr/sbin/cwrubotix_pi-stop"]
 
 
-def test_install_on_boot():
+def test_install_on_boot() -> None:
     """Test that file copying and systemd are made."""
     main()
 
     # Test for rules files being copied correctly
+    # Could be split into a separate test but main() does both
     actual_rules_files = set(os.listdir(os.path.join("/etc", "udev", "rules.d")))
     expected_rules_files = set(["i2c.rules", "camera.rules", "pixhawk.rules"])
     assert expected_rules_files.issubset(actual_rules_files)
