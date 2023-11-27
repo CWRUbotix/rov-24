@@ -7,6 +7,7 @@ from rov_msgs.msg import Heartbeat
 
 PUBLISH_RATE = 2  # Hz
 
+
 class HeartbeatNode(Node):
     def __init__(self):
         super().__init__("heartbeat_node", parameter_overrides=[])
@@ -19,6 +20,7 @@ class HeartbeatNode(Node):
 
     def timer_callback(self):
         self.publisher.publish(Heartbeat())
+
 
 def main():
     rclpy.init()
