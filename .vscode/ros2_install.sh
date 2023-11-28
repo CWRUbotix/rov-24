@@ -17,7 +17,7 @@ sudo apt-get update
 sudo apt-get upgrade -y
 
 # Install ROS2
-sudo apt-get install ros-iron-desktop
+sudo apt-get install ros-iron-desktop -y
 sudo apt-get upgrade -y
 
 # Add setup.bash to .bashrc only if it isn't already there
