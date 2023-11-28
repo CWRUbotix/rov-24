@@ -2,7 +2,7 @@ import atexit
 import signal
 
 import qdarktheme
-import rclpy
+import rclpy.utilities
 from PyQt6.QtWidgets import QApplication, QWidget
 from rclpy.node import Node
 
@@ -13,7 +13,7 @@ class App(QWidget):
     app: QApplication = QApplication([])
 
     def __init__(self, node_name: str) -> None:
-        if not rclpy.ok():
+        if not rclpy.utilities.ok():
             rclpy.init()
         super().__init__()
         self.node = Node(node_name, parameter_overrides=[])
@@ -24,7 +24,7 @@ class App(QWidget):
         atexit.register(self.clean_shutdown)
 
     def clean_shutdown(self) -> None:
-        if rclpy.ok():
+        if rclpy.utilities.ok():
             rclpy.shutdown()
 
     def run_gui(self) -> None:
