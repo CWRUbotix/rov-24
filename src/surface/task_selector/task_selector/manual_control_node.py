@@ -2,11 +2,12 @@ from collections.abc import MutableSequence
 
 import rclpy
 from mavros_msgs.msg import OverrideRCIn
-from rclpy.action import ActionServer, CancelResponse
-from rclpy.action.server import ServerGoalHandle
+from rclpy.action.server import ActionServer, CancelResponse, ServerGoalHandle
 from rclpy.executors import MultiThreadedExecutor
-from rclpy.node import Node, Publisher, Subscription
+from rclpy.node import Node
+from rclpy.publisher import Publisher
 from rclpy.qos import qos_profile_sensor_data, qos_profile_system_default
+from rclpy.subscription import Subscription
 from sensor_msgs.msg import Joy
 
 from rov_msgs.action import BasicTask
@@ -163,7 +164,7 @@ class ManualControlNode(Node):
             return BasicTask.Result()
 
     # TODO jank?
-    def cancel_callback(self, goal_handle: ServerGoalHandle) -> CancelResponse.ACCEPT:
+    def cancel_callback(self, goal_handle: ServerGoalHandle) -> CancelResponse:
         self.get_logger().info('Received cancel request')
         self._passing = False
         return CancelResponse.ACCEPT
