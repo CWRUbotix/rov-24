@@ -1,6 +1,5 @@
 import rclpy
-from rclpy.action import ActionServer, CancelResponse
-from rclpy.action.server import ServerGoalHandle
+from rclpy.action.server import ActionServer, CancelResponse, ServerGoalHandle
 from rclpy.executors import MultiThreadedExecutor
 from rclpy.node import Node
 
@@ -38,7 +37,7 @@ class BasicTaskNode(Node):
             result = BasicTask.Result()
             return result
 
-    def cancel_callback(self, goal_handle: ServerGoalHandle) -> CancelResponse.ACCEPT:
+    def cancel_callback(self, goal_handle: ServerGoalHandle) -> CancelResponse:
         self.get_logger().info('Received cancel request')
         return CancelResponse.ACCEPT
 
