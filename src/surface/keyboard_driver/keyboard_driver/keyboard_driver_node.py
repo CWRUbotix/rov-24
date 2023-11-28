@@ -1,10 +1,9 @@
 from array import array
 from typing import Optional
 
-import rclpy
+import rclpy.utilities
 from mavros_msgs.msg import OverrideRCIn
-from pynput import keyboard
-from pynput.keyboard import Key, KeyCode
+from pynput.keyboard import Key, KeyCode, Listener
 from rclpy.node import Node
 from rclpy.qos import qos_profile_system_default
 from task_selector.manual_control_node import (FORWARD_CHANNEL,
@@ -146,10 +145,10 @@ class KeyboardListenerNode(Node):
         self.pub_status.publish(msg)
 
     def spin(self) -> None:
-        with keyboard.Listener(
+        with Listener(
             on_press=self.on_press, on_release=self.on_release
         ) as listener:
-            while rclpy.ok() and listener.running:
+            while rclpy.utilities.ok() and listener.running:
                 rclpy.spin_once(self, timeout_sec=0.1)
 
 
