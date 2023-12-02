@@ -16,7 +16,7 @@ class AutoDocker(Node):
 
         self.running = False
 
-        # Add cam frame subscriber here to act as control loop for auto docking
+        # TODO: Add cam frame subscriber here to act as control loop for auto docking
 
     def task_control_callback(self, request: AutonomousFlight.Request,
                               response: AutonomousFlight.Response) -> AutonomousFlight.Response:

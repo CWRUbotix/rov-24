@@ -20,7 +20,7 @@ def generate_launch_description() -> LaunchDescription:
         ]),
     )
 
-    # Launches Task Selector
+    # Launches flight controls (manual/auto flight)
     teleop_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([
             os.path.join(
