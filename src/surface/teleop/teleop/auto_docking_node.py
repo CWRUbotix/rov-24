@@ -7,7 +7,7 @@ from rclpy.node import Node
 
 class AutoDocker(Node):
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__('auto_docker',
                          parameter_overrides=[])
 
@@ -19,14 +19,14 @@ class AutoDocker(Node):
         # Add cam frame subscriber here to act as control loop for auto docking
 
     def task_control_callback(self, request: TaskControl.Request,
-                              response: TaskControl.Response):
+                              response: TaskControl.Response) -> TaskControl.Response:
         self.running = request.start
         response.is_running = self.running
 
         return response
 
 
-def main():
+def main() -> None:
     rclpy.init()
     auto_docker = AutoDocker()
     executor = MultiThreadedExecutor()
