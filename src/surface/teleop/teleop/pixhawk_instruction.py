@@ -25,7 +25,10 @@ YAW_CHANNEL:      int = 5  # Yaw
 
 @dataclass
 class PixhawkInstruction:
-    """Store movement instructions for the Pixhawk. Each instruction should be a float in the range [-1.0, 1.0]."""
+    """
+    Store movement instructions for the Pixhawk.
+    Each instruction should be a float in the range [-1.0, 1.0].
+    """
 
     forward:  float = 0
     vertical: float = 0

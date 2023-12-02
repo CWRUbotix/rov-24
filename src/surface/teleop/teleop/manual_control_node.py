@@ -41,7 +41,7 @@ DPADVERT:        int = 7
 
 
 class ManualControlNode(Node):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__('manual_control_node',
                          parameter_overrides=[])
 
@@ -81,12 +81,12 @@ class ManualControlNode(Node):
         self.seen_left_cam = False
         self.seen_right_cam = False
 
-    def controller_callback(self, msg: Joy):
+    def controller_callback(self, msg: Joy) -> None:
         self.joystick_to_pixhawk(msg)
         self.manip_callback(msg)
         self.camera_toggle(msg)
 
-    def joystick_to_pixhawk(self, msg: Joy):
+    def joystick_to_pixhawk(self, msg: Joy) -> None:
         axes: MutableSequence[float] = msg.axes
         buttons: MutableSequence[int] = msg.buttons
 
