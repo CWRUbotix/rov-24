@@ -4,6 +4,7 @@ import rclpy
 from rclpy.executors import MultiThreadedExecutor
 from rclpy.node import Node
 
+
 class AutoDocker(Node):
 
     def __init__(self):
@@ -12,7 +13,7 @@ class AutoDocker(Node):
 
         self.control_server = self.create_service(
             TaskControl, '/auto_docker_control', self.task_control_callback)
-        
+
         self.running = False
 
         # TODO: multithreading shenanigans needed for auto docking while also awaiting callback?
@@ -23,6 +24,7 @@ class AutoDocker(Node):
         response.is_running = self.running
 
         return response
+
 
 def main():
     rclpy.init()

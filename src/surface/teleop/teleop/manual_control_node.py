@@ -9,7 +9,7 @@ from mavros_msgs.msg import OverrideRCIn
 
 from rov_msgs.msg import CameraControllerSwitch, Manip
 
-from teleop.pixhawk_publisher import PixhawkInstruction, PixhawkPublisher
+from teleop.pixhawk_instruction import PixhawkInstruction
 
 # Button meanings for PS5 Control might be different for others
 X_BUTTON:        int = 0  # Manipulator 0

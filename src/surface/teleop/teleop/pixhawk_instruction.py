@@ -1,6 +1,4 @@
 from mavros_msgs.msg import OverrideRCIn
-from rclpy.node import Node, Publisher
-from rclpy.qos import qos_profile_system_default, qos_profile_sensor_data
 from dataclasses import dataclass
 from typing import Callable
 
@@ -11,7 +9,7 @@ SPEED_THROTTLE: float = 0.85
 # In microseconds
 ZERO_SPEED: int = 1500
 MAX_RANGE_SPEED: int = 400
-RANGE_SPEED: float = MAX_RANGE_SPEED*SPEED_THROTTLE
+RANGE_SPEED: float = MAX_RANGE_SPEED * SPEED_THROTTLE
 
 # Channels for RC command
 MAX_CHANNEL: int = 8
@@ -33,7 +31,7 @@ YAW_CHANNEL:      int = 5  # Yaw
 
 @dataclass
 class PixhawkInstruction:
-    """Store movement instructions for the Pixhawk."""
+    """Store movement instructions for the Pixhawk. Each instruction should be a float in the range [-1.0, 1.0]."""
 
     forward:  float = 0
     vertical: float = 0
