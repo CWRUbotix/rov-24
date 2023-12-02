@@ -4,7 +4,7 @@ import pytest
 
 
 @pytest.fixture
-def test_keyboard_listener_instantiation():
+def test_keyboard_listener_instantiation() -> None:
     """Unit test for KeyboardListenerNode instantiation."""
     rclpy.init()
     KeyboardListenerNode()

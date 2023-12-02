@@ -4,6 +4,7 @@ import rclpy
 from rclpy.executors import MultiThreadedExecutor
 from rclpy.node import Node
 
+
 class AutoDocker(Node):
 
     def __init__(self):
@@ -12,10 +13,10 @@ class AutoDocker(Node):
 
         self.control_server = self.create_service(
             TaskControl, '/auto_docker_control', self.task_control_callback)
-        
+
         self.running = False
 
-        # TODO: multithreading shenanigans needed for auto docking while also awaiting callback?
+        # Add cam frame subscriber here to act as control loop for auto docking
 
     def task_control_callback(self, request: TaskControl.Request,
                               response: TaskControl.Response):
@@ -23,6 +24,7 @@ class AutoDocker(Node):
         response.is_running = self.running
 
         return response
+
 
 def main():
     rclpy.init()

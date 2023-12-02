@@ -5,10 +5,11 @@ from rclpy.executors import MultiThreadedExecutor
 from rclpy.node import Node, Publisher, Subscription
 from rclpy.qos import qos_profile_sensor_data, qos_profile_system_default
 from sensor_msgs.msg import Joy
+from mavros_msgs.msg import OverrideRCIn
 
 from rov_msgs.msg import CameraControllerSwitch, Manip
 
-from teleop.pixhawk_publisher import PixhawkInstruction, PixhawkPublisher
+from teleop.pixhawk_instruction import PixhawkInstruction
 
 # Button meanings for PS5 Control might be different for others
 X_BUTTON:        int = 0  # Manipulator 0
@@ -42,7 +43,11 @@ class ManualControlNode(Node):
         super().__init__('manual_control_node',
                          parameter_overrides=[])
 
-        self.pixhawk_publisher = PixhawkPublisher(self)
+        self.rc_pub: Publisher = self.create_publisher(
+            OverrideRCIn,
+            '/mavros/rc/override',
+            qos_profile_system_default
+        )
 
         self.subscription: Subscription = self.create_subscription(
             Joy,
@@ -84,20 +89,20 @@ class ManualControlNode(Node):
         buttons: MutableSequence[int] = msg.buttons
 
         instruction = PixhawkInstruction(
-            pitch    = int(axes[DPADVERT]),            # DPad
+            pitch    = axes[DPADVERT],                 # DPad
             roll     = buttons[R1] - buttons[L1],      # L1/R1 buttons
-            vertical = int(axes[RJOYX]),               # Right Joystick Z
-            forward  = int(axes[LJOYX]),               # Left Joystick X
-            lateral  = int(-axes[LJOYY]),              # Left Joystick Y
-            yaw      = int((axes[R2PRESS_PERCENT] - axes[L2PRESS_PERCENT]) / 2)  # L2/R2 buttons
+            vertical = axes[RJOYX],                    # Right Joystick Z
+            forward  = axes[LJOYX],                    # Left Joystick X
+            lateral  = -axes[LJOYY],                   # Left Joystick Y
+            yaw      = (axes[R2PRESS_PERCENT] - axes[L2PRESS_PERCENT]) / 2  # L2/R2 buttons
         )
 
         # Smooth out adjustments
-        instruction.map(lambda value: value * abs(value))
+        instruction.apply(lambda value: value * abs(value))
 
-        self.pixhawk_publisher.publish_instruction(instruction)
+        self.rc_pub.publish(instruction.to_override_rc_in())
 
-    def manip_callback(self, msg: Joy):
+    def manip_callback(self, msg: Joy) -> None:
         buttons: MutableSequence[int] = msg.buttons
 
         for button_id, manip_button in self.manip_buttons.items():
@@ -119,7 +124,7 @@ class ManualControlNode(Node):
 
             manip_button.last_button_state = just_pressed
 
-    def camera_toggle(self, msg: Joy):
+    def camera_toggle(self, msg: Joy) -> None:
         """Cycles through connected cameras on pilot GUI using menu and pairing buttons."""
         buttons: MutableSequence[int] = msg.buttons
 
@@ -136,13 +141,13 @@ class ManualControlNode(Node):
 
 
 class ManipButton:
-    def __init__(self, claw: str):
+    def __init__(self, claw: str) -> None:
         self.claw: str = claw
         self.last_button_state: bool = False
         self.is_active: bool = False
 
 
-def main():
+def main() -> None:
     rclpy.init()
     manual_control = ManualControlNode()
     executor = MultiThreadedExecutor()

@@ -14,7 +14,7 @@ class TaskSelector(QWidget):
     # the ROS service object TaskRequest_Response
     scheduler_response_signal: pyqtSignal = pyqtSignal(TaskControl.Response)
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
 
         layout: QGridLayout = QGridLayout()
@@ -46,7 +46,7 @@ class TaskSelector(QWidget):
         self.task_controller: GUIEventClient = GUIEventClient(
             TaskControl, '/auto_docker_control', self.scheduler_response_signal)
 
-    def start_btn_clicked(self):
+    def start_btn_clicked(self) -> None:
         """Tell the back about the user selecting the start button."""
         self.task_controller.get_logger().info(
             'GUI changed task to: Auto Docking')
@@ -56,7 +56,7 @@ class TaskSelector(QWidget):
         self.task_controller.send_request_async(
             TaskControl.Request(start=True))
 
-    def stop_btn_clicked(self):
+    def stop_btn_clicked(self) -> None:
         """Tell the back about the user selecting the manual control button."""
         self.task_controller.get_logger().info(
             'GUI changed task to: Manual Control')
