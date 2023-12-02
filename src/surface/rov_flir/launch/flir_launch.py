@@ -16,26 +16,24 @@ def generate_launch_description() -> LaunchDescription:
         package='spinnaker_camera_driver',
         executable='camera_driver_node',
         emulate_tty=True,
-        name='front_cam',
         output='screen',
         parameters=[Parameter('serial_number', '23473577'),
                     Parameter('binning', '2'),
                     Parameter('parameter_file', parameter_file)]
     )
 
-    # launches node to run bottom flir camera
-    bottom_cam: Node = Node(
-        package='spinnaker_camera_driver',
-        executable='camera_driver_node',
-        emulate_tty=True,
-        name='bottom_cam',
-        output='screen',
-        parameters=[Parameter('serial_number', '23473566'),
-                    Parameter('binning', '2'),
-                    Parameter('parameter_file', parameter_file)]
-    )
+    # # launches node to run bottom flir camera
+    # bottom_cam: Node = Node(
+    #     package='spinnaker_camera_driver',
+    #     executable='camera_driver_node',
+    #     emulate_tty=True,
+    #     output='screen',
+    #     parameters=[Parameter('serial_number', '23473566'),
+    #                 Parameter('binning', '2'),
+    #                 Parameter('parameter_file', parameter_file)]
+    # )
 
     return LaunchDescription([
         front_cam,
-        bottom_cam
+        # bottom_cam
     ])
