@@ -1,24 +1,24 @@
 import os
 
 from ament_index_python.packages import get_package_share_directory
-from launch import LaunchDescription
+from launch.launch_description import LaunchDescription
 from launch.actions import GroupAction, IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import PushRosNamespace
 
 
-def generate_launch_description():
+def generate_launch_description() -> LaunchDescription:
     NS = 'pi'
     # Manipulator Controller
-    manip_path: str = get_package_share_directory('manipulators')
-
-    manip_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource([
-            os.path.join(
-                manip_path, 'launch', 'manip_launch.py'
-            )
-        ])
-    )
+    # manip_path: str = get_package_share_directory('manipulators')
+    #
+    # manip_launch = IncludeLaunchDescription(
+    #     PythonLaunchDescriptionSource([
+    #         os.path.join(
+    #             manip_path, 'launch', 'manip_launch.py'
+    #         )
+    #     ])
+    # )
 
     # Camera Streamer
     cam_path: str = get_package_share_directory('camera_streamer')
@@ -57,7 +57,7 @@ def generate_launch_description():
     namespace_launch = GroupAction(
         actions=[
             PushRosNamespace(NS),
-            manip_launch,
+            # manip_launch,
             pixhawk_launch,
             cam_launch,
             # realsense_launch
