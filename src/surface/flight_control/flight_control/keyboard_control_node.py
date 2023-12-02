@@ -54,7 +54,7 @@ Key Bindings:
 
 class KeyboardListenerNode(Node):
     def __init__(self) -> None:
-        super().__init__("keyboard_listener_node", parameter_overrides=[])
+        super().__init__('keyboard_listener_node', parameter_overrides=[])
 
         self.rc_pub: Publisher = self.create_publisher(
             OverrideRCIn,
@@ -126,12 +126,12 @@ class KeyboardListenerNode(Node):
 
     def pub_rov_control(self) -> None:
         instruction = PixhawkInstruction(
-            pitch    = self.status[PITCH_UP] - self.status[PITCH_DOWN],
-            roll     = self.status[ROLL_LEFT] - self.status[ROLL_RIGHT],
-            vertical = self.status[UP] - self.status[DOWN],
-            forward  = self.status[FORWARD] - self.status[BACKWARD],
-            lateral  = self.status[LEFT] - self.status[RIGHT],
-            yaw      = self.status[YAW_LEFT] - self.status[YAW_RIGHT]
+            pitch=self.status[PITCH_UP] - self.status[PITCH_DOWN],
+            roll=self.status[ROLL_LEFT] - self.status[ROLL_RIGHT],
+            vertical=self.status[UP] - self.status[DOWN],
+            forward=self.status[FORWARD] - self.status[BACKWARD],
+            lateral=self.status[LEFT] - self.status[RIGHT],
+            yaw=self.status[YAW_LEFT] - self.status[YAW_RIGHT]
         )
 
         self.rc_pub.publish(instruction.to_override_rc_in())
