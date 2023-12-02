@@ -10,8 +10,8 @@ from launch_ros.actions import PushRosNamespace
 def generate_launch_description() -> LaunchDescription:
 
     gui_path: str = get_package_share_directory('gui')
-    teleop_path: str = get_package_share_directory('teleop')
-    # Launches Gui
+    flight_control_path: str = get_package_share_directory('flight_control')
+    # Launches GUI
     gui_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([
             os.path.join(
@@ -20,11 +20,11 @@ def generate_launch_description() -> LaunchDescription:
         ]),
     )
 
-    # Launches flight controls (manual/auto flight)
-    teleop_launch = IncludeLaunchDescription(
+    # Launches flight_control (auto docking, manual control, etc.)
+    flight_control_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([
             os.path.join(
-                teleop_path, 'launch', 'teleop_launch.py'
+                flight_control_path, 'launch', 'flight_control_launch.py'
             )
         ]),
     )
@@ -33,7 +33,7 @@ def generate_launch_description() -> LaunchDescription:
         actions=[
             PushRosNamespace("surface"),
             gui_launch,
-            teleop_launch,
+            flight_control_launch,
         ]
     )
 
