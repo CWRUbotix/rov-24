@@ -16,6 +16,6 @@ Used for toggling manipulators on and off.
 
 ## Srv files
 
-[TaskControl.srv](srv/TaskControl.srv)
+[AutonomousFlight.srv](srv/AutonomousFlight.srv)
 
 Send to a automation task's control topic to start or stop that automation task

@@ -2,7 +2,7 @@ from gui.event_nodes.client import GUIEventClient
 from PyQt6.QtCore import pyqtSignal, pyqtSlot
 from PyQt6.QtWidgets import QGridLayout, QLabel, QPushButton, QWidget
 
-from rov_msgs.srv import TaskControl
+from rov_msgs.srv import AutonomousFlight
 
 WIDTH = 200
 
@@ -12,7 +12,7 @@ class TaskSelector(QWidget):
 
     # Declare signals with "object" params b/c we don't have access to
     # the ROS service object TaskRequest_Response
-    scheduler_response_signal: pyqtSignal = pyqtSignal(TaskControl.Response)
+    scheduler_response_signal: pyqtSignal = pyqtSignal(AutonomousFlight.Response)
 
     def __init__(self) -> None:
         super().__init__()
@@ -44,7 +44,7 @@ class TaskSelector(QWidget):
 
         self.scheduler_response_signal.connect(self.handle_scheduler_response)
         self.task_controller: GUIEventClient = GUIEventClient(
-            TaskControl, '/auto_docker_control', self.scheduler_response_signal)
+            AutonomousFlight, '/auto_docker_control', self.scheduler_response_signal)
 
     def start_btn_clicked(self) -> None:
         """Tell the back about the user selecting the start button."""
@@ -54,7 +54,7 @@ class TaskSelector(QWidget):
         self.task_status.setText('Auto Docking: Enabled')
 
         self.task_controller.send_request_async(
-            TaskControl.Request(start=True))
+            AutonomousFlight.Request(start=True))
 
     def stop_btn_clicked(self) -> None:
         """Tell the back about the user selecting the manual control button."""
@@ -64,11 +64,14 @@ class TaskSelector(QWidget):
         self.task_status.setText('Auto Docking: Disabled')
 
         self.task_controller.send_request_async(
-            TaskControl.Request(start=False))
+            AutonomousFlight.Request(start=False))
 
-    @pyqtSlot(TaskControl.Response)
-    def handle_scheduler_response(self, response: TaskControl.Response):
+    @pyqtSlot(AutonomousFlight.Response)
+    def handle_scheduler_response(self, response: AutonomousFlight.Response) -> None:
         """Handle scheduler response to request sent from gui_changed_task."""
-        self.task_controller.get_logger().info('Auto docking is now running'
-                                                   if response.is_running else
-                                                   'Auto docking is no longer running')
+        msg = 'Auto docking is '
+        if response.is_running:
+            msg += 'now running'
+        else:
+            msg += 'no longer running'
+        self.task_controller.get_logger().info(msg)
