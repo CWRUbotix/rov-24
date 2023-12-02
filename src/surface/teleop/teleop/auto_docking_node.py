@@ -16,7 +16,7 @@ class AutoDocker(Node):
 
         self.running = False
 
-        # TODO: multithreading shenanigans needed for auto docking while also awaiting callback?
+        # Add cam frame subscriber here to act as control loop for auto docking
 
     def task_control_callback(self, request: TaskControl.Request,
                               response: TaskControl.Response):
