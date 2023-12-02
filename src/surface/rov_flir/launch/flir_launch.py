@@ -19,6 +19,7 @@ def generate_launch_description() -> LaunchDescription:
         name='front_cam',
         output='screen',
         parameters=[Parameter('serial_number', '23473577'),
+                    Parameter('binning', '2'),
                     Parameter('parameter_file', parameter_file)]
     )
 
@@ -30,6 +31,7 @@ def generate_launch_description() -> LaunchDescription:
         name='bottom_cam',
         output='screen',
         parameters=[Parameter('serial_number', '23473566'),
+                    Parameter('binning', '2'),
                     Parameter('parameter_file', parameter_file)]
     )
 
