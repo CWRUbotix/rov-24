@@ -3,7 +3,7 @@ from glob import glob
 
 from setuptools import setup
 
-package_name = 'teleop'
+package_name = 'flight_control'
 
 setup(
     name=package_name,
@@ -26,8 +26,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'manual_control_node = teleop.manual_control_node:main',
-            'auto_docking_node = teleop.auto_docking_node:main'
+            'manual_control_node = flight_control.manual_control_node:main',
+            'auto_docking_node = flight_control.auto_docking_node:main'
         ],
     },
 )
