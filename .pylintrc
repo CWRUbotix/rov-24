@@ -1,2 +1,2 @@
 [pylint]
-duplicate-code=allow
+disable=duplicate-code
