@@ -20,7 +20,6 @@ import pytest
 @pytest.mark.linter
 def test_flake8() -> None:
     """Tests flake8 on this module."""
-
     error_code, errors = main_with_errors(argv=[])
     assert error_code == 0, \
         'Found %d code style errors / warnings:\n' % len(errors) + \
