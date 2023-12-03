@@ -8,7 +8,6 @@ from ament_mypy.main import main
 @pytest.mark.linter
 def test_mypy() -> None:
     """Tests mypy on this module."""
-
     file_path = __file__.replace(f'{__name__}.py', '')
     config_file = os.path.join(file_path, '..', '..', '..', '..', 'mypy.ini')
     error_code = main(argv=['--config', config_file])
