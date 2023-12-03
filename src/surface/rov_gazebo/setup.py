@@ -3,20 +3,20 @@ from glob import glob
 
 from setuptools import setup
 
-package_name = "rov_gazebo"
+PACKAGE_NAME = "rov_gazebo"
 
 setup(
-    name=package_name,
+    name=PACKAGE_NAME,
     version="1.0.0",
-    packages=[package_name],
+    packages=[PACKAGE_NAME],
     data_files=[
-        ("share/ament_index/resource_index/packages", ["resource/" + package_name]),
-        ("share/" + package_name, ["package.xml"]),
-        (os.path.join("share", package_name, "launch"), glob("launch/*.py")),
-        (os.path.join("share", package_name, "description"), glob("description/*")),
-        (os.path.join("share", package_name, "config"), glob("config/*")),
-        (os.path.join("share", package_name, "worlds"), glob("worlds/*")),
-        (os.path.join("share", package_name, "meshes"), glob("meshes/*")),
+        ("share/ament_index/resource_index/packages", ["resource/" + PACKAGE_NAME]),
+        ("share/" + PACKAGE_NAME, ["package.xml"]),
+        (os.path.join("share", PACKAGE_NAME, "launch"), glob("launch/*.py")),
+        (os.path.join("share", PACKAGE_NAME, "description"), glob("description/*")),
+        (os.path.join("share", PACKAGE_NAME, "config"), glob("config/*")),
+        (os.path.join("share", PACKAGE_NAME, "worlds"), glob("worlds/*")),
+        (os.path.join("share", PACKAGE_NAME, "meshes"), glob("meshes/*")),
     ],
     install_requires=["setuptools"],
     zip_safe=True,
