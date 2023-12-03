@@ -1,3 +1,4 @@
+"""setup.py for this module"""
 import os
 from glob import glob
 

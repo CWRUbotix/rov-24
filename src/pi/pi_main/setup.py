@@ -1,3 +1,4 @@
+"""setup.py for this module"""
 import os
 from glob import glob
 
@@ -29,7 +30,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'install = pi_main.install_on_boot:main',
+            'install = pi_main.run_on_boot:main',
         ],
     },
 )

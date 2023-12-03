@@ -1,3 +1,4 @@
+"""When run sets up environment for the robot to run on boot"""
 import os
 import sys
 import subprocess
@@ -9,7 +10,7 @@ from robot_upstart.job import Job
 
 def main() -> None:
     """
-    Sets up Pi file environment
+    Set up Pi file environment.
 
     Copies udev rules from this package into udev folder.
     Also uses robot_upstart to allow robot to automatically start on power on.
