@@ -1,4 +1,4 @@
-"""When run sets up environment for the robot to run on boot"""
+"""When run sets up environment for the robot to run on boot."""
 import os
 import sys
 import subprocess
