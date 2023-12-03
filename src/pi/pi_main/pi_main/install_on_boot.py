@@ -8,6 +8,11 @@ from robot_upstart.job import Job
 
 
 def main() -> None:
+    """Sets up Pi file environment
+
+        Copies udev rules from this package into udev folder.
+        Also uses robot_upstart to allow robot to automatically start on power on.
+    """
     pi_main_share = get_package_share_directory('pi_main')
 
     launch_dir = os.path.join(pi_main_share, 'launch')
