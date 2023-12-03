@@ -27,14 +27,14 @@ def main() -> None:
     cmd = ['/usr/bin/sudo', '/usr/bin/python3', udev_script, pi_main_share]
 
     try:
-        p = subprocess.run(cmd, capture_output=True, check=True)
+        process = subprocess.run(cmd, capture_output=True, check=True)
     # Logs Error
-    except subprocess.CalledProcessError as e:
-        print(e.stderr)
+    except subprocess.CalledProcessError as error:
+        print(error.stderr)
         sys.exit(1)
 
     # Success Message
-    print(p.stdout.decode())
+    print(process.stdout.decode())
 
     install_path = os.path.join(pi_main_share, "..", "..")
     workspace_path = os.path.join(install_path, "setup.bash")
