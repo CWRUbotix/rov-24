@@ -20,6 +20,5 @@ import pytest
 @pytest.mark.pep257
 def test_pep257() -> None:
     """Tests pep257 on this module."""
-
     error_code = main(argv=['.', 'test'])
     assert error_code == 0, 'Found code style errors / warnings'
