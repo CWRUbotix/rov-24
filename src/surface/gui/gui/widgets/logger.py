@@ -4,7 +4,7 @@ from PyQt6.QtGui import QColor, QFont, QTextCursor
 from PyQt6.QtWidgets import (QCheckBox, QHBoxLayout, QTextEdit, QVBoxLayout,
                              QWidget)
 from rcl_interfaces.msg import Log
-from rclpy.logging import LoggingSeverity
+from rclpy.impl.logging_severity import LoggingSeverity
 
 # Dictionary linking LoggingSeverity to a QColor
 SEVERITY_LEVELS_DICT = {LoggingSeverity.UNSET: QColor(0, 0, 0),
@@ -20,7 +20,7 @@ class Logger(QWidget):
 
     print_log_signal: pyqtSignal = pyqtSignal(Log)
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
 
         layout: QVBoxLayout = QVBoxLayout()

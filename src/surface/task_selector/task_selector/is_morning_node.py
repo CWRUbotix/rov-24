@@ -9,7 +9,7 @@ from rov_msgs.action import Example
 
 class IsMorning(Node):
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__('good_morning_sayer',
                          parameter_overrides=[])
         self._action_server = ActionServer(
@@ -19,7 +19,7 @@ class IsMorning(Node):
             self.execute_callback
         )
 
-    def execute_callback(self, goal_handle: ServerGoalHandle):
+    def execute_callback(self, goal_handle: ServerGoalHandle) -> Example.Result:
         self.get_logger().info('Executing goal...')
 
         if goal_handle.is_cancel_requested:
@@ -53,7 +53,7 @@ class IsMorning(Node):
             return result
 
 
-def main():
+def main() -> None:
     rclpy.init()
 
     task_controller = IsMorning()
