@@ -11,7 +11,7 @@ from rov_msgs.action import BasicTask
 
 class BasicTaskTimedNode(Node):
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__('basic_task_timed',
                          parameter_overrides=[])
         self._action_server = ActionServer(
@@ -22,7 +22,7 @@ class BasicTaskTimedNode(Node):
             cancel_callback=self.cancel_callback
         )
 
-    def execute_callback(self, goal_handle: ServerGoalHandle):
+    def execute_callback(self, goal_handle: ServerGoalHandle) -> BasicTask.Result:
         self.get_logger().info('Executing goal...')
 
         feedback_msg = BasicTask.Feedback()
@@ -44,12 +44,12 @@ class BasicTaskTimedNode(Node):
         result = BasicTask.Result()
         return result
 
-    def cancel_callback(self, goal_handle: ServerGoalHandle):
+    def cancel_callback(self, goal_handle: ServerGoalHandle) -> CancelResponse.ACCEPT:
         self.get_logger().info('Received cancel request')
         return CancelResponse.ACCEPT
 
 
-def main():
+def main() -> None:
     rclpy.init()
 
     task_controller = BasicTaskTimedNode()

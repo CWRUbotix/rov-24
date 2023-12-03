@@ -1,12 +1,13 @@
-from array import array
+from collections.abc import MutableSequence
 
 import rclpy
 from mavros_msgs.msg import OverrideRCIn
-from rclpy.action import ActionServer, CancelResponse
-from rclpy.action.server import ServerGoalHandle
+from rclpy.action.server import ActionServer, CancelResponse, ServerGoalHandle
 from rclpy.executors import MultiThreadedExecutor
-from rclpy.node import Node, Publisher, Subscription
-from rclpy.qos import qos_profile_system_default, qos_profile_sensor_data
+from rclpy.node import Node
+from rclpy.publisher import Publisher
+from rclpy.qos import qos_profile_sensor_data, qos_profile_system_default
+from rclpy.subscription import Subscription
 from sensor_msgs.msg import Joy
 
 from rov_msgs.action import BasicTask
@@ -62,7 +63,7 @@ YAW_CHANNEL:      int = 5  # Yaw
 class ManualControlNode(Node):
     _passing: bool = False
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__('manual_control_node',
                          parameter_overrides=[])
         # TODO would Service make more sense then Actions?
@@ -74,7 +75,7 @@ class ManualControlNode(Node):
         )
         self.rc_pub: Publisher = self.create_publisher(
             OverrideRCIn,
-            '/mavros/rc/override',
+            'mavros/rc/override',
             qos_profile_system_default
         )
         self.subscription: Subscription = self.create_subscription(
@@ -107,17 +108,17 @@ class ManualControlNode(Node):
         self.seen_left_cam = False
         self.seen_right_cam = False
 
-    def controller_callback(self, msg: Joy):
+    def controller_callback(self, msg: Joy) -> None:
         if self._passing:
             self.joystick_to_pixhawk(msg)
             self.manip_callback(msg)
             self.camera_toggle(msg)
 
-    def joystick_to_pixhawk(self, msg: Joy):
+    def joystick_to_pixhawk(self, msg: Joy) -> None:
         rc_msg = OverrideRCIn()
 
-        axes: array[float] = msg.axes
-        buttons: array[int] = msg.buttons
+        axes: MutableSequence[float] = msg.axes
+        buttons: MutableSequence[int] = msg.buttons
 
         # DPad Pitch
         rc_msg.channels[PITCH_CHANNEL] = self.joystick_profiles(axes[DPADVERT])
@@ -163,13 +164,13 @@ class ManualControlNode(Node):
             return BasicTask.Result()
 
     # TODO jank?
-    def cancel_callback(self, goal_handle: ServerGoalHandle):
+    def cancel_callback(self, goal_handle: ServerGoalHandle) -> CancelResponse:
         self.get_logger().info('Received cancel request')
         self._passing = False
         return CancelResponse.ACCEPT
 
-    def manip_callback(self, msg: Joy):
-        buttons: array[int] = msg.buttons
+    def manip_callback(self, msg: Joy) -> None:
+        buttons: MutableSequence[int] = msg.buttons
 
         for button_id, manip_button in self.manip_buttons.items():
 
@@ -191,9 +192,9 @@ class ManualControlNode(Node):
 
             manip_button.last_button_state = just_pressed
 
-    def camera_toggle(self, msg: Joy):
+    def camera_toggle(self, msg: Joy) -> None:
         """Cycles through connected cameras on pilot GUI using menu and pairing buttons."""
-        buttons: array[int] = msg.buttons
+        buttons: MutableSequence[int] = msg.buttons
 
         if buttons[MENU] == 1:
             self.seen_right_cam = True
@@ -208,13 +209,13 @@ class ManualControlNode(Node):
 
 
 class ManipButton:
-    def __init__(self, claw: str):
+    def __init__(self, claw: str) -> None:
         self.claw: str = claw
         self.last_button_state: bool = False
         self.is_active: bool = False
 
 
-def main():
+def main() -> None:
     rclpy.init()
     manual_control = ManualControlNode()
     executor = MultiThreadedExecutor()

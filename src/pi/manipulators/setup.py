@@ -19,11 +19,9 @@ setup(
         ('share/' + package_name, ['package.xml']),
         # Include all launch files.
         (os.path.join('share', package_name, 'launch'),
-         glob('launch/*launch.[pxy][yma]*')),
-        (os.path.join('lib', f'python{major_num}.{minor_num}', 'site-packages', package_name),
-         glob(os.path.join('TCA9555', 'tca9555', 'tca9555.py'))),
+         glob('launch/*launch.[pxy][yma]*'))
     ],
-    install_requires=['setuptools', 'bitstring', 'wiringpi'],
+    install_requires=['setuptools', 'flake8==4.0.1', 'mypy >= 1.7'],
     zip_safe=True,
     maintainer='Georgia Martinez, Michael Carlstrom',
     maintainer_email='gcm49@case.edu, rmc170@case.edu',
@@ -32,8 +30,6 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'manipulator = manipulators.manipulators:main',
-            'test = manipulators.manip_tester:main'
         ],
     },
 )

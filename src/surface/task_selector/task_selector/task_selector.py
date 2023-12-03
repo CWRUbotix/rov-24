@@ -1,5 +1,5 @@
 import rclpy
-from rclpy.action import ActionClient
+from rclpy.action.client import ActionClient
 from rclpy.node import Node
 from rclpy.qos import qos_profile_system_default
 from task_selector.tasks import Tasks
@@ -12,17 +12,17 @@ from rov_msgs.srv import TaskRequest
 
 class TaskSelector(Node):
 
-    def __init__(self):
+    def __init__(self) -> None:
         # creation of a Node with its name as input
         super().__init__('task_selector',
                          parameter_overrides=[])
 
         # create service to handle requests for task switching
         self.request_server = self.create_service(
-            TaskRequest, '/task_request', self.request_task_callback)
+            TaskRequest, 'task_request', self.request_task_callback)
 
         self.feedback_server = self.create_publisher(
-            TaskFeedback, '/task_feedback', qos_profile_system_default)
+            TaskFeedback, 'task_feedback', qos_profile_system_default)
 
         # instantiates new action clients with inputs of node,
         # action type, action name
@@ -42,17 +42,18 @@ class TaskSelector(Node):
         self.active = False
         self._goal_handle = None
 
-        self.send_basic_goal(self.manual_control_client)
+        # self.send_basic_goal(self.manual_control_client)
 
     def request_task_callback(self, request: TaskRequest.Request,
-                              response: TaskRequest.Response):
+                              response: TaskRequest.Response) -> TaskRequest.Response:
         response.response = "Acknowledged"
         if self.active:
-            self.cancel_goal()
+            pass
+            # self.cancel_goal()
 
         if request.task_id == Tasks.MANUAL_CONTROL.value:
             self.active = True
-            self.send_basic_goal(self.manual_control_client)
+            # self.send_basic_goal(self.manual_control_client)
         # elif request.task_id == Tasks.EX_GOOD_MORNING.value:
         #     self.send_morning_goal(True, True)
         # elif request.task_id == Tasks.EX_TIMED.value:
@@ -72,17 +73,17 @@ class TaskSelector(Node):
     #
     # send_basic_goal() takes a basic client and requests for the server it's
     # attached to to run a task
-    def send_basic_goal(self, client: ActionClient):
-        goal_msg = BasicTask.Goal()
+    # def send_basic_goal(self, client: ActionClient) -> None:
+    #     goal_msg = BasicTask.Goal()
 
-        if not self.active:
-            self.get_logger().info('Waiting for action server...')
-        client.wait_for_server()
+    #     if not self.active:
+    #         self.get_logger().info('Waiting for action server...')
+    #     client.wait_for_server()
 
-        if not self.active:
-            self.get_logger().info('Sending goal request...')
-        self._send_goal_future = client.send_goal_async(
-            goal_msg, feedback_callback=self.feedback_callback)
+    #     if not self.active:
+    #         self.get_logger().info('Sending goal request...')
+    #     self._send_goal_future = client.send_goal_async(
+    #         goal_msg, feedback_callback=self.feedback_callback)
 
         # self._send_goal_future.add_done_callback(self.basic_response_callback)
 
@@ -103,18 +104,19 @@ class TaskSelector(Node):
     #         self.morning_response_callback)
 
     # Checks if goal was accepted
-    def basic_response_callback(self, future):
-        goal_handle = future.result()
-        if not goal_handle.accepted:
-            self.get_logger().info('Goal rejected')
-            return
+    # TODO what type is future?
+    # def basic_response_callback(self, future):
+    #     goal_handle = future.result()
+    #     if not goal_handle.accepted:
+    #         self.get_logger().info('Goal rejected')
+    #         return
 
-        self.get_logger().info('Goal accepted')
+    #     self.get_logger().info('Goal accepted')
 
-        self._goal_handle = goal_handle
+    #     self._goal_handle = goal_handle
 
-        self._get_result_future = goal_handle.get_result_async()
-        self._get_result_future.add_done_callback(self.basic_result_callback)
+    #     self._get_result_future = goal_handle.get_result_async()
+    #     self._get_result_future.add_done_callback(self.basic_result_callback)
 
     # def morning_response_callback(self, future):
     #     goal_handle = future.result()
@@ -128,9 +130,10 @@ class TaskSelector(Node):
     #     self._get_result_future.add_done_callback(self.morning_result_callback)
 
     # Notify us that task is finished
-    def basic_result_callback(self, future):
-        self.get_logger().info("Task finished")
-        self.active = False
+    # TODO what type is future?
+    # def basic_result_callback(self, future) -> None:
+    #     self.get_logger().info("Task finished")
+    #     self.active = False
 
     # # Logs greeting that the morning server sends
     # def morning_result_callback(self, future):
@@ -139,33 +142,35 @@ class TaskSelector(Node):
     #     self.active = False
 
     # Logs feedback from action server
-    def feedback_callback(self, feedback_msg):
-        feedback = feedback_msg.feedback
-        self.get_logger().info(
-            'Received feedback: {0}'.format(feedback.feedback_message))
+    # TODO what type is feedback_msg?
+    # def feedback_callback(self, feedback_msg) -> None:
+    #     feedback = feedback_msg.feedback
+    #     self.get_logger().info(
+    #         'Received feedback: {0}'.format(feedback.feedback_message))
 
     # Only works if server runs on a multithreaded executor
-    def cancel_goal(self):
-        if self._goal_handle is None:
-            self.get_logger().warn('Could not cancel goal because there is none')
-            return
+    # def cancel_goal(self) -> None:
+    #     if self._goal_handle is None:
+    #         self.get_logger().warn('Could not cancel goal because there is none')
+    #         return
 
-        self.get_logger().info('Canceling goal')
-        # Cancel the goal
-        future = self._goal_handle.cancel_goal_async()
-        future.add_done_callback(self.cancel_done)
+    #     self.get_logger().info('Canceling goal')
+    #     # Cancel the goal
+    #     future = self._goal_handle.cancel_goal_async()
+    #     future.add_done_callback(self.cancel_done)
 
     # Logs if goal was canceled
-    def cancel_done(self, future):
-        cancel_response = future.result()
-        if len(cancel_response.goals_canceling) > 0:
-            self.get_logger().info('Goal successfully canceled')
-            self.active = False
-        else:
-            self.get_logger().info('Goal failed to cancel')
+    # TODO what type is future?
+    # def cancel_done(self, future) -> None:
+    #     cancel_response = future.result()
+    #     if len(cancel_response.goals_canceling) > 0:
+    #         self.get_logger().info('Goal successfully canceled')
+    #         self.active = False
+    #     else:
+    #         self.get_logger().info('Goal failed to cancel')
 
 
-def main():
+def main() -> None:
     rclpy.init()
 
     action_client = TaskSelector()

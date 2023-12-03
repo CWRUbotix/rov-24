@@ -1,9 +1,8 @@
 import atexit
 import signal
-import sys
 
 import qdarktheme
-import rclpy
+import rclpy.utilities
 from PyQt6.QtWidgets import QApplication, QWidget
 from rclpy.node import Node
 
@@ -11,18 +10,24 @@ from rclpy.node import Node
 class App(QWidget):
     """Main app window."""
 
-    def __init__(self, node_name: str):
-        self.app: QApplication = QApplication(sys.argv)
-        rclpy.init()
+    app: QApplication = QApplication([])
+
+    def __init__(self, node_name: str) -> None:
+        if not rclpy.utilities.ok():
+            rclpy.init()
         super().__init__()
         self.node = Node(node_name, parameter_overrides=[])
 
         self.node.declare_parameter('theme', '')
         self.resize(1850, 720)
 
-        atexit.register(rclpy.shutdown)
+        atexit.register(self.clean_shutdown)
 
-    def run_gui(self):
+    def clean_shutdown(self) -> None:
+        if rclpy.utilities.ok():
+            rclpy.shutdown()
+
+    def run_gui(self) -> None:
         # Kills with Control + C
         signal.signal(signal.SIGINT, signal.SIG_DFL)
 

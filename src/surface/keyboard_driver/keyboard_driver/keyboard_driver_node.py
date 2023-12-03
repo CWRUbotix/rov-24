@@ -1,13 +1,15 @@
+from array import array
 from typing import Optional
 
-import rclpy
-from pynput import keyboard
-from pynput.keyboard import Key, KeyCode
+import rclpy.utilities
+from mavros_msgs.msg import OverrideRCIn
+from pynput.keyboard import Key, KeyCode, Listener
 from rclpy.node import Node
 from rclpy.qos import qos_profile_system_default
-
-from rov_msgs.msg import ROVControl
-
+from task_selector.manual_control_node import (FORWARD_CHANNEL,
+                                               LATERAL_CHANNEL, PITCH_CHANNEL,
+                                               ROLL_CHANNEL, THROTTLE_CHANNEL,
+                                               YAW_CHANNEL)
 
 # key bindings
 FORWARD = "w"
@@ -59,11 +61,11 @@ RANGE_SPEED: int = 400
 
 
 class KeyboardListenerNode(Node):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__("keyboard_listener_node", parameter_overrides=[])
 
         self.pub_status = self.create_publisher(
-            ROVControl, "manual_control", qos_profile_system_default
+            OverrideRCIn, "/mavros/rc/override", qos_profile_system_default
         )
         self.get_logger().info(HELP_MSG)
         self.status = {
@@ -81,9 +83,9 @@ class KeyboardListenerNode(Node):
             YAW_RIGHT: False,
         }
 
-    def on_press(self, key: Optional[Key | KeyCode]):
+    def on_press(self, key: Optional[Key | KeyCode]) -> None:
         try:
-            key_name: Optional[str] = ''
+            key_name: str = ''
             if isinstance(key, KeyCode):
                 key_name = key.char
                 if key_name is None:
@@ -104,9 +106,9 @@ class KeyboardListenerNode(Node):
             self.get_logger().error(str(exception))
             raise exception
 
-    def on_release(self, key: Optional[Key | KeyCode]):
+    def on_release(self, key: Optional[Key | KeyCode]) -> None:
         try:
-            key_name: Optional[str] = ''
+            key_name: str = ''
             if isinstance(key, KeyCode):
                 key_name = key.char
                 if key_name is None:
@@ -127,28 +129,30 @@ class KeyboardListenerNode(Node):
             self.get_logger().error(str(exception))
             raise exception
 
-    def pub_rov_control(self):
-        msg = ROVControl()
-        msg.x = (self.status[FORWARD] - self.status[BACKWARD]) * 400 + 1500
-        msg.y = (self.status[LEFT] - self.status[RIGHT]) * 400 + 1500
-        msg.z = (self.status[UP] - self.status[DOWN]) * 400 + 1500
-        msg.roll = (self.status[ROLL_LEFT] - self.status[ROLL_RIGHT]) * 400 + 1500
+    def pub_rov_control(self) -> None:
+        msg = OverrideRCIn()
 
-        msg.pitch = (self.status[PITCH_UP] - self.status[PITCH_DOWN]) * 400 + 1500
+        channels = array('B', [1500, 1500, 1500, 1500, 1500, 1500])
+        channels[FORWARD_CHANNEL] += (self.status[FORWARD] - self.status[BACKWARD]) * 400
+        channels[LATERAL_CHANNEL] += (self.status[LEFT] - self.status[RIGHT]) * 400
+        channels[THROTTLE_CHANNEL] += (self.status[UP] - self.status[DOWN]) * 400
+        channels[ROLL_CHANNEL] += (self.status[ROLL_LEFT] - self.status[ROLL_RIGHT]) * 400
+        channels[PITCH_CHANNEL] += (self.status[PITCH_UP] - self.status[PITCH_DOWN]) * 400
+        channels[YAW_CHANNEL] += (self.status[YAW_LEFT] - self.status[YAW_RIGHT]) * 400
 
-        msg.yaw = (self.status[YAW_LEFT] - self.status[YAW_RIGHT]) * 400 + 1500
+        msg.channels = channels
 
         self.pub_status.publish(msg)
 
-    def spin(self):
-        with keyboard.Listener(
+    def spin(self) -> None:
+        with Listener(
             on_press=self.on_press, on_release=self.on_release
         ) as listener:
-            while rclpy.ok() and listener.running:
+            while rclpy.utilities.ok() and listener.running:
                 rclpy.spin_once(self, timeout_sec=0.1)
 
 
-def main():
+def main() -> None:
     rclpy.init()
     KeyboardListenerNode().spin()
 
