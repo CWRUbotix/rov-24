@@ -8,6 +8,11 @@ from robot_upstart.job import Job
 
 
 def main() -> None:
+    """Sets up Pi file environment
+
+        Copies udev rules from this package into udev folder.
+        Also uses robot_upstart to allow robot to automatically start on power on.
+    """
     pi_main_share = get_package_share_directory('pi_main')
 
     launch_dir = os.path.join(pi_main_share, 'launch')
@@ -27,14 +32,14 @@ def main() -> None:
     cmd = ['/usr/bin/sudo', '/usr/bin/python3', udev_script, pi_main_share]
 
     try:
-        p = subprocess.run(cmd, capture_output=True, check=True)
+        process = subprocess.run(cmd, capture_output=True, check=True)
     # Logs Error
-    except subprocess.CalledProcessError as e:
-        print(e.stderr)
+    except subprocess.CalledProcessError as error:
+        print(error.stderr)
         sys.exit(1)
 
     # Success Message
-    print(p.stdout.decode())
+    print(process.stdout.decode())
 
     install_path = os.path.join(pi_main_share, "..", "..")
     workspace_path = os.path.join(install_path, "setup.bash")

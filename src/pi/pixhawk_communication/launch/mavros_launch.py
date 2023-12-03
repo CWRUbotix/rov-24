@@ -3,7 +3,13 @@ from launch_ros.actions import Node
 
 
 def generate_launch_description() -> LaunchDescription:
+    """Generates LaunchDescription for pixhawk_communication package.
 
+    Returns
+    -------
+    LaunchDescription
+        Launches mavros Node.
+    """
     mavros_node = Node(
         package="mavros",
         executable="mavros_node",
