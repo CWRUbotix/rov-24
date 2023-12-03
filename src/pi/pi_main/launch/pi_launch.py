@@ -8,7 +8,7 @@ from launch_ros.actions import PushRosNamespace
 
 
 def generate_launch_description() -> LaunchDescription:
-    NS = 'pi'
+    NAMESPACE = 'pi'
     # Manipulator Controller
     # manip_path: str = get_package_share_directory('manipulators')
     #
@@ -56,7 +56,7 @@ def generate_launch_description() -> LaunchDescription:
 
     namespace_launch = GroupAction(
         actions=[
-            PushRosNamespace(NS),
+            PushRosNamespace(NAMESPACE),
             # manip_launch,
             pixhawk_launch,
             cam_launch,
