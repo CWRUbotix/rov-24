@@ -1,0 +1,2 @@
+disable=duplicate-code,fixme
+extension-pkg-whitelist=PyQt6,cv2
