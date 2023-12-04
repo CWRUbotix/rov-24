@@ -12,7 +12,7 @@ class AutoDocker(Node):
                          parameter_overrides=[])
 
         self.control_server = self.create_service(
-            AutonomousFlight, '/auto_docker_control', self.task_control_callback)
+            AutonomousFlight, 'auto_docker_control', self.task_control_callback)
 
         self.running = False
 
