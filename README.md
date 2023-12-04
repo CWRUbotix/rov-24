@@ -29,7 +29,7 @@ git clone --recurse-submodules git@github.com:cwruRobotics/rov-24.git
 
 If you've never contributed to a git repository before, you might receive an error message saying you don't have access. In that case visit [this tutorial](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/about-ssh) to set up SSH for local GitHub access.
 
-After cloning the code, we need to set up our IDE: VSCode. If you already have it, great. Otherwise follow [this](https://code.visualstudio.com/download) tutorial.
+After cloning the code, we need to set up our IDE: VSCode. If you already have it, great. Otherwise follow [this](https://code.visualstudio.com/download) tutorial. We recommend installing the mypy, flake8 and autoDocstring VSCode extensions. Our setting for autoDocstring are set to Numpy and auto docstring on new line.
 
 ### Linux
 
@@ -133,6 +133,8 @@ although the magic of symlink should mean you won't need to build again for most
 If you're working on package's `setup.py` or rov_msgs, you'll need to run `🏃‍♂️ ROS Quick Build` or use `Control + Shift + B` every time you change something.
 
 If you want to run our unit tests use this command `colcon test --event-handlers=console_direct+`.
+
+n VSCode, press `F1` or `ctrl+shift+p` and enter `Tasks: Run Test Task` as another method to run the above command.
 
 It runs the tests and pipes the output to the terminal. To test pi_main make sure to type your password into the terminal after running the above command.
 
