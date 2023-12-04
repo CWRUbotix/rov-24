@@ -18,7 +18,7 @@ setup(
         (os.path.join('share', package_name, 'launch'),
          glob('launch/*launch.[pxy][yma]*'))
     ],
-    install_requires=['setuptools', 'pyqt6==6.5.3', 'pyqtdarktheme', 'opencv-python>=4.8.1',
+    install_requires=['setuptools', 'pyqt6==6.6.0', 'pyqtdarktheme', 'opencv-python>=4.8.1',
                       'numpy>=1.26', 'pytest-qt', 'pytest-xvfb', 'flake8==4.0.1', 'mypy >= 1.7'],
     zip_safe=True,
     maintainer='Benjamin Poulin',
