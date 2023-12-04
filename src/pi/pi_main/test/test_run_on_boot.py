@@ -1,6 +1,6 @@
 import os
 
-from pi_main.install_on_boot import main
+from pi_main.run_on_boot import main
 
 ROS_DISTRO = os.getenv("ROS_DISTRO")
 
