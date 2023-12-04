@@ -1,9 +1,11 @@
 import rclpy
 from mavros_msgs.msg import OverrideRCIn
 from flight_control.manual_control_node import ManualControlNode
-from flight_control.pixhawk_instruction import PixhawkInstruction, FORWARD_CHANNEL, \
-    THROTTLE_CHANNEL, LATERAL_CHANNEL, PITCH_CHANNEL, YAW_CHANNEL, ROLL_CHANNEL, \
+from flight_control.pixhawk_instruction import (
+    PixhawkInstruction, FORWARD_CHANNEL, THROTTLE_CHANNEL,
+    LATERAL_CHANNEL, PITCH_CHANNEL, YAW_CHANNEL, ROLL_CHANNEL,
     ZERO_SPEED, RANGE_SPEED
+)
 
 
 def test_manual_control_instantiation() -> None:

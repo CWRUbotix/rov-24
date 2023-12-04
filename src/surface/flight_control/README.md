@@ -33,35 +33,44 @@ Controls motors, manipulators, and camera switching (if applicable) from the PS5
 
 #### Subscribed Topics
 
-* **`/temperature`** ([sensor_msgs/Temperature])
+* **`/surface/joy`** ([sensor_msgs/msg/Joy])
 
-    The temperature measurements from which the average is computed.
+    PS5 controller instructions.
 
 #### Published Topics
 
-* **`mavros/rc/override`** ([mavros_msgs/OverrideRcIn])
+* **`/tether/mavros/rc/override`** ([mavros_msgs/msg/OverrideRcIn])
 
     The movement instructions for the Pixhawk.
 
+* **`/tether/manipulator_control`** ([rov_msgs/msg/Manip])
+
+    Manipulator instructions for the Pi.
+
+* **`/surface/camera_switch`** ([rov_msgs/msg/CameraControllerSwitch])
+
+    Instructions to change which camera should be active. TODO: Remove this if possible after upgrading to FLIR cams.
+
+### keyboard_control_node
+
+Controls motors (only) from the keyboard. Not run by general surface launch files. Run this separately with its launch file to use it.
+This node can publish concurrently with manual control/auto docking.
+
+#### Published Topics
+
+* **`/tether/mavros/rc/override`** ([mavros_msgs/msg/OverrideRcIn])
+
+    The movement instructions for the Pixhawk. This node can publish concurrently with manual control.
+
+### auto_docking_node
+
+Execute an automatic docking sequence. This node must be "activated" with its service before it will publish movement instructions.
+Once activated, it will publish concurrently with manual control/keyboard control nodes.
+
+TODO: actually implement autodocking.
+
 #### Services
 
-* **`get_average`** ([std_srvs/Trigger])
+* **`/surface/auto_docker_control`** ([rov_msgs/srv/AutonomousFlight.srv])
 
-    Returns information about the current average.
-
-#### Parameters
-
-* **`subscriber_topic`** (string, default: "/temperature")
-
-    The name of the input topic.
-
-* **`cache_size`** (int, default: 200, min: 0, max: 1000)
-
-    The size of the cache.
-
-### NODE_B_NAME
-
-...
-
-[std_srvs/Trigger]: http://docs.ros.org/api/std_srvs/html/srv/Trigger.html
-[sensor_msgs/Temperature]: http://docs.ros.org/api/sensor_msgs/html/msg/Temperature.html
+    Toggles whether the auto docker is running (sending instructions) and returns the new state.
