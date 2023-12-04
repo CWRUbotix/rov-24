@@ -134,7 +134,7 @@ If you're working on package's `setup.py` or rov_msgs, you'll need to run `ğŸƒâ
 
 If you want to run our unit tests use this command `colcon test --event-handlers=console_direct+`.
 
-n VSCode, press `F1` or `ctrl+shift+p` and enter `Tasks: Run Test Task` as another method to run the above command.
+In VSCode, press `F1` or `ctrl+shift+p` and enter `Tasks: Run Test Task` as another method to run the above command.
 
 It runs the tests and pipes the output to the terminal. To test pi_main make sure to type your password into the terminal after running the above command.
 
