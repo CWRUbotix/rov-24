@@ -1,21 +1,22 @@
+"""setup.py for the gui module."""
 import os
 from glob import glob
 
 from setuptools import setup
 
-package_name = 'gui'
+PACKAGE_NAME = 'gui'
 
 setup(
-    name=package_name,
+    name=PACKAGE_NAME,
     version='1.0.0',
-    packages=[package_name, os.path.join(package_name, 'widgets'),
-              os.path.join(package_name, 'event_nodes')],
+    packages=[PACKAGE_NAME, os.path.join(PACKAGE_NAME, 'widgets'),
+              os.path.join(PACKAGE_NAME, 'event_nodes')],
     data_files=[
         ('share/ament_index/resource_index/packages',
-            ['resource/' + package_name]),
-        ('share/' + package_name, ['package.xml']),
+            ['resource/' + PACKAGE_NAME]),
+        ('share/' + PACKAGE_NAME, ['package.xml']),
         # Include all launch files.
-        (os.path.join('share', package_name, 'launch'),
+        (os.path.join('share', PACKAGE_NAME, 'launch'),
          glob('launch/*launch.[pxy][yma]*'))
     ],
     install_requires=['setuptools', 'pyqt6', 'pyqtdarktheme', 'opencv-python>=4.8.1',
