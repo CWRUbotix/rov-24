@@ -174,7 +174,7 @@ Documentation will take place at 3 levels:
 
 - High Level - Overarching Design Document outlining our general structure and what goes where.
 - Device Level - Following the markdown tempate in `doc` directory.
-- Inline Level - Using reST / Numpy Standard. To autogenerate in VSCode we use autoDocstring with the setting set to Numpy and auto docstring on new line. Below is an example of an inline function docstring.
+- Inline Level - Using reST / Numpy Standard. To autogenerate in VSCode we use autoDocstring extension with the setting set to Numpy and auto docstring on new line. Below is an example of an inline function docstring.
 
 ```python
 def __init__(self, srv_type: SrvType, topic: str, signal: pyqtBoundSignal,
