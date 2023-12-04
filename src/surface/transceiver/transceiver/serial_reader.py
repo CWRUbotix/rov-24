@@ -16,7 +16,7 @@ class SerialReader(Node):
             self.control_callback,
             10)
         timer_period = .5
-        self.ser = serial.Serial('/dev/ttyUSB0', 115200)
+        self.ser = serial.Serial('/dev/ttyTransceiver', 115200)
         self.timer = self.create_timer(timer_period, self.timer_callback)
         self.i = 0
 
