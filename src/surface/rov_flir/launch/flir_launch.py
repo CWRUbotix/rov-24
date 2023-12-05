@@ -1,4 +1,3 @@
-from typing import Any
 from launch.launch_description import LaunchDescription
 from launch.substitutions import PathJoinSubstitution
 from launch_ros.actions import Node
