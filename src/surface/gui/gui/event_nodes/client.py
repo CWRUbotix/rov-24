@@ -31,8 +31,6 @@ class GUIEventClient(Node):
         Thread(target=self.__connect_to_service, daemon=True,
                name=f'{self.name}_connect_to_service').start()
 
-        self.timeout = timeout
-
     def __connect_to_service(self) -> None:
         """Connect this client to a server in a separate thread."""
         while not self.cli.wait_for_service(timeout_sec=self.timeout):
