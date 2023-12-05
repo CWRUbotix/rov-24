@@ -1,23 +1,24 @@
+"""setup.py for pi_main module."""
 import os
 from glob import glob
 
 from setuptools import setup
 
-package_name = 'pi_main'
+PACKAGE_NAME = 'pi_main'
 
 
 setup(
-    name=package_name,
+    name=PACKAGE_NAME,
     version='1.0.0',
-    packages=[package_name],
+    packages=[PACKAGE_NAME],
     data_files=[
         ('share/ament_index/resource_index/packages',
-            ['resource/' + package_name]),
-        ('share/' + package_name, ['package.xml']),
+            ['resource/' + PACKAGE_NAME]),
+        ('share/' + PACKAGE_NAME, ['package.xml']),
         # Include all launch files.
-        (os.path.join('share', package_name, 'launch'),
+        (os.path.join('share', PACKAGE_NAME, 'launch'),
          glob('launch/*launch.[pxy][yma]*')),
-        (os.path.join('share', package_name, 'udev_rules'),
+        (os.path.join('share', PACKAGE_NAME, 'udev_rules'),
          glob('udev_rules/*'))
     ],
     install_requires=['setuptools', 'flake8==4.0.1', 'mypy >= 1.7'],
@@ -29,7 +30,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'install = pi_main.install_on_boot:main',
+            'install = pi_main.run_on_boot:main',
         ],
     },
 )

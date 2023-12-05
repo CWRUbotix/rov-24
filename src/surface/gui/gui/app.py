@@ -21,11 +21,7 @@ class App(QWidget):
         self.node.declare_parameter('theme', '')
         self.resize(1850, 720)
 
-        atexit.register(self.clean_shutdown)
-
-    def clean_shutdown(self) -> None:
-        if rclpy.utilities.ok():
-            rclpy.shutdown()
+        atexit.register(clean_shutdown)
 
     def run_gui(self) -> None:
         # Kills with Control + C
@@ -45,3 +41,8 @@ class App(QWidget):
 
         # TODO: when the app closes it causes an error. Make not cause error?
         self.app.exec()
+
+
+def clean_shutdown() -> None:
+    if rclpy.utilities.ok():
+        rclpy.shutdown()
