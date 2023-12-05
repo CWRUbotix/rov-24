@@ -18,7 +18,7 @@ class App(QWidget):
         super().__init__()
         self.node = Node(node_name, parameter_overrides=[])
 
-        self.node.declare_parameter('theme', '')
+        self.theme_param = self.node.declare_parameter('theme', '')
         self.resize(1850, 720)
 
         atexit.register(clean_shutdown)
@@ -27,9 +27,9 @@ class App(QWidget):
         # Kills with Control + C
         signal.signal(signal.SIGINT, signal.SIG_DFL)
 
-        if self.node.get_parameter('theme').get_parameter_value().string_value == "dark":
+        if self.theme_param.get_parameter_value().string_value == "dark":
             qdarktheme.setup_theme()
-        elif self.node.get_parameter('theme').get_parameter_value().string_value == "watermelon":
+        elif self.theme_param.get_parameter_value().string_value == "watermelon":
             # UGLY But WORKS
             self.app.setStyleSheet("QWidget { background-color: green; color: pink; }")
         else:
