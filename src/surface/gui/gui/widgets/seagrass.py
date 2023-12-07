@@ -10,7 +10,7 @@ class SeagrassWidget(QWidget):
 
     BUTTON_WIDTH = 120
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
 
         root_layout: QHBoxLayout = QHBoxLayout(self)
@@ -41,7 +41,7 @@ class SeagrassWidget(QWidget):
         before_layout.addStretch()
 
         # Bottom cam
-        self.bottom_cam = PauseableVideoWidget("/bottom_cam/image_raw", "Bottom Cam",
+        self.bottom_cam = PauseableVideoWidget("bottom_cam/image_raw", "Bottom Cam",
                                                widget_width=640, widget_height=360)
 
         # After layout
@@ -105,7 +105,7 @@ class SeagrassWidget(QWidget):
 
 class SeagrassGrid(QWidget):
     def __init__(self, update_result_text: Callable[[], None],
-                 set_other_button: Optional[Callable[[int, bool], None]] = None):
+                 set_other_button: Optional[Callable[[int, bool], None]] = None) -> None:
         super().__init__()
 
         self.set_other_button: Optional[Callable[[int, bool], None]] = set_other_button
@@ -164,7 +164,7 @@ class SeagrassGrid(QWidget):
 
 class SeagrassButton(QPushButton):
     def __init__(self, button_id: int, size: int, update_text: Callable[[], None],
-                 set_other_button: Optional[Callable[[int, bool], None]] = None):
+                 set_other_button: Optional[Callable[[int, bool], None]] = None) -> None:
         super(SeagrassButton, self).__init__()
 
         self.button_id: int = button_id
