@@ -20,7 +20,7 @@ def generate_launch_description() -> LaunchDescription:
                   # 'pixel_format': 'BayerRG8',
                   'exposure_auto': 'Continuous',
                   # These are useful for GigE cameras
-                  'device_link_throughput_limit': 380000000,
+                  'device_link_throughput_limit': 125000000,
                   'gev_scps_packet_size': 9000,
                   # ---- to reduce the sensor width and shift the crop
                   #   'image_width': 1280,
