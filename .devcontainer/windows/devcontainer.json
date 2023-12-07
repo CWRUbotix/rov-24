@@ -7,6 +7,5 @@
             "extensions": ["ms-python.flake8", "ms-azuretools.vscode-docker", "streetsidesoftware.code-spell-checker"]
         }
     },
-    "privileged": true,
-    "runArgs": [ "-e", "DISPLAY=host.docker.internal:0"]
+    "privileged": true
 }

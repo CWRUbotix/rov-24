@@ -8,10 +8,10 @@ from launch_ros.actions import Node, PushRosNamespace
 
 # from launch.substitutions import Command
 
-NS = "simulation"
+NAMESPACE = "simulation"
 
 
-def generate_launch_description():
+def generate_launch_description() -> LaunchDescription:
     rov_gazebo_path: str = get_package_share_directory("rov_gazebo")
     # ros_gz_sim_path: str = get_package_share_directory("ros_gz_sim")
     surface_main_path: str = get_package_share_directory("surface_main")
@@ -126,15 +126,16 @@ def generate_launch_description():
         package="keyboard_driver",
         executable="keyboard_driver_node",
         output="screen",
-        remappings=[(f'/{NS}/mavros/setpoint_velocity/cmd_vel',
-                     '/mavros/setpoint_velocity/cmd_vel')],
+        name="keyboard_driver_node",
+        namespace=NAMESPACE,
+        remappings=[(f"/{NAMESPACE}/manual_control", "/manual_control")],
         emulate_tty=True
     )
 
     # cam_bridge = Node(
     #     package="ros_gz_bridge",
     #     executable="parameter_bridge",
-    #     namespace=NS,
+    #     namespace=NAMESPACE,
     #     name="cam_bridge",
     #     arguments=[
     #         "/bottom_cam/image_raw@sensor_msgs/msg/Image@gz.msgs.Image",
@@ -146,13 +147,13 @@ def generate_launch_description():
     #         "/depth_cam/points@sensor_msgs/msg/PointCloud2@gz.msgs.PointCloudPacked",
     #     ],
     #     remappings=[
-    #         (f"/{NS}/bottom_cam/image_raw", "/bottom_cam/image_raw"),
-    #         (f"/{NS}/bottom_cam/camera_info", "/bottom_cam/camera_info"),
-    #         (f"/{NS}/front_cam/image_raw", "/front_cam/image_raw"),
-    #         (f"/{NS}/front_cam/camera_info", "/front_cam/camera_info"),
-    #         (f"/{NS}/manip_cam/image_raw", "/manip_cam/image_raw"),
-    #         (f"/{NS}/depth_cam", "/depth_cam/image_raw"),
-    #         (f"/{NS}/depth_cam/points", "/depth_cam/points"),
+    #         (f"/{NAMESPACE}/bottom_cam/image_raw", "/bottom_cam/image_raw"),
+    #         (f"/{NAMESPACE}/bottom_cam/camera_info", "/bottom_cam/camera_info"),
+    #         (f"/{NAMESPACE}/front_cam/image_raw", "/front_cam/image_raw"),
+    #         (f"/{NAMESPACE}/front_cam/camera_info", "/front_cam/camera_info"),
+    #         (f"/{NAMESPACE}/manip_cam/image_raw", "/manip_cam/image_raw"),
+    #         (f"/{NAMESPACE}/depth_cam", "/depth_cam/image_raw"),
+    #         (f"/{NAMESPACE}/depth_cam/points", "/depth_cam/points"),
     #     ],
     #     output="screen",
     #     emulate_tty=True
