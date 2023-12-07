@@ -1,15 +1,15 @@
+import os
+
+from ament_index_python.packages import get_package_share_directory
 from launch.launch_description import LaunchDescription
-from launch.substitutions import PathJoinSubstitution
 from launch_ros.actions import Node
 from launch_ros.parameter_descriptions import Parameter
-from launch_ros.substitutions import FindPackageShare
 
 
 def generate_launch_description() -> LaunchDescription:
 
-    parameter_file = PathJoinSubstitution(
-            [FindPackageShare('spinnaker_camera_driver'), 'config',
-             'blackfly_s' + '.yaml'])
+    parameter_file = os.path.join(get_package_share_directory('rov_flir'), 'config',
+                                  'blackfly_s.yaml')
 
     parameters = {'debug': False,
                   'compute_brightness': False,
@@ -23,12 +23,14 @@ def generate_launch_description() -> LaunchDescription:
                   'device_link_throughput_limit': 380000000,
                   'gev_scps_packet_size': 9000,
                   # ---- to reduce the sensor width and shift the crop
-                  # 'image_width': 1408,
-                  # 'image_height': 1080,
+                  #   'image_width': 1280,
+                  #   'image_height': 720,
                   # 'offset_x': 16,
                   # 'offset_y': 0,
+                  'binning_x': 2,
+                  'binning_y': 2,
                   'frame_rate_auto': 'Off',
-                  #  'frame_rate': 40.0,
+                  'frame_rate': 60.0,
                   'frame_rate_enable': True,
                   'buffer_queue_size': 1,
                   'trigger_mode': 'Off',
@@ -46,10 +48,10 @@ def generate_launch_description() -> LaunchDescription:
     front_cam: Node = Node(
         package='spinnaker_camera_driver',
         executable='camera_driver_node',
+        name='front_camera',
         emulate_tty=True,
         output='screen',
         parameters=[Parameter('serial_number', '23473577'),
-                    Parameter('binning', '2'),
                     Parameter('parameter_file', parameter_file),
                     parameters]
     )
@@ -58,10 +60,10 @@ def generate_launch_description() -> LaunchDescription:
     bottom_cam: Node = Node(
         package='spinnaker_camera_driver',
         executable='camera_driver_node',
+        name='bottom_camera',
         emulate_tty=True,
         output='screen',
         parameters=[Parameter('serial_number', '23473566'),
-                    Parameter('binning', '2'),
                     Parameter('parameter_file', parameter_file),
                     parameters]
     )
