@@ -31,15 +31,14 @@ updates:
     schedule:
       interval: "daily"
 
-
-
+  # Surface python dependencies
   - package-ecosystem: "pip" # See documentation for possible values
-    directory: "/src/surface/gui" # Location of package manifests
+    directory: "/src/surface/flight_control" # Location of package manifests
     schedule:
       interval: "daily"
 
   - package-ecosystem: "pip" # See documentation for possible values
-    directory: "/src/surface/keyboard_driver" # Location of package manifests
+    directory: "/src/surface/gui" # Location of package manifests
     schedule:
       interval: "daily"
   
@@ -57,11 +56,6 @@ updates:
 
   - package-ecosystem: "pip" # See documentation for possible values
     directory: "/src/surface/surface_main" # Location of package manifests
-    schedule:
-      interval: "daily"
-
-  - package-ecosystem: "pip" # See documentation for possible values
-    directory: "/src/surface/task_selector" # Location of package manifests
     schedule:
       interval: "daily"
   
