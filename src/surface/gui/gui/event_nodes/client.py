@@ -15,7 +15,7 @@ class GUIEventClient(Node):
     # Set to None for no timeout limits on service requests
     # else set to float number of seconds to limit request spinning
     def __init__(self, srv_type: SrvType, topic: str, signal: pyqtBoundSignal,
-                 timeout: float = 1.0):
+                 timeout: float = 3.0):
 
         # Name this node with a sanitized version of the topic
         self.name: str = f'client_{re.sub(r"[^a-zA-Z0-9_]", "_", topic)}'
@@ -51,7 +51,11 @@ class GUIEventClient(Node):
             self, future, timeout_sec=self.timeout)
 
         try:
-            self.signal.emit(future.result())
+            result = future.result()
+            if result is not None:
+                self.signal.emit(result)
+            else:
+                self.get_logger().error("Request received no response.")
         except TypeError as exception:
-            self.get_logger().error("Request received no response.")
+            self.get_logger().error("Request received incorrectly typed response.")
             self.get_logger().error(str(exception))

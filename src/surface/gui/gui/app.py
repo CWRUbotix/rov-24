@@ -44,7 +44,8 @@ class App(QWidget):
 
         elif os.path.exists(theme_path):
             with open(theme_path) as theme_file:
-                self.app.setStyleSheet(theme_file.read())
+                qdarktheme.setup_theme("light", additional_qss="\n" + theme_file.read())
+                # self.app.setStyleSheet(theme_file.read())
 
         else:
             qdarktheme.setup_theme("light")
