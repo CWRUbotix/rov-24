@@ -1,24 +1,25 @@
+"""setup.py for the realsense module."""
 import os
 from glob import glob
 
 from setuptools import setup
 
-package_name = 'realsense'
+PACKAGE_NAME = 'realsense'
 
 
 setup(
-    name=package_name,
+    name=PACKAGE_NAME,
     version='1.0.0',
-    packages=[package_name],
+    packages=[PACKAGE_NAME],
     data_files=[
         ('share/ament_index/resource_index/packages',
-            ['resource/' + package_name]),
-        ('share/' + package_name, ['package.xml']),
+            ['resource/' + PACKAGE_NAME]),
+        ('share/' + PACKAGE_NAME, ['package.xml']),
         # Include all launch files.
-        (os.path.join('share', package_name, 'launch'),
+        (os.path.join('share', PACKAGE_NAME, 'launch'),
          glob('launch/*launch.[pxy][yma]*'))
     ],
-    install_requires=['setuptools', 'flake8==4.0.1', 'mypy >= 1.7'],
+    install_requires=['setuptools', 'flake8==5.0.4', 'mypy >= 1.7'],
     zip_safe=True,
     maintainer='Michael Carlstrom',
     maintainer_email='rmc170@case.edu',
