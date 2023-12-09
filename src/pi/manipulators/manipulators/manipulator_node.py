@@ -1,9 +1,10 @@
+import time
+
 import rclpy
 from rclpy.node import Node
+from smbus2 import SMBus
 
 from rov_msgs.msg import Manip
-
-from smbus2 import SMBus
 
 TCA9555_ADDRESS = 0x20
 
@@ -20,11 +21,16 @@ class Manipulator(Node):
             self.manip_callback,
             10)
 
-        with SMBus(TCA9555_ADDRESS) as bus:
-            pass
+        with SMBus() as self.bus:
+            while True:
+
+                self.bus.write_byte(TCA9555_ADDRESS, 0b00000000)
+                time.sleep(1000)
+                self.bus.write_byte(TCA9555_ADDRESS, 0b11111111)
 
     def manip_callback(self, msg: Manip) -> None:
-        pass
+        # self.bus.
+        self.bus.write_byte()
 
 
 def main(args=None) -> None:
