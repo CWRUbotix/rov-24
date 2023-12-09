@@ -12,6 +12,12 @@ Run the setup file from spinnaker_camera_driver
 ros2 run spinnaker_camera_driver linux_setup_flir
 ```
 
+## Debugging
+
+You can install the Spinnaker SDK & Spinview GUI for debugging [here](https://www.flir.com/products/spinnaker-sdk/).
+
+If you get errors about cameras on the wrong subnet, install this and open Spinview. Write click the entries for each camera and select "Auto Force IPs".
+
 ## Usage
 
 Run the main node with
