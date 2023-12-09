@@ -19,9 +19,12 @@ def generate_launch_description() -> LaunchDescription:
             {"plugin_allowlist": ["sys_status", "rc_io", "command", "param"]},
             {"fcu_url": "/dev/ttyACM0"}
         ],
-        remappings=[('/pi/mavros/rc/override', '/tether/mavros/rc/override'),
-                    ('/pi/mavros/cmd/arming', '/tether/mavros/cmd/arming'),
-                    ('/pi/mavros/cmd/cmd', '/tether/mavros/cmd/cmd')]
+        remappings=[
+            ('/pi/mavros/state', '/tether/mavros/state'),
+            ('/pi/mavros/rc/override', '/tether/mavros/rc/override'),
+            ('/pi/mavros/cmd/arming', '/tether/mavros/cmd/arming'),
+            ('/pi/mavros/cmd/cmd', '/tether/mavros/cmd/cmd'),
+        ]
     )
 
     return LaunchDescription([

@@ -11,7 +11,6 @@ def generate_launch_description() -> LaunchDescription:
 
     gui_path: str = get_package_share_directory('gui')
     controller_path: str = get_package_share_directory('ps5_controller')
-    vehicle_manager_path: str = get_package_share_directory('vehicle_manager')
 
     # Launches Gui
     gui_launch = IncludeLaunchDescription(
@@ -31,21 +30,11 @@ def generate_launch_description() -> LaunchDescription:
         ]),
     )
 
-    # Launches Vehicle Manager
-    vehicle_manager_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource([
-            os.path.join(
-                vehicle_manager_path, 'launch', 'vehicle_manager_launch.py'
-            )
-        ]),
-    )
-
     namespace_launch = GroupAction(
         actions=[
             PushRosNamespace("surface"),
             gui_launch,
             controller_launch,
-            vehicle_manager_launch
         ]
     )
 
