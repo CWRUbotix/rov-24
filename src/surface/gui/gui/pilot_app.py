@@ -1,6 +1,6 @@
 from gui.app import App
 from gui.widgets.arm import Arm
-from gui.widgets.video_widget import SwitchableVideoWidget
+from gui.widgets.video_widget import SwitchableVideoWidget, VideoWidget
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QHBoxLayout
 
@@ -14,14 +14,17 @@ class PilotApp(App):
         layout: QHBoxLayout = QHBoxLayout()
         self.setLayout(layout)
 
-        self.video_area = SwitchableVideoWidget(["front_cam/image_raw",
-                                                 "bottom_cam/image_raw",
+        self.main_video = VideoWidget("front_cam/image_raw", "Front Camera")
+
+        self.video_area = SwitchableVideoWidget(["bottom_cam/image_raw",
+                                                 "top_cam/image_raw",
                                                  "camera/color/image_raw"],
-                                                ["Front Camera",
-                                                 "Bottom Camera",
+                                                ["Bottom Camera",
+                                                 "Top Camera",
                                                  "Depth Camera"],
                                                 "camera_switch")
-        layout.addWidget(self.video_area, alignment=Qt.AlignmentFlag.AlignCenter)
+        layout.addWidget(self.main_video, alignment=Qt.AlignmentFlag.AlignLeft)
+        layout.addWidget(self.video_area, alignment=Qt.AlignmentFlag.AlignRight)
 
         self.arm: Arm = Arm()
         layout.addWidget(self.arm,
