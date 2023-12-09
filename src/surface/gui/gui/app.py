@@ -3,7 +3,7 @@ import signal
 import os
 
 import qdarktheme
-import rclpy
+import rclpy.utilities
 from PyQt6.QtWidgets import QApplication, QWidget
 from rclpy.node import Node
 from ament_index_python.packages import get_package_share_directory
@@ -15,19 +15,15 @@ class App(QWidget):
     app: QApplication = QApplication([])
 
     def __init__(self, node_name: str) -> None:
-        if not rclpy.ok():
+        if not rclpy.utilities.ok():
             rclpy.init()
         super().__init__()
         self.node = Node(node_name, parameter_overrides=[])
 
-        self.node.declare_parameter('theme', '')
+        self.theme_param = self.node.declare_parameter('theme', '')
         self.resize(1850, 720)
 
-        atexit.register(self.clean_shutdown)
-
-    def clean_shutdown(self) -> None:
-        if rclpy.ok():
-            rclpy.shutdown()
+        atexit.register(clean_shutdown)
 
     def run_gui(self) -> None:
         # Kills with Control + C
@@ -45,7 +41,6 @@ class App(QWidget):
         elif os.path.exists(theme_path):
             with open(theme_path) as theme_file:
                 qdarktheme.setup_theme("light", additional_qss="\n" + theme_file.read())
-                # self.app.setStyleSheet(theme_file.read())
 
         else:
             qdarktheme.setup_theme("light")
@@ -57,3 +52,8 @@ class App(QWidget):
 
         # TODO: when the app closes it causes an error. Make not cause error?
         self.app.exec()
+
+
+def clean_shutdown() -> None:
+    if rclpy.utilities.ok():
+        rclpy.shutdown()
