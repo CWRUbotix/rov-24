@@ -16,7 +16,10 @@ setup(
         ('share/' + package_name, ['package.xml']),
         # Include all launch files.
         (os.path.join('share', package_name, 'launch'),
-         glob('launch/*launch.[pxy][yma]*'))
+         glob('launch/*launch.[pxy][yma]*')),
+        # Include all theme files.
+        (os.path.join('share', package_name, 'themes'),
+         glob('themes/*')),
     ],
     install_requires=['setuptools', 'pyqt6', 'pyqtdarktheme', 'opencv-python>=4.8.1',
                       'numpy>=1.26', 'pytest-qt', 'pytest-xvfb', 'flake8==4.0.1', 'mypy >= 1.7'],

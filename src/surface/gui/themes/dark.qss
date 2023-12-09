@@ -1,0 +1,3 @@
+QWidget[inputStyle="disconnected"] { background-color: #4f4f4f; }
+QWidget[inputStyle="armed"] { background-color: green; }
+QWidget[inputStyle="disarmed"] { background-color: red; }

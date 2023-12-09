@@ -1,8 +1,10 @@
 
 from gui.event_nodes.client import GUIEventClient
+from gui.event_nodes.subscriber import GUIEventSubscriber
 from mavros_msgs.srv import CommandBool
 from PyQt6.QtCore import pyqtSignal, pyqtSlot
 from PyQt6.QtWidgets import QHBoxLayout, QPushButton, QWidget
+from rov_msgs.msg import VehicleState
 
 
 class Arm(QWidget):
@@ -14,7 +16,8 @@ class Arm(QWidget):
     BUTTON_HEIGHT = 60
     BUTTON_STYLESHEET = 'QPushButton { font-size: 20px; }'
 
-    signal: pyqtSignal = pyqtSignal(CommandBool.Response)
+    command_response_signal: pyqtSignal = pyqtSignal(CommandBool.Response)
+    vehicle_state_signal = pyqtSignal(VehicleState)
 
     def __init__(self) -> None:
 
@@ -23,34 +26,44 @@ class Arm(QWidget):
         layout: QHBoxLayout = QHBoxLayout()
         self.setLayout(layout)
 
-        arm_button = QPushButton()
-        disarm_button = QPushButton()
+        self.arm_button = QPushButton()
+        self.disarm_button = QPushButton()
 
-        arm_button.setText("Arm")
-        disarm_button.setText("Disarm")
+        self.arm_button.setText("Arm")
+        self.disarm_button.setText("Disarm")
 
-        arm_button.setMinimumWidth(self.BUTTON_WIDTH)
-        disarm_button.setMinimumWidth(self.BUTTON_WIDTH)
+        self.arm_button.setMinimumWidth(self.BUTTON_WIDTH)
+        self.disarm_button.setMinimumWidth(self.BUTTON_WIDTH)
 
-        arm_button.setMinimumHeight(self.BUTTON_HEIGHT)
-        disarm_button.setMinimumHeight(self.BUTTON_HEIGHT)
+        self.arm_button.setMinimumHeight(self.BUTTON_HEIGHT)
+        self.disarm_button.setMinimumHeight(self.BUTTON_HEIGHT)
 
-        arm_button.setStyleSheet(self.BUTTON_STYLESHEET)
-        disarm_button.setStyleSheet(self.BUTTON_STYLESHEET)
+        self.arm_button.setStyleSheet(self.BUTTON_STYLESHEET)
+        self.disarm_button.setStyleSheet(self.BUTTON_STYLESHEET)
+        self.arm_button.setProperty("inputStyle", "disconnected")
+        self.disarm_button.setProperty("inputStyle", "disconnected")
 
-        arm_button.clicked.connect(self.arm_clicked)
-        disarm_button.clicked.connect(self.disarm_clicked)
+        self.arm_button.clicked.connect(self.arm_clicked)
+        self.disarm_button.clicked.connect(self.disarm_clicked)
 
-        layout.addWidget(arm_button)
-        layout.addWidget(disarm_button)
+        layout.addWidget(self.arm_button)
+        layout.addWidget(self.disarm_button)
 
-        self.signal.connect(self.arm_status)
+        self.command_response_signal.connect(self.arm_status)
 
         self.arm_client: GUIEventClient = GUIEventClient(
             CommandBool,
             "mavros/cmd/arming",
-            self.signal
+            self.command_response_signal
         )
+
+        self.mavros_subscription = GUIEventSubscriber(
+            VehicleState,
+            'vehicle_state_event',
+            self.vehicle_state_signal,
+        )
+
+        self.vehicle_state_signal.connect(self.vehicle_state_callback)
 
     def arm_clicked(self) -> None:
         self.arm_client.send_request_async(self.ARM_REQUEST)
@@ -60,8 +73,22 @@ class Arm(QWidget):
 
     @pyqtSlot(CommandBool.Response)
     def arm_status(self, res: CommandBool.Response) -> None:
-        # TODO? could check against /mavros/state for confirmation
-        if res:
-            self.arm_client.get_logger().info("Has been armed or disarmed.")
+        if not res:
+            self.arm_client.get_logger().warn("Failed to arm or disarm.")
+
+    @pyqtSlot(VehicleState)
+    def vehicle_state_callback(self, msg: VehicleState):
+        if msg.pixhawk_connected:
+            if msg.armed:
+                self.arm_button.setProperty("inputStyle", "armed")
+                self.disarm_button.setProperty("inputStyle", "inactive")
+            else:
+                self.arm_button.setProperty("inputStyle", "inactive")
+                self.disarm_button.setProperty("inputStyle", "disarmed")
         else:
-            self.arm_client.get_logger().error("Has not armed or disarmed")
+            self.arm_button.setProperty("inputStyle", "disconnected")
+            self.disarm_button.setProperty("inputStyle", "disconnected")
+
+        print(self.arm_button.property("inputStyle"))
+        self.arm_button.style().polish(self.arm_button)
+        self.disarm_button.style().polish(self.disarm_button)
