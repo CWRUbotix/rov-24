@@ -22,7 +22,7 @@ ros2 launch rov_flir flir_launch.py
 
 ## Settings
 
-In the config folder are the nodes from the spinnaker api, these are different from ROS nodes. They are basically settings of the cameras. Each setting in the config file has a name which is the name of the ROS parameter, a type which is the data type of the field, and finally each setting has a node which is the name of the setting in spinnaker.
+In the config folder are the nodes from the spinnaker api, these are different from ROS nodes. They are basically settings of the cameras. Each setting in the config file has a `name` which is the name of the ROS parameter, a `type` which is the data type of the field, and finally each setting has a `node` which is the name of the setting in spinnaker.
 
 ## Launch files
 
