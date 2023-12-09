@@ -4,7 +4,7 @@ from gui.widgets.thruster_tester import ThrusterTester
 
 
 class DebugWidget(QWidget):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
 
         root_layout: QVBoxLayout = QVBoxLayout(self)

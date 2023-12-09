@@ -1,4 +1,3 @@
-
 from gui.event_nodes.client import GUIEventClient
 from gui.event_nodes.subscriber import GUIEventSubscriber
 from mavros_msgs.srv import CommandBool
@@ -26,8 +25,8 @@ class Arm(QWidget):
         layout: QHBoxLayout = QHBoxLayout()
         self.setLayout(layout)
 
-        self.arm_button = QPushButton()
-        self.disarm_button = QPushButton()
+        self.arm_button: QPushButton = QPushButton()
+        self.disarm_button: QPushButton = QPushButton()
 
         self.arm_button.setText("Arm")
         self.disarm_button.setText("Disarm")
@@ -78,7 +77,7 @@ class Arm(QWidget):
             self.arm_client.get_logger().warn("Failed to arm or disarm.")
 
     @pyqtSlot(VehicleState)
-    def vehicle_state_callback(self, msg: VehicleState):
+    def vehicle_state_callback(self, msg: VehicleState) -> None:
         if msg.pixhawk_connected:
             if msg.armed:
                 self.arm_button.setProperty("inputStyle", "armed")
@@ -90,6 +89,9 @@ class Arm(QWidget):
             self.arm_button.setProperty("inputStyle", "disconnected")
             self.disarm_button.setProperty("inputStyle", "disconnected")
 
-        print(self.arm_button.property("inputStyle"))
-        self.arm_button.style().polish(self.arm_button)
-        self.disarm_button.style().polish(self.disarm_button)
+        for button in (self.arm_button, self.disarm_button):
+            style = button.style()
+            if style is not None:
+                style.polish(button)
+            else:
+                self.arm_client.get_logger().error("Gui button missing a style")
