@@ -22,7 +22,7 @@ setup(
     zip_safe=True,
     maintainer='Michael Carlstrom',
     maintainer_email='rmc170@case.edu',
-    description='Biolerplate for calling standard joystick launch file.',
+    description='Boilerplate for calling standard joystick launch file.',
     license='Apache License 2.0',
     tests_require=['pytest'],
     entry_points={},

@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>ps5_controller</name>
+  <name>rov_flir</name>
   <version>1.0.0</version>
-  <description>Boilerplate for calling standard joystick launch file.</description>
+  <description>Boilerplate for calling flir launch file.</description>
   <maintainer email="rmc170@case.edu">Michael Carlstrom</maintainer>
   <license>Apache License 2.0</license>
 
@@ -12,7 +12,7 @@
   <test_depend>python3-pytest</test_depend>
 
   <exec_depend>ros2launch</exec_depend>
-  <exec_depend>joy</exec_depend>
+  <exec_depend>spinnaker_camera_driver</exec_depend>
 
   <export>
     <build_type>ament_python</build_type>
