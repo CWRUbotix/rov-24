@@ -6,10 +6,9 @@ TCA9555_ADDRESS = 0x20
 
 
 def main() -> None:
-    """
-    Test relay board by blinking lights.
-    """
-    with SMBus() as bus:
+    """Test relay board by blinking lights."""
+
+    with SMBus(0) as bus:
         while True:
             bus.write_byte(TCA9555_ADDRESS, 0b00000000)
             time.sleep(1000)
