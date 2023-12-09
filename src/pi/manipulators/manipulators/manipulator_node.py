@@ -21,7 +21,7 @@ class Manipulator(Node):
             self.manip_callback,
             10)
 
-        with SMBus() as self.bus:
+        with SMBus(0) as self.bus:
             while True:
 
                 self.bus.write_byte(TCA9555_ADDRESS, 0b00000000)
@@ -30,19 +30,16 @@ class Manipulator(Node):
 
     def manip_callback(self, msg: Manip) -> None:
         # self.bus.
-        self.bus.write_byte()
+        # self.bus.write_byte()
+        pass
 
 
-def main(args=None) -> None:
-    rclpy.init(args=args)
+def main() -> None:
+    rclpy.init()
 
     minimal_subscriber = Manipulator()
 
     rclpy.spin(minimal_subscriber)
-
-    # Destroy the node explicitly
-    # (optional - otherwise it will be done automatically
-    # when the garbage collector destroys the node object)
     minimal_subscriber.destroy_node()
     rclpy.shutdown()
 
