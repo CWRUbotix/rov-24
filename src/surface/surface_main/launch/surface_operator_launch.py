@@ -10,10 +10,10 @@ from launch_ros.actions import PushRosNamespace
 def generate_launch_description() -> LaunchDescription:
 
     gui_path: str = get_package_share_directory('gui')
-    task_selector_path: str = get_package_share_directory('task_selector')
+    flight_control_path: str = get_package_share_directory('flight_control')
     vehicle_manager_path: str = get_package_share_directory('vehicle_manager')
 
-    # Launches Gui
+    # Launches GUI
     gui_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([
             os.path.join(
@@ -22,11 +22,11 @@ def generate_launch_description() -> LaunchDescription:
         ]),
     )
 
-    # Launches Task Selector
-    task_selector_launch = IncludeLaunchDescription(
+    # Launches flight_control (auto docking, manual control, etc.)
+    flight_control_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([
             os.path.join(
-                task_selector_path, 'launch', 'task_scheduler_launch.py'
+                flight_control_path, 'launch', 'flight_control_launch.py'
             )
         ]),
     )
@@ -44,7 +44,7 @@ def generate_launch_description() -> LaunchDescription:
         actions=[
             PushRosNamespace("surface"),
             gui_launch,
-            task_selector_launch,
+            flight_control_launch,
             vehicle_manager_launch
         ]
     )

@@ -54,7 +54,8 @@ class Arm(QWidget):
         self.arm_client: GUIEventClient = GUIEventClient(
             CommandBool,
             "mavros/cmd/arming",
-            self.command_response_signal
+            self.command_response_signal,
+            expected_namespace='/tether'
         )
 
         self.mavros_subscription = GUIEventSubscriber(

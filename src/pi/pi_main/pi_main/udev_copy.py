@@ -1,3 +1,4 @@
+"""Copies udev rules from separate process to ensure ideal protections of sudo."""
 import os
 import shutil
 import sys
