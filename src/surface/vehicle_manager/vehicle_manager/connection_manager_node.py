@@ -73,9 +73,9 @@ class VehicleManagerNode(Node):
                 self.get_logger().info("Pixhawk connected")
 
             if self.vehicle_state.armed and not new_state.armed:
-                self.get_logger().info("Pixhawk armed")
-            elif not self.vehicle_state.armed and new_state.armed:
                 self.get_logger().info("Pixhawk disarmed")
+            elif not self.vehicle_state.armed and new_state.armed:
+                self.get_logger().info("Pixhawk armed")
 
             self.vehicle_state = new_state
 
