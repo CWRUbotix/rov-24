@@ -1,5 +1,6 @@
 from gui.event_nodes.client import GUIEventClient
 from gui.event_nodes.subscriber import GUIEventSubscriber
+from gui.theme import PROPERTY_NAME, Style
 from mavros_msgs.srv import CommandBool
 from PyQt6.QtCore import pyqtSignal, pyqtSlot
 from PyQt6.QtWidgets import QHBoxLayout, QPushButton, QWidget
@@ -39,8 +40,8 @@ class Arm(QWidget):
 
         self.arm_button.setStyleSheet(self.BUTTON_STYLESHEET)
         self.disarm_button.setStyleSheet(self.BUTTON_STYLESHEET)
-        self.arm_button.setProperty("inputStyle", "disconnected")
-        self.disarm_button.setProperty("inputStyle", "disconnected")
+        self.arm_button.setProperty(PROPERTY_NAME, Style.INACTIVE)
+        self.disarm_button.setProperty(PROPERTY_NAME, Style.INACTIVE)
 
         self.arm_button.clicked.connect(self.arm_clicked)
         self.disarm_button.clicked.connect(self.disarm_clicked)
@@ -80,14 +81,14 @@ class Arm(QWidget):
     def vehicle_state_callback(self, msg: VehicleState) -> None:
         if msg.pixhawk_connected:
             if msg.armed:
-                self.arm_button.setProperty("inputStyle", "armed")
-                self.disarm_button.setProperty("inputStyle", "inactive")
+                self.arm_button.setProperty(PROPERTY_NAME, Style.ON)
+                self.disarm_button.setProperty(PROPERTY_NAME, Style.INACTIVE)
             else:
-                self.arm_button.setProperty("inputStyle", "inactive")
-                self.disarm_button.setProperty("inputStyle", "disarmed")
+                self.arm_button.setProperty(PROPERTY_NAME, Style.INACTIVE)
+                self.disarm_button.setProperty(PROPERTY_NAME, Style.OFF)
         else:
-            self.arm_button.setProperty("inputStyle", "disconnected")
-            self.disarm_button.setProperty("inputStyle", "disconnected")
+            self.arm_button.setProperty(PROPERTY_NAME, Style.INACTIVE)
+            self.disarm_button.setProperty(PROPERTY_NAME, Style.INACTIVE)
 
         for button in (self.arm_button, self.disarm_button):
             style = button.style()

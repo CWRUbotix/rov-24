@@ -1,4 +1,4 @@
 QWidget { background-color: #ffb5e4; color: #1f7d1f; }
-QWidget[inputStyle="disconnected"] { background-color: #e0a2c9; }
-QWidget[inputStyle="armed"] { background-color: #ed8f2b; }
-QWidget[inputStyle="disarmed"] { background-color: #f92b4f; }
+QWidget[customStyle="inactive"] { background-color: #e0a2c9; }
+QWidget[customStyle="on"] { background-color: #ed8f2b; }
+QWidget[customStyle="off"] { background-color: #f92b4f; }
