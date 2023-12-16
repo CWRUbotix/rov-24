@@ -26,7 +26,7 @@ def generate_launch_description() -> LaunchDescription:
             {"system_id": 255},
             # plugin_allowlist allows which mavros nodes get launched. The default is all of them.
             {"plugin_allowlist": ["sys_status", "rc_io", "command", "param"]},
-            {"fcu_url": "/dev/ttyACM0"}
+            {"fcu_url": "/dev/ttyPixhawk"}
         ],
         remappings=[
             ('/pi/mavros/state', '/tether/mavros/state'),
