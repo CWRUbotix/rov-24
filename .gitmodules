@@ -1,0 +1,3 @@
+[submodule "src/surface/ros_2_video_streamer"]
+	path = src/surface/ros_2_video_streamer
+	url = https://github.com/cwruRobotics/ros2_video_streamer/
