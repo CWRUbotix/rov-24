@@ -7,7 +7,6 @@ from rclpy.qos import qos_profile_system_default
 from rclpy.executors import MultiThreadedExecutor
 
 from rov_msgs.msg import VehicleState as VehicleStateMsg, Heartbeat
-from rov_msgs.msg import Heartbeat
 from mavros_msgs.msg import State
 
 PI_TIMEOUT = 1  # Seconds
