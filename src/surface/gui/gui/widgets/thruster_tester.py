@@ -47,7 +47,7 @@ class ThrusterTester(QWidget):
         heading = QLabel("Thruster Pin Configuration")
 
         pin_numbers_grid = QGridLayout()
-        self.pin_input_widgets = [] 
+        self.pin_input_widgets = []
 
         pin_number_validator = QIntValidator()
         pin_number_validator.setRange(0, self.MOTOR_COUNT - 1)
@@ -61,8 +61,12 @@ class ThrusterTester(QWidget):
             pin_input.setMaximumWidth(20)
             self.pin_input_widgets.append(pin_input)
 
-            pin_numbers_grid.addWidget(pin_label, i % 4, 3 * (i // 4) + 1)
-            pin_numbers_grid.addWidget(pin_input, i % 4, 3 * (i // 4) + 2)
+            on_first_column = i < self.MOTOR_COUNT / 2
+            column = 1 if on_first_column else 4
+            row = i if on_first_column else i - self.MOTOR_COUNT // 2
+            print(row, column)
+            pin_numbers_grid.addWidget(pin_label, row, column)
+            pin_numbers_grid.addWidget(pin_input, row, column + 1)
 
         pin_numbers_grid.setColumnStretch(0, 1)
         pin_numbers_grid.setColumnStretch(3, 1)
