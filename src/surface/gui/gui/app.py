@@ -34,16 +34,13 @@ class App(QWidget):
         theme_path = os.path.join(get_package_share_directory("gui"),
                                   "themes", theme_param + ".qss")
 
-        if theme_param == "dark":
+        base_theme = "dark" if theme_param == "dark" else "light"
+        custom_styles = "\n"
+        if os.path.exists(theme_path):
             with open(theme_path) as theme_file:
-                qdarktheme.setup_theme("dark", additional_qss="\n" + theme_file.read())
+                custom_styles += theme_file.read()
 
-        elif os.path.exists(theme_path):
-            with open(theme_path) as theme_file:
-                qdarktheme.setup_theme("light", additional_qss="\n" + theme_file.read())
-
-        else:
-            qdarktheme.setup_theme("light")
+        qdarktheme.setup_theme(base_theme, additional_qss=custom_styles)
 
         # Delete node now that we've used it to get params
         self.node.destroy_node()
