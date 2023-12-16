@@ -9,7 +9,7 @@ def generate_launch_description():
         remappings=[
             ("/surface/mavros/state", "/tether/mavros/state"),
             ("/surface/pi_heartbeat", "/tether/pi_heartbeat")
-            ],
+        ],
         emulate_tty=True,
         output='screen'
     )
