@@ -64,7 +64,6 @@ class ThrusterTester(QWidget):
             on_first_column = i < self.MOTOR_COUNT / 2
             column = 1 if on_first_column else 4
             row = i if on_first_column else i - self.MOTOR_COUNT // 2
-            print(row, column)
             pin_numbers_grid.addWidget(pin_label, row, column)
             pin_numbers_grid.addWidget(pin_input, row, column + 1)
 
