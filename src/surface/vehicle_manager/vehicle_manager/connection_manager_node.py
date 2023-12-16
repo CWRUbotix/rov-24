@@ -20,7 +20,7 @@ class VehicleState():
 
 
 class VehicleManagerNode(Node):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__("connection_manager_node", parameter_overrides=[])
 
         self.state_publisher = self.create_publisher(
@@ -42,11 +42,11 @@ class VehicleManagerNode(Node):
         )
 
         self.timer = self.create_timer(1, self.timer_callback)
-        self.last_heartbeat = 0  # Unix timestamp of the last mavros heartbeat from the pi
+        self.last_heartbeat: float = 0  # Unix timestamp of the last mavros heartbeat from the pi
 
         self.vehicle_state = VehicleState()
 
-    def publish_state(self, state: VehicleState):
+    def publish_state(self, state: VehicleState) -> None:
         self.state_publisher.publish(
             VehicleStateMsg(
                 pi_connected=state.pi_connected,
@@ -55,7 +55,7 @@ class VehicleManagerNode(Node):
             )
         )
 
-    def mavros_callback(self, msg: State):
+    def mavros_callback(self, msg: State) -> None:
         new_state = VehicleState(pi_connected=True,
                                  pixhawk_connected=msg.connected,
                                  armed=msg.armed)
@@ -78,7 +78,7 @@ class VehicleManagerNode(Node):
 
             self.vehicle_state = new_state
 
-    def heartbeat_callback(self, msg: Heartbeat):
+    def heartbeat_callback(self, msg: Heartbeat) -> None:
         self.last_heartbeat = time.time()
 
         if not self.vehicle_state.pi_connected:
@@ -86,7 +86,7 @@ class VehicleManagerNode(Node):
             self.publish_state(self.vehicle_state)
             self.get_logger().info("Pi connected")
 
-    def timer_callback(self):
+    def timer_callback(self) -> None:
         if self.vehicle_state.pi_connected and time.time() - self.last_heartbeat > PI_TIMEOUT:
             self.vehicle_state = VehicleState(
                 pi_connected=False,
@@ -96,7 +96,7 @@ class VehicleManagerNode(Node):
             self.get_logger().warn("Pi disconnected")
 
 
-def main():
+def main() -> None:
     rclpy.init()
     vehicle_manager = VehicleManagerNode()
     executor = MultiThreadedExecutor()
