@@ -1,4 +1,4 @@
-from launch import LaunchDescription
+from launch.launch_description import LaunchDescription
 from launch_ros.actions import Node
 
 
