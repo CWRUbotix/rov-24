@@ -47,12 +47,12 @@ class ThrusterTester(QWidget):
         heading = QLabel("Thruster Pin Configuration")
 
         pin_numbers_grid = QGridLayout()
-        self.pin_input_widgets = []
+        self.pin_input_widgets = [] 
 
         pin_number_validator = QIntValidator()
-        pin_number_validator.setRange(0, 7)
+        pin_number_validator.setRange(0, self.MOTOR_COUNT - 1)
 
-        for i in range(8):
+        for i in range(self.MOTOR_COUNT):
             pin_label = QLabel(str(i))
             pin_label.setMaximumWidth(20)
             pin_input = QLineEdit()
@@ -118,7 +118,7 @@ class ThrusterTester(QWidget):
     def send_test_message(self) -> None:
         self.cmd_client.get_logger().info("Testing thrusters")
 
-        for motor_index in range(1, 9):
+        for motor_index in range(1, self.MOTOR_COUNT + 1):
             self.test_motor_for_time(motor_index, self.TEST_THROTTLE, self.TEST_LENGTH)
             self.test_motor_for_time(motor_index, 0.0, 0.5)
 
