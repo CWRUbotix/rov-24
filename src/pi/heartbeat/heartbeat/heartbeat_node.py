@@ -1,7 +1,7 @@
 import rclpy
+from rclpy.executors import MultiThreadedExecutor
 from rclpy.node import Node
 from rclpy.qos import qos_profile_system_default
-from rclpy.executors import MultiThreadedExecutor
 
 from rov_msgs.msg import Heartbeat
 
