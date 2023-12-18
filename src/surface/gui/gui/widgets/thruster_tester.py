@@ -1,9 +1,11 @@
-from mavros_msgs.srv import CommandLong, ParamGet, ParamSet
-from PyQt6.QtWidgets import QVBoxLayout, QGridLayout, QPushButton, QWidget, QLabel, QLineEdit
-from PyQt6.QtGui import QIntValidator
-from PyQt6.QtCore import pyqtSignal, pyqtSlot
-from gui.event_nodes.client import GUIEventClient
 import time
+
+from gui.event_nodes.client import GUIEventClient
+from mavros_msgs.srv import CommandLong, ParamGet, ParamSet
+from PyQt6.QtCore import pyqtSignal, pyqtSlot
+from PyQt6.QtGui import QIntValidator
+from PyQt6.QtWidgets import (QGridLayout, QLabel, QLineEdit, QPushButton,
+                             QVBoxLayout, QWidget)
 
 
 class ThrusterTester(QWidget):
