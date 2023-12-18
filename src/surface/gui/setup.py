@@ -8,7 +8,7 @@ PACKAGE_NAME = 'gui'
 
 setup(
     name=PACKAGE_NAME,
-    version='1.0.0',
+    version='1.1.0',
     packages=[PACKAGE_NAME, os.path.join(PACKAGE_NAME, 'widgets'),
               os.path.join(PACKAGE_NAME, 'event_nodes')],
     data_files=[
