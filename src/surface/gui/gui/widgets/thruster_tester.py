@@ -24,21 +24,21 @@ class ThrusterTester(QWidget):
 
         self.cmd_client: GUIEventClient = GUIEventClient(
             CommandLong,
-            "/mavros/cmd/command",
+            "mavros/cmd/command",
             self.command_resposne_signal
         )
         self.command_resposne_signal.connect(self.command_response_handler)
 
         self.param_get_client: GUIEventClient = GUIEventClient(
             ParamGet,
-            "/mavros/param/get",
+            "mavros/param/get",
             self.param_get_resposne_signal
         )
         self.param_get_resposne_signal.connect(self.param_get_response_handler)
 
         self.param_set_client: GUIEventClient = GUIEventClient(
             ParamSet,
-            "/mavros/param/set",
+            "mavros/param/set",
             self.param_set_resposne_signal
         )
         self.param_get_resposne_signal.connect(self.param_set_response_handler)
