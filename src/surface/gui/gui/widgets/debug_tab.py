@@ -1,6 +1,6 @@
-from PyQt6.QtWidgets import QVBoxLayout, QHBoxLayout, QWidget
 from gui.widgets.logger import Logger
 from gui.widgets.thruster_tester import ThrusterTester
+from PyQt6.QtWidgets import QHBoxLayout, QVBoxLayout, QWidget
 
 
 class DebugWidget(QWidget):

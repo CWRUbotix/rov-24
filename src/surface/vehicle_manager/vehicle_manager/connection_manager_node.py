@@ -1,13 +1,14 @@
-from dataclasses import dataclass
 import time
+from dataclasses import dataclass
 
 import rclpy
+from mavros_msgs.msg import State
+from rclpy.executors import MultiThreadedExecutor
 from rclpy.node import Node
 from rclpy.qos import qos_profile_system_default
-from rclpy.executors import MultiThreadedExecutor
 
-from rov_msgs.msg import VehicleState as VehicleStateMsg, Heartbeat
-from mavros_msgs.msg import State
+from rov_msgs.msg import Heartbeat
+from rov_msgs.msg import VehicleState as VehicleStateMsg
 
 PI_TIMEOUT = 1  # Seconds
 
@@ -78,7 +79,7 @@ class VehicleManagerNode(Node):
 
             self.vehicle_state = new_state
 
-    def heartbeat_callback(self, msg: Heartbeat) -> None:
+    def heartbeat_callback(self, _: Heartbeat) -> None:
         self.last_heartbeat = time.time()
 
         if not self.vehicle_state.pi_connected:
