@@ -32,7 +32,7 @@ jobs:
         with:
           # Clone submodules as well
           submodules: 'true'
-      - uses: actions/cache@v3 # fetch/store the directory used by ccache before/after the ci run
+      - uses: actions/cache@v4 # fetch/store the directory used by ccache before/after the ci run
         with:
           path: ${{ env.CCACHE_DIR }}
           # This configuration will always create a new ccache cache starting off from the previous one (if any).
