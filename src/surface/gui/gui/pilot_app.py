@@ -7,7 +7,7 @@ from PyQt6.QtWidgets import QHBoxLayout
 
 
 class PilotApp(App):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__('pilot_gui_node')
 
         self.setWindowTitle('Pilot GUI - CWRUbotix ROV 2024')
@@ -15,13 +15,13 @@ class PilotApp(App):
         layout: QHBoxLayout = QHBoxLayout()
         self.setLayout(layout)
 
-        self.video_area = SwitchableVideoWidget(["/front_cam/image_raw",
-                                                 "/bottom_cam/image_raw",
-                                                 "/camera/color/image_raw"],
+        self.video_area = SwitchableVideoWidget(["front_cam/image_raw",
+                                                 "bottom_cam/image_raw",
+                                                 "camera/color/image_raw"],
                                                 ["Front Camera",
                                                  "Bottom Camera",
                                                  "Depth Camera"],
-                                                "/camera_switch")
+                                                "camera_switch")
         layout.addWidget(self.video_area, alignment=Qt.AlignmentFlag.AlignCenter)
 
         self.floodWidget: FloodVisual = FloodVisual()
@@ -33,5 +33,5 @@ class PilotApp(App):
                          alignment=Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignBottom)
 
 
-def run_gui_pilot():
+def run_gui_pilot() -> None:
     PilotApp().run_gui()

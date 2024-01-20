@@ -1,23 +1,24 @@
+"""setup.py for pixhawk_communication module."""
 import os
 from glob import glob
 
 from setuptools import setup
 
-package_name = 'pixhawk_communication'
+PACKAGE_NAME = 'pixhawk_communication'
 
 setup(
-    name=package_name,
+    name=PACKAGE_NAME,
     version='1.0.0',
-    packages=[package_name],
+    packages=[PACKAGE_NAME],
     data_files=[
         ('share/ament_index/resource_index/packages',
-            ['resource/' + package_name]),
-        ('share/' + package_name, ['package.xml']),
+            ['resource/' + PACKAGE_NAME]),
+        ('share/' + PACKAGE_NAME, ['package.xml']),
         # Include all launch files.
-        (os.path.join('share', package_name, 'launch'),
+        (os.path.join('share', PACKAGE_NAME, 'launch'),
          glob('launch/*launch.[pxy][yma]*'))
     ],
-    install_requires=['setuptools'],
+    install_requires=['setuptools', 'flake8==5.0.4', 'mypy >= 1.7'],
     zip_safe=True,
     maintainer='Michael Carlstrom',
     maintainer_email='rmc@carlstrom.com',

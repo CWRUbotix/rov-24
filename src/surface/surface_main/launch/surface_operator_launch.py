@@ -1,17 +1,17 @@
 import os
 
 from ament_index_python.packages import get_package_share_directory
-from launch import LaunchDescription
+from launch.launch_description import LaunchDescription
 from launch.actions import GroupAction, IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import PushRosNamespace
 
 
-def generate_launch_description():
+def generate_launch_description() -> LaunchDescription:
 
     gui_path: str = get_package_share_directory('gui')
-    task_selector_path: str = get_package_share_directory('task_selector')
-    # Launches Gui
+    flight_control_path: str = get_package_share_directory('flight_control')
+    # Launches GUI
     gui_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([
             os.path.join(
@@ -20,20 +20,20 @@ def generate_launch_description():
         ]),
     )
 
-    # Launches Task Selector
-    task_selector_launch = IncludeLaunchDescription(
+    # Launches flight_control (auto docking, manual control, etc.)
+    flight_control_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([
             os.path.join(
-                task_selector_path, 'launch', 'task_scheduler_launch.py'
+                flight_control_path, 'launch', 'flight_control_launch.py'
             )
         ]),
     )
 
     namespace_launch = GroupAction(
         actions=[
-            PushRosNamespace("/surface"),
+            PushRosNamespace("surface"),
             gui_launch,
-            task_selector_launch,
+            flight_control_launch,
         ]
     )
 
