@@ -2,18 +2,22 @@
 __pycache__/
 *.py[cod]
 *$py.class
+*.egg-info
 
 # ROS build files
 build/
 install/
 log/
 
-
 # Allows custom tasks
 .vscode/*
 !.vscode/tasks.json
 !.vscode/easy_build.sh
 !.vscode/easy_all.sh
+!.vscode/ros2_install.sh
+!.vscode/install_dependencies.sh
+!.vscode/rov_setup.sh
+!.vscode/pi_setup.sh
 
 # Video Files
 *.mp4

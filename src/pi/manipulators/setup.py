@@ -1,29 +1,24 @@
+"""setup.py for manipulators module."""
 import os
-import sys
 from glob import glob
 
 from setuptools import setup
 
-major_num = sys.version_info[0]
-minor_num = sys.version_info[1]
-
-package_name = 'manipulators'
+PACKAGE_NAME = 'manipulators'
 
 setup(
-    name=package_name,
+    name=PACKAGE_NAME,
     version='1.0.0',
-    packages=[package_name],
+    packages=[PACKAGE_NAME],
     data_files=[
         ('share/ament_index/resource_index/packages',
-            ['resource/' + package_name]),
-        ('share/' + package_name, ['package.xml']),
+            ['resource/' + PACKAGE_NAME]),
+        ('share/' + PACKAGE_NAME, ['package.xml']),
         # Include all launch files.
-        (os.path.join('share', package_name, 'launch'),
-         glob('launch/*launch.[pxy][yma]*')),
-        (os.path.join('lib', f'python{major_num}.{minor_num}', 'site-packages', package_name),
-         glob(os.path.join('TCA9555', 'tca9555', 'tca9555.py'))),
+        (os.path.join('share', PACKAGE_NAME, 'launch'),
+         glob('launch/*launch.[pxy][yma]*'))
     ],
-    install_requires=['setuptools', 'bitstring', 'wiringpi'],
+    install_requires=['setuptools', 'flake8==5.0.4', 'mypy >= 1.7'],
     zip_safe=True,
     maintainer='Georgia Martinez, Michael Carlstrom',
     maintainer_email='gcm49@case.edu, rmc170@case.edu',
@@ -32,8 +27,6 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'manipulator = manipulators.manipulators:main',
-            'test = manipulators.manip_tester:main'
         ],
     },
 )
