@@ -17,7 +17,7 @@ echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-a
 # Install dev tools like rosdep among others. This is ros-distro agnostic.
 # More info can be found here
 # https://discourse.ros.org/t/ros-developer-tools-now-in-binary-form/29802
-sudo apt update && sudo apt install ros-dev-tools
+sudo apt install ros-dev-tools
 
 # Install pip
 sudo apt install python3-pip
