@@ -19,6 +19,9 @@ echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-a
 # https://discourse.ros.org/t/ros-developer-tools-now-in-binary-form/29802
 sudo apt update && sudo apt install ros-dev-tools
 
+# Install pip
+sudo apt install python3-pip
+
 # Update any installed packages
 sudo apt-get update
 sudo apt-get upgrade -y
