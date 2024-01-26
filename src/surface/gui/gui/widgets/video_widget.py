@@ -8,11 +8,18 @@ from PyQt6.QtCore import Qt, pyqtSignal, pyqtSlot
 from PyQt6.QtGui import QImage, QPixmap
 from PyQt6.QtWidgets import QLabel, QPushButton, QVBoxLayout, QWidget
 from sensor_msgs.msg import Image
+from enum import IntEnum
 
 from rov_msgs.msg import CameraControllerSwitch
 
 WIDTH = 1280
 HEIGHT = 720
+
+
+class CameraType(IntEnum):
+    USB = 1
+    ETHERNET = 2
+    DEPTH = 3
 
 
 class VideoWidget(QWidget):
