@@ -12,8 +12,9 @@ from enum import IntEnum
 
 from rov_msgs.msg import CameraControllerSwitch
 
-WIDTH = 1280
-HEIGHT = 720
+WIDTH = 721
+HEIGHT = 541
+# 1 Pixel larger than actual pixel dimensions
 
 
 class CameraType(IntEnum):
