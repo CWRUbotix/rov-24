@@ -3,7 +3,7 @@ from gui.widgets.arm import Arm
 from gui.widgets.video_widget import (CameraType, SwitchableVideoWidget,
                                       VideoWidget)
 from PyQt6.QtCore import Qt
-from PyQt6.QtWidgets import QHBoxLayout
+from PyQt6.QtWidgets import QHBoxLayout, QVBoxLayout
 
 
 class PilotApp(App):
@@ -12,8 +12,9 @@ class PilotApp(App):
 
         self.setWindowTitle('Pilot GUI - CWRUbotix ROV 2024')
 
-        layout: QHBoxLayout = QHBoxLayout()
-        self.setLayout(layout)
+        main_layout = QVBoxLayout()
+        video_layout = QHBoxLayout()
+        self.setLayout(main_layout)
 
         self.main_video = VideoWidget("front_cam/image_raw", CameraType.ETHERNET, "Front Camera")
 
@@ -23,12 +24,13 @@ class PilotApp(App):
                                                 ["Bottom Camera",
                                                  "Depth Camera"],
                                                 "camera_switch")
-        layout.addWidget(self.main_video, alignment=Qt.AlignmentFlag.AlignLeft)
-        layout.addWidget(self.video_area, alignment=Qt.AlignmentFlag.AlignRight)
+        video_layout.addWidget(self.main_video, alignment=Qt.AlignmentFlag.AlignLeft)
+        video_layout.addWidget(self.video_area, alignment=Qt.AlignmentFlag.AlignRight)
 
-        self.arm: Arm = Arm()
-        layout.addWidget(self.arm,
-                         alignment=Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignBottom)
+        main_layout.addLayout(video_layout)
+
+        self.arm = Arm()
+        main_layout.addWidget(self.arm, alignment=Qt.AlignmentFlag.AlignHCenter)
 
 
 def run_gui_pilot() -> None:
