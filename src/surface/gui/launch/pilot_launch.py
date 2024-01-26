@@ -14,7 +14,6 @@ def generate_launch_description() -> LaunchDescription:
                     ("/surface/gui/camera_switch", "/surface/camera_switch"),
                     ("/surface/gui/bottom_cam/image_raw", "/surface/bottom_cam/image_raw"),
                     ("/surface/gui/front_cam/image_raw", "/surface/front_cam/image_raw"),
-                    ("/surface/gui/top_cam/image_raw", "/tether/top_cam/image_raw"),
                     ("/surface/gui/camera/color/image_raw", "/tether/camera/color/image_raw")],
         emulate_tty=True,
         output='screen'

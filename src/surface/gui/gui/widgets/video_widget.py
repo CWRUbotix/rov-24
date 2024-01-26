@@ -33,15 +33,15 @@ class VideoWidget(QWidget):
         layout = QVBoxLayout()
         self.setLayout(layout)
 
+        self.video_frame_label = QLabel()
+        self.video_frame_label.setText(f'This topic had no frame: {topic}')
+        layout.addWidget(self.video_frame_label)
+
         if label_text is not None:
             self.label = QLabel(label_text)
             self.label.setAlignment(Qt.AlignmentFlag.AlignHCenter)
             self.label.setStyleSheet('QLabel { font-size: 35px; }')
             layout.addWidget(self.label, Qt.AlignmentFlag.AlignHCenter)
-
-        self.video_frame_label = QLabel()
-        self.video_frame_label.setText(f'This topic had no frame: {topic}')
-        layout.addWidget(self.video_frame_label)
 
         self.cv_bridge: CvBridge = CvBridge()
 
