@@ -28,14 +28,15 @@ class VideoWidget(QWidget):
     update_big_video_signal = pyqtSignal(QWidget)
     handle_frame_signal = pyqtSignal(Image)
 
-    def __init__(self, topic: str, label_text: Optional[str] = None,
+    def __init__(self, topic: str, camera_type: CameraType, label_text: Optional[str] = None,
                  widget_width: int = WIDTH, widget_height: int = HEIGHT,
                  swap_rb_channels: bool = False) -> None:
         super().__init__()
 
-        self.widget_width: int = widget_width
-        self.widget_height: int = widget_height
-        self.swap_rb_channels: bool = swap_rb_channels
+        self.camera_type = camera_type
+        self.widget_width = widget_width
+        self.widget_height = widget_height
+        self.swap_rb_channels = swap_rb_channels
 
         layout = QVBoxLayout()
         self.setLayout(layout)
@@ -67,6 +68,11 @@ class VideoWidget(QWidget):
 
     def convert_cv_qt(self, cv_img: MatLike, width: int = 0, height: int = 0) -> QImage:
         """Convert from an opencv image to QPixmap."""
+
+        if self.camera_type == CameraType.ETHERNET:
+            # Switches ethernet's color profile from BayerBGR to BGR
+            cv_img = cv2.cvtColor(cv_img, cv2.COLOR_BAYER_BGGR2BGR)
+
         # Color image
         if len(cv_img.shape) == 3:
             # Swap red & blue channels if necessary
@@ -97,22 +103,24 @@ class VideoWidget(QWidget):
 class SwitchableVideoWidget(VideoWidget):
     """A single video stream widget that can be paused and played."""
 
-    BUTTON_WIDTH = 120
+    BUTTON_WIDTH = 150
 
     controller_signal = pyqtSignal(CameraControllerSwitch)
 
-    def __init__(self, cam_topics: list[str], button_names: list[str],
+    def __init__(self, cam_topics: list[str], camera_types: list[CameraType],
+                 button_names: list[str],
                  controller_button_topic: Optional[str] = None,
                  default_cam_num: int = 0,
                  label_text: Optional[str] = None,
                  widget_width: int = WIDTH, widget_height: int = HEIGHT,
                  swap_rb_channels: bool = False):
 
+        self.camera_types = camera_types
         self.active_cam = default_cam_num
         self.cam_topics = cam_topics
         self.button_names = button_names
 
-        super().__init__(cam_topics[self.active_cam], label_text, widget_width,
+        super().__init__(cam_topics[self.active_cam], camera_types[self.active_cam], label_text, widget_width,
                          widget_height, swap_rb_channels)
 
         self.num_of_cams = len(cam_topics)
@@ -152,18 +160,21 @@ class SwitchableVideoWidget(VideoWidget):
             Image, self.cam_topics[self.active_cam], self.handle_frame_signal)
         self.button.setText(self.button_names[self.active_cam])
 
+        # Update CameraType
+        self.camera_type = self.camera_types[self.active_cam]
+
 
 class PauseableVideoWidget(VideoWidget):
     """A single video stream widget that can be paused and played."""
 
-    BUTTON_WIDTH = 120
+    BUTTON_WIDTH = 150
     PAUSED_TEXT = 'Play'
     PLAYING_TEXT = 'Pause'
 
-    def __init__(self, cam_topic: str, label_text: Optional[str] = None,
+    def __init__(self, cam_topic: str, camera_type: CameraType, label_text: Optional[str] = None,
                  widget_width: int = WIDTH, widget_height: int = HEIGHT,
                  swap_rb_channels: bool = False) -> None:
-        super().__init__(cam_topic, label_text, widget_width,
+        super().__init__(cam_topic, camera_type, label_text, widget_width,
                          widget_height, swap_rb_channels)
 
         self.button: QPushButton = QPushButton(self.PLAYING_TEXT)

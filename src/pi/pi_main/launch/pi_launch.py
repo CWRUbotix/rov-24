@@ -30,16 +30,17 @@ def generate_launch_description() -> LaunchDescription:
     #     ])
     # )
 
+    # Commented out because no usb cams are planned
     # Camera Streamer
-    cam_path: str = get_package_share_directory('camera_streamer')
+    # cam_path: str = get_package_share_directory('camera_streamer')
 
-    cam_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource([
-            os.path.join(
-                cam_path, 'launch', 'camera_launch.py'
-            )
-        ])
-    )
+    # cam_launch = IncludeLaunchDescription(
+    #     PythonLaunchDescriptionSource([
+    #         os.path.join(
+    #             cam_path, 'launch', 'camera_launch.py'
+    #         )
+    #     ])
+    # )
 
     # Pixhawk Communication
     pixhawk_path: str = get_package_share_directory('pixhawk_communication')
@@ -52,25 +53,25 @@ def generate_launch_description() -> LaunchDescription:
         ])
     )
 
-    # realsense_path: str = get_package_share_directory('realsense')
+    realsense_path: str = get_package_share_directory('realsense')
 
-    # # Launches Realsense
-    # realsense_launch = IncludeLaunchDescription(
-    #     PythonLaunchDescriptionSource([
-    #         os.path.join(
-    #             realsense_path, 'launch', 'realsense_launch.py'
-    #         )
-    #     ]),
-    #     launch_arguments={'align_depth.enable': 'true'}.items()
-    # )
+    # Launches Realsense
+    realsense_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([
+            os.path.join(
+                realsense_path, 'launch', 'realsense_launch.py'
+            )
+        ]),
+        launch_arguments={'align_depth.enable': 'true'}.items()
+    )
 
     namespace_launch = GroupAction(
         actions=[
             PushRosNamespace(NAMESPACE),
             # manip_launch,
             pixhawk_launch,
-            cam_launch,
-            # realsense_launch
+            # cam_launch,
+            realsense_launch
         ]
     )
 
