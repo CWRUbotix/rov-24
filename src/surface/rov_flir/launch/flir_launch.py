@@ -18,7 +18,7 @@ def generate_launch_description() -> LaunchDescription:
         'dump_node_map': False,
         # set parameters defined in blackfly_s.yaml
         'gain_auto': 'Continuous',
-        # 'pixel_format': 'BayerRG8',
+        'pixel_format': 'BayerRG8',
         'exposure_auto': 'Continuous',
         # These are useful for GigE cameras
         'device_link_throughput_limit': 125000000,

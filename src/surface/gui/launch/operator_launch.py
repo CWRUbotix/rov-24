@@ -10,9 +10,9 @@ def generate_launch_description() -> LaunchDescription:
         package='gui',
         executable='run_operator',
         parameters=[{'theme': LaunchConfiguration('theme', default='dark')}],
-        remappings=[("/surface/gui/bottom_cam/image_raw", "/tether/bottom_cam/image_raw"),
-                    ("/surface/gui/task_request", "/surface/task_request"),
+        remappings=[("/surface/gui/task_request", "/surface/task_request"),
                     ("/surface/gui/task_feedback", "/surface/task_feedback"),
+                    ("/surface/gui/bottom_cam/image_raw", "/surface/bottom_cam/image_raw"),
                     ("/surface/gui/auto_docker_control", "/surface/auto_docker_control")],
         emulate_tty=True,
         output='screen'
