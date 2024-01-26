@@ -24,13 +24,15 @@ class PilotApp(App):
                                                 ["Bottom Camera",
                                                  "Depth Camera"],
                                                 "camera_switch")
-        video_layout.addWidget(self.main_video, alignment=Qt.AlignmentFlag.AlignLeft)
-        video_layout.addWidget(self.video_area, alignment=Qt.AlignmentFlag.AlignRight)
+
+        video_layout.addWidget(self.main_video)
+        video_layout.addWidget(self.video_area)
 
         main_layout.addLayout(video_layout)
 
         self.arm = Arm()
-        main_layout.addWidget(self.arm, alignment=Qt.AlignmentFlag.AlignHCenter)
+        main_layout.addWidget(self.arm, alignment=Qt.AlignmentFlag.AlignHCenter |
+                              Qt.AlignmentFlag.AlignBottom)
 
 
 def run_gui_pilot() -> None:
