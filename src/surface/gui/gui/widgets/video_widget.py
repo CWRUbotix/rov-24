@@ -68,7 +68,6 @@ class VideoWidget(QWidget):
 
     def convert_cv_qt(self, cv_img: MatLike, width: int = 0, height: int = 0) -> QImage:
         """Convert from an opencv image to QPixmap."""
-
         if self.camera_type == CameraType.ETHERNET:
             # Switches ethernet's color profile from BayerBGR to BGR
             cv_img = cv2.cvtColor(cv_img, cv2.COLOR_BAYER_BGGR2BGR)
@@ -120,8 +119,8 @@ class SwitchableVideoWidget(VideoWidget):
         self.cam_topics = cam_topics
         self.button_names = button_names
 
-        super().__init__(cam_topics[self.active_cam], camera_types[self.active_cam], label_text, widget_width,
-                         widget_height, swap_rb_channels)
+        super().__init__(cam_topics[self.active_cam], camera_types[self.active_cam],
+                         label_text, widget_width, widget_height, swap_rb_channels)
 
         self.num_of_cams = len(cam_topics)
 
