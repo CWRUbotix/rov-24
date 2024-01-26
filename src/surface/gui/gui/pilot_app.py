@@ -19,7 +19,7 @@ class PilotApp(App):
 
         self.video_area = SwitchableVideoWidget(["bottom_cam/image_raw",
                                                  "camera/color/image_raw"],
-                                                [CameraType.ETHERNET, CameraType.ETHERNET],
+                                                [CameraType.ETHERNET, CameraType.DEPTH],
                                                 ["Bottom Camera",
                                                  "Depth Camera"],
                                                 "camera_switch")
