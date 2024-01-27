@@ -6,7 +6,6 @@ from PyQt6.QtCore import pyqtSignal, pyqtSlot
 
 
 class FloodWarning(QWidget):
-    # flooding (boolean) (True is flooding)
 
     signal: pyqtSignal = pyqtSignal(Flooding)
 
