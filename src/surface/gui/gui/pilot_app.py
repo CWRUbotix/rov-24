@@ -32,11 +32,12 @@ class PilotApp(App):
 
         bottom_screen_layout = QHBoxLayout()
 
+        flood_widget = FloodWarning()
+        bottom_screen_layout.addWidget(flood_widget, alignment=Qt.AlignmentFlag.AlignRight |
+                                       Qt.AlignmentFlag.AlignBottom)
+
         arm = Arm()
         bottom_screen_layout.addWidget(arm, alignment=Qt.AlignmentFlag.AlignRight |
-                                       Qt.AlignmentFlag.AlignBottom)
-        flood_widget = FloodWarning()
-        bottom_screen_layout.addWidget(flood_widget, alignment=Qt.AlignmentFlag.AlignHCenter |
                                        Qt.AlignmentFlag.AlignBottom)
 
         main_layout.addLayout(bottom_screen_layout)
