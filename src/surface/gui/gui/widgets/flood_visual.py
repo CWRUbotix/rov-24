@@ -34,8 +34,6 @@ class FloodWarning(QWidget):
     def refresh(self, msg: Flooding) -> None:
         if Flooding.flooding:
             self.indicator.setText('FLOODING')
-            font: QFont = QFont("Arial", 14)
-            self.indicator.setFont(font)
             self.subscription.get_logger().error("Robot is actively flooding, do something!")
         else:
             self.indicator.setText('No Water present')
