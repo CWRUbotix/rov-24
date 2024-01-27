@@ -1,4 +1,3 @@
-# flooding (boolean) (True is flooding)
 from rov_msgs.msg import Flooding
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel
 from PyQt6.QtGui import QFont
@@ -7,6 +6,7 @@ from PyQt6.QtCore import pyqtSignal, pyqtSlot
 
 
 class FloodWarning(QWidget):
+    # flooding (boolean) (True is flooding)
 
     signal: pyqtSignal = pyqtSignal(Flooding)
 
