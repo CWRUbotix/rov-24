@@ -1,7 +1,7 @@
 import time
 
 from gui.event_nodes.client import GUIEventClient
-from mavros_msgs.srv import CommandLong, ParamGet, ParamSet
+from mavros_msgs.srv import CommandLong
 from PyQt6.QtCore import pyqtSignal, pyqtSlot
 from PyQt6.QtGui import QIntValidator
 from PyQt6.QtWidgets import (QGridLayout, QLabel, QLineEdit, QPushButton,
@@ -16,8 +16,6 @@ class ThrusterTester(QWidget):
     MOTOR_COUNT = 8
 
     command_resposne_signal: pyqtSignal = pyqtSignal(CommandLong.Response)
-    param_get_resposne_signal: pyqtSignal = pyqtSignal(ParamGet.Response)
-    param_set_resposne_signal: pyqtSignal = pyqtSignal(ParamSet.Response)
 
     def __init__(self) -> None:
         super().__init__()
@@ -28,20 +26,6 @@ class ThrusterTester(QWidget):
             self.command_resposne_signal
         )
         self.command_resposne_signal.connect(self.command_response_handler)
-
-        self.param_get_client: GUIEventClient = GUIEventClient(
-            ParamGet,
-            "mavros/param/get",
-            self.param_get_resposne_signal
-        )
-        self.param_get_resposne_signal.connect(self.param_get_response_handler)
-
-        self.param_set_client: GUIEventClient = GUIEventClient(
-            ParamSet,
-            "mavros/param/set",
-            self.param_set_resposne_signal
-        )
-        self.param_get_resposne_signal.connect(self.param_set_response_handler)
 
         layout: QVBoxLayout = QVBoxLayout()
         self.setLayout(layout)
@@ -133,11 +117,3 @@ class ThrusterTester(QWidget):
     @pyqtSlot(CommandLong.Response)
     def command_response_handler(self, res: CommandLong.Response) -> None:
         self.cmd_client.get_logger().debug(f"Test response: {res.success}, {res.result}")
-
-    @pyqtSlot(ParamGet.Response)
-    def param_get_response_handler(self, res: ParamGet.Response) -> None:
-        pass
-
-    @pyqtSlot(ParamSet.Response)
-    def param_set_response_handler(self, res: ParamSet.Response) -> None:
-        pass
