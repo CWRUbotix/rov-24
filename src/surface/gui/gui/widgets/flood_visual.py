@@ -29,13 +29,13 @@ class FloodVisual(QWidget):
 
         # Text Indicator
         self.indicator: QLabel = QLabel('No Water present')
-        self.indicator.setFOnt(font)
+        self.indicator.setFont(font)
         self.layout.addWidget(self.indicator)
         self.setLayout(self.layout)
 
     @pyqtSlot(Flooding)
     def refresh(self, msg: Flooding):
-        if msg.flooding:
+        if Flooding.flooding:
             self.indicator.setText('FLOODING')
             font: QFont = QFont("Arial", 28)
             self.indicator.setFont(font)
