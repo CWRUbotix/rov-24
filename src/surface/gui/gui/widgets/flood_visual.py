@@ -6,7 +6,7 @@ from gui.event_nodes.subscriber import GUIEventSubscriber
 from PyQt6.QtCore import pyqtSignal, pyqtSlot
 
 
-class FloodVisual(QWidget):
+class FloodWarning(QWidget):
 
     signal: pyqtSignal = pyqtSignal(Flooding)
 
@@ -18,19 +18,17 @@ class FloodVisual(QWidget):
                                                                    'flooding',
                                                                    self.signal)
         # Create basic 2 vertical stacked boxes layout
-        self.mylayout = QVBoxLayout()
+        self.flood_layour = QVBoxLayout()
         # Create the label that tells us what this is
         self.label: QLabel = QLabel('Flooding Indicator')
-        # Set font and size
         font: QFont = QFont("Arial", 14)
         self.label.setFont(font)
-        self.mylayout.addWidget(self.label)
+        self.flood_layour.addWidget(self.label)
 
-        # Text Indicator
         self.indicator: QLabel = QLabel('No Water present')
         self.indicator.setFont(font)
-        self.mylayout.addWidget(self.indicator)
-        self.setLayout(self.mylayout)
+        self.flood_layour.addWidget(self.indicator)
+        self.setLayout(self.flood_layour)
 
     @pyqtSlot(Flooding)
     def refresh(self, msg: Flooding) -> None:
@@ -39,3 +37,6 @@ class FloodVisual(QWidget):
             font: QFont = QFont("Arial", 14)
             self.indicator.setFont(font)
             self.subscription.get_logger().error("Robot is actively flooding, do something!")
+        else:
+            self.indicator.setText('FLOODING')
+            self.subscription.get_logger().warning("Robot flooding has reset itself.")

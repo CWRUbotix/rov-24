@@ -1,7 +1,7 @@
 from gui.app import App
 from gui.widgets.arm import Arm
 from gui.widgets.video_widget import SwitchableVideoWidget
-from gui.widgets.flood_visual import FloodVisual
+from gui.widgets.flood_visual import FloodWarning
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QHBoxLayout
 
@@ -24,7 +24,7 @@ class PilotApp(App):
                                                 "camera_switch")
         layout.addWidget(self.video_area, alignment=Qt.AlignmentFlag.AlignCenter)
 
-        self.floodWidget: FloodVisual = FloodVisual()
+        self.floodWidget: FloodWarning = FloodWarning()
         layout.addWidget(self.floodWidget, alignment=Qt.AlignmentFlag.AlignRight
                          | Qt.AlignmentFlag.AlignTop)
 
