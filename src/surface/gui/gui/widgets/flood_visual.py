@@ -18,19 +18,19 @@ class FloodVisual(QWidget):
                                                                    'flooding',
                                                                    self.signal)
         # Create basic 2 vertical stacked boxes layout
-        self.layout: QVBoxLayout = QVBoxLayout()
+        self.mylayout = QVBoxLayout()
         # Create the label that tells us what this is
         self.label: QLabel = QLabel('Flooding Indicator')
         # Set font and size
         font: QFont = QFont("Arial", 14)
         self.label.setFont(font)
-        self.layout.addWidget(self.label)
+        self.mylayout.addWidget(self.label)
 
         # Text Indicator
         self.indicator: QLabel = QLabel('No Water present')
         self.indicator.setFont(font)
-        self.layout.addWidget(self.indicator)
-        self.setLayout(self.layout)
+        self.mylayout.addWidget(self.indicator)
+        self.setLayout(self.mylayout)
 
     @pyqtSlot(Flooding)
     def refresh(self, msg: Flooding) -> None:
