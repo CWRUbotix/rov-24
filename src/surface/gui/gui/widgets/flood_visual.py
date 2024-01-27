@@ -10,14 +10,13 @@ class FloodVisual(QWidget):
 
     signal: pyqtSignal = pyqtSignal(Flooding)
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         # Boilerplate PyQt Setup to link to ROS through a signal/subscriber
         self.signal.connect(self.refresh)
         self.subscription: GUIEventSubscriber = GUIEventSubscriber(Flooding,
                                                                    'flooding',
-                                                                   self.signal,
-                                                                   10)
+                                                                   self.signal)
         # Create basic 2 vertical stacked boxes layout
         self.layout: QVBoxLayout = QVBoxLayout()
         # Create the label that tells us what this is
@@ -34,7 +33,7 @@ class FloodVisual(QWidget):
         self.setLayout(self.layout)
 
     @pyqtSlot(Flooding)
-    def refresh(self, msg: Flooding):
+    def refresh(self, msg: Flooding) -> None:
         if Flooding.flooding:
             self.indicator.setText('FLOODING')
             font: QFont = QFont("Arial", 28)
