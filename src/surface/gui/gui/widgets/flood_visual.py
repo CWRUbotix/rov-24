@@ -38,5 +38,5 @@ class FloodWarning(QWidget):
             self.indicator.setFont(font)
             self.subscription.get_logger().error("Robot is actively flooding, do something!")
         else:
-            self.indicator.setText('FLOODING')
+            self.indicator.setText('No Water present')
             self.subscription.get_logger().warning("Robot flooding has reset itself.")
