@@ -38,4 +38,4 @@ class FloodVisual(QWidget):
             self.indicator.setText('FLOODING')
             font: QFont = QFont("Arial", 14)
             self.indicator.setFont(font)
-            self.subscription.get_logger().error("Robot is actively flooding, please do something!")
+            self.subscription.get_logger().error("Robot is actively flooding, do something!")
