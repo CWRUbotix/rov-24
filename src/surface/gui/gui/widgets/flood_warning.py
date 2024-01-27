@@ -34,7 +34,7 @@ class FloodWarning(QWidget):
 
     @pyqtSlot(Flooding)
     def refresh(self, msg: Flooding) -> None:
-        if Flooding.flooding:
+        if msg.flooding:
             self.indicator.setText('FLOODING')
             self.subscription.get_logger().error("Robot is actively flooding, do something!")
             self.warning_msg_latch = True
