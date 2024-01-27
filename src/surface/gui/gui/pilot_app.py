@@ -1,7 +1,7 @@
 from gui.app import App
 from gui.widgets.arm import Arm
-from gui.widgets.video_widget import SwitchableVideoWidget
 from gui.widgets.flood_warning import FloodWarning
+from gui.widgets.video_widget import SwitchableVideoWidget
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QHBoxLayout
 
