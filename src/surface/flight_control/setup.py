@@ -4,8 +4,12 @@ from glob import glob
 from setuptools import setup
 
 PACKAGE_NAME = 'flight_control'
+PACKAGE_NAME = 'flight_control'
 
 setup(
+    name=PACKAGE_NAME,
+    version='1.1.0',
+    packages=[PACKAGE_NAME],
     name=PACKAGE_NAME,
     version='1.0.0',
     packages=[PACKAGE_NAME],
@@ -13,11 +17,13 @@ setup(
         ('share/ament_index/resource_index/packages',
             ['resource/' + PACKAGE_NAME]),
         ('share/' + PACKAGE_NAME, ['package.xml']),
+            ['resource/' + PACKAGE_NAME]),
+        ('share/' + PACKAGE_NAME, ['package.xml']),
         # Include all launch files.
         (os.path.join('share', PACKAGE_NAME, 'launch'),
          glob('launch/*launch.[pxy][yma]*'))
     ],
-    install_requires=['setuptools', 'flake8==5.0.4', 'mypy>=1.7', 'pynput'],
+    install_requires=['setuptools', 'flake8==4.0.1', 'mypy>=1.7', 'pynput'],
     zip_safe=True,
     maintainer='benjamin',
     maintainer_email='bwp18@case.edu',
