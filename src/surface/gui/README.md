@@ -64,6 +64,16 @@ Has two buttons for arming and disarming the pixhawk.
 
     Sends a request to arm or disarm the pixhawk. Receives a confirmation about the success of the arm or disarm.
 
+### Flood Warnng
+
+Shows whether the robot is flooding or not on the GUI
+
+#### Subscribed Topics
+
+* **`/tether/flooding`** ([rov_msgs/msg/Flooding])
+
+    A custom message for whether the robot is actively flooding
+
 ### Logger
 
 Reads ROS logging information and displays it on the gui.
