@@ -1,11 +1,10 @@
 import rclpy
 from rclpy.node import Node
-
 from std_msgs.msg import String
 import lgpio
-import time
 
-class MinimalPublisher(Node):
+
+class floodDetector(Node):
 
     def __init__(self):
         super().__init__('gpio_reader', parameter_overrides=[])
@@ -15,14 +14,19 @@ class MinimalPublisher(Node):
         self.i = 0
 
     def timer_callback(self):
-        detect1, detect2, detect3 = 2,4,6
+        # Pins used for GPIO
+        detect1, detect2, detect3 = 2, 4, 6
+        # GPIO Boilerplate
         h = lgpio.gpiochip_open(0)
-        lgpio.gpio_claim_input(h,detect1)
-        lgpio.gpio_claim_input(h,detect2)
-        lgpio.gpio_claim_input(h,detect3)
-        data1 = lgpio.gpio_read(h,detect1)
-        data2 = lgpio.gpio_read(h,detect2)
-        data3 = lgpio.gpio_read(h,detect3)
+        lgpio.gpio_claim_input(h, detect1)
+        lgpio.gpio_claim_input(h, detect2)
+        lgpio.gpio_claim_input(h, detect3)
+        # Read Data
+        data1 = lgpio.gpio_read(h, detect1)
+        data2 = lgpio.gpio_read(h, detect2)
+        data3 = lgpio.gpio_read(h, detect3)
+
+        # If any of the sensors detect water, send true to /tether/flooding
 
         msg = String()
         # msg.data = 'Hello World: %d' % self.i
@@ -33,15 +37,9 @@ class MinimalPublisher(Node):
 
 def main(args=None):
     rclpy.init(args=args)
-
-    minimal_publisher = MinimalPublisher()
-
-    rclpy.spin(minimal_publisher)
-
-    # Destroy the node explicitly
-    # (optional - otherwise it will be done automatically
-    # when the garbage collector destroys the node object)
-    minimal_publisher.destroy_node()
+    flood_detector = floodDetector()
+    rclpy.spin(flood_detector)
+    flood_detector.destroy_node()
     rclpy.shutdown()
 
 
