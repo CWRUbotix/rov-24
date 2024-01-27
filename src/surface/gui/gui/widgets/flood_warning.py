@@ -1,8 +1,9 @@
-from rov_msgs.msg import Flooding
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel
-from PyQt6.QtGui import QFont
 from gui.event_nodes.subscriber import GUIEventSubscriber
 from PyQt6.QtCore import pyqtSignal, pyqtSlot
+from PyQt6.QtGui import QFont
+from PyQt6.QtWidgets import QLabel, QVBoxLayout, QWidget
+
+from rov_msgs.msg import Flooding
 
 
 class FloodWarning(QWidget):
