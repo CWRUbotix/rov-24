@@ -102,13 +102,13 @@ Then install the Dev Containers VSCode extension.
 To get GUI support inside docker, first install [homebrew](https://brew.sh/).
 
 Then, from a terminal, run the following:
-```sh
+```bash
 brew install socat
 brew install xquartz
 ```
 
 Next, configure XQuartz with
-```sh
+```bash
 open -a Xquartz
 ```
 
