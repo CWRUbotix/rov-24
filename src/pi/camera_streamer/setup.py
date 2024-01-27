@@ -1,26 +1,28 @@
-from setuptools import setup
-from glob import glob
+"""setup.py for camera_streamer module."""
 import os
+from glob import glob
 
-package_name = 'camera_streamer'
+from setuptools import setup
+
+PACKAGE_NAME = 'camera_streamer'
 
 setup(
-    name=package_name,
-    version='0.0.0',
-    packages=[package_name],
+    name=PACKAGE_NAME,
+    version='1.1.0',
+    packages=[PACKAGE_NAME],
     data_files=[
         ('share/ament_index/resource_index/packages',
-            ['resource/' + package_name]),
-        ('share/' + package_name, ['package.xml']),
+            ['resource/' + PACKAGE_NAME]),
+        ('share/' + PACKAGE_NAME, ['package.xml']),
         # Include all launch files.
-        (os.path.join('share', package_name, 'launch'),
+        (os.path.join('share', PACKAGE_NAME, 'launch'),
          glob('launch/*launch.[pxy][yma]*'))
     ],
-    install_requires=['setuptools'],
+    install_requires=['setuptools', 'flake8==4.0.1', 'mypy >= 1.7'],
     zip_safe=True,
     maintainer='Noah Mollerstuen',
     maintainer_email='noah@mollerstuen.com',
-    description='contains camera information aswell as camera launch files',
+    description='contains camera information as well as camera launch files',
     license='Apaches License 2.0',
     tests_require=['pytest'],
     entry_points={
