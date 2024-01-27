@@ -18,7 +18,7 @@ class FloodWarning(QWidget):
                                                                    'flooding',
                                                                    self.signal)
         # Create a latch variable
-        self.latch: bool = False
+        self.warningMsgLatch: bool = False
         # Create basic 2 vertical stacked boxes layout
         self.flood_layour = QVBoxLayout()
         # Create the label that tells us what this is
@@ -37,9 +37,9 @@ class FloodWarning(QWidget):
         if Flooding.flooding:
             self.indicator.setText('FLOODING')
             self.subscription.get_logger().error("Robot is actively flooding, do something!")
-            self.latch = True
+            self.warningMsgLatch = True
         else:
             self.indicator.setText('No Water present')
-            if self.latch:
+            if self.warningMsgLatch:
                 self.subscription.get_logger().warning("Robot flooding has reset itself.")
-                self.latch = False
+                self.warningMsgLatch = False
