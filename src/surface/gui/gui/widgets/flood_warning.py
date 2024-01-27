@@ -7,7 +7,6 @@ from rov_msgs.msg import Flooding
 
 
 class FloodWarning(QWidget):
-    # flooding (boolean) (True is flooding)
 
     signal: pyqtSignal = pyqtSignal(Flooding)
 
