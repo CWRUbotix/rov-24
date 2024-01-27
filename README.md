@@ -99,6 +99,23 @@ Start by installing docker from [here](https://www.docker.com/get-started/).
 
 Then install the Dev Containers VSCode extension.
 
+To get GUI support inside docker, first install [homebrew](https://brew.sh/).
+
+Then, from a terminal, run the following:
+```sh
+brew install socat
+brew install xquartz
+```
+
+Next, configure XQuartz with
+```sh
+open -a Xquartz
+```
+
+Make the settings look like this:
+
+![image](https://github.com/cwruRobotics/rov-24/assets/90342856/8d0defea-c5b1-4a19-a536-c9ada7e3f632)
+
 To open the container use `F1` or `ctrl+shift+p` to open the command bar and use `Tasks: Runs Task`. Then from the Task selection choose `Docker Rebuild`. This will build and run the docker container. Make sure to choose `ROV macOS` for which type to run.
 
 To reopen after a build Go to File > Open Recent /stuff/rov-24 \[Dev Container]
