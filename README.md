@@ -114,7 +114,7 @@ open -a Xquartz
 
 Make the settings look like this:
 
-![image](https://github.com/cwruRobotics/rov-24/assets/90342856/8d0defea-c5b1-4a19-a536-c9ada7e3f632)
+![image](/doc/images/macos_xserver_settings.jpg)
 
 To open the container use `F1` or `ctrl+shift+p` to open the command bar and use `Tasks: Runs Task`. Then from the Task selection choose `Docker Rebuild`. This will build and run the docker container. Make sure to choose `ROV macOS` for which type to run.
 
