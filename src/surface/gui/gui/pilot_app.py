@@ -2,6 +2,7 @@ from gui.app import App
 from gui.widgets.arm import Arm
 from gui.widgets.video_widget import (CameraType, SwitchableVideoWidget,
                                       VideoWidget)
+from gui.widgets.flood_warning import FloodWarning
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QHBoxLayout, QVBoxLayout
 
@@ -16,23 +17,29 @@ class PilotApp(App):
         video_layout = QHBoxLayout()
         self.setLayout(main_layout)
 
-        self.main_video = VideoWidget("front_cam/image_raw", CameraType.ETHERNET, "Front Camera")
+        main_video = VideoWidget("front_cam/image_raw", CameraType.ETHERNET, "Front Camera")
 
-        self.video_area = SwitchableVideoWidget(["bottom_cam/image_raw",
-                                                 "camera/color/image_raw"],
-                                                [CameraType.ETHERNET, CameraType.DEPTH],
-                                                ["Bottom Camera",
-                                                 "Depth Camera"],
-                                                "camera_switch")
+        video_area = SwitchableVideoWidget(["bottom_cam/image_raw",
+                                            "camera/color/image_raw"],
+                                           [CameraType.ETHERNET, CameraType.DEPTH],
+                                           ["Bottom Camera", "Depth Camera"],
+                                           "camera_switch")
 
-        video_layout.addWidget(self.main_video)
-        video_layout.addWidget(self.video_area)
+        video_layout.addWidget(main_video)
+        video_layout.addWidget(video_area)
 
         main_layout.addLayout(video_layout)
 
-        self.arm = Arm()
-        main_layout.addWidget(self.arm, alignment=Qt.AlignmentFlag.AlignHCenter |
-                              Qt.AlignmentFlag.AlignBottom)
+        bottom_screen_layout = QHBoxLayout()
+
+        arm = Arm()
+        bottom_screen_layout.addWidget(arm, alignment=Qt.AlignmentFlag.AlignRight |
+                                       Qt.AlignmentFlag.AlignBottom)
+        flood_widget = FloodWarning()
+        bottom_screen_layout.addWidget(flood_widget, alignment=Qt.AlignmentFlag.AlignHCenter |
+                                       Qt.AlignmentFlag.AlignBottom)
+
+        main_layout.addLayout(bottom_screen_layout)
 
 
 def run_gui_pilot() -> None:
