@@ -1,10 +1,9 @@
 from gui.app import App
 from gui.widgets.arm import Arm
-from gui.widgets.video_widget import (CameraType, SwitchableVideoWidget,
-                                      VideoWidget)
 from gui.widgets.flood_warning import FloodWarning
+from gui.widgets.video_widget import CameraType, SwitchableVideoWidget, VideoWidget
 from PyQt6.QtCore import Qt
-from PyQt6.QtWidgets import QHBoxLayout, QVBoxLayout
+from PyQt6.QtWidgets import QHBoxLayout, QVBoxLayout, QWidget
 
 
 class PilotApp(App):
@@ -25,15 +24,18 @@ class PilotApp(App):
                                            ["Bottom Camera", "Depth Camera"],
                                            "camera_switch")
 
-        video_layout.addWidget(main_video)
-        video_layout.addWidget(video_area)
+        video_layout.addWidget(main_video, alignment=Qt.AlignmentFlag.AlignHCenter)
+        video_layout.addWidget(video_area, alignment=Qt.AlignmentFlag.AlignHCenter)
 
         main_layout.addLayout(video_layout)
 
         bottom_screen_layout = QHBoxLayout()
 
+        place_holder = QWidget()
+        bottom_screen_layout.addWidget(place_holder)
+
         flood_widget = FloodWarning()
-        bottom_screen_layout.addWidget(flood_widget, alignment=Qt.AlignmentFlag.AlignRight |
+        bottom_screen_layout.addWidget(flood_widget, alignment=Qt.AlignmentFlag.AlignHCenter |
                                        Qt.AlignmentFlag.AlignBottom)
 
         arm = Arm()
