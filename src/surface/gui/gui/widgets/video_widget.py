@@ -92,7 +92,7 @@ class VideoWidget(QWidget):
             img_format = QImage.Format.Format_Grayscale8
 
         else:
-            raise Exception("Somehow not color or grayscale image.")
+            raise ValueError("Somehow not color or grayscale image.")
 
         qt_image = QImage(cv_img.data, w, h, bytes_per_line, img_format)
         qt_image = qt_image.scaled(width, height, Qt.AspectRatioMode.KeepAspectRatio)
@@ -177,7 +177,7 @@ class PauseableVideoWidget(VideoWidget):
         super().__init__(cam_topic, camera_type, label_text, widget_width,
                          widget_height, swap_rb_channels)
 
-        self.button: QPushButton = QPushButton(self.PLAYING_TEXT)
+        self.button = QPushButton(self.PLAYING_TEXT)
         self.button.setMaximumWidth(self.BUTTON_WIDTH)
         self.button.clicked.connect(self.toggle)
 
