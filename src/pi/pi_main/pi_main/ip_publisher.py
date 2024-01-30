@@ -10,18 +10,14 @@ from rov_msgs.msg import IPAddress
 class IPPublisher(Node):
 
     def __init__(self) -> None:
-        """
-        Creates IP Publisher node.
-        """
+        """Create IP Publisher node."""
         super().__init__('ip_publisher')
         self.publisher_ = self.create_publisher(IPAddress, 'ip_address', 10)
         timer_period = 0.5  # seconds
         self.create_timer(timer_period, self.timer_callback)
 
     def timer_callback(self) -> None:
-        """
-        On timer publishes the ip address of the computer.
-        """
+        """On timer publishes the ip address of the computer."""
         msg = IPAddress()
         try:
             msg.address = get_ip_address()
