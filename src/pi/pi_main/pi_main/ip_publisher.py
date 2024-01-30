@@ -15,14 +15,26 @@ class IPPublisher(Node):
         self.publisher_ = self.create_publisher(IPAddress, 'ip_address', 10)
         timer_period = 0.5  # seconds
         self.create_timer(timer_period, self.timer_callback)
+        self.failed_ethernet = False
+        self.failed_wireless = False
 
     def timer_callback(self) -> None:
         """On timer publishes the ip address of the computer."""
         msg = IPAddress()
-        try:
-            msg.address = get_ip_address()
-        except OSError:
-            self.get_logger().error("No such device for reading ip address.")
+        if not self.failed_ethernet:
+            try:
+                msg.ethernet_address = get_ip_address('eth0')
+            except OSError:
+                self.get_logger().error("No ethernet IP address found.")
+                self.failed_ethernet = True
+
+        if not self.failed_wireless:
+            try:
+                msg.wireless_address = get_ip_address('wlan0')
+            except OSError:
+                self.get_logger().error("No wireless IP address found.")
+                self.failed_wireless = True
+
         self.publisher_.publish(msg)
 
 
