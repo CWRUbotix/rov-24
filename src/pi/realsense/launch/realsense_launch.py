@@ -30,7 +30,7 @@ def generate_launch_description() -> LaunchDescription:
         # Values are width x height x fps.
         launch_arguments={'depth_module.profile': '640x480x15',
                           'initial_reset': 'true',
-                          'rgb_camera.profile': '960x540x30'}.items()
+                          'rgb_camera.profile': '640x480x15'}.items()
     )
 
     realsense_action = GroupAction(
