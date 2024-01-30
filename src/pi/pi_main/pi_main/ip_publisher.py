@@ -14,7 +14,8 @@ class IPPublisher(Node):
     def __init__(self) -> None:
         """Create IP Publisher node."""
         super().__init__('ip_publisher')
-        self.publisher_ = self.create_publisher(IPAddress, 'ip_address', qos_profile_system_default)
+        self.publisher_ = self.create_publisher(IPAddress, 'ip_address',
+                                                qos_profile_system_default)
         timer_period = 0.5  # seconds
         self.create_timer(timer_period, self.timer_callback)
         self.failed_ethernet = False
