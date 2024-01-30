@@ -30,6 +30,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/Manip.msg"
   "msg/CameraControllerSwitch.msg"
   "msg/Flooding.msg"
+  "msg/IPAddress.msg"
   DEPENDENCIES std_msgs
 )
 
