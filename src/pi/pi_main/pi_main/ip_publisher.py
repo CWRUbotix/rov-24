@@ -34,7 +34,7 @@ class IPPublisher(Node):
             self.failed_ethernet = True
 
         try:
-            msg.wireless_address = get_ip_address('wlp62s0')
+            msg.wireless_address = get_ip_address('wlan0')
             self.failed_wireless = False
         except OSError:
             if not self.failed_wireless:
