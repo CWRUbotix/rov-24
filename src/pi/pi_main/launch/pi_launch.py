@@ -64,8 +64,8 @@ def generate_launch_description() -> LaunchDescription:
     #     launch_arguments={'align_depth.enable': 'true'}.items()
     # )
 
-    # Launches pi_publisher node.
-    pi_publisher_node = Node(
+    # Launches ip_publisher node.
+    ip_publisher_node = Node(
         package='pi_main',
         executable='ip_publisher',
         emulate_tty=True,
@@ -79,7 +79,7 @@ def generate_launch_description() -> LaunchDescription:
             pixhawk_launch,
             cam_launch,
             # realsense_launch,
-            pi_publisher_node
+            ip_publisher_node
         ]
     )
 
