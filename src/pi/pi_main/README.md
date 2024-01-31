@@ -137,7 +137,7 @@ ros2 run robot_upstart uninstall cwrubotix_pi
 
 Publishes the current ip address of the network.
 
-#### Subscribed Topics
+#### Published Topics
 
 * **`/ip_address`** ([rov_msgs/msg/IPAddress])
 
