@@ -16,20 +16,20 @@ class OperatorApp(App):
 
         # Main tab
         main_tab = QWidget()
-        main_layout: QGridLayout = QGridLayout()
+        main_layout = QGridLayout()
         main_tab.setLayout(main_layout)
 
-        self.timer: Timer = Timer()
+        self.timer = Timer()
         main_layout.addWidget(self.timer, 0, 1)
 
-        self.task_selector: TaskSelector = TaskSelector()
+        self.task_selector = TaskSelector()
         main_layout.addWidget(self.task_selector, 1, 1)
 
-        self.logger: Logger = Logger()
+        self.logger = Logger()
         main_layout.addWidget(self.logger, 1, 0)
 
         # Add tabs to root
-        root_layout: QGridLayout = QGridLayout()
+        root_layout = QGridLayout()
         self.setLayout(root_layout)
 
         tabs.addTab(main_tab, "Main")
