@@ -39,7 +39,9 @@ class SeagrassWidget(QWidget):
 
         before_layout.addStretch()
 
-        bottom_cam_description = CameraDescription(CameraType.ETHERNET, 'bottom_cam/image_raw', 'Bottom Camera', 640, 370)
+        bottom_cam_description = CameraDescription(CameraType.ETHERNET,
+                                                   'bottom_cam/image_raw',
+                                                   'Bottom Camera', 640, 370)
         # Bottom cam
         self.bottom_cam = PauseableVideoWidget(bottom_cam_description)
 

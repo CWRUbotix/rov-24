@@ -61,7 +61,6 @@ class VideoWidget(QWidget):
         self.camera_subscriber: GUIEventSubscriber = GUIEventSubscriber(
             Image, camera_description.topic, self.handle_frame_signal)
 
-
     @pyqtSlot(Image)
     def handle_frame(self, frame: Image) -> None:
         cv_image: MatLike = self.cv_bridge.imgmsg_to_cv2(

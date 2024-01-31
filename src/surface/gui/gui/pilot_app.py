@@ -17,14 +17,21 @@ class PilotApp(App):
         video_layout = QHBoxLayout()
         self.setLayout(main_layout)
 
-        front_cam_description = CameraDescription(CameraType.ETHERNET, 'front_cam/image_raw', 'Front Camera')
+        front_cam_description = CameraDescription(CameraType.ETHERNET,
+                                                  'front_cam/image_raw',
+                                                  'Front Camera')
 
         main_video = VideoWidget(front_cam_description)
 
-        bottom_cam_description = CameraDescription(CameraType.ETHERNET, 'bottom_cam/image_raw', 'Bottom Camera')
-        depth_cam_description = CameraDescription(CameraType.DEPTH, 'depth_cam/image_raw', 'Depth Camera', 640, 480)
+        bottom_cam_description = CameraDescription(CameraType.ETHERNET,
+                                                   'bottom_cam/image_raw',
+                                                   'Bottom Camera')
+        depth_cam_description = CameraDescription(CameraType.DEPTH,
+                                                  'depth_cam/image_raw',
+                                                  'Depth Camera', 640, 480)
 
-        video_area = SwitchableVideoWidget([bottom_cam_description, depth_cam_description], "camera_switch")
+        video_area = SwitchableVideoWidget([bottom_cam_description, depth_cam_description],
+                                           "camera_switch")
 
         video_layout.addWidget(main_video, alignment=Qt.AlignmentFlag.AlignHCenter)
         video_layout.addWidget(video_area, alignment=Qt.AlignmentFlag.AlignHCenter)
