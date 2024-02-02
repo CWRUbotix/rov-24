@@ -79,7 +79,7 @@ def generate_launch_description() -> LaunchDescription:
             # manip_launch,
             pixhawk_launch,
             # cam_launch,
-            # realsense_launch,
+            realsense_launch,
             ip_publisher_node
         ]
     )
