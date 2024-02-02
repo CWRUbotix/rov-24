@@ -23,7 +23,7 @@ class Arm(QWidget):
 
         super().__init__()
 
-        layout: QHBoxLayout = QHBoxLayout()
+        layout = QHBoxLayout()
         self.setLayout(layout)
 
         self.arm_button = QPushButton()
