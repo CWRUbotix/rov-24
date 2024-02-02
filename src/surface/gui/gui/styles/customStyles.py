@@ -15,5 +15,3 @@ class WidgetState(Style):
     # some external factor, either another widget or something external to the gui
     # For example, a the arm button when the pi is not connected
     INACTIVE = "inactive"
-
-
