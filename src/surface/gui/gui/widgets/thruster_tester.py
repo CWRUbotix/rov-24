@@ -15,7 +15,7 @@ class ThrusterTester(QWidget):
     TEST_THROTTLE: float = 0.50  # 50%
     MOTOR_COUNT = 8
 
-    command_resposne_signal: pyqtSignal = pyqtSignal(CommandLong.Response)
+    command_response_signal: pyqtSignal = pyqtSignal(CommandLong.Response)
 
     def __init__(self) -> None:
         super().__init__()
@@ -23,9 +23,9 @@ class ThrusterTester(QWidget):
         self.cmd_client: GUIEventClient = GUIEventClient(
             CommandLong,
             "mavros/cmd/command",
-            self.command_resposne_signal
+            self.command_response_signal
         )
-        self.command_resposne_signal.connect(self.command_response_handler)
+        self.command_response_signal.connect(self.command_response_handler)
 
         layout: QVBoxLayout = QVBoxLayout()
         self.setLayout(layout)
