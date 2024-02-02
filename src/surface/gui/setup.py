@@ -21,7 +21,7 @@ setup(
         # Include all style files.
         (os.path.join('share', PACKAGE_NAME, 'styles'),
          glob('gui/styles/*.py')),
-         (os.path.join('share', PACKAGE_NAME, 'styles'),
+        (os.path.join('share', PACKAGE_NAME, 'styles'),
          glob('gui/styles/*.qss')),
     ],
     install_requires=['setuptools', 'pyqt6', 'pyqtdarktheme', 'opencv-python>=4.8.1',
