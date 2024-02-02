@@ -2,7 +2,7 @@
     "name" : "ROV macOS",
     "image": "ghcr.io/cwrurobotics/rov-24:iron",
     "containerEnv": {
-        "DISPLAY": "${localEnv:DISPLAY}"
+        "DISPLAY": "unix:0"
     },
     "mounts": [
         "type=bind,source=/Users/${localEnv:USER}/.ssh,target=/root/.ssh,readonly",
