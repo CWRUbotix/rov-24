@@ -28,7 +28,7 @@ class PilotApp(App):
                                                    'Bottom Camera')
         depth_cam_description = CameraDescription(CameraType.DEPTH,
                                                   'depth_cam/image_raw',
-                                                  'Depth Camera', 640, 480)
+                                                  'Depth Camera', 640, 360)
 
         video_area = SwitchableVideoWidget([bottom_cam_description, depth_cam_description],
                                            "camera_switch")

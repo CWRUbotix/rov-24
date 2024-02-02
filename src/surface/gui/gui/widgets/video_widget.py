@@ -12,8 +12,8 @@ from enum import IntEnum
 
 from rov_msgs.msg import CameraControllerSwitch
 
-WIDTH = 721
-HEIGHT = 541
+WIDTH = 361
+HEIGHT = 271
 # 1 Pixel larger than actual pixel dimensions
 
 
