@@ -120,6 +120,7 @@ A widget to display video. There are two subclasses of the video widget: `Pausea
 
     The video feed from the intel realsense.
 
+[rov_msgs/msg/Flooding]: ../../rov_msgs/msg/Flooding.msg
 [mavros_msgs/srv/CommandBool]: https://github.com/mavlink/mavros/blob/ros2/mavros_msgs/srv/CommandBool.srv
 [rcl_interfaces/msg/Log]: https://github.com/ros2/rcl_interfaces/blob/rolling/rcl_interfaces/msg/Log.msg
 [sensor_msgs/msg/Image]: <http://docs.ros.org/en/noetic/api/sensor_msgs/html/msg/Image.html>
