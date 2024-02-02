@@ -1,6 +1,6 @@
 from gui.event_nodes.client import GUIEventClient
 from gui.event_nodes.subscriber import GUIEventSubscriber
-from gui.styles.customStyles import WidgetState
+from gui.styles.custom_styles import WidgetState
 from mavros_msgs.srv import CommandBool
 from PyQt6.QtCore import pyqtSignal, pyqtSlot
 from PyQt6.QtWidgets import QHBoxLayout, QPushButton, QWidget
