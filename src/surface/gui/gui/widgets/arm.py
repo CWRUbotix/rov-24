@@ -26,8 +26,8 @@ class Arm(QWidget):
         layout: QHBoxLayout = QHBoxLayout()
         self.setLayout(layout)
 
-        self.arm_button: QPushButton = QPushButton()
-        self.disarm_button: QPushButton = QPushButton()
+        self.arm_button = QPushButton()
+        self.disarm_button = QPushButton()
 
         self.arm_button.setText("Arm")
         self.disarm_button.setText("Disarm")
