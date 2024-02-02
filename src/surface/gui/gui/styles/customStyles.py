@@ -1,7 +1,10 @@
-PROPERTY_NAME = "customStyle"
-
-
 class Style():
+    PROPERTY_NAME: str
+
+
+class WidgetState(Style):
+    PROPERTY_NAME = "widgetState"
+
     # A component is running, enabled, or armed
     ON = "on"
 
@@ -12,3 +15,5 @@ class Style():
     # some external factor, either another widget or something external to the gui
     # For example, a the arm button when the pi is not connected
     INACTIVE = "inactive"
+
+
