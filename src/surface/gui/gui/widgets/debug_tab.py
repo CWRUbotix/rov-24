@@ -7,9 +7,9 @@ class DebugWidget(QWidget):
     def __init__(self) -> None:
         super().__init__()
 
-        root_layout: QVBoxLayout = QVBoxLayout(self)
+        root_layout = QVBoxLayout(self)
 
-        top_pane: QHBoxLayout = QHBoxLayout()
+        top_pane = QHBoxLayout()
         top_pane.addStretch(2)
         top_pane.addWidget(ThrusterTester())
 

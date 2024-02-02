@@ -1,4 +1,5 @@
 import time
+from threading import Thread
 
 from gui.event_nodes.client import GUIEventClient
 from mavros_msgs.srv import CommandLong
@@ -62,7 +63,7 @@ class ThrusterTester(QWidget):
 
         test_button = QPushButton()
         test_button.setText("Test Thrusters")
-        test_button.clicked.connect(self.send_test_message)
+        test_button.clicked.connect(self.asnyc_send_message)
 
         layout.addWidget(heading)
         layout.addLayout(pin_numbers_grid)
@@ -104,9 +105,11 @@ class ThrusterTester(QWidget):
 
             time.sleep(0.05)
 
+    def asnyc_send_message(self) -> None:
+        Thread(target=self.send_test_message, daemon=True).start()
+
     def send_test_message(self) -> None:
         self.cmd_client.get_logger().info("Testing thrusters")
-
         for motor_index in range(1, self.MOTOR_COUNT + 1):
             self.test_motor_for_time(motor_index, self.TEST_THROTTLE, self.TEST_LENGTH)
             self.test_motor_for_time(motor_index, 0.0, 0.5)
