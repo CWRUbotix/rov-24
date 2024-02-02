@@ -106,7 +106,7 @@ class ThrusterTester(QWidget):
             time.sleep(0.05)
 
     def asnyc_send_message(self) -> None:
-        Thread(target=self.send_test_message, daemon=True).start()
+        Thread(target=self.send_test_message, daemon=True, name="thruster_test_thread").start()
 
     def send_test_message(self) -> None:
         self.cmd_client.get_logger().info("Testing thrusters")
