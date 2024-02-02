@@ -21,7 +21,7 @@ setup(
         (os.path.join('share', PACKAGE_NAME, 'udev_rules'),
          glob('udev_rules/*'))
     ],
-    install_requires=['setuptools', 'flake8==4.0.1', 'mypy >= 1.7'],
+    install_requires=['setuptools', 'flake8==4.0.1', 'mypy >= 1.7', 'socket'],
     zip_safe=True,
     maintainer='Michael Carlstrom',
     maintainer_email='rmc170@case.edu',
@@ -31,6 +31,7 @@ setup(
     entry_points={
         'console_scripts': [
             'install = pi_main.run_on_boot:main',
+            'ip_publisher = pi_main.ip_publisher:main'
         ],
     },
 )
