@@ -32,7 +32,8 @@ class App(QWidget):
         # Apply theme
         theme_param = self.theme_param.get_parameter_value().string_value
         theme_path = os.path.join(get_package_share_directory("gui"),
-                                  "themes", theme_param + ".qss")
+                                  "styles", theme_param + ".qss")
+        print(theme_path)
 
         base_theme = "dark" if theme_param == "dark" else "light"
         custom_styles = "\n"
