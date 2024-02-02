@@ -27,7 +27,7 @@ class ThrusterTester(QWidget):
         )
         self.command_response_signal.connect(self.command_response_handler)
 
-        layout: QVBoxLayout = QVBoxLayout()
+        layout = QVBoxLayout()
         self.setLayout(layout)
 
         heading = QLabel("Thruster Pin Configuration")
