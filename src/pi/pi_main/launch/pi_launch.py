@@ -88,7 +88,6 @@ def generate_launch_description() -> LaunchDescription:
             PushRosNamespace(NAMESPACE),
             # manip_launch,
             pixhawk_launch,
-            cam_launch,
             ip_publisher_node,
             heartbeat_launch,
             # realsense_launch
