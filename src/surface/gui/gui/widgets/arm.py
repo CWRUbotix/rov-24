@@ -47,8 +47,7 @@ class Arm(QWidget):
         self.signal.connect(self.arm_status)
 
         self.arm_client = GUIEventClient(CommandBool, "mavros/cmd/arming",
-                                         self.signal, expected_namespace='/tether'
-        )
+                                         self.signal, expected_namespace='/tether')
 
     def arm_clicked(self) -> None:
         self.arm_client.send_request_async(self.ARM_REQUEST)
