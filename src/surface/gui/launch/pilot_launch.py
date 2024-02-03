@@ -15,6 +15,7 @@ def generate_launch_description() -> LaunchDescription:
                     ("/surface/gui/bottom_cam/image_raw", "/surface/bottom_cam/image_raw"),
                     ("/surface/gui/front_cam/image_raw", "/surface/front_cam/image_raw"),
                     ("/surface/gui/depth_cam/image_raw", "/tether/depth_cam/image_raw"),
+                    ("/surface/gui/vehicle_state_event", "/surface/vehicle_state_event"),
                     ("/surface/gui/flooding", "/tether/flooding")],
         emulate_tty=True,
         output='screen'
