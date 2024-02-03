@@ -1,8 +1,16 @@
 class Style():
+    """
+    Represents a single class that can be applied to gui objects to change their appearance. PROPRT
+    """
+
     PROPERTY_NAME: str
 
 
 class WidgetState(Style):
+    """
+    Represents the state of a widget that can be alternately active or inactive
+    """
+
     PROPERTY_NAME = "widgetState"
 
     # A component is running, enabled, or armed
