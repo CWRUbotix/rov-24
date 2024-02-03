@@ -42,8 +42,11 @@ class VehicleManagerNode(Node):
             10
         )
 
-        self.timer = self.create_timer(1, self.timer_callback)
+        self.watchdog_timer = self.create_timer(1, self.watchdog_callback)
         self.last_heartbeat: float = 0  # Unix timestamp of the last mavros heartbeat from the pi
+
+        self.last_subscriber_count = 0
+        self.poll_subscribres_timer = self.create_timer(1, self.poll_subscribers)
 
         self.vehicle_state = VehicleState()
 
@@ -87,7 +90,7 @@ class VehicleManagerNode(Node):
             self.publish_state(self.vehicle_state)
             self.get_logger().info("Pi connected")
 
-    def timer_callback(self) -> None:
+    def watchdog_callback(self) -> None:
         if self.vehicle_state.pi_connected and time.time() - self.last_heartbeat > PI_TIMEOUT:
             self.vehicle_state = VehicleState(
                 pi_connected=False,
@@ -95,6 +98,14 @@ class VehicleManagerNode(Node):
                 armed=False)
             self.publish_state(self.vehicle_state)
             self.get_logger().warn("Pi disconnected")
+
+    def poll_subscribers(self) -> None:
+        # Whenever a node subscirbes to vehicle state updates, send the current state
+        subscriber_count = self.state_publisher.get_subscription_count()
+        if subscriber_count > self.last_subscriber_count:
+            self.publish_state(self.vehicle_state)
+
+        self.last_subscriber_count = subscriber_count
 
 
 def main() -> None:
