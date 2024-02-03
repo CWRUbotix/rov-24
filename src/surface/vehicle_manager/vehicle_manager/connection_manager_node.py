@@ -103,8 +103,9 @@ class VehicleManagerNode(Node):
         # Whenever a node subscirbes to vehicle state updates, send the current state
         subscriber_count = self.state_publisher.get_subscription_count()
         if subscriber_count > self.last_subscriber_count:
-            self.get_logger().debug("Subscriber connected; publishing state. "
-                                    f"Subscriber count={subscriber_count}")
+            # TODO debug messages seem broken
+            # self.get_logger().debug("Subscriber connected; publishing state. "
+            #                         f"Subscriber count={subscriber_count}")
             self.publish_state(self.vehicle_state)
 
         self.last_subscriber_count = subscriber_count
