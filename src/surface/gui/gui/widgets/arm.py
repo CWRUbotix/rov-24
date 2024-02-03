@@ -14,13 +14,13 @@ class Arm(QWidget):
     BUTTON_HEIGHT = 60
     BUTTON_STYLESHEET = 'QPushButton { font-size: 20px; }'
 
-    signal: pyqtSignal = pyqtSignal(CommandBool.Response)
+    signal = pyqtSignal(CommandBool.Response)
 
     def __init__(self) -> None:
 
         super().__init__()
 
-        layout: QHBoxLayout = QHBoxLayout()
+        layout = QHBoxLayout()
         self.setLayout(layout)
 
         arm_button = QPushButton()
@@ -46,11 +46,8 @@ class Arm(QWidget):
 
         self.signal.connect(self.arm_status)
 
-        self.arm_client: GUIEventClient = GUIEventClient(
-            CommandBool,
-            "mavros/cmd/arming",
-            self.signal,
-            expected_namespace='/tether'
+        self.arm_client = GUIEventClient(CommandBool, "mavros/cmd/arming",
+                                         self.signal, expected_namespace='/tether'
         )
 
     def arm_clicked(self) -> None:

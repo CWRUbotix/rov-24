@@ -17,7 +17,7 @@ class TaskSelector(QWidget):
     def __init__(self) -> None:
         super().__init__()
 
-        layout: QGridLayout = QGridLayout()
+        layout = QGridLayout()
         self.setLayout(layout)
 
         # Create Start button
@@ -43,8 +43,7 @@ class TaskSelector(QWidget):
         layout.addWidget(self.stop_btn, 3, 1)
 
         self.scheduler_response_signal.connect(self.handle_scheduler_response)
-        self.task_controller: GUIEventClient = GUIEventClient(
-            AutonomousFlight, 'auto_docker_control', self.scheduler_response_signal)
+        self.task_controller = GUIEventClient(AutonomousFlight, 'auto_docker_control', self.scheduler_response_signal)
 
     def start_btn_clicked(self) -> None:
         """Tell the back about the user selecting the start button."""
