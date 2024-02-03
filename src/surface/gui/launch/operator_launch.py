@@ -16,7 +16,9 @@ def generate_launch_description() -> LaunchDescription:
                     ("/surface/gui/mavros/param/pull", "/tether/mavros/param/pull"),
                     ("/surface/gui/task_request", "/surface/task_request"),
                     ("/surface/gui/task_feedback", "/surface/task_feedback"),
-                    ("/surface/gui/auto_docker_control", "/surface/auto_docker_control")],
+                    ("/surface/gui/auto_docker_control", "/surface/auto_docker_control"),
+                    ("/surface/gui/vehicle_state_event", "/surface/vehicle_state_event"),
+                    ("/surface/gui/mavros/cmd/arming", "/tether/mavros/cmd/arming")],
         emulate_tty=True,
         output='screen'
     )
