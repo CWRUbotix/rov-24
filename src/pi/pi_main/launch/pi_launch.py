@@ -31,15 +31,15 @@ def generate_launch_description() -> LaunchDescription:
     # )
 
     # Camera Streamer
-    cam_path: str = get_package_share_directory('camera_streamer')
+    # cam_path: str = get_package_share_directory('camera_streamer')
 
-    cam_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource([
-            os.path.join(
-                cam_path, 'launch', 'camera_launch.py'
-            )
-        ])
-    )
+    # cam_launch = IncludeLaunchDescription(
+    #     PythonLaunchDescriptionSource([
+    #         os.path.join(
+    #             cam_path, 'launch', 'camera_launch.py'
+    #         )
+    #     ])
+    # )
 
     # Pixhawk Communication
     pixhawk_path: str = get_package_share_directory('pixhawk_communication')
@@ -48,6 +48,17 @@ def generate_launch_description() -> LaunchDescription:
         PythonLaunchDescriptionSource([
             os.path.join(
                 pixhawk_path, 'launch', 'mavros_launch.py'
+            ),
+        ])
+    )
+
+    # Heartbeat
+    heartbeat_path: str = get_package_share_directory('heartbeat')
+
+    heartbeat_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([
+            os.path.join(
+                heartbeat_path, 'launch', 'heartbeat_launch.py'
             )
         ])
     )
@@ -77,9 +88,9 @@ def generate_launch_description() -> LaunchDescription:
             PushRosNamespace(NAMESPACE),
             # manip_launch,
             pixhawk_launch,
-            cam_launch,
-            # realsense_launch,
-            ip_publisher_node
+            ip_publisher_node,
+            heartbeat_launch,
+            # realsense_launch
         ]
     )
 
