@@ -31,15 +31,15 @@ def generate_launch_description() -> LaunchDescription:
     # )
 
     # Camera Streamer
-    cam_path: str = get_package_share_directory('camera_streamer')
+    # cam_path: str = get_package_share_directory('camera_streamer')
 
-    cam_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource([
-            os.path.join(
-                cam_path, 'launch', 'camera_launch.py'
-            )
-        ])
-    )
+    # cam_launch = IncludeLaunchDescription(
+    #     PythonLaunchDescriptionSource([
+    #         os.path.join(
+    #             cam_path, 'launch', 'camera_launch.py'
+    #         )
+    #     ])
+    # )
 
     # Pixhawk Communication
     pixhawk_path: str = get_package_share_directory('pixhawk_communication')
