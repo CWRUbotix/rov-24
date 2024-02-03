@@ -1,15 +1,11 @@
 class Style():
-    """
-    Represents a single class that can be applied to gui objects to change their appearance. PROPRT
-    """
+    """Represents a single class that can be applied to gui objects to change their appearance."""
 
     PROPERTY_NAME: str
 
 
 class WidgetState(Style):
-    """
-    Represents the state of a widget that can be alternately active or inactive
-    """
+    """Represents the state of a widget that can be alternately active or inactive."""
 
     PROPERTY_NAME = "widgetState"
 
