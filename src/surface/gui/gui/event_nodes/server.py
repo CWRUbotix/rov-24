@@ -3,7 +3,7 @@ import re
 from threading import Thread
 from typing import Callable
 
-from rclpy.service import Service, SrvType, SrvTypeRequest, SrvTypeResponse
+from rclpy.service import SrvType, SrvTypeRequest, SrvTypeResponse
 from rclpy.executors import SingleThreadedExecutor
 from rclpy.node import Node
 
