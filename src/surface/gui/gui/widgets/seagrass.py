@@ -13,7 +13,7 @@ class SeagrassWidget(QWidget):
     def __init__(self) -> None:
         super().__init__()
 
-        root_layout: QHBoxLayout = QHBoxLayout(self)
+        root_layout = QHBoxLayout(self)
 
         self.after_grid = SeagrassGrid(self.update_result_text)
         self.before_grid = SeagrassGrid(self.update_result_text, self.after_grid.set_button)
