@@ -18,7 +18,7 @@ class OperatorApp(App):
         main_tab.setLayout(main_layout)
 
         timer = Timer()
-        main_layout.addWidget(self.timer, 0, 1)
+        main_layout.addWidget(timer, 0, 1)
 
         task_selector = TaskSelector()
         main_layout.addWidget(task_selector, 1, 1)
