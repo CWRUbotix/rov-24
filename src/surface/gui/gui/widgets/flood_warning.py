@@ -12,25 +12,23 @@ class FloodWarning(QWidget):
 
     def __init__(self) -> None:
         super().__init__()
-        # Boilerplate PyQt Setup to link to ROS through a signal/subscriber
+
         self.signal.connect(self.refresh)
-        self.subscription: GUIEventSubscriber = GUIEventSubscriber(Flooding,
-                                                                   'flooding',
-                                                                   self.signal)
+        self.subscription = GUIEventSubscriber(Flooding, 'flooding', self.signal)
         # Create a latch variable
         self.warning_msg_latch: bool = False
         # Create basic 2 vertical stacked boxes layout
-        self.flood_layour = QVBoxLayout()
+        self.flood_layout = QVBoxLayout()
         # Create the label that tells us what this is
-        self.label: QLabel = QLabel('Flooding Indicator')
-        font: QFont = QFont("Arial", 14)
+        self.label = QLabel('Flooding Indicator')
+        font = QFont("Arial", 14)
         self.label.setFont(font)
-        self.flood_layour.addWidget(self.label)
+        self.flood_layout.addWidget(self.label)
 
-        self.indicator: QLabel = QLabel('No Water present')
+        self.indicator = QLabel('No Water present')
         self.indicator.setFont(font)
-        self.flood_layour.addWidget(self.indicator)
-        self.setLayout(self.flood_layour)
+        self.flood_layout.addWidget(self.indicator)
+        self.setLayout(self.flood_layout)
 
     @pyqtSlot(Flooding)
     def refresh(self, msg: Flooding) -> None:
