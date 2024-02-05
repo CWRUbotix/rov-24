@@ -12,7 +12,7 @@ class FloodWarning(QWidget):
 
     def __init__(self) -> None:
         super().__init__()
-        # Boilerplate PyQt Setup to link to ROS through a signal/subscriber
+
         self.signal.connect(self.refresh)
         self.subscription = GUIEventSubscriber(Flooding, 'flooding', self.signal)
         # Create a latch variable
