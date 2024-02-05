@@ -34,7 +34,7 @@ class OperatorApp(App):
         tabs = QTabWidget()
         tabs.addTab(main_tab, "Main")
         tabs.addTab(DebugWidget(), "Debug")
-        tabs.addTab(SeagrassWidget(), "Seagrass")
+        # tabs.addTab(SeagrassWidget(), "Seagrass")
 
         root_layout.addWidget(tabs)
 
