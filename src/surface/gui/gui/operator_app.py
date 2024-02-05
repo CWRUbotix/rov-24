@@ -17,14 +17,14 @@ class OperatorApp(App):
         main_layout = QGridLayout()
         main_tab.setLayout(main_layout)
 
-        self.timer = Timer()
+        timer = Timer()
         main_layout.addWidget(self.timer, 0, 1)
 
-        self.task_selector = TaskSelector()
-        main_layout.addWidget(self.task_selector, 1, 1)
+        task_selector = TaskSelector()
+        main_layout.addWidget(task_selector, 1, 1)
 
-        self.logger = Logger()
-        main_layout.addWidget(self.logger, 1, 0)
+        logger = Logger()
+        main_layout.addWidget(logger, 1, 0)
 
         # Add tabs to root
         root_layout = QVBoxLayout()
