@@ -31,6 +31,7 @@ def generate_launch_description() -> LaunchDescription:
         launch_arguments={'depth_module.profile': '640x360x30',
                           'initial_reset': 'true',
                           'rgb_camera.profile': '640x360x30'}.items()
+        #   launch_arguments={'align_depth.enable': 'true'}.items()
     )
 
     realsense_action = GroupAction(

@@ -72,8 +72,7 @@ def generate_launch_description() -> LaunchDescription:
             os.path.join(
                 realsense_path, 'launch', 'realsense_launch.py'
             )
-        ]),
-        launch_arguments={'align_depth.enable': 'true'}.items()
+        ])
     )
 
     # Launches ip_publisher node.
