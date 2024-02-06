@@ -4,6 +4,7 @@ from gui.styles.custom_styles import WidgetState
 from mavros_msgs.srv import CommandBool
 from PyQt6.QtCore import pyqtSignal, pyqtSlot
 from PyQt6.QtWidgets import QHBoxLayout, QPushButton, QWidget
+
 from rov_msgs.msg import VehicleState
 
 
@@ -16,7 +17,7 @@ class Arm(QWidget):
     BUTTON_HEIGHT = 60
     BUTTON_STYLESHEET = 'QPushButton { font-size: 20px; }'
 
-    command_response_signal: pyqtSignal = pyqtSignal(CommandBool.Response)
+    command_response_signal = pyqtSignal(CommandBool.Response)
     vehicle_state_signal = pyqtSignal(VehicleState)
 
     def __init__(self) -> None:
