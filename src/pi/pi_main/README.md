@@ -18,7 +18,7 @@ Run the following commands on both devices:
 
 ```bash
 sudo nmcli connection add type ethernet ifname eth0
-nmcli connection modify ethernet-eth0 ipv4.method link-local
+sudo nmcli connection modify ethernet-eth0 ipv4.method link-local
 nmcli connection up ethernet-eth0
 ```
 
