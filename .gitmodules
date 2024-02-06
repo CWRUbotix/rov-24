@@ -5,3 +5,7 @@
 	path = src/pi/robot_upstart
 	url = git@github.com:clearpathrobotics/robot_upstart.git
 	branch = foxy-devel
+[submodule "src/surface/flir_camera_driver"]
+	path = src/surface/flir_camera_driver
+	url = git@github.com:ros-drivers/flir_camera_driver.git
+	branch = connect_while_subscribed
