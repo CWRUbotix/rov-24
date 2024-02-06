@@ -47,7 +47,7 @@ def generate_launch_description() -> LaunchDescription:
     }
 
     # launches node to run front flir camera
-    front_cam: Node = Node(
+    front_cam = Node(
         package='spinnaker_camera_driver',
         executable='camera_driver_node',
         name='front_cam',
@@ -59,7 +59,7 @@ def generate_launch_description() -> LaunchDescription:
     )
 
     # launches node to run bottom flir camera
-    bottom_cam: Node = Node(
+    bottom_cam = Node(
         package='spinnaker_camera_driver',
         executable='camera_driver_node',
         name='bottom_cam',

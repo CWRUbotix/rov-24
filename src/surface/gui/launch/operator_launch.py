@@ -6,7 +6,7 @@ from launch_ros.actions import Node, PushRosNamespace
 
 def generate_launch_description() -> LaunchDescription:
     """Asynchronously launches operator's gui node."""
-    gui_node: Node = Node(
+    gui_node = Node(
         package='gui',
         executable='run_operator',
         parameters=[{'theme': LaunchConfiguration('theme', default='dark')}],
