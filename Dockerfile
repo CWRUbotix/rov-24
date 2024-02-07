@@ -1,21 +1,18 @@
 FROM osrf/ros:iron-desktop-full
 
-RUN apt-get update -y
-
 # Install pip
-RUN apt-get install python3-pip -y
-
 # Install Video for Linux
-RUN apt-get install v4l-utils -y
-
 # Install lsusb
-RUN apt-get install usbutils -y
-
 # Install nano
-RUN apt-get install nano -y
-
-RUN apt-get update -y
-RUN apt-get upgrade -y
+RUN apt-get update -y \
+ && apt-get install python3-pip -y \
+ && apt-get install v4l-utils -y \
+ && apt-get install usbutils -y \
+ && apt-get install nano -y \
+ && apt-get upgrade -y \
+#  Clean for better performance
+ && apt-get clean \
+ && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /root/rov-24
 
