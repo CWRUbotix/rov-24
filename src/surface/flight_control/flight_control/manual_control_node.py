@@ -106,9 +106,7 @@ class ManualControlNode(Node):
                 new_manip_state: bool = not manip_button.is_active
                 manip_button.is_active = new_manip_state
 
-                log_msg: str = (
-                    f"manip_id= {manip_button.claw}, manip_active= {new_manip_state}"
-                )
+                log_msg: str = f"manip_id= {manip_button.claw}, manip_active= {new_manip_state}"
                 self.get_logger().info(log_msg)
 
                 manip_msg: Manip = Manip(
@@ -128,14 +126,10 @@ class ManualControlNode(Node):
             self.seen_left_cam = True
         elif buttons[MENU] == 0 and self.seen_right_cam:
             self.seen_right_cam = False
-            self.camera_toggle_publisher.publish(
-                CameraControllerSwitch(toggle_right=True)
-            )
+            self.camera_toggle_publisher.publish(CameraControllerSwitch(toggle_right=True))
         elif buttons[PAIRING_BUTTON] == 0 and self.seen_left_cam:
             self.seen_left_cam = False
-            self.camera_toggle_publisher.publish(
-                CameraControllerSwitch(toggle_right=False)
-            )
+            self.camera_toggle_publisher.publish(CameraControllerSwitch(toggle_right=False))
 
 
 class ManipButton:

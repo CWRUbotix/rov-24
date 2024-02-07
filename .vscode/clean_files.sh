@@ -5,4 +5,4 @@ shfmt -w .
 
 # Cleans Python files
 isort .
-black .
+black --line-length 100 .

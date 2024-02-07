@@ -86,14 +86,10 @@ class Arm(QWidget):
                 self.disarm_button.setProperty(WidgetState.PROPERTY_NAME, "")
             else:
                 self.arm_button.setProperty(WidgetState.PROPERTY_NAME, "")
-                self.disarm_button.setProperty(
-                    WidgetState.PROPERTY_NAME, WidgetState.OFF
-                )
+                self.disarm_button.setProperty(WidgetState.PROPERTY_NAME, WidgetState.OFF)
         else:
             self.arm_button.setProperty(WidgetState.PROPERTY_NAME, WidgetState.INACTIVE)
-            self.disarm_button.setProperty(
-                WidgetState.PROPERTY_NAME, WidgetState.INACTIVE
-            )
+            self.disarm_button.setProperty(WidgetState.PROPERTY_NAME, WidgetState.INACTIVE)
 
         for button in (self.arm_button, self.disarm_button):
             style = button.style()

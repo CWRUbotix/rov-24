@@ -23,9 +23,7 @@ def generate_launch_description() -> LaunchDescription:
 
     # Launches Realsense
     realsense_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            [os.path.join(realsense_path, "launch", "rs_launch.py")]
-        ),
+        PythonLaunchDescriptionSource([os.path.join(realsense_path, "launch", "rs_launch.py")]),
         launch_arguments={"depth_module.profile": "640x480x15"}.items(),
     )
 

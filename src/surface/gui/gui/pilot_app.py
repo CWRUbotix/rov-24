@@ -31,9 +31,7 @@ class PilotApp(App):
         )
 
         arm = Arm()
-        layout.addWidget(
-            arm, alignment=Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignBottom
-        )
+        layout.addWidget(arm, alignment=Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignBottom)
 
 
 def run_gui_pilot() -> None:

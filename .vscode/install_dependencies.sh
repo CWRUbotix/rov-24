@@ -19,3 +19,6 @@ rm -rf "$(find . | grep .egg-info)"
 
 # Install some random package that PyQt requires
 sudo apt-get install libxcb-cursor0 -y
+
+# Install the clean Shell script
+sudo snap install shfmt

@@ -42,9 +42,7 @@ def generate_launch_description() -> LaunchDescription:
         output="screen",
         parameters=[pool_params],
         namespace=NAMESPACE,
-        remappings=[
-            (f"/{NAMESPACE}/robot_description", f"/{NAMESPACE}/pool_description")
-        ],
+        remappings=[(f"/{NAMESPACE}/robot_description", f"/{NAMESPACE}/pool_description")],
         emulate_tty=True,
     )
 

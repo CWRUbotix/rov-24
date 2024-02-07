@@ -57,13 +57,9 @@ class VideoWidget(QWidget):
 
     @pyqtSlot(Image)
     def handle_frame(self, frame: Image) -> None:
-        cv_image: MatLike = self.cv_bridge.imgmsg_to_cv2(
-            frame, desired_encoding="passthrough"
-        )
+        cv_image: MatLike = self.cv_bridge.imgmsg_to_cv2(frame, desired_encoding="passthrough")
 
-        qt_image: QImage = self.convert_cv_qt(
-            cv_image, self.widget_width, self.widget_height
-        )
+        qt_image: QImage = self.convert_cv_qt(cv_image, self.widget_width, self.widget_height)
 
         self.video_frame_label.setPixmap(QPixmap.fromImage(qt_image))
 
@@ -130,9 +126,7 @@ class SwitchableVideoWidget(VideoWidget):
         self.num_of_cams = len(cam_topics)
 
         if self.num_of_cams != len(button_names):
-            self.camera_subscriber.get_logger().error(
-                "Number of cam topics != num of cam names"
-            )
+            self.camera_subscriber.get_logger().error("Number of cam topics != num of cam names")
             raise ValueError("Number of cam topics != num of cam names")
 
         self.button: QPushButton = QPushButton(button_names[self.active_cam])
@@ -183,9 +177,7 @@ class PauseableVideoWidget(VideoWidget):
         widget_height: int = HEIGHT,
         swap_rb_channels: bool = False,
     ) -> None:
-        super().__init__(
-            cam_topic, label_text, widget_width, widget_height, swap_rb_channels
-        )
+        super().__init__(cam_topic, label_text, widget_width, widget_height, swap_rb_channels)
 
         self.button: QPushButton = QPushButton(self.PLAYING_TEXT)
         self.button.setMaximumWidth(self.BUTTON_WIDTH)
