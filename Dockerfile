@@ -1,8 +1,5 @@
 FROM osrf/ros:iron-desktop-full
 
-RUN useradd -m rov
-USER rov
-
 # Specify no Healtcheck needed.
 HEALTHCHECK NONE
 
@@ -19,6 +16,9 @@ RUN apt-get update -y \
 #  Clean for better performance
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/*
+
+RUN useradd -m rov
+USER rov
 
 # Set Shell for calling shell scripts.
 SHELL ["/bin/bash", "-c"]
