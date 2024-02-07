@@ -46,4 +46,4 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN  find . -name "*config" | grep git | while read -r line; do sed -i "/sshCommand/d" "$line"; done
 
 RUN useradd -m rov
-USER rov
+# USER rov
