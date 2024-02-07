@@ -1,0 +1,3 @@
+shfmt -w .
+isort .
+black .

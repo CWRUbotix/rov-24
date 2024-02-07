@@ -123,6 +123,18 @@
                 "revealProblems": "onProblem"
             },
             "problemMatcher": []
-        }
+        },
+        {
+            "label": "Clean files",
+            "type": "shell",
+            "command": "bash",
+            "args": [
+                "${workspaceFolder}/.vscode/clean_files.sh"
+            ],
+            "presentation": {
+                "revealProblems": "onProblem"
+            },
+            "problemMatcher": []
+        },
     ]
 }
