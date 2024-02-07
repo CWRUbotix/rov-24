@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # Cleans Shellscripts
 shfmt -w .
 
