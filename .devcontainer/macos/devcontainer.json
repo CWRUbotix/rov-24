@@ -5,7 +5,7 @@
         "DISPLAY": "unix:0"
     },
     "mounts": [
-        "type=bind,source=/Users/${localEnv:USER}/.ssh,target=/root/.ssh,readonly",
+        "type=bind,source=/Users/${localEnv:USER}/.ssh,target=/root/.ssh,readonly"
     ],
     "workspaceFolder": "/root/rov-24",
     "customizations": {
