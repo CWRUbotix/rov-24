@@ -43,9 +43,11 @@ if ! grep -qF "$PYTHON_WARNINGS_LINE" ~/.bashrc; then
 	echo "$PYTHON_WARNINGS_LINE" >>~/.bashrc
 fi
 
+# shellcheck source=/dev/null
 source ~/.bashrc
 
 # Start rosdep
 sudo rosdep init
 rosdep update
+# shellcheck source=/dev/null
 source ~/.bashrc
