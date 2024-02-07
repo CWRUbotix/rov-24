@@ -31,8 +31,7 @@ jobs:
         env:
           DEFAULT_BRANCH: main
           VALIDATE_ANSIBLE: false
-          PYTHON_MYPY_CONFIG_FILE: mypy.ini
-          PYTHON_PYLINT_CONFIG_FILE: .pylintrc
+          # PYTHON_PYLINT_CONFIG_FILE: .pylintrc
           # To report GitHub Actions status checks
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ...
