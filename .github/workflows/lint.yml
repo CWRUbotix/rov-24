@@ -29,7 +29,9 @@ jobs:
         env:
           DEFAULT_BRANCH: main
           VALIDATE_ANSIBLE: false
+          # @ben Should we keep isort / black?
           VALIDATE_PYTHON_ISORT: false
+          VALIDATE_PYTHON_BLACK: false
           # PYTHON_PYLINT_CONFIG_FILE: .pylintrc
           # To report GitHub Actions status checks
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
