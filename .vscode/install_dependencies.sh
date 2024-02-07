@@ -21,4 +21,4 @@ rm -rf "$(find . | grep .egg-info)"
 sudo apt-get install libxcb-cursor0 -y
 
 # Install the clean Shell script
-sudo snap install shfmt
+curl -sS https://webi.sh/shfmt | sh
