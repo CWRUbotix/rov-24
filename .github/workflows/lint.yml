@@ -23,9 +23,7 @@ jobs:
           # super-linter needs the full git history to get the
           # list of files that changed across commits
           fetch-depth: 0
-
-      - run: ls
-
+    
       - name: Super-linter
         uses: super-linter/super-linter@v6.0.0  # x-release-please-version
         env:
@@ -35,4 +33,8 @@ jobs:
           PYTHON_PYLINT_CONFIG_FILE: .pylintrc
           # To report GitHub Actions status checks
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - run: echo $PYTHON_PYLINT_FILE_NAME
+      - run: echo $PYTHON_MYPY_FILE_NAME
+      - run: echo $PYTHON_MYPY_CONFIG_FILE
+      - run: echo $PYTHON_PYLINT_CONFIG_FILE
 ...
