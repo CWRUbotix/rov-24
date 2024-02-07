@@ -29,6 +29,8 @@ jobs:
         env:
           DEFAULT_BRANCH: main
           VALIDATE_ANSIBLE: false
+          # We use JSON with comments so JSON linter fails.
+          VALIDATE_JSON: false
           # @ben Should we keep isort / black?
           # Perhaps add vscode task to run the commands?
           # Having some standards for indentation seems nice?
