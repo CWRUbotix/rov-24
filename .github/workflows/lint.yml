@@ -32,11 +32,17 @@ jobs:
           VALIDATE_ANSIBLE: false
           # We use JSON with comments so JSON linter fails.
           VALIDATE_JSON: false
+          # Would need to update our documentation format
+          VALIDATE_MARKDOWN: false
+
           # @ben Should we keep isort / black?
           # Perhaps add vscode task to run the commands?
           # Having some standards for indentation seems nice?
           VALIDATE_PYTHON_ISORT: false
           VALIDATE_PYTHON_BLACK: false
+
+          # Currently broken waiting on a hotfix still tested in the other linter
+          VALIDATE_PYTHON_MYPY: false
           # PYTHON_PYLINT_CONFIG_FILE: .pylintrc
           # To report GitHub Actions status checks
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
