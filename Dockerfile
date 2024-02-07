@@ -18,7 +18,6 @@ RUN apt-get update -y \
  && rm -rf /var/lib/apt/lists/*
 
 RUN useradd -m rov
-USER rov
 
 # Set Shell for calling shell scripts.
 SHELL ["/bin/bash", "-c"]
@@ -38,6 +37,7 @@ RUN source /opt/ros/iron/setup.sh \
     && PYTHONWARNINGS=ignore:::setuptools.command.install,ignore:::setuptools.command.easy_install,ignore:::pkg_resources; export PYTHONWARNINGS\
     && colcon build --symlink-install
 
+USER rov
 
 # https://github.com/hadolint/hadolint/wiki/DL4006
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
