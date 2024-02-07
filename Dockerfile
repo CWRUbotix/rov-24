@@ -22,15 +22,12 @@ WORKDIR /root/rov-24
 COPY . .
 
 # TODO for future nerd to do this via ENTRYPOINT which be better but, I could not get ENTRYPOINT to play with VsCODE.
-# shellcheck source=/root/rov-24/.vscode/rov_setup.sh
 RUN source /root/rov-24/.vscode/rov_setup.sh
 RUN echo "export PYTHONWARNINGS=ignore:::setuptools.command.install,ignore:::setuptools.command.easy_install,ignore:::pkg_resources" >> ~/.bashrc ;
 
 # Installs ROS and python dependencies
-# shellcheck source=/root/rov-24/.vscode/install_dependencies.sh
 RUN source /root/rov-24/.vscode/install_dependencies.sh
 
-# shellcheck source=/opt/ros/iron/setup.sh
 RUN source /opt/ros/iron/setup.sh \
     && PYTHONWARNINGS=ignore:::setuptools.command.install,ignore:::setuptools.command.easy_install,ignore:::pkg_resources; export PYTHONWARNINGS\
     && colcon build --symlink-install
