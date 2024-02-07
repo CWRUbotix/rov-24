@@ -24,14 +24,16 @@ jobs:
           # list of files that changed across commits
           fetch-depth: 0
 
+      - run: ls
+
       - name: Super-linter
         uses: super-linter/super-linter@v6.0.0  # x-release-please-version
         env:
           DEFAULT_BRANCH: main
           VALIDATE_ANSIBLE: false
-          PYTHON_MYPY_CONFIG_FILE: mypy.ini
-          PYTHON_PYLINT_CONFIG_FILE: .pylintrc
-          LINTER_RULES_PATH: $HOME/rov-24/
+          PYTHON_MYPY_CONFIG_FILE: $HOME/rov-24/mypy.ini
+          PYTHON_PYLINT_CONFIG_FILE: $HOME/.pylintrc
+          # LINTER_RULES_PATH: $HOME/rov-24/
           # To report GitHub Actions status checks
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ...
