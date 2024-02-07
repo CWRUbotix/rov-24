@@ -4,6 +4,7 @@ from gui.styles.custom_styles import WidgetState
 from mavros_msgs.srv import CommandBool
 from PyQt6.QtCore import pyqtSignal, pyqtSlot
 from PyQt6.QtWidgets import QHBoxLayout, QPushButton, QWidget
+
 from rov_msgs.msg import VehicleState
 
 

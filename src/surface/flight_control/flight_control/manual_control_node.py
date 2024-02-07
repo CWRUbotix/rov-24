@@ -1,17 +1,16 @@
 from collections.abc import MutableSequence
 
 import rclpy
+from flight_control.pixhawk_instruction import PixhawkInstruction
+from mavros_msgs.msg import OverrideRCIn
 from rclpy.executors import MultiThreadedExecutor
 from rclpy.node import Node
 from rclpy.publisher import Publisher
 from rclpy.qos import qos_profile_sensor_data, qos_profile_system_default
 from rclpy.subscription import Subscription
 from sensor_msgs.msg import Joy
-from mavros_msgs.msg import OverrideRCIn
 
 from rov_msgs.msg import CameraControllerSwitch, Manip
-
-from flight_control.pixhawk_instruction import PixhawkInstruction
 
 # Button meanings for PS5 Control might be different for others
 X_BUTTON:        int = 0  # Manipulator 0

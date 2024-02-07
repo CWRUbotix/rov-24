@@ -1,6 +1,7 @@
-from mavros_msgs.msg import OverrideRCIn
 from dataclasses import dataclass
 from typing import Callable
+
+from mavros_msgs.msg import OverrideRCIn
 
 # Brown out protection
 SPEED_THROTTLE: float = 0.85

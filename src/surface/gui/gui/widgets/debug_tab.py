@@ -2,8 +2,8 @@ from gui.widgets.arm import Arm
 from gui.widgets.ip_widget import IPWidget
 from gui.widgets.logger import Logger
 from gui.widgets.thruster_tester import ThrusterTester
-from PyQt6.QtWidgets import QHBoxLayout, QVBoxLayout, QWidget
 from PyQt6.QtCore import Qt
+from PyQt6.QtWidgets import QHBoxLayout, QVBoxLayout, QWidget
 
 
 class DebugWidget(QWidget):
