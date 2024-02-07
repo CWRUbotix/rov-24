@@ -20,7 +20,7 @@ setup(
             glob("launch/*launch.[pxy][yma]*"),
         ),
     ],
-    install_requires=["setuptools", "flake8==4.0.1", "mypy >= 1.7"],
+    install_requires=["setuptools", "flake8==4.0.1", "mypy >= 1.7", "isort", "black"],
     zip_safe=True,
     maintainer="Michael Carlstrom",
     maintainer_email="rmc170@case.edu",
