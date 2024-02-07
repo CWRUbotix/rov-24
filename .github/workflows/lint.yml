@@ -29,8 +29,8 @@ jobs:
         env:
           DEFAULT_BRANCH: main
           VALIDATE_ANSIBLE: false
-          PYTHON_MYPY_CONFIG_FILE: ~/rov-24/mypy.ini
-          PYTHON_PYLINT_CONFIG_FILE: ~/rov-24/.pylintrc
+          PYTHON_MYPY_CONFIG_FILE: /home/runner/work/rov-24/rov-24/mypy.ini
+          PYTHON_PYLINT_CONFIG_FILE: /home/runner/work/rov-24/rov-24/.pylintrc
           # To report GitHub Actions status checks
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ...
