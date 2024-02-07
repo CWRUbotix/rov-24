@@ -1,6 +1,7 @@
+#checkov:skip=CKV_DOCKER_3: being able to install things is good for testing
 FROM osrf/ros:iron-desktop-full
 
-# Specify no Healtcheck needed.
+# Specify no Healthcheck needed.
 HEALTHCHECK NONE
 
 # Install pip
@@ -23,15 +24,15 @@ SHELL ["/bin/bash", "-c"]
 # Done to supress setup.py warnings
 RUN echo "export PYTHONWARNINGS=ignore:::setuptools.command.install,ignore:::setuptools.command.easy_install,ignore:::pkg_resources" >> ~/.bashrc ;
 
-WORKDIR /rov/rov-24
+WORKDIR /root/rov-24
 
 COPY . .
 
 # TODO for future nerd to do this via ENTRYPOINT which be better but, I could not get ENTRYPOINT to play with VsCODE.
-RUN source /rov/rov-24/.vscode/rov_setup.sh
+RUN source /root/rov-24/.vscode/rov_setup.sh
 
 # Installs ROS and python dependencies
-RUN source /rov/rov-24/.vscode/install_dependencies.sh
+RUN source /root/rov-24/.vscode/install_dependencies.sh
 
 RUN source /opt/ros/iron/setup.bash \
     && PYTHONWARNINGS=ignore:::setuptools.command.install,ignore:::setuptools.command.easy_install,ignore:::pkg_resources; export PYTHONWARNINGS\
@@ -44,6 +45,3 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 # Then removes file paths without "git"
 # Then removes the 'sshCommand' line from each file
 RUN  find . -name "*config" | grep git | while read -r line; do sed -i "/sshCommand/d" "$line"; done
-
-RUN useradd -m rov
-# USER rov
