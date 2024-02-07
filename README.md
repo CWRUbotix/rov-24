@@ -1,7 +1,8 @@
 # MATE ROV 2023-24
 
-<a href="https://github.com/cwruRobotics/rov-24/actions"><img src="https://github.com/cwruRobotics/rov-24/workflows/Continuous Integration/badge.svg" alt="Build Status"></a>
-<a href=" https://opensource.org/licenses/Apache-2.0"><img src="https://img.shields.io/badge/License-Apache%202.0-blue.svg" alt="Apache License"></a>
+[![Continuous Integration](https://github.com/cwruRobotics/rov-24/actions/workflows/industrial_ci_action.yml/badge.svg)](https://github.com/cwruRobotics/rov-24/actions/workflows/industrial_ci_action.yml)
+[![Lint](https://github.com/cwruRobotics/rov-24/actions/workflows/lint.yml/badge.svg)](https://github.com/cwruRobotics/rov-24/actions/workflows/lint.yml)
+[![Apache License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 # Table of Contents
 
@@ -102,12 +103,14 @@ Then install the Dev Containers VSCode extension.
 To get GUI support inside docker, first install [homebrew](https://brew.sh/).
 
 Then, from a terminal, run the following:
+
 ```bash
 brew install socat
 brew install xquartz
 ```
 
 Next, configure XQuartz with
+
 ```bash
 open -a Xquartz
 ```
