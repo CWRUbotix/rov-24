@@ -5,11 +5,8 @@
         "DISPLAY": "${localEnv:DISPLAY}"
     },
     "mounts": [
-        // SSH Keys
         "type=bind,source=/home/${localEnv:USER}/.ssh,target=/root/.ssh,readonly",
-        // X11 for guis
         "source=/tmp/.X11-unix,target=/tmp/.X11-unix,type=bind,consistency=cached",
-        // gitconfig
         "type=bind,source=/home/${localEnv:USER}/.gitconfig,target=/root/.gitconfig,readonly"
     ],
     "workspaceFolder": "/root/rov-24",

@@ -30,8 +30,6 @@ jobs:
         env:
           DEFAULT_BRANCH: main
           VALIDATE_ANSIBLE: false
-          # We use JSON with comments so JSON linter fails.
-          VALIDATE_JSON: false
           # Would need to update our documentation format
           VALIDATE_MARKDOWN: false
 
