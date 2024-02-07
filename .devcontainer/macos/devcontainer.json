@@ -7,7 +7,7 @@
     "mounts": [
         "type=bind,source=/Users/${localEnv:USER}/.ssh,target=/root/.ssh,readonly"
     ],
-    "workspaceFolder": "/rov/rov-24",
+    "workspaceFolder": "/root/rov-24",
     "customizations": {
         "vscode" : {
             "extensions": ["ms-python.flake8", "ms-azuretools.vscode-docker",
