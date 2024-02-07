@@ -1,10 +1,12 @@
 #!/bin/bash
 
 # Update ROS dependencies
+# shellcheck source=/dev/null
 . /opt/ros/iron/setup.sh && rosdep update
 sudo apt-get update -y
 
 # Installs ROS dependencies
+# shellcheck source=/dev/null
 . /opt/ros/iron/setup.sh && rosdep install --from-paths src --ignore-src -r -y
 
 # Deletes ROS build directories

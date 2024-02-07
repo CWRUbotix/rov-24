@@ -50,6 +50,7 @@ source ~/.bashrc
 
 # Install only Pi dependencies
 # Installs ROS dependencies
+# shellcheck source=/dev/null
 source /opt/ros/iron/setup.sh && rosdep install --from-paths src/pi --ignore-src -r -y
 
 # Crazy one liner for install python dependencies
