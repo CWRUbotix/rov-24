@@ -4,5 +4,5 @@
 shfmt -w .
 
 # Cleans Python files
-black .
 isort .
+black .
