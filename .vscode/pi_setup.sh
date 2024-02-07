@@ -56,7 +56,7 @@ source /opt/ros/iron/setup.sh && rosdep install --from-paths src/pi --ignore-src
 # Crazy one liner for install python dependencies
 for d in src/pi/*/; do sudo pip install -e "$d"; done
 # Delete generated files
-sudo rm -rf $(find . | grep .egg-info)
+sudo rm -rf "$(find . | grep .egg-info)"
 
 # Add setup.bash to .bashrc
 source "$(pwd)/.vscode/rov_setup.sh"
