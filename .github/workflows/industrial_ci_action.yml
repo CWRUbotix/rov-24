@@ -3,6 +3,8 @@
 
 name: Continuous Integration
 
+permissions: read-all
+
 on: # this determines when this workflow is run
   push:
   #   branches: [ master, melodic-devel ] #  when master or melodic-devel branch is pushed to

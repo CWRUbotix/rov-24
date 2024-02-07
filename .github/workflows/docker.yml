@@ -1,5 +1,7 @@
 name: Create and publish a Docker image
 
+permissions: read-all
+
 # Configures this workflow to run every time a change is pushed to a branch in the branches array.
 on:
   push:

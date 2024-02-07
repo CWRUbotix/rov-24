@@ -1,10 +1,11 @@
 ---
 name: Lint
 
-on:  # yamllint disable-line rule:truthy
-  push: null
-  pull_request: null
+permissions: read-all
 
+on:
+  push: 
+    
 jobs:
   build:
     name: Lint
