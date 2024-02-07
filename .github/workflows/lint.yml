@@ -40,10 +40,10 @@ jobs:
           # Having some standards for indentation seems nice?
           VALIDATE_PYTHON_ISORT: false
           VALIDATE_PYTHON_BLACK: false
-
-          # Currently broken waiting on a hotfix still tested in the other linter
+          # Currently running mypy on other linter and not running pylint at all
+          # Would need to install lots of deps so runnning them here makes little sense.
           VALIDATE_PYTHON_MYPY: false
-          # PYTHON_PYLINT_CONFIG_FILE: .pylintrc
+          VALIDATE_PYTHON_PYLINT: false
           # To report GitHub Actions status checks
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ...
