@@ -28,6 +28,7 @@ jobs:
         uses: super-linter/super-linter@v6.0.0  # x-release-please-version
         env:
           DEFAULT_BRANCH: main
+          VALIDATE_ANSIBLE: false
           # To report GitHub Actions status checks
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ...
