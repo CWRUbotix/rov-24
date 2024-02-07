@@ -1,11 +1,10 @@
 {
-    "name" : "ROV macOS",
-    "image": "ghcr.io/cwrurobotics/rov-24:iron",
-    "containerEnv": {
-        "DISPLAY": "unix:0"
-    },
+    "name" : "ROV Linux Test",
+    "build": {"dockerfile": "../../Dockerfile"},
     "mounts": [
-        "type=bind,source=/Users/${localEnv:USER}/.ssh,target=/root/.ssh,readonly"
+        "type=bind,source=/home/${localEnv:USER}/.ssh,target=/root/.ssh,readonly",
+        "source=/tmp/.X11-unix,target=/tmp/.X11-unix,type=bind,consistency=cached",
+        "type=bind,source=/home/${localEnv:USER}/.gitconfig,target=/root/.gitconfig,readonly"
     ],
     "workspaceFolder": "/rov/rov-24",
     "customizations": {

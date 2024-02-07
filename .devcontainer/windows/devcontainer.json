@@ -4,7 +4,7 @@
     "containerEnv": {  
         "DISPLAY": "${localEnv:DISPLAY}"
     },
-    "workspaceFolder": "/root/rov-24",
+    "workspaceFolder": "/rov/rov-24",
     "customizations": {
         "vscode" : {
             "extensions": ["ms-python.flake8", "ms-azuretools.vscode-docker",

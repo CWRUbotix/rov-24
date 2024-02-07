@@ -17,10 +17,11 @@ RUN apt-get update -y \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/*
 
-RUN useradd -m rov
-
 # Set Shell for calling shell scripts.
 SHELL ["/bin/bash", "-c"]
+
+# Done to supress setup.py warnings
+RUN echo "export PYTHONWARNINGS=ignore:::setuptools.command.install,ignore:::setuptools.command.easy_install,ignore:::pkg_resources" >> ~/.bashrc ;
 
 WORKDIR /rov/rov-24
 
@@ -28,16 +29,13 @@ COPY . .
 
 # TODO for future nerd to do this via ENTRYPOINT which be better but, I could not get ENTRYPOINT to play with VsCODE.
 RUN source /rov/rov-24/.vscode/rov_setup.sh
-RUN echo "export PYTHONWARNINGS=ignore:::setuptools.command.install,ignore:::setuptools.command.easy_install,ignore:::pkg_resources" >> ~/.bashrc ;
 
 # Installs ROS and python dependencies
 RUN source /rov/rov-24/.vscode/install_dependencies.sh
 
-RUN source /opt/ros/iron/setup.sh \
+RUN source /opt/ros/iron/setup.bash \
     && PYTHONWARNINGS=ignore:::setuptools.command.install,ignore:::setuptools.command.easy_install,ignore:::pkg_resources; export PYTHONWARNINGS\
     && colcon build --symlink-install
-
-USER rov
 
 # https://github.com/hadolint/hadolint/wiki/DL4006
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
@@ -45,4 +43,7 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 # Start by finding all files ending in config
 # Then removes file paths without "git"
 # Then removes the 'sshCommand' line from each file
-RUN  find . -name "*config" | grep git | while read -r line; do sed -i "/sshCommand/d" $line; done
+RUN  find . -name "*config" | grep git | while read -r line; do sed -i "/sshCommand/d" "$line"; done
+
+RUN useradd -m rov
+USER rov
