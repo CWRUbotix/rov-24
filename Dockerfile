@@ -1,5 +1,11 @@
 FROM osrf/ros:iron-desktop-full
 
+RUN useradd -m rov
+USER rov
+
+# Specify no Healtcheck needed.
+HEALTHCHECK NONE
+
 # Install pip
 # Install Video for Linux
 # Install lsusb
@@ -17,16 +23,16 @@ RUN apt-get update -y \
 # Set Shell for calling shell scripts.
 SHELL ["/bin/bash", "-c"]
 
-WORKDIR /root/rov-24
+WORKDIR /rov/rov-24
 
 COPY . .
 
 # TODO for future nerd to do this via ENTRYPOINT which be better but, I could not get ENTRYPOINT to play with VsCODE.
-RUN source /root/rov-24/.vscode/rov_setup.sh
+RUN source /rov/rov-24/.vscode/rov_setup.sh
 RUN echo "export PYTHONWARNINGS=ignore:::setuptools.command.install,ignore:::setuptools.command.easy_install,ignore:::pkg_resources" >> ~/.bashrc ;
 
 # Installs ROS and python dependencies
-RUN source /root/rov-24/.vscode/install_dependencies.sh
+RUN source /rov/rov-24/.vscode/install_dependencies.sh
 
 RUN source /opt/ros/iron/setup.sh \
     && PYTHONWARNINGS=ignore:::setuptools.command.install,ignore:::setuptools.command.easy_install,ignore:::pkg_resources; export PYTHONWARNINGS\
