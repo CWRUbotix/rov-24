@@ -32,8 +32,4 @@ jobs:
           # PYTHON_PYLINT_CONFIG_FILE: .pylintrc
           # To report GitHub Actions status checks
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - run: echo $PYTHON_PYLINT_FILE_NAME
-      - run: echo $PYTHON_MYPY_FILE_NAME
-      - run: echo $PYTHON_MYPY_CONFIG_FILE
-      - run: echo $PYTHON_PYLINT_CONFIG_FILE
 ...
