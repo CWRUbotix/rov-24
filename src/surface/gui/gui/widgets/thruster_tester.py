@@ -5,14 +5,7 @@ from gui.event_nodes.client import GUIEventClient
 from mavros_msgs.srv import CommandLong
 from PyQt6.QtCore import pyqtSignal, pyqtSlot
 from PyQt6.QtGui import QIntValidator
-from PyQt6.QtWidgets import (
-    QGridLayout,
-    QLabel,
-    QLineEdit,
-    QPushButton,
-    QVBoxLayout,
-    QWidget,
-)
+from PyQt6.QtWidgets import QGridLayout, QLabel, QLineEdit, QPushButton, QVBoxLayout, QWidget
 
 
 class ThrusterTester(QWidget):
