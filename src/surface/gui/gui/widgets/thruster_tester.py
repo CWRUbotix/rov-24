@@ -2,7 +2,8 @@ import time
 from threading import Thread
 
 from gui.event_nodes.client import GUIEventClient
-from mavros_msgs.srv import CommandLong
+from mavros_msgs.srv import CommandLong, ParamSetV2, ParamPull
+from 
 from PyQt6.QtCore import pyqtSignal, pyqtSlot
 from PyQt6.QtGui import QIntValidator
 from PyQt6.QtWidgets import (QGridLayout, QLabel, QLineEdit, QPushButton,
@@ -16,17 +17,25 @@ class ThrusterTester(QWidget):
     TEST_THROTTLE: float = 0.50  # 50%
     MOTOR_COUNT = 8
 
-    command_response_signal: pyqtSignal = pyqtSignal(CommandLong.Response)
+    test_command_response_signal = pyqtSignal(CommandLong.Response)
+    set_motors_response_signal = pyqtSignal(ParamSetV2.Response)
 
     def __init__(self) -> None:
         super().__init__()
 
-        self.cmd_client: GUIEventClient = GUIEventClient(
+        self.test_cmd_client = GUIEventClient(
             CommandLong,
             "mavros/cmd/command",
-            self.command_response_signal
+            self.test_command_response_signal
         )
-        self.command_response_signal.connect(self.command_response_handler)
+        self.test_command_response_signal.connect(self.command_response_handler)
+
+        self.set_motors_client = GUIEventClient(
+            ParamSetV2,
+            "mavros/param/set",
+            self.set_motors_response_signal
+        )
+        self.set_motors_response_signal.connect(self.set_motors_response_handler)
 
         layout = QVBoxLayout()
         self.setLayout(layout)
@@ -34,7 +43,7 @@ class ThrusterTester(QWidget):
         heading = QLabel("Thruster Pin Configuration")
 
         pin_numbers_grid = QGridLayout()
-        self.pin_input_widgets = []
+        self.pin_input_widgets: list[QLineEdit] = []
 
         pin_number_validator = QIntValidator()
         pin_number_validator.setRange(0, self.MOTOR_COUNT - 1)
@@ -60,10 +69,11 @@ class ThrusterTester(QWidget):
 
         pin_assignment_button = QPushButton()
         pin_assignment_button.setText("Send Pin Assignments")
+        pin_assignment_button.clicked.connect(self.send_pin_assignments)
 
         test_button = QPushButton()
         test_button.setText("Test Thrusters")
-        test_button.clicked.connect(self.async_send_message)
+        test_button.clicked.connect(self.async_send_test_message)
 
         layout.addWidget(heading)
         layout.addLayout(pin_numbers_grid)
@@ -91,7 +101,7 @@ class ThrusterTester(QWidget):
 
         start_time = time.time()
         while time.time() - start_time < duration:
-            self.cmd_client.send_request_async(
+            self.test_cmd_client.send_request_async(
                 CommandLong.Request(
                     command=209,  # MAV_CMD_DO_MOTOR_TEST
                     param1=float(motor_index),  # Motor number
@@ -105,21 +115,30 @@ class ThrusterTester(QWidget):
 
             time.sleep(0.05)
 
-    def async_send_message(self) -> None:
+    def async_send_test_message(self) -> None:
         Thread(target=self.send_test_message, daemon=True, name="thruster_test_thread").start()
 
     def send_test_message(self) -> None:
-        for motor_index in range(0, self.MOTOR_COUNT):
-            self.cmd_client.get_logger().info(f"Testing thruster {motor_index}")
+        for motor_index in range(self.MOTOR_COUNT):
+            self.test_cmd_client.get_logger().info(f"Testing thruster {motor_index}")
             self.test_motor_for_time(motor_index, self.TEST_THROTTLE, self.TEST_LENGTH)
             self.test_motor_for_time(motor_index, 0.0, 0.5)
 
-    def send_pin_assignments(self) -> None:
-        # TODO: Send the pin assingments inputed by the user to the pixhawk as parameters
-        # https://wiki.ros.org/mavros/Plugins#param
-        # https://ardupilot.org/copter/docs/parameters.html#servo10-parameters
-        pass
-
     @pyqtSlot(CommandLong.Response)
     def command_response_handler(self, res: CommandLong.Response) -> None:
-        self.cmd_client.get_logger().debug(f"Test response: {res.success}, {res.result}")
+        self.test_cmd_client.get_logger().debug(f"Test response: {res.success}, {res.result}")
+
+    # https://wiki.ros.org/mavros/Plugins#param
+    # https://ardupilot.org/copter/docs/parameters.html#servo10-parameters
+    def send_pin_assignments(self) -> None:
+        print(self.pin_input_widgets[2].text())
+        req = ParamSetV2.Request(
+            param_id="",
+            value=
+        )
+        self.set_motors_client.send_request_async(req)
+        # TODO: Send the pin assignments inputted by the user to the pixhawk as parameters
+
+    @pyqtSlot(ParamSetV2.Response)
+    def set_motors_response_handler(self, res: ParamSetV2.Response) -> None:
+        self.set_motors_client.get_logger().debug(f"Test response: {res.success}, {res.result}")
