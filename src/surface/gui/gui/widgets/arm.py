@@ -15,7 +15,7 @@ class Arm(QWidget):
     DISARM_REQUEST = CommandBool.Request(value=False)
     BUTTON_WIDTH = 120
     BUTTON_HEIGHT = 60
-    BUTTON_STYLESHEET = 'QPushButton { font-size: 20px; }'
+    BUTTON_STYLESHEET = "QPushButton { font-size: 20px; }"
 
     command_response_signal: pyqtSignal = pyqtSignal(CommandBool.Response)
     vehicle_state_signal = pyqtSignal(VehicleState)
@@ -56,12 +56,12 @@ class Arm(QWidget):
             CommandBool,
             "mavros/cmd/arming",
             self.command_response_signal,
-            expected_namespace='/tether'
+            expected_namespace="/tether",
         )
 
         self.mavros_subscription = GUIEventSubscriber(
             VehicleState,
-            'vehicle_state_event',
+            "vehicle_state_event",
             self.vehicle_state_signal,
         )
 
@@ -86,10 +86,14 @@ class Arm(QWidget):
                 self.disarm_button.setProperty(WidgetState.PROPERTY_NAME, "")
             else:
                 self.arm_button.setProperty(WidgetState.PROPERTY_NAME, "")
-                self.disarm_button.setProperty(WidgetState.PROPERTY_NAME, WidgetState.OFF)
+                self.disarm_button.setProperty(
+                    WidgetState.PROPERTY_NAME, WidgetState.OFF
+                )
         else:
             self.arm_button.setProperty(WidgetState.PROPERTY_NAME, WidgetState.INACTIVE)
-            self.disarm_button.setProperty(WidgetState.PROPERTY_NAME, WidgetState.INACTIVE)
+            self.disarm_button.setProperty(
+                WidgetState.PROPERTY_NAME, WidgetState.INACTIVE
+            )
 
         for button in (self.arm_button, self.disarm_button):
             style = button.style()

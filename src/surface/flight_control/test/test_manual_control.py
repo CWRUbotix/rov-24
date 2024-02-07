@@ -1,10 +1,16 @@
 import rclpy
 from flight_control.manual_control_node import ManualControlNode
-from flight_control.pixhawk_instruction import (FORWARD_CHANNEL,
-                                                LATERAL_CHANNEL, PITCH_CHANNEL,
-                                                RANGE_SPEED, ROLL_CHANNEL,
-                                                THROTTLE_CHANNEL, YAW_CHANNEL,
-                                                ZERO_SPEED, PixhawkInstruction)
+from flight_control.pixhawk_instruction import (
+    FORWARD_CHANNEL,
+    LATERAL_CHANNEL,
+    PITCH_CHANNEL,
+    RANGE_SPEED,
+    ROLL_CHANNEL,
+    THROTTLE_CHANNEL,
+    YAW_CHANNEL,
+    ZERO_SPEED,
+    PixhawkInstruction,
+)
 from mavros_msgs.msg import OverrideRCIn
 
 
@@ -22,11 +28,10 @@ def test_joystick_profiles() -> None:
         forward=0,
         vertical=1,
         lateral=-1,
-
         # Not nice possible values
         pitch=0.34,
         yaw=-0.6,
-        roll=0.92
+        roll=0.92,
     )
 
     msg: OverrideRCIn = instruction.to_override_rc_in()

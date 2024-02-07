@@ -1,4 +1,5 @@
 """Test flake8 on this module."""
+
 # Copyright 2017 Open Source Robotics Foundation, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,6 +23,6 @@ from ament_flake8.main import main_with_errors
 def test_flake8() -> None:
     """Tests flake8 on this module."""
     error_code, errors = main_with_errors(argv=[])
-    assert error_code == 0, \
-        f'Found {len(errors)} code style errors / warnings:\n' + \
-        '\n'.join(errors)
+    assert (
+        error_code == 0
+    ), f"Found {len(errors)} code style errors / warnings:\n" + "\n".join(errors)

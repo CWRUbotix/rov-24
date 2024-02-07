@@ -14,7 +14,7 @@ PI_TIMEOUT = 1  # Seconds
 
 
 @dataclass
-class VehicleState():
+class VehicleState:
     pi_connected: bool = False
     pixhawk_connected: bool = False
     armed: bool = False
@@ -29,21 +29,17 @@ class VehicleManagerNode(Node):
         )
 
         self.mavros_subscription = self.create_subscription(
-            State,
-            'mavros/state',
-            self.mavros_callback,
-            10
+            State, "mavros/state", self.mavros_callback, 10
         )
 
         self.mavros_subscription = self.create_subscription(
-            Heartbeat,
-            'pi_heartbeat',
-            self.heartbeat_callback,
-            10
+            Heartbeat, "pi_heartbeat", self.heartbeat_callback, 10
         )
 
         self.watchdog_timer = self.create_timer(1, self.watchdog_callback)
-        self.last_heartbeat: float = 0  # Unix timestamp of the last mavros heartbeat from the pi
+        self.last_heartbeat: float = (
+            0  # Unix timestamp of the last mavros heartbeat from the pi
+        )
 
         self.last_subscriber_count = 0
         self.poll_subscribers_timer = self.create_timer(1, self.poll_subscribers)
@@ -55,14 +51,14 @@ class VehicleManagerNode(Node):
             VehicleStateMsg(
                 pi_connected=state.pi_connected,
                 pixhawk_connected=state.pixhawk_connected,
-                armed=state.armed
+                armed=state.armed,
             )
         )
 
     def mavros_callback(self, msg: State) -> None:
-        new_state = VehicleState(pi_connected=True,
-                                 pixhawk_connected=msg.connected,
-                                 armed=msg.armed)
+        new_state = VehicleState(
+            pi_connected=True, pixhawk_connected=msg.connected, armed=msg.armed
+        )
 
         if new_state != self.vehicle_state:
             self.publish_state(new_state)
@@ -72,7 +68,9 @@ class VehicleManagerNode(Node):
 
             if self.vehicle_state.pixhawk_connected and not new_state.pixhawk_connected:
                 self.get_logger().warn("Pixhawk disconnected")
-            elif not self.vehicle_state.pixhawk_connected and new_state.pixhawk_connected:
+            elif (
+                not self.vehicle_state.pixhawk_connected and new_state.pixhawk_connected
+            ):
                 self.get_logger().info("Pixhawk connected")
 
             if self.vehicle_state.armed and not new_state.armed:
@@ -91,11 +89,13 @@ class VehicleManagerNode(Node):
             self.get_logger().info("Pi connected")
 
     def watchdog_callback(self) -> None:
-        if self.vehicle_state.pi_connected and time.time() - self.last_heartbeat > PI_TIMEOUT:
+        if (
+            self.vehicle_state.pi_connected
+            and time.time() - self.last_heartbeat > PI_TIMEOUT
+        ):
             self.vehicle_state = VehicleState(
-                pi_connected=False,
-                pixhawk_connected=False,
-                armed=False)
+                pi_connected=False, pixhawk_connected=False, armed=False
+            )
             self.publish_state(self.vehicle_state)
             self.get_logger().warn("Pi disconnected")
 

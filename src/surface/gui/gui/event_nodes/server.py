@@ -11,8 +11,12 @@ from rclpy.service import Service, SrvType, SrvTypeRequest, SrvTypeResponse
 class GUIEventServer(Node):
     """Multithreaded server for processing server requests to update GUI."""
 
-    def __init__(self, srv_type: SrvType, topic: str,
-                 callback: Callable[[SrvTypeRequest, SrvTypeResponse], SrvTypeResponse]):
+    def __init__(
+        self,
+        srv_type: SrvType,
+        topic: str,
+        callback: Callable[[SrvTypeRequest, SrvTypeResponse], SrvTypeResponse],
+    ):
         """
         Initialize this server with a CALLBACK for processing requests.
 
@@ -26,6 +30,5 @@ class GUIEventServer(Node):
 
         custom_executor = SingleThreadedExecutor()
         custom_executor.add_node(self)
-        Thread(target=custom_executor.spin, daemon=True,
-               name=f'{name}_spin').start()
+        Thread(target=custom_executor.spin, daemon=True, name=f"{name}_spin").start()
         atexit.register(custom_executor.shutdown)

@@ -4,10 +4,12 @@ from pi_main.run_on_boot import main
 
 ROS_DISTRO = os.getenv("ROS_DISTRO")
 
-EXPECTED_SYSTEM_FILES = [f"/etc/ros/{ROS_DISTRO}/cwrubotix_pi.d/.installed_files",
-                         f"/etc/ros/{ROS_DISTRO}/cwrubotix_pi.d/pi.launch.py",
-                         "/usr/sbin/cwrubotix_pi-start",
-                         "/usr/sbin/cwrubotix_pi-stop"]
+EXPECTED_SYSTEM_FILES = [
+    f"/etc/ros/{ROS_DISTRO}/cwrubotix_pi.d/.installed_files",
+    f"/etc/ros/{ROS_DISTRO}/cwrubotix_pi.d/pi.launch.py",
+    "/usr/sbin/cwrubotix_pi-start",
+    "/usr/sbin/cwrubotix_pi-stop",
+]
 
 
 def test_install_on_boot() -> None:

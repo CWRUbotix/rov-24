@@ -21,9 +21,14 @@ class VideoWidget(QWidget):
     update_big_video_signal = pyqtSignal(QWidget)
     handle_frame_signal = pyqtSignal(Image)
 
-    def __init__(self, topic: str, label_text: Optional[str] = None,
-                 widget_width: int = WIDTH, widget_height: int = HEIGHT,
-                 swap_rb_channels: bool = False) -> None:
+    def __init__(
+        self,
+        topic: str,
+        label_text: Optional[str] = None,
+        widget_width: int = WIDTH,
+        widget_height: int = HEIGHT,
+        swap_rb_channels: bool = False,
+    ) -> None:
         super().__init__()
 
         self.widget_width: int = widget_width
@@ -36,25 +41,29 @@ class VideoWidget(QWidget):
         if label_text is not None:
             self.label = QLabel(label_text)
             self.label.setAlignment(Qt.AlignmentFlag.AlignHCenter)
-            self.label.setStyleSheet('QLabel { font-size: 35px; }')
+            self.label.setStyleSheet("QLabel { font-size: 35px; }")
             layout.addWidget(self.label, Qt.AlignmentFlag.AlignHCenter)
 
         self.video_frame_label = QLabel()
-        self.video_frame_label.setText(f'This topic had no frame: {topic}')
+        self.video_frame_label.setText(f"This topic had no frame: {topic}")
         layout.addWidget(self.video_frame_label)
 
         self.cv_bridge: CvBridge = CvBridge()
 
         self.handle_frame_signal.connect(self.handle_frame)
         self.camera_subscriber: GUIEventSubscriber = GUIEventSubscriber(
-            Image, topic, self.handle_frame_signal)
+            Image, topic, self.handle_frame_signal
+        )
 
     @pyqtSlot(Image)
     def handle_frame(self, frame: Image) -> None:
         cv_image: MatLike = self.cv_bridge.imgmsg_to_cv2(
-            frame, desired_encoding='passthrough')
+            frame, desired_encoding="passthrough"
+        )
 
-        qt_image: QImage = self.convert_cv_qt(cv_image, self.widget_width, self.widget_height)
+        qt_image: QImage = self.convert_cv_qt(
+            cv_image, self.widget_width, self.widget_height
+        )
 
         self.video_frame_label.setPixmap(QPixmap.fromImage(qt_image))
 
@@ -94,24 +103,36 @@ class SwitchableVideoWidget(VideoWidget):
 
     controller_signal = pyqtSignal(CameraControllerSwitch)
 
-    def __init__(self, cam_topics: list[str], button_names: list[str],
-                 controller_button_topic: Optional[str] = None,
-                 default_cam_num: int = 0,
-                 label_text: Optional[str] = None,
-                 widget_width: int = WIDTH, widget_height: int = HEIGHT,
-                 swap_rb_channels: bool = False):
+    def __init__(
+        self,
+        cam_topics: list[str],
+        button_names: list[str],
+        controller_button_topic: Optional[str] = None,
+        default_cam_num: int = 0,
+        label_text: Optional[str] = None,
+        widget_width: int = WIDTH,
+        widget_height: int = HEIGHT,
+        swap_rb_channels: bool = False,
+    ):
 
         self.active_cam = default_cam_num
         self.cam_topics = cam_topics
         self.button_names = button_names
 
-        super().__init__(cam_topics[self.active_cam], label_text, widget_width,
-                         widget_height, swap_rb_channels)
+        super().__init__(
+            cam_topics[self.active_cam],
+            label_text,
+            widget_width,
+            widget_height,
+            swap_rb_channels,
+        )
 
         self.num_of_cams = len(cam_topics)
 
         if self.num_of_cams != len(button_names):
-            self.camera_subscriber.get_logger().error("Number of cam topics != num of cam names")
+            self.camera_subscriber.get_logger().error(
+                "Number of cam topics != num of cam names"
+            )
             raise ValueError("Number of cam topics != num of cam names")
 
         self.button: QPushButton = QPushButton(button_names[self.active_cam])
@@ -126,9 +147,9 @@ class SwitchableVideoWidget(VideoWidget):
 
         if controller_button_topic is not None:
             self.controller_signal.connect(self.controller_camera_switch)
-            self.controller_subscriber = GUIEventSubscriber(CameraControllerSwitch,
-                                                            controller_button_topic,
-                                                            self.controller_signal)
+            self.controller_subscriber = GUIEventSubscriber(
+                CameraControllerSwitch, controller_button_topic, self.controller_signal
+            )
 
     @pyqtSlot(CameraControllerSwitch)
     def controller_camera_switch(self, switch: CameraControllerSwitch) -> None:
@@ -142,7 +163,8 @@ class SwitchableVideoWidget(VideoWidget):
 
         self.camera_subscriber.destroy_node()
         self.camera_subscriber = GUIEventSubscriber(
-            Image, self.cam_topics[self.active_cam], self.handle_frame_signal)
+            Image, self.cam_topics[self.active_cam], self.handle_frame_signal
+        )
         self.button.setText(self.button_names[self.active_cam])
 
 
@@ -150,14 +172,20 @@ class PauseableVideoWidget(VideoWidget):
     """A single video stream widget that can be paused and played."""
 
     BUTTON_WIDTH = 120
-    PAUSED_TEXT = 'Play'
-    PLAYING_TEXT = 'Pause'
+    PAUSED_TEXT = "Play"
+    PLAYING_TEXT = "Pause"
 
-    def __init__(self, cam_topic: str, label_text: Optional[str] = None,
-                 widget_width: int = WIDTH, widget_height: int = HEIGHT,
-                 swap_rb_channels: bool = False) -> None:
-        super().__init__(cam_topic, label_text, widget_width,
-                         widget_height, swap_rb_channels)
+    def __init__(
+        self,
+        cam_topic: str,
+        label_text: Optional[str] = None,
+        widget_width: int = WIDTH,
+        widget_height: int = HEIGHT,
+        swap_rb_channels: bool = False,
+    ) -> None:
+        super().__init__(
+            cam_topic, label_text, widget_width, widget_height, swap_rb_channels
+        )
 
         self.button: QPushButton = QPushButton(self.PLAYING_TEXT)
         self.button.setMaximumWidth(self.BUTTON_WIDTH)

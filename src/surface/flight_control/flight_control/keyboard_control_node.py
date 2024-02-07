@@ -53,12 +53,10 @@ Key Bindings:
 
 class KeyboardListenerNode(Node):
     def __init__(self) -> None:
-        super().__init__('keyboard_listener_node', parameter_overrides=[])
+        super().__init__("keyboard_listener_node", parameter_overrides=[])
 
         self.rc_pub: Publisher = self.create_publisher(
-            OverrideRCIn,
-            'mavros/rc/override',
-            qos_profile_system_default
+            OverrideRCIn, "mavros/rc/override", qos_profile_system_default
         )
 
         self.get_logger().info(HELP_MSG)
@@ -79,7 +77,7 @@ class KeyboardListenerNode(Node):
 
     def on_press(self, key: Optional[Key | KeyCode]) -> None:
         try:
-            key_name: str = ''
+            key_name: str = ""
             if isinstance(key, KeyCode):
                 key_name = key.char
                 if key_name is None:
@@ -102,7 +100,7 @@ class KeyboardListenerNode(Node):
 
     def on_release(self, key: Optional[Key | KeyCode]) -> None:
         try:
-            key_name: str = ''
+            key_name: str = ""
             if isinstance(key, KeyCode):
                 key_name = key.char
                 if key_name is None:
@@ -130,15 +128,13 @@ class KeyboardListenerNode(Node):
             vertical=self.status[UP] - self.status[DOWN],
             forward=self.status[FORWARD] - self.status[BACKWARD],
             lateral=self.status[LEFT] - self.status[RIGHT],
-            yaw=self.status[YAW_LEFT] - self.status[YAW_RIGHT]
+            yaw=self.status[YAW_LEFT] - self.status[YAW_RIGHT],
         )
 
         self.rc_pub.publish(instruction.to_override_rc_in())
 
     def spin(self) -> None:
-        with Listener(
-            on_press=self.on_press, on_release=self.on_release
-        ) as listener:
+        with Listener(on_press=self.on_press, on_release=self.on_release) as listener:
             while rclpy.utilities.ok() and listener.running:
                 rclpy.spin_once(self, timeout_sec=0.1)
 

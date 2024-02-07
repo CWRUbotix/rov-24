@@ -1,4 +1,5 @@
 """realsense_launch launch file."""
+
 import os
 
 from ament_index_python.packages import get_package_share_directory
@@ -18,28 +19,26 @@ def generate_launch_description() -> LaunchDescription:
         Launches realsense launch file.
 
     """
-    realsense_path: str = get_package_share_directory('realsense2_camera')
+    realsense_path: str = get_package_share_directory("realsense2_camera")
 
     # Launches Realsense
     realsense_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource([
-            os.path.join(
-                realsense_path, 'launch', 'rs_launch.py'
-            )
-        ]),
-        launch_arguments={'depth_module.profile': '640x480x15'}.items()
+        PythonLaunchDescriptionSource(
+            [os.path.join(realsense_path, "launch", "rs_launch.py")]
+        ),
+        launch_arguments={"depth_module.profile": "640x480x15"}.items(),
     )
 
     realsense_action = GroupAction(
         actions=[
-            SetRemap(src='/pi/camera/color/image_raw', dst='/depth_cam/image_raw'),
-            SetRemap(src='/pi/camera/color/camera_info', dst='/depth_cam/camera_info'),
-            SetRemap(src='/pi/camera/aligned_depth_to_color/image_raw',
-                     dst='/depth_cam/depth_to_color'),
-            realsense_launch
+            SetRemap(src="/pi/camera/color/image_raw", dst="/depth_cam/image_raw"),
+            SetRemap(src="/pi/camera/color/camera_info", dst="/depth_cam/camera_info"),
+            SetRemap(
+                src="/pi/camera/aligned_depth_to_color/image_raw",
+                dst="/depth_cam/depth_to_color",
+            ),
+            realsense_launch,
         ]
     )
 
-    return LaunchDescription([
-        realsense_action
-    ])
+    return LaunchDescription([realsense_action])

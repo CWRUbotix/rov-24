@@ -8,12 +8,10 @@ def generate_launch_description() -> LaunchDescription:
         executable="connection_manager_node",
         remappings=[
             ("/surface/mavros/state", "/tether/mavros/state"),
-            ("/surface/pi_heartbeat", "/tether/pi_heartbeat")
+            ("/surface/pi_heartbeat", "/tether/pi_heartbeat"),
         ],
         emulate_tty=True,
-        output='screen'
+        output="screen",
     )
 
-    return LaunchDescription([
-        heartbeat_node
-    ])
+    return LaunchDescription([heartbeat_node])

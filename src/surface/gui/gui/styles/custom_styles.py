@@ -1,4 +1,4 @@
-class Style():
+class Style:
     """Represents a single class that can be applied to gui objects to change their appearance."""
 
     PROPERTY_NAME: str

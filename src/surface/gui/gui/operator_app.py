@@ -8,9 +8,9 @@ from PyQt6.QtWidgets import QGridLayout, QTabWidget, QVBoxLayout, QWidget
 
 class OperatorApp(App):
     def __init__(self) -> None:
-        super().__init__('operator_gui_node')
+        super().__init__("operator_gui_node")
 
-        self.setWindowTitle('Operator GUI - CWRUbotix ROV 2024')
+        self.setWindowTitle("Operator GUI - CWRUbotix ROV 2024")
 
         # Main tab
         main_tab = QWidget()

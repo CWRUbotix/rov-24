@@ -33,7 +33,7 @@ def generate_launch_description() -> LaunchDescription:
         output="screen",
         parameters=[params],
         namespace=NAMESPACE,
-        emulate_tty=True
+        emulate_tty=True,
     )
 
     pool_state_publisher = Node(
@@ -42,8 +42,10 @@ def generate_launch_description() -> LaunchDescription:
         output="screen",
         parameters=[pool_params],
         namespace=NAMESPACE,
-        remappings=[(f"/{NAMESPACE}/robot_description", f"/{NAMESPACE}/pool_description")],
-        emulate_tty=True
+        remappings=[
+            (f"/{NAMESPACE}/robot_description", f"/{NAMESPACE}/pool_description")
+        ],
+        emulate_tty=True,
     )
 
     # Launches Gazebo
@@ -68,7 +70,7 @@ def generate_launch_description() -> LaunchDescription:
             "true",
         ],
         namespace=NAMESPACE,
-        emulate_tty=True
+        emulate_tty=True,
     )
 
     gz_spawn_pool = Node(
@@ -84,7 +86,7 @@ def generate_launch_description() -> LaunchDescription:
             "true",
         ],
         namespace=NAMESPACE,
-        emulate_tty=True
+        emulate_tty=True,
     )
 
     # Not using keyboard launch file
@@ -98,7 +100,7 @@ def generate_launch_description() -> LaunchDescription:
         name="keyboard_driver_node",
         namespace=NAMESPACE,
         remappings=[(f"/{NAMESPACE}/manual_control", "/manual_control")],
-        emulate_tty=True
+        emulate_tty=True,
     )
 
     # cam_bridge = Node(

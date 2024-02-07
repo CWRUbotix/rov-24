@@ -8,9 +8,7 @@ def generate_launch_description() -> LaunchDescription:
         executable="heartbeat_node",
         remappings=[("/pi/pi_heartbeat", "/tether/pi_heartbeat")],
         emulate_tty=True,
-        output='screen'
+        output="screen",
     )
 
-    return LaunchDescription([
-        heartbeat_node
-    ])
+    return LaunchDescription([heartbeat_node])
