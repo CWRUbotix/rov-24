@@ -1,7 +1,7 @@
 # MATE ROV 2023-24
 
 [![Continuous Integration](https://github.com/cwruRobotics/rov-24/actions/workflows/industrial_ci_action.yml/badge.svg)](https://github.com/cwruRobotics/rov-24/actions/workflows/industrial_ci_action.yml)
-[![Lint](https://github.com/cwruRobotics/rov-24/actions/workflows/lint.yml/badge.svg)](https://github.com/cwruRobotics/rov-24/actions/workflows/lint.yml)
+[![Other Linters](https://github.com/cwruRobotics/rov-24/actions/workflows/lint.yml/badge.svg)](https://github.com/cwruRobotics/rov-24/actions/workflows/lint.yml)
 [![Apache License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 # Table of Contents
