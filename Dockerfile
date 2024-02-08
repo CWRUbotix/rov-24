@@ -21,7 +21,7 @@ RUN apt-get update -y \
 # Set Shell for calling shell scripts.
 SHELL ["/bin/bash", "-c"]
 
-# Done to supress setup.py warnings
+# Done to suppress setup.py warnings
 RUN echo "export PYTHONWARNINGS=ignore:::setuptools.command.install,ignore:::setuptools.command.easy_install,ignore:::pkg_resources" >> ~/.bashrc ;
 
 WORKDIR /root/rov-24

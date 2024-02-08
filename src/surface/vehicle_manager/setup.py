@@ -22,7 +22,7 @@ setup(
     zip_safe=True,
     maintainer="noah",
     maintainer_email="noah@mollerstuen.com",
-    description="Surface packaage to manage vehicle state updates",
+    description="Surface package to manage vehicle state updates",
     license="Apache License 2.0",
     tests_require=["pytest"],
     entry_points={

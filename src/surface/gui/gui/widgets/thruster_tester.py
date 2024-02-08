@@ -112,7 +112,7 @@ class ThrusterTester(QWidget):
             self.test_motor_for_time(motor_index, 0.0, 0.5)
 
     def send_pin_assignments(self) -> None:
-        # TODO: Send the pin assingments inputed by the user to the pixhawk as parameters
+        # TODO: Send the pin assignments inputed by the user to the pixhawk as parameters
         # https://wiki.ros.org/mavros/Plugins#param
         # https://ardupilot.org/copter/docs/parameters.html#servo10-parameters
         pass

@@ -93,7 +93,7 @@ class VehicleManagerNode(Node):
             self.get_logger().warn("Pi disconnected")
 
     def poll_subscribers(self) -> None:
-        # Whenever a node subscirbes to vehicle state updates, send the current state
+        # Whenever a node subscribes to vehicle state updates, send the current state
         subscriber_count = self.state_publisher.get_subscription_count()
         if subscriber_count > self.last_subscriber_count:
             # TODO debug messages seem broken
