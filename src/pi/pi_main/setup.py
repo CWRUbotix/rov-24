@@ -31,6 +31,7 @@ setup(
     entry_points={
         'console_scripts': [
             'install = pi_main.run_on_boot:main',
+            'ip_publisher = pi_main.ip_publisher:main'
         ],
     },
 )
