@@ -10,4 +10,4 @@ def test_app_instantiation(
     """Unit test for PilotApp instantiation."""
     app = PilotApp()
     app.show()
-    qtbot.addWiget(app)
+    qtbot.addWidget(app)
