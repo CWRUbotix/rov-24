@@ -39,7 +39,7 @@ class TimerNode(Node):
         timestamp = self.get_clock().now()
 
         if self.is_running and self.lastTimestamp is not None:
-            self.time_left -= (self.lastTimestamp - timestamp)
+            self.time_left = self.lastTimestamp + self.time_left - timestamp
 
             if self.time_left < Duration(seconds=0):
                 self.is_running = False
@@ -59,15 +59,17 @@ class TimerNode(Node):
 
         self.time_left = Duration.from_msg(request.set_time)
 
-        if request.stop_time:
+        if request.stop_timer:
             self.is_running = False
+
+        return response
 
     def set_running_callback(self, request: MissionTimerSetRunning.Request,
                              response: MissionTimerSetRunning.Response) -> None:
         timestamp = self.get_clock().now()
         if self.is_running and self.lastTimestamp is not None:
             self.time_left = max(
-                self.time_left - (self.lastTimestamp - timestamp),
+                self.lastTimestamp + self.time_left - timestamp,
                 Duration(seconds=0)
             )
 
@@ -75,6 +77,8 @@ class TimerNode(Node):
 
         self.is_running = request.set_running
         response.is_running = self.is_running
+
+        return response
 
 
 def run_timer() -> None:
