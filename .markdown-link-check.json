@@ -2,7 +2,7 @@
     "replacementPatterns": [
         {
             "pattern": "^/",
-            "replacement": "{{BASEURL}}/rov-24/doc/images"
+            "replacement": "{{BASEURL}}/rov-24/"
         }
     ]
 }

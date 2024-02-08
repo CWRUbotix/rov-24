@@ -29,10 +29,10 @@ WORKDIR /root/rov-24
 COPY . .
 
 # TODO for future nerd to do this via ENTRYPOINT which be better but, I could not get ENTRYPOINT to play with VsCODE.
-# shellcheck source=/rov-24/.vscode/rov_setup.sh
+# shellcheck source=/dev/null
 RUN source /root/rov-24/.vscode/rov_setup.sh \
 # Installs ROS and python dependencies
-# shellcheck source=/rov-24/.vscode/install_dependencies.sh
+# shellcheck source=/dev/null
  && source /root/rov-24/.vscode/install_dependencies.sh \
 # Builds package
 # shellcheck source=/dev/null
