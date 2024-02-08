@@ -1,19 +1,19 @@
 PRE_COMMANDS:
-- command: pip install ament-lint-pep257 ament-lint-flake8
+- command: pip install pytest ament-lint-pep257 ament-lint-flake8
   venv: pylint
-- command: pip install ament-lint-pep257 ament-lint-flake8
+- command: pip install pytest ament-lint-pep257 ament-lint-flake8
   venv: black
-- command: pip install ament-lint-pep257 ament-lint-flake8
+- command: pip install pytest ament-lint-pep257 ament-lint-flake8
   venv: flake8
-- command: pip install ament-lint-pep257 ament-lint-flake8
+- command: pip install pytest ament-lint-pep257 ament-lint-flake8
   venv: isort
-- command: pip install ament-lint-pep257 ament-lint-flake8
+- command: pip install pytest ament-lint-pep257 ament-lint-flake8
   venv: bandit
-- command: pip install ament-lint-pep257 ament-lint-flake8
+- command: pip install pytest ament-lint-pep257 ament-lint-flake8
   venv: mypy
-- command: pip install ament-lint-pep257 ament-lint-flake8
+- command: pip install pytest ament-lint-pep257 ament-lint-flake8
   venv: pyright
-- command: pip install ament-lint-pep257 ament-lint-flake8
+- command: pip install pytest ament-lint-pep257 ament-lint-flake8
   venv: ruff
 
 DISABLE:
