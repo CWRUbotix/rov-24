@@ -1,5 +1,5 @@
 PRE_COMMANDS:
-- command: pip install pyqt6 ament_pep257 ament_flake8
+- command: pip install PyQt6 ament_pep257 ament_flake8
   venv: mypy
 
 DISABLE:
