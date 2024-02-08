@@ -2,7 +2,7 @@
 
 import os
 import pathlib
-import subprocess
+import subprocess  # nosec
 import sys
 
 from ament_index_python.packages import get_package_share_directory
@@ -36,7 +36,7 @@ def main() -> None:
     cmd = ["/usr/bin/sudo", "/usr/bin/python3", udev_script, pi_main_share]
 
     try:
-        process = subprocess.run(cmd, capture_output=True, check=True)
+        process = subprocess.run(cmd, capture_output=True, check=True)  # nosec
     # Logs Error
     except subprocess.CalledProcessError as error:
         print(error.stderr)
