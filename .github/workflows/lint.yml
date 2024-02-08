@@ -34,7 +34,7 @@ jobs:
           VALIDATE_MARKDOWN: false
           # Currently running mypy on other linter and not running pylint at all
           # Would need to install lots of deps so runnning them here makes little sense.
-          VALIDATE_PYTHON_MYPY: false
+          # VALIDATE_PYTHON_MYPY: false
           VALIDATE_PYTHON_PYLINT: false
           # To report GitHub Actions status checks
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
