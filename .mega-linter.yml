@@ -1,0 +1,3 @@
+PRE_COMMANDS:
+- command: pip install pyqt6
+    venv: mypy
