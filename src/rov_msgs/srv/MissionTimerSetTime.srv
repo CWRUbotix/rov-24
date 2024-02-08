@@ -1,5 +1,5 @@
 # The new duration to set the timer to
-Duration set_time
+builtin_interfaces/Duration set_time
 # True to stop the timer, False to keep the current running state
 bool stop_timer true
 ---
