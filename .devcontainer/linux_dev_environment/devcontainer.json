@@ -1,5 +1,5 @@
 {
-    "name" : "ROV Linux Test",
+    "name": "ROV Linux Test",
     "build": {
         "dockerfile": "../../Dockerfile"
     },
@@ -10,10 +10,14 @@
     ],
     "workspaceFolder": "/root/rov-24",
     "customizations": {
-        "vscode" : {
-            "extensions": ["ms-python.flake8", "ms-azuretools.vscode-docker",
-                           "streetsidesoftware.code-spell-checker", "ms-python.python",
-                           "ms-python.mypy-type-checker"]
+        "vscode": {
+            "extensions": [
+                "ms-python.flake8",
+                "ms-azuretools.vscode-docker",
+                "streetsidesoftware.code-spell-checker",
+                "ms-python.python",
+                "ms-python.mypy-type-checker"
+            ]
         }
     },
     "privileged": true

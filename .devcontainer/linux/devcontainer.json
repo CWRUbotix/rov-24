@@ -1,5 +1,5 @@
 {
-    "name" : "ROV Linux",
+    "name": "ROV Linux",
     "image": "ghcr.io/cwrurobotics/rov-24:iron",
     "containerEnv": {
         "DISPLAY": "${localEnv:DISPLAY}"
@@ -11,10 +11,14 @@
     ],
     "workspaceFolder": "/root/rov-24",
     "customizations": {
-        "vscode" : {
-            "extensions": ["ms-python.flake8", "ms-azuretools.vscode-docker",
-                           "streetsidesoftware.code-spell-checker", "ms-python.python",
-                           "ms-python.mypy-type-checker"]
+        "vscode": {
+            "extensions": [
+                "ms-python.flake8",
+                "ms-azuretools.vscode-docker",
+                "streetsidesoftware.code-spell-checker",
+                "ms-python.python",
+                "ms-python.mypy-type-checker"
+            ]
         }
     },
     "privileged": true
