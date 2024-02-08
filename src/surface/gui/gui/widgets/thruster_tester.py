@@ -12,7 +12,7 @@ from PyQt6.QtWidgets import (QGridLayout, QLabel, QLineEdit, QPushButton,
 class ThrusterTester(QWidget):
     """Widget to command the pixhawk to test the thrusters, and reassign thruster ports."""
 
-    TEST_LENGTH: float = 2.0  # time between adjecent tests of individual thrusters
+    TEST_LENGTH: float = 2.0  # time between adjacent tests of individual thrusters
     TEST_THROTTLE: float = 0.50  # 50%
     MOTOR_COUNT = 8
 
@@ -63,7 +63,7 @@ class ThrusterTester(QWidget):
 
         test_button = QPushButton()
         test_button.setText("Test Thrusters")
-        test_button.clicked.connect(self.asnyc_send_message)
+        test_button.clicked.connect(self.async_send_message)
 
         layout.addWidget(heading)
         layout.addLayout(pin_numbers_grid)
@@ -105,7 +105,7 @@ class ThrusterTester(QWidget):
 
             time.sleep(0.05)
 
-    def asnyc_send_message(self) -> None:
+    def async_send_message(self) -> None:
         Thread(target=self.send_test_message, daemon=True, name="thruster_test_thread").start()
 
     def send_test_message(self) -> None:
@@ -115,7 +115,7 @@ class ThrusterTester(QWidget):
             self.test_motor_for_time(motor_index, 0.0, 0.5)
 
     def send_pin_assignments(self) -> None:
-        # TODO: Send the pin assingments inputed by the user to the pixhawk as parameters
+        # TODO: Send the pin assignments inputted by the user to the pixhawk as parameters
         # https://wiki.ros.org/mavros/Plugins#param
         # https://ardupilot.org/copter/docs/parameters.html#servo10-parameters
         pass
