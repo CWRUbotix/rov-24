@@ -91,6 +91,10 @@
                 }}
     
               GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+              PRE_COMMANDS:
+                - command: pip install pyqt6
+                  venv: mypy # Will be run within flake8 python virtualenv. There is one virtualenv per python-based linter, with the same name
     
               # ADD YOUR CUSTOM ENV VARIABLES HERE OR DEFINE THEM IN A FILE
               # .mega-linter.yml AT THE ROOT OF YOUR REPOSITORY
