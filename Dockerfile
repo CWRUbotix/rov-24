@@ -29,14 +29,16 @@ WORKDIR /root/rov-24
 COPY . .
 
 # TODO for future nerd to do this via ENTRYPOINT which be better but, I could not get ENTRYPOINT to play with VsCODE.
-RUN source /root/rov-24/.vscode/rov_setup.sh
-
+# shellcheck source=rov-24/.vscode/rov_setup.sh
+RUN source /root/rov-24/.vscode/rov_setup.sh \
 # Installs ROS and python dependencies
-RUN source /root/rov-24/.vscode/install_dependencies.sh
-
-RUN source /opt/ros/iron/setup.bash \
-    && PYTHONWARNINGS=ignore:::setuptools.command.install,ignore:::setuptools.command.easy_install,ignore:::pkg_resources; export PYTHONWARNINGS\
-    && colcon build --symlink-install
+# shellcheck source=rov-24/.vscode/install_dependencies.sh
+ && source /root/rov-24/.vscode/install_dependencies.sh \
+# Builds package
+# shellcheck source=/dev/null
+ && source /opt/ros/iron/setup.bash \
+ && PYTHONWARNINGS=ignore:::setuptools.command.install,ignore:::setuptools.command.easy_install,ignore:::pkg_resources; export PYTHONWARNINGS\
+ && colcon build --symlink-install
 
 # https://github.com/hadolint/hadolint/wiki/DL4006
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
