@@ -80,6 +80,7 @@
         "pyqt",
         "pyqtdarktheme",
         "pytest",
+        "pyright",
         "qdarktheme",
         "rclpy",
         "realsense",
