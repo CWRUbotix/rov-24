@@ -25,7 +25,9 @@ def generate_launch_description() -> LaunchDescription:
         executable="v4l2_camera_node",
         namespace="front_cam",
         parameters=[
-            {"video_device": "/dev/v4l/by-id/usb-3.0_USB_Camera_3.0_USB_Camera-video-index0"},
+            {
+                "video_device": "/dev/v4l/by-id/usb-3.0_USB_Camera_3.0_USB_Camera-video-index0"
+            },
             {"image_size": [640, 480]},
             {"time_per_frame": [1, 30]},
         ],
@@ -43,7 +45,8 @@ def generate_launch_description() -> LaunchDescription:
         parameters=[
             {
                 "video_device": (
-                    "/dev/v4l/by-id/usb-3.0_USB_Camera_3.0_USB_Camera" "_2020042501-video-index0"
+                    "/dev/v4l/by-id/usb-3.0_USB_Camera_3.0_USB_Camera"
+                    "_2020042501-video-index0"
                 )
             },
             {"image_size": [640, 480]},
