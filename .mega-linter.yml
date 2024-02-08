@@ -23,3 +23,5 @@ DISABLE_LINTERS:
   - PYTHON_PYLINT
   # MYPY is doing enough type checking
   - PYTHON_PYRIGHT
+  # Seems broken rn
+  - JSON_JSONLINT
