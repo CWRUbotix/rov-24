@@ -54,7 +54,7 @@ class TimerNode(Node):
         self.publisher.publish(msg)
 
     def set_time_callback(self, request: MissionTimerSetTime.Request,
-                          response: MissionTimerSetTime.Response) -> None:
+                          response: MissionTimerSetTime.Response) -> MissionTimerSetTime.Response:
         self.lastTimestamp = self.get_clock().now()
 
         self.time_left = Duration.from_msg(request.set_time)
@@ -67,7 +67,8 @@ class TimerNode(Node):
         return response
 
     def set_running_callback(self, request: MissionTimerSetRunning.Request,
-                             response: MissionTimerSetRunning.Response) -> None:
+                             response: MissionTimerSetRunning.Response
+                             ) -> MissionTimerSetRunning.Response:
         timestamp = self.get_clock().now()
         if self.is_running and self.lastTimestamp is not None:
             self.time_left = max(
