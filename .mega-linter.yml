@@ -1,3 +1,6 @@
 PRE_COMMANDS:
-- command: pip install pyqt6
+- command: pip install pyqt6  
   venv: mypy
+
+DISABLE:
+  - COPYPASTE
