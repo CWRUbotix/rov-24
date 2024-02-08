@@ -29,7 +29,7 @@ jobs:
         uses: super-linter/super-linter@v6.0.0  # x-release-please-version
         env:
           DEFAULT_BRANCH: origin/main
-          LINTER_RULES_PATH: '/github/workspace/'
+          LINTER_RULES_PATH: /
           VALIDATE_ANSIBLE: false
           # Would need to update our documentation format
           VALIDATE_MARKDOWN: false
