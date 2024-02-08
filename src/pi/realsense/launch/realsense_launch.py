@@ -1,14 +1,23 @@
+"""realsense_launch launch file."""
 import os
 
 from ament_index_python.packages import get_package_share_directory
-from launch import LaunchDescription
+from launch.launch_description import LaunchDescription
 from launch.actions import GroupAction, IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import SetRemap
 
 
-def generate_launch_description():
+def generate_launch_description() -> LaunchDescription:
+    """
+    Generate LaunchDescription for the realsense package.
 
+    Returns
+    -------
+    LaunchDescription
+        Launches realsense launch file.
+
+    """
     realsense_path: str = get_package_share_directory('realsense2_camera')
 
     # Launches Realsense
