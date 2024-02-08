@@ -1,0 +1,8 @@
+{
+    "replacementPatterns": [
+        {
+            "pattern": "^/images",
+            "replacement": "{{BASEURL}}/static/images"
+        }
+    ]
+}
