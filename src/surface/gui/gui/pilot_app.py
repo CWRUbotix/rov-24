@@ -1,10 +1,11 @@
 from gui.app import App
 from gui.widgets.arm import Arm
+from gui.widgets.timer import Timer
 from gui.widgets.flood_warning import FloodWarning
 from gui.widgets.video_widget import (CameraDescription, CameraType,
                                       SwitchableVideoWidget, VideoWidget)
 from PyQt6.QtCore import Qt
-from PyQt6.QtWidgets import QHBoxLayout, QVBoxLayout, QWidget
+from PyQt6.QtWidgets import QHBoxLayout, QVBoxLayout
 
 
 class PilotApp(App):
@@ -40,8 +41,8 @@ class PilotApp(App):
 
         bottom_screen_layout = QHBoxLayout()
 
-        place_holder = QWidget()
-        bottom_screen_layout.addWidget(place_holder)
+        timer = Timer()
+        bottom_screen_layout.addWidget(timer)
 
         flood_widget = FloodWarning()
         bottom_screen_layout.addWidget(flood_widget, alignment=Qt.AlignmentFlag.AlignHCenter |
