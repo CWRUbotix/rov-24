@@ -1,4 +1,5 @@
-# The number of seconds to set the timer to, default to 15 minutes
-float32 set_seconds 900
-# True to stop the timer, False to keep current runnning state
+# The new duration to set the timer to
+Duration set_time
+# True to stop the timer, False to keep the current running state
 bool stop_timer true
+---
