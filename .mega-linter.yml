@@ -16,8 +16,10 @@ PRE_COMMANDS:
 - command: pip install pytest ament-lint-pep257 ament-lint-flake8 flake8==4.0.1
   venv: ruff
 
-DISABLE_LINTERS:
+DISABLE:
   - COPYPASTE
+
+DISABLE_LINTERS:
   - PYTHON_PYLINT
   # MYPY is doing enough type checking
   - PYTHON_PYRIGHT
