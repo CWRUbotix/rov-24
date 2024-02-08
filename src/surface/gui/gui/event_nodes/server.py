@@ -3,9 +3,16 @@ import re
 from threading import Thread
 from typing import Callable
 
-from rclpy.executors import SingleThreadedExecutor
+from rclpy.executors import (
+    SingleThreadedExecutor,
+)
 from rclpy.node import Node
-from rclpy.service import Service, SrvType, SrvTypeRequest, SrvTypeResponse
+from rclpy.service import (
+    Service,
+    SrvType,
+    SrvTypeRequest,
+    SrvTypeResponse,
+)
 
 
 class GUIEventServer(Node):
@@ -15,7 +22,13 @@ class GUIEventServer(Node):
         self,
         srv_type: SrvType,
         topic: str,
-        callback: Callable[[SrvTypeRequest, SrvTypeResponse], SrvTypeResponse],
+        callback: Callable[
+            [
+                SrvTypeRequest,
+                SrvTypeResponse,
+            ],
+            SrvTypeResponse,
+        ],
     ):
         """
         Initialize this server with a CALLBACK for processing requests.
@@ -26,9 +39,17 @@ class GUIEventServer(Node):
         name: str = f'server_{re.sub(r"[^a-zA-Z0-9_]", "_", topic)}'
         super().__init__(name, parameter_overrides=[])
 
-        self.srv: Service = self.create_service(srv_type, topic, callback)
+        self.srv: Service = self.create_service(
+            srv_type,
+            topic,
+            callback,
+        )
 
         custom_executor = SingleThreadedExecutor()
         custom_executor.add_node(self)
-        Thread(target=custom_executor.spin, daemon=True, name=f"{name}_spin").start()
+        Thread(
+            target=custom_executor.spin,
+            daemon=True,
+            name=f"{name}_spin",
+        ).start()
         atexit.register(custom_executor.shutdown)

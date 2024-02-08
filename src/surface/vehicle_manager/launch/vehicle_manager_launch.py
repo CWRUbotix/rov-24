@@ -1,4 +1,6 @@
-from launch.launch_description import LaunchDescription
+from launch.launch_description import (
+    LaunchDescription,
+)
 from launch_ros.actions import Node
 
 
@@ -7,8 +9,14 @@ def generate_launch_description() -> LaunchDescription:
         package="vehicle_manager",
         executable="connection_manager_node",
         remappings=[
-            ("/surface/mavros/state", "/tether/mavros/state"),
-            ("/surface/pi_heartbeat", "/tether/pi_heartbeat"),
+            (
+                "/surface/mavros/state",
+                "/tether/mavros/state",
+            ),
+            (
+                "/surface/pi_heartbeat",
+                "/tether/pi_heartbeat",
+            ),
         ],
         emulate_tty=True,
         output="screen",

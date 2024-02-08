@@ -1,16 +1,30 @@
-from collections.abc import MutableSequence
+from collections.abc import (
+    MutableSequence,
+)
 
 import rclpy
-from flight_control.pixhawk_instruction import PixhawkInstruction
+from flight_control.pixhawk_instruction import (
+    PixhawkInstruction,
+)
 from mavros_msgs.msg import OverrideRCIn
-from rclpy.executors import MultiThreadedExecutor
+from rclpy.executors import (
+    MultiThreadedExecutor,
+)
 from rclpy.node import Node
 from rclpy.publisher import Publisher
-from rclpy.qos import qos_profile_sensor_data, qos_profile_system_default
-from rclpy.subscription import Subscription
+from rclpy.qos import (
+    qos_profile_sensor_data,
+    qos_profile_system_default,
+)
+from rclpy.subscription import (
+    Subscription,
+)
 from sensor_msgs.msg import Joy
 
-from rov_msgs.msg import CameraControllerSwitch, Manip
+from rov_msgs.msg import (
+    CameraControllerSwitch,
+    Manip,
+)
 
 # Button meanings for PS5 Control might be different for others
 X_BUTTON: int = 0  # Manipulator 0
@@ -41,24 +55,36 @@ DPADVERT: int = 7
 
 class ManualControlNode(Node):
     def __init__(self) -> None:
-        super().__init__("manual_control_node", parameter_overrides=[])
+        super().__init__(
+            "manual_control_node",
+            parameter_overrides=[],
+        )
 
         self.rc_pub: Publisher = self.create_publisher(
-            OverrideRCIn, "mavros/rc/override", qos_profile_system_default
+            OverrideRCIn,
+            "mavros/rc/override",
+            qos_profile_system_default,
         )
 
         self.subscription: Subscription = self.create_subscription(
-            Joy, "joy", self.controller_callback, qos_profile_sensor_data
+            Joy,
+            "joy",
+            self.controller_callback,
+            qos_profile_sensor_data,
         )
 
         # Manipulators
         self.manip_publisher: Publisher = self.create_publisher(
-            Manip, "manipulator_control", qos_profile_system_default
+            Manip,
+            "manipulator_control",
+            qos_profile_system_default,
         )
 
         # Cameras
         self.camera_toggle_publisher = self.create_publisher(
-            CameraControllerSwitch, "camera_switch", qos_profile_system_default
+            CameraControllerSwitch,
+            "camera_switch",
+            qos_profile_system_default,
         )
 
         self.manip_buttons: dict[int, ManipButton] = {
@@ -96,7 +122,10 @@ class ManualControlNode(Node):
     def manip_callback(self, msg: Joy) -> None:
         buttons: MutableSequence[int] = msg.buttons
 
-        for button_id, manip_button in self.manip_buttons.items():
+        for (
+            button_id,
+            manip_button,
+        ) in self.manip_buttons.items():
             just_pressed: bool = False
 
             if buttons[button_id] == 1:
@@ -110,7 +139,8 @@ class ManualControlNode(Node):
                 self.get_logger().info(log_msg)
 
                 manip_msg: Manip = Manip(
-                    manip_id=manip_button.claw, activated=manip_button.is_active
+                    manip_id=manip_button.claw,
+                    activated=manip_button.is_active,
                 )
                 self.manip_publisher.publish(manip_msg)
 
@@ -143,4 +173,7 @@ def main() -> None:
     rclpy.init()
     manual_control = ManualControlNode()
     executor = MultiThreadedExecutor()
-    rclpy.spin(manual_control, executor=executor)
+    rclpy.spin(
+        manual_control,
+        executor=executor,
+    )

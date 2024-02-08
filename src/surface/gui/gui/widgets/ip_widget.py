@@ -1,19 +1,31 @@
-from gui.event_nodes.subscriber import GUIEventSubscriber
-from PyQt6.QtCore import pyqtSignal, pyqtSlot
-from PyQt6.QtWidgets import QLabel, QVBoxLayout, QWidget
+from gui.event_nodes.subscriber import (
+    GUIEventSubscriber,
+)
+from PyQt6.QtCore import (
+    pyqtSignal,
+    pyqtSlot,
+)
+from PyQt6.QtWidgets import (
+    QLabel,
+    QVBoxLayout,
+    QWidget,
+)
 
 from rov_msgs.msg import IPAddress
 
 
 class IPWidget(QWidget):
-
     signal = pyqtSignal(IPAddress)
 
     def __init__(self) -> None:
         super().__init__()
 
         self.signal.connect(self.refresh)
-        self.sub = GUIEventSubscriber(IPAddress, "ip_address", self.signal)
+        self.sub = GUIEventSubscriber(
+            IPAddress,
+            "ip_address",
+            self.signal,
+        )
 
         ip_layout = QVBoxLayout()
         wired_str = f"Last known Pi Wired IP: {IPAddress.ETHERNET_ADDRESS__DEFAULT}"

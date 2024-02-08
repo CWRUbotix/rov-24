@@ -6,4 +6,4 @@ shfmt -w .
 # Cleans Python files
 isort .
 black --config .python-black .
-ruff --fix .
+ruff format

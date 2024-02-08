@@ -1,9 +1,17 @@
 from gui.widgets.arm import Arm
-from gui.widgets.ip_widget import IPWidget
+from gui.widgets.ip_widget import (
+    IPWidget,
+)
 from gui.widgets.logger import Logger
-from gui.widgets.thruster_tester import ThrusterTester
+from gui.widgets.thruster_tester import (
+    ThrusterTester,
+)
 from PyQt6.QtCore import Qt
-from PyQt6.QtWidgets import QHBoxLayout, QVBoxLayout, QWidget
+from PyQt6.QtWidgets import (
+    QHBoxLayout,
+    QVBoxLayout,
+    QWidget,
+)
 
 
 class DebugWidget(QWidget):
@@ -12,7 +20,8 @@ class DebugWidget(QWidget):
 
         top_bar = QHBoxLayout()
         top_bar.addWidget(
-            IPWidget(), alignment=Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignLeft
+            IPWidget(),
+            alignment=Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignLeft,
         )
 
         right_bar = QVBoxLayout()

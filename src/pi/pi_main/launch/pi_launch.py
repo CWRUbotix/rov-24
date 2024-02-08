@@ -2,11 +2,23 @@
 
 import os
 
-from ament_index_python.packages import get_package_share_directory
-from launch.actions import GroupAction, IncludeLaunchDescription
-from launch.launch_description import LaunchDescription
-from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch_ros.actions import Node, PushRosNamespace
+from ament_index_python.packages import (
+    get_package_share_directory,
+)
+from launch.actions import (
+    GroupAction,
+    IncludeLaunchDescription,
+)
+from launch.launch_description import (
+    LaunchDescription,
+)
+from launch.launch_description_sources import (
+    PythonLaunchDescriptionSource,
+)
+from launch_ros.actions import (
+    Node,
+    PushRosNamespace,
+)
 
 
 def generate_launch_description() -> LaunchDescription:
@@ -48,7 +60,11 @@ def generate_launch_description() -> LaunchDescription:
     pixhawk_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             [
-                os.path.join(pixhawk_path, "launch", "mavros_launch.py"),
+                os.path.join(
+                    pixhawk_path,
+                    "launch",
+                    "mavros_launch.py",
+                ),
             ]
         )
     )
@@ -58,7 +74,13 @@ def generate_launch_description() -> LaunchDescription:
 
     heartbeat_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            [os.path.join(heartbeat_path, "launch", "heartbeat_launch.py")]
+            [
+                os.path.join(
+                    heartbeat_path,
+                    "launch",
+                    "heartbeat_launch.py",
+                )
+            ]
         )
     )
 
@@ -80,7 +102,12 @@ def generate_launch_description() -> LaunchDescription:
         executable="ip_publisher",
         emulate_tty=True,
         output="screen",
-        remappings=[("/pi/ip_address", "/tether/ip_address")],
+        remappings=[
+            (
+                "/pi/ip_address",
+                "/tether/ip_address",
+            )
+        ],
     )
 
     namespace_launch = GroupAction(

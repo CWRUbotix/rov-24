@@ -5,7 +5,9 @@ import pathlib
 import subprocess  # nosec
 import sys
 
-from ament_index_python.packages import get_package_share_directory
+from ament_index_python.packages import (
+    get_package_share_directory,
+)
 from robot_upstart.job import Job
 
 
@@ -33,10 +35,19 @@ def main() -> None:
     file_location = pathlib.Path(__file__).parent.resolve()
     udev_script = os.path.join(file_location, "udev_copy.py")
 
-    cmd = ["/usr/bin/sudo", "/usr/bin/python3", udev_script, pi_main_share]
+    cmd = [
+        "/usr/bin/sudo",
+        "/usr/bin/python3",
+        udev_script,
+        pi_main_share,
+    ]
 
     try:
-        process = subprocess.run(cmd, capture_output=True, check=True)  # nosec
+        process = subprocess.run(
+            cmd,
+            capture_output=True,
+            check=True,
+        )  # nosec
     # Logs Error
     except subprocess.CalledProcessError as error:
         print(error.stderr)
@@ -49,8 +60,14 @@ def main() -> None:
     workspace_path = os.path.join(install_path, "setup.bash")
     clean_path = os.path.normpath(workspace_path)
 
-    cwrubotix_job = Job(name="cwrubotix_pi", workspace_setup=clean_path)
+    cwrubotix_job = Job(
+        name="cwrubotix_pi",
+        workspace_setup=clean_path,
+    )
     cwrubotix_job.symlink = True
     cwrubotix_job.uninstall()
-    cwrubotix_job.add(package="pi_main", filename="launch/pi.launch.py")
+    cwrubotix_job.add(
+        package="pi_main",
+        filename="launch/pi.launch.py",
+    )
     cwrubotix_job.install()

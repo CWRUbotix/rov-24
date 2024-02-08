@@ -1,7 +1,10 @@
 import os
 from glob import glob
 
-from setuptools import find_packages, setup
+from setuptools import (
+    find_packages,
+    setup,
+)
 
 PACKAGE_NAME = "heartbeat"
 
@@ -10,11 +13,21 @@ setup(
     version="1.0.0",
     packages=find_packages(exclude=["test"]),
     data_files=[
-        ("share/ament_index/resource_index/packages", ["resource/" + PACKAGE_NAME]),
-        ("share/" + PACKAGE_NAME, ["package.xml"]),
+        (
+            "share/ament_index/resource_index/packages",
+            ["resource/" + PACKAGE_NAME],
+        ),
+        (
+            "share/" + PACKAGE_NAME,
+            ["package.xml"],
+        ),
         # Include all launch files.
         (
-            os.path.join("share", PACKAGE_NAME, "launch"),
+            os.path.join(
+                "share",
+                PACKAGE_NAME,
+                "launch",
+            ),
             glob("launch/*launch.[pxy][yma]*"),
         ),
     ],
