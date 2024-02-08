@@ -3,3 +3,5 @@ builtin_interfaces/Duration set_time
 # True to stop the timer, False to keep the current running state
 bool stop_timer true
 ---
+# The new running state
+bool is_running

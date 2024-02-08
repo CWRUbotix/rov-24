@@ -62,6 +62,8 @@ class TimerNode(Node):
         if request.stop_timer:
             self.is_running = False
 
+        response.is_running = self.is_running
+
         return response
 
     def set_running_callback(self, request: MissionTimerSetRunning.Request,
