@@ -21,10 +21,15 @@ class floodDetector(Node):
         lgpio.gpio_claim_input(h, detect1)
         lgpio.gpio_claim_input(h, detect2)
         lgpio.gpio_claim_input(h, detect3)
+
         # Read Data
-        # data1 = lgpio.gpio_read(h, detect1)
-        # data2 = lgpio.gpio_read(h, detect2)
-        # data3 = lgpio.gpio_read(h, detect3)
+        data1 = lgpio.gpio_read(h, detect1)
+        data2 = lgpio.gpio_read(h, detect2)
+        data3 = lgpio.gpio_read(h, detect3)
+
+        print("Pin 2: %s" % data1)
+        print("Pin 4: %s" % data2)
+        print("Pin 6: %s" % data3)
 
         # If any of the sensors detect water, send true to /tether/flooding
 
