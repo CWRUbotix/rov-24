@@ -1,0 +1,5 @@
+# True to start, False to stop
+bool set_running
+---
+# The new running state
+bool is_running
