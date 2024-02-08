@@ -23,10 +23,16 @@ def generate_launch_description() -> LaunchDescription:
         output='screen'
     )
 
+    timer_node: Node = Node(
+        package='gui',
+        executable='run_timer'
+    )
+
     namespace_launch = GroupAction(
         actions=[
             PushRosNamespace('gui'),
-            gui_node
+            gui_node,
+            timer_node
         ]
     )
 
