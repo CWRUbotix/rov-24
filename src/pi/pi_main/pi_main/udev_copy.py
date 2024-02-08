@@ -10,5 +10,9 @@ if __name__ == "__main__":
     udev_src_dir = os.path.join(SHARE_DIR, "udev_rules")
     udev_dst_dir = os.path.join("/etc", "udev", "rules.d")
 
-    shutil.copytree(udev_src_dir, udev_dst_dir, dirs_exist_ok=True)
+    shutil.copytree(
+        udev_src_dir,
+        udev_dst_dir,
+        dirs_exist_ok=True,
+    )
     print("Copying udev rules.")

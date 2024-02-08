@@ -1,9 +1,17 @@
 import os
 
-from ament_index_python.packages import get_package_share_directory
-from launch.actions import IncludeLaunchDescription
-from launch.launch_description import LaunchDescription
-from launch.launch_description_sources import PythonLaunchDescriptionSource
+from ament_index_python.packages import (
+    get_package_share_directory,
+)
+from launch.actions import (
+    IncludeLaunchDescription,
+)
+from launch.launch_description import (
+    LaunchDescription,
+)
+from launch.launch_description_sources import (
+    PythonLaunchDescriptionSource,
+)
 from launch.substitutions import Command
 from launch_ros.actions import Node
 
@@ -15,14 +23,26 @@ def generate_launch_description() -> LaunchDescription:
     ros_gz_sim_path: str = get_package_share_directory("ros_gz_sim")
     surface_main_path: str = get_package_share_directory("surface_main")
 
-    world_path: str = os.path.join(rov_gazebo_path, "worlds", "world.sdf")
+    world_path: str = os.path.join(
+        rov_gazebo_path,
+        "worlds",
+        "world.sdf",
+    )
 
     # Process the URDF file
-    xacro_file = os.path.join(rov_gazebo_path, "description", "rov.xacro")
+    xacro_file = os.path.join(
+        rov_gazebo_path,
+        "description",
+        "rov.xacro",
+    )
     robot_description = Command(["xacro ", xacro_file])
     params = {"robot_description": robot_description}
 
-    pool_file = os.path.join(rov_gazebo_path, "description", "pool.xacro")
+    pool_file = os.path.join(
+        rov_gazebo_path,
+        "description",
+        "pool.xacro",
+    )
     pool_description = Command(["xacro ", pool_file])
     pool_params = {"robot_description": pool_description}
 
@@ -42,14 +62,25 @@ def generate_launch_description() -> LaunchDescription:
         output="screen",
         parameters=[pool_params],
         namespace=NAMESPACE,
-        remappings=[(f"/{NAMESPACE}/robot_description", f"/{NAMESPACE}/pool_description")],
+        remappings=[
+            (
+                f"/{NAMESPACE}/robot_description",
+                f"/{NAMESPACE}/pool_description",
+            )
+        ],
         emulate_tty=True,
     )
 
     # Launches Gazebo
     gazeboLaunch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            [os.path.join(ros_gz_sim_path, "launch", "gz_sim.launch.py")]
+            [
+                os.path.join(
+                    ros_gz_sim_path,
+                    "launch",
+                    "gz_sim.launch.py",
+                )
+            ]
         ),
         launch_arguments={"gz_args": world_path}.items(),
     )
@@ -97,7 +128,12 @@ def generate_launch_description() -> LaunchDescription:
         output="screen",
         name="keyboard_driver_node",
         namespace=NAMESPACE,
-        remappings=[(f"/{NAMESPACE}/manual_control", "/manual_control")],
+        remappings=[
+            (
+                f"/{NAMESPACE}/manual_control",
+                "/manual_control",
+            )
+        ],
         emulate_tty=True,
     )
 
@@ -131,7 +167,13 @@ def generate_launch_description() -> LaunchDescription:
     # Launches Controller
     surface_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            [os.path.join(surface_main_path, "launch", "surface_all_nodes_launch.py")]
+            [
+                os.path.join(
+                    surface_main_path,
+                    "launch",
+                    "surface_all_nodes_launch.py",
+                )
+            ]
         ),
     )
 

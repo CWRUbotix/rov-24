@@ -4,19 +4,27 @@ import struct
 
 import rclpy
 from rclpy.node import Node
-from rclpy.qos import qos_profile_system_default
+from rclpy.qos import (
+    qos_profile_system_default,
+)
 
 from rov_msgs.msg import IPAddress
 
 
 class IPPublisher(Node):
-
     def __init__(self) -> None:
         """Create IP Publisher node."""
         super().__init__("ip_publisher")
-        self.publisher = self.create_publisher(IPAddress, "ip_address", qos_profile_system_default)
+        self.publisher = self.create_publisher(
+            IPAddress,
+            "ip_address",
+            qos_profile_system_default,
+        )
         timer_period = 0.5  # seconds
-        self.create_timer(timer_period, self.timer_callback)
+        self.create_timer(
+            timer_period,
+            self.timer_callback,
+        )
         self.failed_ethernet = False
         self.failed_wireless = False
 
@@ -44,10 +52,22 @@ class IPPublisher(Node):
 
 
 # https://stackoverflow.com/questions/24196932/how-can-i-get-the-ip-address-from-a-nic-network-interface-controller-in-python
-def get_ip_address(ifname: str = "eth0") -> str:
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+def get_ip_address(
+    ifname: str = "eth0",
+) -> str:
+    s = socket.socket(
+        socket.AF_INET,
+        socket.SOCK_DGRAM,
+    )
     return socket.inet_ntoa(
-        fcntl.ioctl(s.fileno(), 0x8915, struct.pack("256s", ifname[:15].encode()))[  # SIOCGIFADDR
+        fcntl.ioctl(
+            s.fileno(),
+            0x8915,
+            struct.pack(
+                "256s",
+                ifname[:15].encode(),
+            ),
+        )[  # SIOCGIFADDR
             20:24
         ]
     )

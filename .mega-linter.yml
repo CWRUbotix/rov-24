@@ -1,0 +1,27 @@
+PRE_COMMANDS:
+# - command: pip install pytest ament-lint-pep257 ament-lint-flake8 flake8==4.0.1
+#   venv: pylint
+- command: pip install --upgrade setuptools pip && pip install pytest ament-lint-pep257 ament-lint-flake8 flake8==4.0.1 pyqt6==6.6.0
+  venv: black
+- command: pip install --upgrade setuptools pip && pip install pytest ament-lint-pep257 ament-lint-flake8 flake8==4.0.1 pyqt6==6.6.0
+  venv: flake8
+- command: pip install --upgrade setuptools pip && pip install pytest ament-lint-pep257 ament-lint-flake8 flake8==4.0.1 pyqt6==6.6.0
+  venv: isort
+- command: pip install --upgrade setuptools pip && pip install pytest ament-lint-pep257 ament-lint-flake8 flake8==4.0.1 pyqt6==6.6.0
+  venv: bandit
+- command: pip install --upgrade setuptools pip && pip install pytest ament-lint-pep257 ament-lint-flake8 flake8==4.0.1 pyqt6==6.6.0
+  venv: mypy
+# - command: pip install pytest ament-lint-pep257 ament-lint-flake8 flake8==4.0.1
+#   venv: pyright
+- command: pip install pytest ament-lint-pep257 ament-lint-flake8 flake8==4.0.1 pyqt6
+  venv: ruff
+
+DISABLE:
+  - COPYPASTE
+
+DISABLE_LINTERS:
+  - PYTHON_PYLINT
+  # MYPY is doing enough type checking
+  - PYTHON_PYRIGHT
+  # Seems broken rn
+  - JSON_JSONLINT

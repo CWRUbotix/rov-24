@@ -1,9 +1,22 @@
-from gui.event_nodes.client import GUIEventClient
-from gui.event_nodes.subscriber import GUIEventSubscriber
-from gui.styles.custom_styles import WidgetState
+from gui.event_nodes.client import (
+    GUIEventClient,
+)
+from gui.event_nodes.subscriber import (
+    GUIEventSubscriber,
+)
+from gui.styles.custom_styles import (
+    WidgetState,
+)
 from mavros_msgs.srv import CommandBool
-from PyQt6.QtCore import pyqtSignal, pyqtSlot
-from PyQt6.QtWidgets import QHBoxLayout, QPushButton, QWidget
+from PyQt6.QtCore import (
+    pyqtSignal,
+    pyqtSlot,
+)
+from PyQt6.QtWidgets import (
+    QHBoxLayout,
+    QPushButton,
+    QWidget,
+)
 
 from rov_msgs.msg import VehicleState
 
@@ -21,7 +34,6 @@ class Arm(QWidget):
     vehicle_state_signal = pyqtSignal(VehicleState)
 
     def __init__(self) -> None:
-
         super().__init__()
 
         layout = QHBoxLayout()
@@ -41,8 +53,14 @@ class Arm(QWidget):
 
         self.arm_button.setStyleSheet(self.BUTTON_STYLESHEET)
         self.disarm_button.setStyleSheet(self.BUTTON_STYLESHEET)
-        self.arm_button.setProperty(WidgetState.PROPERTY_NAME, WidgetState.INACTIVE)
-        self.disarm_button.setProperty(WidgetState.PROPERTY_NAME, WidgetState.INACTIVE)
+        self.arm_button.setProperty(
+            WidgetState.PROPERTY_NAME,
+            WidgetState.INACTIVE,
+        )
+        self.disarm_button.setProperty(
+            WidgetState.PROPERTY_NAME,
+            WidgetState.INACTIVE,
+        )
 
         self.arm_button.clicked.connect(self.arm_clicked)
         self.disarm_button.clicked.connect(self.disarm_clicked)
@@ -82,16 +100,37 @@ class Arm(QWidget):
     def vehicle_state_callback(self, msg: VehicleState) -> None:
         if msg.pixhawk_connected:
             if msg.armed:
-                self.arm_button.setProperty(WidgetState.PROPERTY_NAME, WidgetState.ON)
-                self.disarm_button.setProperty(WidgetState.PROPERTY_NAME, "")
+                self.arm_button.setProperty(
+                    WidgetState.PROPERTY_NAME,
+                    WidgetState.ON,
+                )
+                self.disarm_button.setProperty(
+                    WidgetState.PROPERTY_NAME,
+                    "",
+                )
             else:
-                self.arm_button.setProperty(WidgetState.PROPERTY_NAME, "")
-                self.disarm_button.setProperty(WidgetState.PROPERTY_NAME, WidgetState.OFF)
+                self.arm_button.setProperty(
+                    WidgetState.PROPERTY_NAME,
+                    "",
+                )
+                self.disarm_button.setProperty(
+                    WidgetState.PROPERTY_NAME,
+                    WidgetState.OFF,
+                )
         else:
-            self.arm_button.setProperty(WidgetState.PROPERTY_NAME, WidgetState.INACTIVE)
-            self.disarm_button.setProperty(WidgetState.PROPERTY_NAME, WidgetState.INACTIVE)
+            self.arm_button.setProperty(
+                WidgetState.PROPERTY_NAME,
+                WidgetState.INACTIVE,
+            )
+            self.disarm_button.setProperty(
+                WidgetState.PROPERTY_NAME,
+                WidgetState.INACTIVE,
+            )
 
-        for button in (self.arm_button, self.disarm_button):
+        for button in (
+            self.arm_button,
+            self.disarm_button,
+        ):
             style = button.style()
             if style is not None:
                 style.polish(button)

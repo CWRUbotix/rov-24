@@ -1,11 +1,23 @@
 import time
 from threading import Thread
 
-from gui.event_nodes.client import GUIEventClient
+from gui.event_nodes.client import (
+    GUIEventClient,
+)
 from mavros_msgs.srv import CommandLong
-from PyQt6.QtCore import pyqtSignal, pyqtSlot
+from PyQt6.QtCore import (
+    pyqtSignal,
+    pyqtSlot,
+)
 from PyQt6.QtGui import QIntValidator
-from PyQt6.QtWidgets import QGridLayout, QLabel, QLineEdit, QPushButton, QVBoxLayout, QWidget
+from PyQt6.QtWidgets import (
+    QGridLayout,
+    QLabel,
+    QLineEdit,
+    QPushButton,
+    QVBoxLayout,
+    QWidget,
+)
 
 
 class ThrusterTester(QWidget):
@@ -21,7 +33,9 @@ class ThrusterTester(QWidget):
         super().__init__()
 
         self.cmd_client: GUIEventClient = GUIEventClient(
-            CommandLong, "mavros/cmd/command", self.command_response_signal
+            CommandLong,
+            "mavros/cmd/command",
+            self.command_response_signal,
         )
         self.command_response_signal.connect(self.command_response_handler)
 
@@ -49,7 +63,11 @@ class ThrusterTester(QWidget):
             column = 1 if on_first_column else 4
             row = i if on_first_column else i - self.MOTOR_COUNT // 2
             pin_numbers_grid.addWidget(pin_label, row, column)
-            pin_numbers_grid.addWidget(pin_input, row, column + 1)
+            pin_numbers_grid.addWidget(
+                pin_input,
+                row,
+                column + 1,
+            )
 
         pin_numbers_grid.setColumnStretch(0, 1)
         pin_numbers_grid.setColumnStretch(3, 1)
@@ -67,7 +85,12 @@ class ThrusterTester(QWidget):
         layout.addWidget(pin_assignment_button)
         layout.addWidget(test_button)
 
-    def test_motor_for_time(self, motor_index: int, throttle: float, duration: float) -> None:
+    def test_motor_for_time(
+        self,
+        motor_index: int,
+        throttle: float,
+        duration: float,
+    ) -> None:
         """
         Run a motor for an (approximate) length of time (blocking).
 
@@ -102,17 +125,29 @@ class ThrusterTester(QWidget):
 
             time.sleep(0.05)
 
-    def async_send_message(self) -> None:
-        Thread(target=self.send_test_message, daemon=True, name="thruster_test_thread").start()
+    def async_send_message(
+        self,
+    ) -> None:
+        Thread(
+            target=self.send_test_message,
+            daemon=True,
+            name="thruster_test_thread",
+        ).start()
 
     def send_test_message(self) -> None:
         for motor_index in range(0, self.MOTOR_COUNT):
             self.cmd_client.get_logger().info(f"Testing thruster {motor_index}")
-            self.test_motor_for_time(motor_index, self.TEST_THROTTLE, self.TEST_LENGTH)
+            self.test_motor_for_time(
+                motor_index,
+                self.TEST_THROTTLE,
+                self.TEST_LENGTH,
+            )
             self.test_motor_for_time(motor_index, 0.0, 0.5)
 
-    def send_pin_assignments(self) -> None:
-        # TODO: Send the pin assingments inputed by the user to the pixhawk as parameters
+    def send_pin_assignments(
+        self,
+    ) -> None:
+        # TODO: Send the pin assignments inputed by the user to the pixhawk as parameters
         # https://wiki.ros.org/mavros/Plugins#param
         # https://ardupilot.org/copter/docs/parameters.html#servo10-parameters
         pass

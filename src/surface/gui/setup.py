@@ -16,16 +16,40 @@ setup(
         os.path.join(PACKAGE_NAME, "event_nodes"),
     ],
     data_files=[
-        ("share/ament_index/resource_index/packages", ["resource/" + PACKAGE_NAME]),
-        ("share/" + PACKAGE_NAME, ["package.xml"]),
+        (
+            "share/ament_index/resource_index/packages",
+            ["resource/" + PACKAGE_NAME],
+        ),
+        (
+            "share/" + PACKAGE_NAME,
+            ["package.xml"],
+        ),
         # Include all launch files.
         (
-            os.path.join("share", PACKAGE_NAME, "launch"),
+            os.path.join(
+                "share",
+                PACKAGE_NAME,
+                "launch",
+            ),
             glob("launch/*launch.[pxy][yma]*"),
         ),
         # Include all style files.
-        (os.path.join("share", PACKAGE_NAME, "styles"), glob("gui/styles/*.py")),
-        (os.path.join("share", PACKAGE_NAME, "styles"), glob("gui/styles/*.qss")),
+        (
+            os.path.join(
+                "share",
+                PACKAGE_NAME,
+                "styles",
+            ),
+            glob("gui/styles/*.py"),
+        ),
+        (
+            os.path.join(
+                "share",
+                PACKAGE_NAME,
+                "styles",
+            ),
+            glob("gui/styles/*.qss"),
+        ),
     ],
     install_requires=[
         "setuptools",
@@ -43,7 +67,11 @@ setup(
     maintainer_email="bwp18@case.edu",
     description="MATE ROV GUI and related ROS nodes",
     license="Apache License 2.0",
-    tests_require=["pytest", "pytest-qt", "pytest-xvfb"],
+    tests_require=[
+        "pytest",
+        "pytest-qt",
+        "pytest-xvfb",
+    ],
     entry_points={
         "console_scripts": [
             "run_pilot = gui.pilot_app:run_gui_pilot",

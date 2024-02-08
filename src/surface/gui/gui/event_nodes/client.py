@@ -3,7 +3,11 @@ from threading import Thread
 
 import rclpy
 from PyQt6.QtCore import pyqtBoundSignal
-from rclpy.client import Client, SrvType, SrvTypeRequest
+from rclpy.client import (
+    Client,
+    SrvType,
+    SrvTypeRequest,
+)
 from rclpy.node import Node
 
 
@@ -22,10 +26,12 @@ class GUIEventClient(Node):
         timeout: float = 3.0,
         expected_namespace: str = "/surface/gui",
     ) -> None:
-
         # Name this node with a sanitized version of the topic
         self.name: str = f'client_{re.sub(r"[^a-zA-Z0-9_]", "_", topic)}'
-        super().__init__(self.name, parameter_overrides=[])
+        super().__init__(
+            self.name,
+            parameter_overrides=[],
+        )
 
         self.srv_type = srv_type
         self.topic: str = topic
@@ -40,7 +46,9 @@ class GUIEventClient(Node):
             name=f"{self.name}_connect_to_service",
         ).start()
 
-    def __connect_to_service(self) -> None:
+    def __connect_to_service(
+        self,
+    ) -> None:
         """Connect this client to a server in a separate thread."""
         while not self.cli.wait_for_service(timeout_sec=self.timeout):
             self.get_logger().info(
@@ -60,7 +68,11 @@ class GUIEventClient(Node):
     def __send_request_with_signal(self, request: SrvTypeRequest) -> None:
         """Send synchronous request to server and emit signal."""
         future = self.cli.call_async(request)
-        rclpy.spin_until_future_complete(self, future, timeout_sec=self.timeout)
+        rclpy.spin_until_future_complete(
+            self,
+            future,
+            timeout_sec=self.timeout,
+        )
 
         try:
             result = future.result()

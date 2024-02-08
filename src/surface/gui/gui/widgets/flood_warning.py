@@ -1,20 +1,32 @@
-from gui.event_nodes.subscriber import GUIEventSubscriber
-from PyQt6.QtCore import pyqtSignal, pyqtSlot
+from gui.event_nodes.subscriber import (
+    GUIEventSubscriber,
+)
+from PyQt6.QtCore import (
+    pyqtSignal,
+    pyqtSlot,
+)
 from PyQt6.QtGui import QFont
-from PyQt6.QtWidgets import QLabel, QVBoxLayout, QWidget
+from PyQt6.QtWidgets import (
+    QLabel,
+    QVBoxLayout,
+    QWidget,
+)
 
 from rov_msgs.msg import Flooding
 
 
 class FloodWarning(QWidget):
-
     signal: pyqtSignal = pyqtSignal(Flooding)
 
     def __init__(self) -> None:
         super().__init__()
 
         self.signal.connect(self.refresh)
-        self.subscription = GUIEventSubscriber(Flooding, "flooding", self.signal)
+        self.subscription = GUIEventSubscriber(
+            Flooding,
+            "flooding",
+            self.signal,
+        )
         # Create a latch variable
         self.warning_msg_latch: bool = False
         # Create basic 2 vertical stacked boxes layout

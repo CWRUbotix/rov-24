@@ -1,8 +1,20 @@
-from gui.event_nodes.client import GUIEventClient
-from PyQt6.QtCore import pyqtSignal, pyqtSlot
-from PyQt6.QtWidgets import QGridLayout, QLabel, QPushButton, QWidget
+from gui.event_nodes.client import (
+    GUIEventClient,
+)
+from PyQt6.QtCore import (
+    pyqtSignal,
+    pyqtSlot,
+)
+from PyQt6.QtWidgets import (
+    QGridLayout,
+    QLabel,
+    QPushButton,
+    QWidget,
+)
 
-from rov_msgs.srv import AutonomousFlight
+from rov_msgs.srv import (
+    AutonomousFlight,
+)
 
 WIDTH = 200
 
@@ -44,7 +56,9 @@ class TaskSelector(QWidget):
 
         self.scheduler_response_signal.connect(self.handle_scheduler_response)
         self.task_controller: GUIEventClient = GUIEventClient(
-            AutonomousFlight, "auto_docker_control", self.scheduler_response_signal
+            AutonomousFlight,
+            "auto_docker_control",
+            self.scheduler_response_signal,
         )
 
     def start_btn_clicked(self) -> None:
@@ -64,7 +78,10 @@ class TaskSelector(QWidget):
         self.task_controller.send_request_async(AutonomousFlight.Request(start=False))
 
     @pyqtSlot(AutonomousFlight.Response)
-    def handle_scheduler_response(self, response: AutonomousFlight.Response) -> None:
+    def handle_scheduler_response(
+        self,
+        response: AutonomousFlight.Response,
+    ) -> None:
         """Handle scheduler response to request sent from gui_changed_task."""
         msg = "Auto docking is "
         if response.is_running:

@@ -3,12 +3,18 @@ from dataclasses import dataclass
 
 import rclpy
 from mavros_msgs.msg import State
-from rclpy.executors import MultiThreadedExecutor
+from rclpy.executors import (
+    MultiThreadedExecutor,
+)
 from rclpy.node import Node
-from rclpy.qos import qos_profile_system_default
+from rclpy.qos import (
+    qos_profile_system_default,
+)
 
 from rov_msgs.msg import Heartbeat
-from rov_msgs.msg import VehicleState as VehicleStateMsg
+from rov_msgs.msg import (
+    VehicleState as VehicleStateMsg,
+)
 
 PI_TIMEOUT = 1  # Seconds
 
@@ -22,21 +28,35 @@ class VehicleState:
 
 class VehicleManagerNode(Node):
     def __init__(self) -> None:
-        super().__init__("connection_manager_node", parameter_overrides=[])
+        super().__init__(
+            "connection_manager_node",
+            parameter_overrides=[],
+        )
 
         self.state_publisher = self.create_publisher(
-            VehicleStateMsg, "vehicle_state_event", qos_profile_system_default
+            VehicleStateMsg,
+            "vehicle_state_event",
+            qos_profile_system_default,
         )
 
         self.mavros_subscription = self.create_subscription(
-            State, "mavros/state", self.mavros_callback, 10
+            State,
+            "mavros/state",
+            self.mavros_callback,
+            10,
         )
 
         self.mavros_subscription = self.create_subscription(
-            Heartbeat, "pi_heartbeat", self.heartbeat_callback, 10
+            Heartbeat,
+            "pi_heartbeat",
+            self.heartbeat_callback,
+            10,
         )
 
-        self.watchdog_timer = self.create_timer(1, self.watchdog_callback)
+        self.watchdog_timer = self.create_timer(
+            1,
+            self.watchdog_callback,
+        )
         self.last_heartbeat: float = 0  # Unix timestamp of the last mavros heartbeat from the pi
 
         self.last_subscriber_count = 0
@@ -55,7 +75,9 @@ class VehicleManagerNode(Node):
 
     def mavros_callback(self, msg: State) -> None:
         new_state = VehicleState(
-            pi_connected=True, pixhawk_connected=msg.connected, armed=msg.armed
+            pi_connected=True,
+            pixhawk_connected=msg.connected,
+            armed=msg.armed,
         )
 
         if new_state != self.vehicle_state:
@@ -87,13 +109,15 @@ class VehicleManagerNode(Node):
     def watchdog_callback(self) -> None:
         if self.vehicle_state.pi_connected and time.time() - self.last_heartbeat > PI_TIMEOUT:
             self.vehicle_state = VehicleState(
-                pi_connected=False, pixhawk_connected=False, armed=False
+                pi_connected=False,
+                pixhawk_connected=False,
+                armed=False,
             )
             self.publish_state(self.vehicle_state)
             self.get_logger().warn("Pi disconnected")
 
     def poll_subscribers(self) -> None:
-        # Whenever a node subscirbes to vehicle state updates, send the current state
+        # Whenever a node subscribes to vehicle state updates, send the current state
         subscriber_count = self.state_publisher.get_subscription_count()
         if subscriber_count > self.last_subscriber_count:
             # TODO debug messages seem broken
@@ -108,7 +132,10 @@ def main() -> None:
     rclpy.init()
     vehicle_manager = VehicleManagerNode()
     executor = MultiThreadedExecutor()
-    rclpy.spin(vehicle_manager, executor=executor)
+    rclpy.spin(
+        vehicle_manager,
+        executor=executor,
+    )
 
 
 if __name__ == "__main__":

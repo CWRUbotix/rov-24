@@ -1,9 +1,18 @@
 from gui.app import App
-from gui.widgets.debug_tab import DebugWidget
+from gui.widgets.debug_tab import (
+    DebugWidget,
+)
 from gui.widgets.logger import Logger
-from gui.widgets.task_selector import TaskSelector
+from gui.widgets.task_selector import (
+    TaskSelector,
+)
 from gui.widgets.timer import Timer
-from PyQt6.QtWidgets import QGridLayout, QTabWidget, QVBoxLayout, QWidget
+from PyQt6.QtWidgets import (
+    QGridLayout,
+    QTabWidget,
+    QVBoxLayout,
+    QWidget,
+)
 
 
 class OperatorApp(App):

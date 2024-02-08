@@ -1,15 +1,22 @@
 import os
 
-from ament_index_python.packages import get_package_share_directory
-from launch.launch_description import LaunchDescription
+from ament_index_python.packages import (
+    get_package_share_directory,
+)
+from launch.launch_description import (
+    LaunchDescription,
+)
 from launch_ros.actions import Node
-from launch_ros.parameter_descriptions import Parameter
+from launch_ros.parameter_descriptions import (
+    Parameter,
+)
 
 
 def generate_launch_description() -> LaunchDescription:
-
     parameter_file = os.path.join(
-        get_package_share_directory("rov_flir"), "config", "blackfly_s.yaml"
+        get_package_share_directory("rov_flir"),
+        "config",
+        "blackfly_s.yaml",
     )
 
     parameters = {
@@ -55,8 +62,14 @@ def generate_launch_description() -> LaunchDescription:
         emulate_tty=True,
         output="screen",
         parameters=[
-            Parameter("serial_number", "23473577"),
-            Parameter("parameter_file", parameter_file),
+            Parameter(
+                "serial_number",
+                "23473577",
+            ),
+            Parameter(
+                "parameter_file",
+                parameter_file,
+            ),
             parameters,
         ],
     )
@@ -69,8 +82,14 @@ def generate_launch_description() -> LaunchDescription:
         emulate_tty=True,
         output="screen",
         parameters=[
-            Parameter("serial_number", "23473566"),
-            Parameter("parameter_file", parameter_file),
+            Parameter(
+                "serial_number",
+                "23473566",
+            ),
+            Parameter(
+                "parameter_file",
+                parameter_file,
+            ),
             parameters,
         ],
     )

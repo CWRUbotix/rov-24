@@ -2,7 +2,10 @@ import re
 
 from rclpy.node import Node
 from rclpy.publisher import MsgType
-from rclpy.qos import QoSProfile, qos_profile_system_default
+from rclpy.qos import (
+    QoSProfile,
+    qos_profile_system_default,
+)
 
 
 class GUIEventPublisher(Node):
@@ -18,7 +21,11 @@ class GUIEventPublisher(Node):
         name: str = f'publisher_{re.sub(r"[^a-zA-Z0-9_]", "_", topic)}'
         super().__init__(name, parameter_overrides=[])
 
-        self.publisher = self.create_publisher(msg_type, topic, qos_profile)
+        self.publisher = self.create_publisher(
+            msg_type,
+            topic,
+            qos_profile,
+        )
 
     def publish(self, msg: MsgType) -> None:
         """Send a message with the provided parameters."""
