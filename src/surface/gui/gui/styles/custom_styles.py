@@ -1,4 +1,3 @@
-from rclpy.logging import get_logger
 from PyQt6.QtWidgets import QWidget
 
 
