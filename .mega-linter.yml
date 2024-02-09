@@ -16,8 +16,8 @@ PRE_COMMANDS:
 # - command: pip install --upgrade setuptools pip && pip install pytest ament-lint-pep257 ament-lint-flake8 flake8==4.0.1
 #   venv: ruff
 
-DISABLE:
-  - COPYPASTE
+# DISABLE:
+#   - COPYPASTE
 
 DISABLE_LINTERS:
   - PYTHON_PYLINT
@@ -25,3 +25,5 @@ DISABLE_LINTERS:
   - PYTHON_PYRIGHT
   # Seems broken rn
   - JSON_JSONLINT
+  # workaround to solve the issue: fatal: detected dubious ownership in repository at '/github/workspace'
+  - REPOSITORY_DEVSKIM
