@@ -1,5 +1,6 @@
 # A list of ardusub parameters for the simulated pixhawk
 # Copied from pixhawk_dump.params (from an actual pixhawk running ardusub)
+FRAME_CONFIG 2
 SERVO10_FUNCTION	0
 SERVO10_MAX	1800
 SERVO10_MIN	1100
@@ -163,9 +164,9 @@ RNGFND1_MAX_CM   3000
 RNGFND1_PIN   0
 RNGFND1_SCALING   12.12
 RNGFND1_TYPE   1
-SERVO8_FUNCTION 7
-SERVO8_MAX 1900
-SERVO8_MIN 1100
+# SERVO8_FUNCTION 7
+# SERVO8_MAX 1900
+# SERVO8_MIN 1100
 BARO_EXT_BUS 1
 
 # Use EK3
