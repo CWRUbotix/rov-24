@@ -23,6 +23,7 @@ class CameraType(IntEnum):
 
     Currently only Ethernet changes behavior.
     """
+
     USB = 1
     ETHERNET = 2
     DEPTH = 3
@@ -34,7 +35,7 @@ class CameraDescription(NamedTuple):
 
     Parameters
     ----------
-    type: CameraDescription
+    type: CameraType
         Describes the type of Camera.
     topic: str
         The topic to listen on, by default cam
@@ -44,6 +45,7 @@ class CameraDescription(NamedTuple):
         The width of the Camera Stream, by default WIDTH constant.
     height: int
         The height of the Camera Stream, by default HEIGHT constant.
+
     """
 
     type: CameraType
