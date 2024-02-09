@@ -1,20 +1,20 @@
 PRE_COMMANDS:
 # - command: pip install pytest ament-lint-pep257 ament-lint-flake8 flake8==4.0.1
 #   venv: pylint
-- command: pip install --upgrade setuptools pip && pip install pytest ament-lint-pep257 ament-lint-flake8 flake8==4.0.1
-  venv: black
+# - command: pip install --upgrade setuptools pip && pip install pytest ament-lint-pep257 ament-lint-flake8 flake8==4.0.1
+#   venv: black
 # - command: pip install --upgrade setuptools pip && pip install pytest ament-lint-pep257 ament-lint-flake8 flake8==4.0.1
 #   venv: flake8
-- command: pip install --upgrade setuptools pip && pip install pytest ament-lint-pep257 ament-lint-flake8 flake8==4.0.1
-  venv: isort
-- command: pip install --upgrade setuptools pip && pip install pytest ament-lint-pep257 ament-lint-flake8 flake8==4.0.1
-  venv: bandit
-- command: pip install --upgrade setuptools pip && pip install pytest ament-lint-pep257 ament-lint-flake8 flake8==4.0.1 PySide6
+# - command: pip install --upgrade setuptools pip && pip install pytest ament-lint-pep257 ament-lint-flake8 flake8==4.0.1
+#   venv: isort
+# - command: pip install --upgrade setuptools pip && pip install pytest ament-lint-pep257 ament-lint-flake8 
+#   venv: bandit
+- command: pip install --upgrade setuptools pip && pip install pytest ament-lint-pep257 ament-lint-flake8 flake8==4.0.1 PySide6-stubs
   venv: mypy
 # - command: pip install pytest ament-lint-pep257 ament-lint-flake8 flake8==4.0.1
 #   venv: pyright
-- command: pip install --upgrade setuptools pip && pip install pytest ament-lint-pep257 ament-lint-flake8 flake8==4.0.1
-  venv: ruff
+# - command: pip install --upgrade setuptools pip && pip install pytest ament-lint-pep257 ament-lint-flake8 flake8==4.0.1
+#   venv: ruff
 
 DISABLE:
   - COPYPASTE
