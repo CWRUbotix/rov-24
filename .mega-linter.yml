@@ -2,19 +2,19 @@ PRE_COMMANDS:
   - commands: sudo apt-get install -y qt6-base-dev
 # - command: pip install pytest ament-lint-pep257 ament-lint-flake8 flake8==4.0.1
 #   venv: pylint
-- command: pip install --upgrade setuptools pip && pip install pytest ament-lint-pep257 ament-lint-flake8 flake8==4.0.1 pyqt6==6.5.0
+- command: pip install --upgrade setuptools pip && pip install pytest ament-lint-pep257 ament-lint-flake8 flake8==4.0.1
   venv: black
-- command: pip install --upgrade setuptools pip && pip install pytest ament-lint-pep257 ament-lint-flake8 flake8==4.0.1 pyqt6==6.5.0
+- command: pip install --upgrade setuptools pip && pip install pytest ament-lint-pep257 ament-lint-flake8 flake8==4.0.1
   venv: flake8
-- command: pip install --upgrade setuptools pip && pip install pytest ament-lint-pep257 ament-lint-flake8 flake8==4.0.1 pyqt6==6.5.0
+- command: pip install --upgrade setuptools pip && pip install pytest ament-lint-pep257 ament-lint-flake8 flake8==4.0.1
   venv: isort
-- command: pip install --upgrade setuptools pip && pip install pytest ament-lint-pep257 ament-lint-flake8 flake8==4.0.1 pyqt6==6.5.0
+- command: pip install --upgrade setuptools pip && pip install pytest ament-lint-pep257 ament-lint-flake8 flake8==4.0.1
   venv: bandit
-- command: pip install --upgrade setuptools pip && pip install pytest ament-lint-pep257 ament-lint-flake8 flake8==4.0.1 pyqt6==6.5.0
+- command: pip install --upgrade setuptools pip && pip install pytest ament-lint-pep257 ament-lint-flake8 flake8==4.0.1
   venv: mypy
 # - command: pip install pytest ament-lint-pep257 ament-lint-flake8 flake8==4.0.1
 #   venv: pyright
-- command: pip install --upgrade setuptools pip && pip install pytest ament-lint-pep257 ament-lint-flake8 flake8==4.0.1 pyqt6==6.5.0
+- command: pip install --upgrade setuptools pip && pip install pytest ament-lint-pep257 ament-lint-flake8 flake8==4.0.1
   venv: ruff
 
 DISABLE:
