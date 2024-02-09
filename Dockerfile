@@ -48,5 +48,3 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 # Then removes file paths without "git"
 # Then removes the 'sshCommand' line from each file
 RUN  find . -name "*config" | grep git | while read -r line; do sed -i "/sshCommand/d" "$line"; done
-
-USER root

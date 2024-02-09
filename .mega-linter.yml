@@ -9,7 +9,7 @@ PRE_COMMANDS:
 #   venv: isort
 # - command: pip install --upgrade setuptools pip && pip install pytest ament-lint-pep257 ament-lint-flake8 
 #   venv: bandit
-- command: pip install --upgrade setuptools pip && pip install pytest ament-lint-pep257 ament-lint-flake8 flake8==4.0.1 PySide6-stubs
+- command: pip install --upgrade setuptools pip && pip install pytest ament-lint-pep257 ament-lint-flake8 flake8==4.0.1
   venv: mypy
 # - command: pip install pytest ament-lint-pep257 ament-lint-flake8 flake8==4.0.1
 #   venv: pyright
