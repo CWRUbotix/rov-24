@@ -1,6 +1,6 @@
-# hadolint does not agree between schemastore and internal schema
-YAML_V8R_FILTER_REGEX_EXCLUDE:
-  - .hadolint
+# Hadolint config files funky right now.
+DOCKERFILE_HADOLINT_ARGUMENTS:
+ --ignore SC1091
 
 DISABLE:
   - COPYPASTE
