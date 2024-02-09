@@ -60,6 +60,7 @@
         "dfsg",
         "distro",
         "ethernets",
+        "hadolint",
         "ifname",
         "imgmsg",
         "inputed",

@@ -1,2 +1,1 @@
-ignored:
-  - SC1091
+failure-threshold: style
