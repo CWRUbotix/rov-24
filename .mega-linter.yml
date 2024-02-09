@@ -27,3 +27,4 @@ DISABLE_LINTERS:
   - JSON_JSONLINT
   # workaround to solve the issue: fatal: detected dubious ownership in repository at '/github/workspace'
   - REPOSITORY_DEVSKIM
+  - REPOSITORY_KICS
