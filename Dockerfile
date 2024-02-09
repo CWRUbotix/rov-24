@@ -9,10 +9,11 @@ HEALTHCHECK NONE
 # Install lsusb
 # Install nano
 RUN apt-get update -y \
- && apt-get install --no-install-recommends python3-pip=22.0.2+dfsg-1ubuntu0.4 -y \
- && apt-get install --no-install-recommends v4l-utils=1.22.1-2build1 -y \
- && apt-get install --no-install-recommends usbutils=1:014-1build1 -y \
- && apt-get install --no-install-recommends nano=6.2-1 -y \
+ && apt-get install --no-install-recommends -y \
+ python3-pip=22.0.2+dfsg-1ubuntu0.4 \
+ v4l-utils=1.22.1-2build1 \
+ usbutils=1:014-1build1 \
+ nano=6.2-1 \
  && apt-get upgrade -y \
 #  Clean for better performance
  && apt-get clean \
