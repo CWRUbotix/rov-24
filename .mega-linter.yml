@@ -1,4 +1,4 @@
-PRE_COMMANDS:
+# PRE_COMMANDS:
 # - command: pip install pytest ament-lint-pep257 ament-lint-flake8 flake8==4.0.1
 #   venv: pylint
 # - command: pip install --upgrade setuptools pip && pip install pytest ament-lint-pep257 ament-lint-flake8 flake8==4.0.1
@@ -9,8 +9,8 @@ PRE_COMMANDS:
 #   venv: isort
 # - command: pip install --upgrade setuptools pip && pip install pytest ament-lint-pep257 ament-lint-flake8 
 #   venv: bandit
-- command: pip install --upgrade setuptools pip && pip install pytest ament-lint-pep257 ament-lint-flake8 flake8==4.0.1
-  venv: mypy
+# - command: pip install --upgrade setuptools pip && pip install pytest ament-lint-pep257 ament-lint-flake8 flake8==4.0.1
+#   venv: mypy
 # - command: pip install pytest ament-lint-pep257 ament-lint-flake8 flake8==4.0.1
 #   venv: pyright
 # - command: pip install --upgrade setuptools pip && pip install pytest ament-lint-pep257 ament-lint-flake8 flake8==4.0.1
@@ -23,6 +23,8 @@ DISABLE_LINTERS:
   - PYTHON_PYLINT
   # MYPY is doing enough type checking
   - PYTHON_PYRIGHT
+  # MYPY cannot do a good job without install all python dependencies so will disable here and use in ROS linter.
+  - PYTHON_MYPY
   # Seems broken rn
   - JSON_JSONLINT
   # workaround to solve the issue: fatal: detected dubious ownership in repository at '/github/workspace'
