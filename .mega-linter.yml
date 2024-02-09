@@ -1,5 +1,5 @@
 PRE_COMMANDS:
-  - commands: sudo apt-get install -y qt6-base-dev
+  - command: sudo apt-get install -y qt6-base-dev
 # - command: pip install pytest ament-lint-pep257 ament-lint-flake8 flake8==4.0.1
 #   venv: pylint
 - command: pip install --upgrade setuptools pip && pip install pytest ament-lint-pep257 ament-lint-flake8 flake8==4.0.1
