@@ -13,6 +13,14 @@
                 </mesh>
               </geometry>
             </visual>
+
+            <collision name="base_link_collision">
+              <geometry>
+                <mesh>
+                  <uri>model://pool/meshes/pool.dae</uri>
+                </mesh>
+              </geometry>
+            </collision>
         </link>
         
     </model>
