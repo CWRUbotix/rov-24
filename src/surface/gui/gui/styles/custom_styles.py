@@ -28,50 +28,25 @@ class WidgetState(Style):
     NO_STATE = ""
 
 
-class WidgetStateInterface:
+class WidgetStateInterface(QWidget):
 
     def set_on(self) -> None:
-        if isinstance(self, QWidget):
-            self.setProperty(WidgetState.PROPERTY_NAME, WidgetState.ON)
-            self._update_style()
-        else:
-            get_logger("WidgetStateInterface").error(
-                "Trying to extend WidgetStateInterface without being a QWidget."
-                )
+        self.setProperty(WidgetState.PROPERTY_NAME, WidgetState.ON)
+        self._update_style()
 
     def set_off(self) -> None:
-        if isinstance(self, QWidget):
-            self.setProperty(WidgetState.PROPERTY_NAME, WidgetState.OFF)
-            self._update_style()
-        else:
-            get_logger("WidgetStateInterface").error(
-                "Trying to extend WidgetStateInterface without being a QWidget."
-                )
+        self.setProperty(WidgetState.PROPERTY_NAME, WidgetState.OFF)
+        self._update_style()
 
     def set_inactive(self) -> None:
-        if isinstance(self, QWidget):
-            self.setProperty(WidgetState.PROPERTY_NAME, WidgetState.INACTIVE)
-            self._update_style()
-        else:
-            get_logger("WidgetStateInterface").error(
-                "Trying to extend WidgetStateInterface without being a QWidget."
-                )
+        self.setProperty(WidgetState.PROPERTY_NAME, WidgetState.INACTIVE)
+        self._update_style()
 
     def remove_state(self) -> None:
-        if isinstance(self, QWidget):
-            self.setProperty(WidgetState.PROPERTY_NAME, WidgetState.NO_STATE)
-            self._update_style()
-        else:
-            get_logger("WidgetStateInterface").error(
-                "Trying to extend WidgetStateInterface without being a QWidget."
-                )
+        self.setProperty(WidgetState.PROPERTY_NAME, WidgetState.NO_STATE)
+        self._update_style()
 
     def _update_style(self) -> None:
-        if isinstance(self, QWidget):
-            style = self.style()
-            if style is not None:
-                style.polish(self)
-        else:
-            get_logger("WidgetStateInterface").error(
-                "Trying to extend WidgetStateInterface without being a QWidget."
-                )
+        style = self.style()
+        if style is not None:
+            style.polish(self)
