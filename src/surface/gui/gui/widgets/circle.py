@@ -18,7 +18,9 @@ class CircleInterface:
             stylesheet = self.styleSheet()
             self.setStyleSheet(f"{stylesheet}border-radius: {radius}px;")
         else:
-            get_logger("CircleInterface").error("Trying to extend circle interface without being a QWidget.")
+            get_logger("CircleInterface").error(
+                "Trying to extend circle interface without being a QWidget."
+                )
 
     def set_color(self, color: QColor | Qt.GlobalColor) -> None:
         if isinstance(self, QWidget):
@@ -27,7 +29,9 @@ class CircleInterface:
             style = f"background-color: rgb({color.red()}, {color.green()}, {color.blue()});"
             self.setStyleSheet(f"{self.styleSheet()}{style}")
         else:
-            get_logger("CircleInterface").error("Trying to call set_color without being a QWidget.")
+            get_logger("CircleInterface").error(
+                "Trying to call set_color without being a QWidget."
+                )
 
 
 class CircleButton(QPushButton, CircleInterface):
