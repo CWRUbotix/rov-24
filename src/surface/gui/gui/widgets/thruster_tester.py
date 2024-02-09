@@ -2,12 +2,24 @@ import time
 from threading import Thread
 
 from gui.event_nodes.client import GUIEventClient
-from mavros_msgs.srv import CommandLong, ParamSetV2, ParamPull
+from mavros_msgs.srv import CommandLong, ParamPull
 from 
 from PyQt6.QtCore import pyqtSignal, pyqtSlot
 from PyQt6.QtGui import QIntValidator
 from PyQt6.QtWidgets import (QGridLayout, QLabel, QLineEdit, QPushButton,
                              QVBoxLayout, QWidget)
+from enum import IntEnum
+
+class ServoFunction(IntEnum):
+    # https://ardupilot.org/copter/docs/parameters.html#servo1-function-servo-output-function
+    MOTOR1 = 33 
+    MOTOR2 = 34
+    MOTOR3 = 35
+    MOTOR4 = 36
+    MOTOR5 = 37
+    MOTOR6 = 38
+    MOTOR7 = 39
+    MOTOR8 = 30
 
 
 class ThrusterTester(QWidget):
@@ -18,7 +30,7 @@ class ThrusterTester(QWidget):
     MOTOR_COUNT = 8
 
     test_command_response_signal = pyqtSignal(CommandLong.Response)
-    set_motors_response_signal = pyqtSignal(ParamSetV2.Response)
+    pull_motors_response_signal = pyqtSignal(ParamPull.Response)
 
     def __init__(self) -> None:
         super().__init__()
@@ -30,12 +42,14 @@ class ThrusterTester(QWidget):
         )
         self.test_command_response_signal.connect(self.command_response_handler)
 
+        self.
+
         self.set_motors_client = GUIEventClient(
-            ParamSetV2,
-            "mavros/param/set",
-            self.set_motors_response_signal
+            ParamPull,
+            "mavros/param/pull",
+            self.pull_motors_response_signal
         )
-        self.set_motors_response_signal.connect(self.set_motors_response_handler)
+        self.pull_motors_response_signal.connect(self.pull_param_handler)
 
         layout = QVBoxLayout()
         self.setLayout(layout)
@@ -126,19 +140,14 @@ class ThrusterTester(QWidget):
 
     @pyqtSlot(CommandLong.Response)
     def command_response_handler(self, res: CommandLong.Response) -> None:
-        self.test_cmd_client.get_logger().debug(f"Test response: {res.success}, {res.result}")
+        self.test_cmd_client.get_logger().info(f"Test response: {res.success}, {res.result}")
 
     # https://wiki.ros.org/mavros/Plugins#param
     # https://ardupilot.org/copter/docs/parameters.html#servo10-parameters
-    def send_pin_assignments(self) -> None:
-        print(self.pin_input_widgets[2].text())
-        req = ParamSetV2.Request(
-            param_id="",
-            value=
-        )
-        self.set_motors_client.send_request_async(req)
+    def pull_param(self) -> None:
+        self.set_motors_client.send_request_async(ParamPull.Request())
         # TODO: Send the pin assignments inputted by the user to the pixhawk as parameters
 
-    @pyqtSlot(ParamSetV2.Response)
-    def set_motors_response_handler(self, res: ParamSetV2.Response) -> None:
-        self.set_motors_client.get_logger().debug(f"Test response: {res.success}, {res.result}")
+    @pyqtSlot(ParamPull.Response)
+    def pull_param_handler(self, res: ParamPull.Response) -> None:
+        self.set_motors_client.get_logger().info(f"Success: {res.success}, param_received: {res.param_received}.")
