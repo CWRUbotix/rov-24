@@ -18,12 +18,36 @@ HEIGHT = 541
 
 
 class CameraType(IntEnum):
+    """
+    Enum Class for defining Camera Types.
+
+    Currently only Ethernet changes behavior.
+    """
     USB = 1
     ETHERNET = 2
     DEPTH = 3
 
 
 class CameraDescription(NamedTuple):
+    """
+    Generic CameraDescription describes each camera for a VideoWidget.
+
+    Parameters
+    ----------
+    type: CameraDescription
+        Describes the type of Camera.
+    topic: str
+        The topic to listen on, by default cam
+    label: str
+        The label of the camera, by default Camera
+    width: int
+        The width of the Camera Stream, by default WIDTH constant.
+    height: int
+        The height of the Camera Stream, by default HEIGHT constant.
+    swap_rb_channels : bool
+        Swaps the rb channels, by default False
+    """
+
     type: CameraType
     topic: str = 'cam'
     label: str = 'Camera'
@@ -114,8 +138,7 @@ class SwitchableVideoWidget(VideoWidget):
 
     def __init__(self, camera_descriptions: list[CameraDescription],
                  controller_button_topic: Optional[str] = None,
-                 default_cam_num: int = 0,):
-
+                 default_cam_num: int = 0):
         self.camera_descriptions = camera_descriptions
         self.active_cam = default_cam_num
 

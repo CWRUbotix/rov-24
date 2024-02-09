@@ -92,8 +92,7 @@ def generate_launch_description() -> LaunchDescription:
             # cam_launch,
             realsense_launch,
             ip_publisher_node,
-            heartbeat_launch,
-            realsense_launch
+            heartbeat_launch
         ]
     )
 
