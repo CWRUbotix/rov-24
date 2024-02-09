@@ -31,7 +31,7 @@ COPY . .
 
 # TODO for future nerd to do this via ENTRYPOINT which be better but, I could not get ENTRYPOINT to play with VsCODE.
 RUN \
-# shellcheck source=/rov-24/.vscode/rov_setup.sh
+# shellcheck source=/.vscode/rov_setup.sh
  source /root/rov-24/.vscode/rov_setup.sh \
 # Installs ROS and python dependencies
 # shellcheck source=/.vscode/install_dependencies.sh
