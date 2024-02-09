@@ -15,7 +15,7 @@ def generate_launch_description() -> LaunchDescription:
     rov_gazebo_path: str = get_package_share_directory("rov_gazebo")
     surface_main_path: str = get_package_share_directory("surface_main")
 
-    world_file = "bluerov2_heavy_underwater.world"
+    world_file = "rov24_coral.sdf"
     world_path: str = os.path.join(rov_gazebo_path, "worlds", world_file)
 
     params_file = "sub.parm"
