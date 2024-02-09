@@ -46,7 +46,7 @@ class CameraDescription(NamedTuple):
     height: int
         The height of the Camera Stream, by default HEIGHT constant.
     swap_rb_channels : bool
-        Swaps the rb channels, by default False
+        Swaps the red blue channels, by default False
 
     """
 
