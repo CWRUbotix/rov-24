@@ -31,6 +31,11 @@ updates:
     schedule:
       interval: "daily"
 
+  - package-ecosystem: "pip" # See documentation for possible values
+    directory: "/src/pi/heartbeat" # Location of package manifests
+    schedule:
+      interval: "daily"
+
   # Surface python dependencies
   - package-ecosystem: "pip" # See documentation for possible values
     directory: "/src/surface/flight_control" # Location of package manifests
@@ -47,8 +52,18 @@ updates:
     schedule:
       interval: "daily"
 
-  # ros2_video_streamer not included because it is a submodule.
+  - package-ecosystem: "pip" # See documentation for possible values
+    directory: "/src/surface/vehicle_manager" # Location of package manifests
+    schedule:
+      interval: "daily"
 
+  # ros2_video_streamer not included because it is a submodule.
+  
+  - package-ecosystem: "pip" # See documentation for possible values
+    directory: "/src/surface/rov_flir" # Location of package manifests
+    schedule:
+      interval: "daily"
+      
   - package-ecosystem: "pip" # See documentation for possible values
     directory: "/src/surface/rov_gazebo" # Location of package manifests
     schedule:
