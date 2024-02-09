@@ -44,8 +44,6 @@ class CameraDescription(NamedTuple):
         The width of the Camera Stream, by default WIDTH constant.
     height: int
         The height of the Camera Stream, by default HEIGHT constant.
-    swap_rb_channels : bool
-        Swaps the rb channels, by default False
     """
 
     type: CameraType
@@ -53,7 +51,6 @@ class CameraDescription(NamedTuple):
     label: str = 'Camera'
     width: int = WIDTH
     height: int = HEIGHT
-    swap_rb_channels: bool = False
 
 
 class VideoWidget(QWidget):
@@ -102,19 +99,8 @@ class VideoWidget(QWidget):
             # Switches ethernet's color profile from BayerBGR to BGR
             cv_img = cv2.cvtColor(cv_img, cv2.COLOR_BAYER_BGGR2BGR)
 
-        # Color image
-        if len(cv_img.shape) == 3:
-            # Swap red & blue channels if necessary
-            if self.camera_description.swap_rb_channels:
-                cv_img = cv2.cvtColor(cv_img, cv2.COLOR_RGB2BGR)
-
-            h, w, ch = cv_img.shape
-            bytes_per_line: int = ch * w
-
-            img_format = QImage.Format.Format_RGB888
-
         # Grayscale image
-        elif len(cv_img.shape) == 2:
+        if len(cv_img.shape) == 2:
             h, w = cv_img.shape
             bytes_per_line = w
 
