@@ -13,7 +13,6 @@ NAMESPACE = "simulation"
 
 def generate_launch_description() -> LaunchDescription:
     rov_gazebo_path: str = get_package_share_directory("rov_gazebo")
-    # ros_gz_sim_path: str = get_package_share_directory("ros_gz_sim")
     surface_main_path: str = get_package_share_directory("surface_main")
 
     world_file = "bluerov2_heavy_underwater.world"
@@ -69,22 +68,25 @@ def generate_launch_description() -> LaunchDescription:
 
     # Translate messages MAV <-> ROS
     mav_ros_node = Node(
-            package='mavros',
-            executable='mavros_node',
-            output='screen',
-            namespace='mavros',
-            parameters=[
-                {"system_id": 255},
-                # TODO check if needed
-                {"component_id": 240},
-                {"fcu_url": "tcp://localhost"},
-                {"gcs_url": "udp://@localhost:14550"},
-                {"plugin_allowlist": ["rc_io", "sys_status", "command"]}
-            ],
-            remappings=[
-                    (f'/{NS}/mavros/cmd/arming', '/mavros/cmd/arming'),
-                    (f'/{NS}/mavros/rc/override', '/mavros/rc/override')],
-            emulate_tty=True
+        package='mavros',
+        executable='mavros_node',
+        output='screen',
+        namespace='mavros',
+        parameters=[
+            {"system_id": 255},
+            # TODO check if needed
+            {"component_id": 240},
+            {"fcu_url": "tcp://localhost"},
+            {"gcs_url": "udp://@localhost:14550"},
+            {"plugin_allowlist": ["rc_io", "sys_status", "command"]}
+        ],
+        remappings=[
+            (f'/{NAMESPACE}/mavros/state', '/tether/mavros/state'),
+            (f'/{NAMESPACE}/mavros/rc/override', '/tether/mavros/rc/override'),
+            (f'/{NAMESPACE}/mavros/cmd/arming', '/tether/mavros/cmd/arming'),
+            (f'/{NAMESPACE}/mavros/cmd/command', '/tether/mavros/cmd/command'),
+        ],
+        emulate_tty=True
     )
 
     # # Spawn entity
@@ -122,15 +124,15 @@ def generate_launch_description() -> LaunchDescription:
     # TODO?
     # I think we should probably switch over all our single
     # Node launch files to something like this
-    keyboard_driver = Node(
-        package="keyboard_driver",
-        executable="keyboard_driver_node",
-        output="screen",
-        name="keyboard_driver_node",
-        namespace=NAMESPACE,
-        remappings=[(f"/{NAMESPACE}/manual_control", "/manual_control")],
-        emulate_tty=True
-    )
+    # keyboard_driver = Node(
+    #     package="keyboard_driver",
+    #     executable="keyboard_driver_node",
+    #     output="screen",
+    #     name="keyboard_driver_node",
+    #     namespace=NAMESPACE,
+    #     remappings=[(f"/{NAMESPACE}/manual_control", "/manual_control")],
+    #     emulate_tty=True
+    # )
 
     # cam_bridge = Node(
     #     package="ros_gz_bridge",
@@ -159,6 +161,15 @@ def generate_launch_description() -> LaunchDescription:
     #     emulate_tty=True
     # )
 
+    # Launches the pi heartbeat node
+    heartbeat_node = Node(
+        package="heartbeat",
+        executable="heartbeat_node",
+        remappings=[(f"/{NAMESPACE}/pi_heartbeat", "/tether/pi_heartbeat")],
+        emulate_tty=True,
+        output="screen"
+    )
+
     # Launches Surface Nodes
     surface_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
@@ -168,9 +179,10 @@ def generate_launch_description() -> LaunchDescription:
 
     namespace_launch = GroupAction(
         actions=[
-            PushRosNamespace(NS),
+            PushRosNamespace(NAMESPACE),
             mav_ros_node,
-            keyboard_driver,
+            heartbeat_node,
+            # keyboard_driver,
         ]
     )
 
