@@ -1,6 +1,7 @@
 {
     "ignore": [
-      "*/test_*.py"
+      "*/test_*.py",
+      "*/setup.py"
     ]
   }
   
