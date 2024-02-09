@@ -123,7 +123,6 @@ To open the container use `F1` or `ctrl+shift+p` to open the command bar and use
 
 To reopen after a build Go to File > Open Recent /stuff/rov-24 \[Dev Container]
 
-<!-- Xserver testing on mac TODO ssh keys work -->
 <!-- https://gist.github.com/cschiewek/246a244ba23da8b9f0e7b11a68bf3285 -->
 
 ## Upgrading Environment
