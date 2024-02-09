@@ -83,9 +83,9 @@ class Arm(QWidget):
         if msg.pixhawk_connected:
             if msg.armed:
                 self.arm_button.setProperty(WidgetState.PROPERTY_NAME, WidgetState.ON)
-                self.disarm_button.setProperty(WidgetState.PROPERTY_NAME, "")
+                self.disarm_button.setProperty(WidgetState.PROPERTY_NAME, WidgetState.NO_STATE)
             else:
-                self.arm_button.setProperty(WidgetState.PROPERTY_NAME, "")
+                self.arm_button.setProperty(WidgetState.PROPERTY_NAME, WidgetState.NO_STATE)
                 self.disarm_button.setProperty(WidgetState.PROPERTY_NAME, WidgetState.OFF)
         else:
             self.arm_button.setProperty(WidgetState.PROPERTY_NAME, WidgetState.INACTIVE)
@@ -96,4 +96,4 @@ class Arm(QWidget):
             if style is not None:
                 style.polish(button)
             else:
-                self.arm_client.get_logger().error("Gui button missing a style")
+                self.arm_client.get_logger().error("Gui button missing a style.")
