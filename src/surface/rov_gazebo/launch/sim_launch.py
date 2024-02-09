@@ -16,8 +16,11 @@ def generate_launch_description() -> LaunchDescription:
     surface_main_path: str = get_package_share_directory("surface_main")
 
     world_file = "bluerov2_heavy_underwater.world"
-
     world_path: str = os.path.join(rov_gazebo_path, "worlds", world_file)
+
+    params_file = "sub.parm"
+    params_path: str = os.path.join(rov_gazebo_path, "config", params_file)
+
     # Process the URDF file
     # xacro_file = os.path.join(rov_gazebo_path, "description", "rov.xacro")
     # robot_description = Command(["xacro ", xacro_file])
@@ -62,7 +65,7 @@ def generate_launch_description() -> LaunchDescription:
     )
 
     start_ardusub = ExecuteProcess(
-        cmd=["ardusub", '-S', '-w', '-M', 'JSON', '-I0'],
+        cmd=["ardusub", '-S', '-w', '-M', 'JSON', '--defaults', params_path, '-I0', ],
         output='screen'
     )
 
@@ -167,7 +170,8 @@ def generate_launch_description() -> LaunchDescription:
         executable="heartbeat_node",
         remappings=[(f"/{NAMESPACE}/pi_heartbeat", "/tether/pi_heartbeat")],
         emulate_tty=True,
-        output="screen"
+        output="screen",
+
     )
 
     # Launches Surface Nodes
