@@ -43,10 +43,10 @@ class FloodWarning(QWidget):
             self.indicator.setText('FLOODING')
             self.subscription.get_logger().error("Robot is actively flooding, do something!")
             self.warning_msg_latch = True
-            self.indicator_circle.bad_state()
+            self.indicator_circle.set_off()
         else:
             self.indicator.setText('No Water present')
-            self.indicator_circle.good_state()
+            self.indicator_circle.set_on()
             if self.warning_msg_latch:
                 self.subscription.get_logger().warning("Robot flooding has reset itself.")
                 self.warning_msg_latch = False

@@ -29,9 +29,3 @@ class CircleIndicator(Circle, IndicatorMixin):
                  radius: int = 50) -> None:
         super().__init__(parent, radius)
         self.set_inactive()
-
-    def good_state(self) -> None:
-        self.set_on()
-
-    def bad_state(self) -> None:
-        self.set_off()

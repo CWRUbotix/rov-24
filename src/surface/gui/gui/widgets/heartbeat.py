@@ -45,14 +45,14 @@ class HeartbeatWidget(QWidget):
     def refresh(self, msg: VehicleState) -> None:
         if msg.pi_connected:
             self.pi_indicator.setText('Pi Connected')
-            self.pi_indicator_circle.good_state()
+            self.pi_indicator_circle.set_on()
         else:
             self.pi_indicator.setText('Pi Disconnected')
-            self.pi_indicator_circle.bad_state()
+            self.pi_indicator_circle.set_off()
 
         if msg.pixhawk_connected:
             self.pixhawk_indicator.setText('Pixhawk Connected')
-            self.pixhawk_indicator_circle.good_state()
+            self.pixhawk_indicator_circle.set_on()
         else:
             self.pixhawk_indicator.setText('Pixhawk Disconnected')
-            self.pixhawk_indicator_circle.bad_state()
+            self.pixhawk_indicator_circle.set_off()
