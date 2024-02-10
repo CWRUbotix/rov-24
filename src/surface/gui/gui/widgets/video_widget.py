@@ -3,26 +3,13 @@ from typing import Optional
 import cv2
 from cv2.typing import MatLike
 from cv_bridge.core import CvBridge
-from gui.event_nodes.subscriber import (
-    GUIEventSubscriber,
-)
-from PyQt6.QtCore import (
-    Qt,
-    pyqtSignal,
-    pyqtSlot,
-)
+from gui.event_nodes.subscriber import GUIEventSubscriber
+from PyQt6.QtCore import Qt, pyqtSignal, pyqtSlot
 from PyQt6.QtGui import QImage, QPixmap
-from PyQt6.QtWidgets import (
-    QLabel,
-    QPushButton,
-    QVBoxLayout,
-    QWidget,
-)
+from PyQt6.QtWidgets import QLabel, QPushButton, QVBoxLayout, QWidget
 from sensor_msgs.msg import Image
 
-from rov_msgs.msg import (
-    CameraControllerSwitch,
-)
+from rov_msgs.msg import CameraControllerSwitch
 
 WIDTH = 1280
 HEIGHT = 720

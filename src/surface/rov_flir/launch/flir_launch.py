@@ -1,15 +1,9 @@
 import os
 
-from ament_index_python.packages import (
-    get_package_share_directory,
-)
-from launch.launch_description import (
-    LaunchDescription,
-)
+from ament_index_python.packages import get_package_share_directory
+from launch.launch_description import LaunchDescription
 from launch_ros.actions import Node
-from launch_ros.parameter_descriptions import (
-    Parameter,
-)
+from launch_ros.parameter_descriptions import Parameter
 
 
 def generate_launch_description() -> LaunchDescription:

@@ -1,20 +1,8 @@
-from gui.event_nodes.client import (
-    GUIEventClient,
-)
-from PyQt6.QtCore import (
-    pyqtSignal,
-    pyqtSlot,
-)
-from PyQt6.QtWidgets import (
-    QGridLayout,
-    QLabel,
-    QPushButton,
-    QWidget,
-)
+from gui.event_nodes.client import GUIEventClient
+from PyQt6.QtCore import pyqtSignal, pyqtSlot
+from PyQt6.QtWidgets import QGridLayout, QLabel, QPushButton, QWidget
 
-from rov_msgs.srv import (
-    AutonomousFlight,
-)
+from rov_msgs.srv import AutonomousFlight
 
 WIDTH = 200
 

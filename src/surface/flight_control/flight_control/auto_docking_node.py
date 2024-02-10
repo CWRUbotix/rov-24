@@ -1,12 +1,8 @@
 import rclpy
-from rclpy.executors import (
-    MultiThreadedExecutor,
-)
+from rclpy.executors import MultiThreadedExecutor
 from rclpy.node import Node
 
-from rov_msgs.srv import (
-    AutonomousFlight,
-)
+from rov_msgs.srv import AutonomousFlight
 
 
 class AutoDocker(Node):

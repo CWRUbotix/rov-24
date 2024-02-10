@@ -1,25 +1,13 @@
-from gui.event_nodes.subscriber import (
-    GUIEventSubscriber,
-)
-from PyQt6.QtCore import (
-    pyqtSignal,
-    pyqtSlot,
-)
-from PyQt6.QtGui import QFont
-from PyQt6.QtWidgets import (
-    QLabel,
-    QVBoxLayout,
-    QWidget,
-    QHBoxLayout
-)
-
+from gui.event_nodes.subscriber import GUIEventSubscriber
 from gui.widgets.circle import CircleIndicator
+from PyQt6.QtCore import pyqtSignal, pyqtSlot
+from PyQt6.QtGui import QFont
+from PyQt6.QtWidgets import QHBoxLayout, QLabel, QVBoxLayout, QWidget
 
 from rov_msgs.msg import Flooding
 
 
 class FloodWarning(QWidget):
-
     signal = pyqtSignal(Flooding)
 
     def __init__(self) -> None:
@@ -38,7 +26,7 @@ class FloodWarning(QWidget):
         # Create the label that tells us what this is
 
         header_layout = QHBoxLayout()
-        label = QLabel('Flooding Status')
+        label = QLabel("Flooding Status")
         font = QFont("Arial", 14)
         label.setFont(font)
         header_layout.addWidget(label)
@@ -60,7 +48,7 @@ class FloodWarning(QWidget):
             self.warning_msg_latch = True
             self.indicator_circle.set_off()
         else:
-            self.indicator.setText('No Water present')
+            self.indicator.setText("No Water present")
             self.indicator_circle.set_on()
             if self.warning_msg_latch:
                 self.subscription.get_logger().warning("Robot flooding has reset itself.")

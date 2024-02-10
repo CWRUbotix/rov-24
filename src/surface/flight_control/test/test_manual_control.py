@@ -1,7 +1,5 @@
 import rclpy
-from flight_control.manual_control_node import (
-    ManualControlNode,
-)
+from flight_control.manual_control_node import ManualControlNode
 from flight_control.pixhawk_instruction import (
     FORWARD_CHANNEL,
     LATERAL_CHANNEL,

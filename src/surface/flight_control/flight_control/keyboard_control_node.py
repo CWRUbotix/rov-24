@@ -1,20 +1,12 @@
 from typing import Optional
 
 import rclpy.utilities
-from flight_control.pixhawk_instruction import (
-    PixhawkInstruction,
-)
+from flight_control.pixhawk_instruction import PixhawkInstruction
 from mavros_msgs.msg import OverrideRCIn
-from pynput.keyboard import (
-    Key,
-    KeyCode,
-    Listener,
-)
+from pynput.keyboard import Key, KeyCode, Listener
 from rclpy.node import Node
 from rclpy.publisher import Publisher
-from rclpy.qos import (
-    qos_profile_system_default,
-)
+from rclpy.qos import qos_profile_system_default
 
 # key bindings
 FORWARD = "w"

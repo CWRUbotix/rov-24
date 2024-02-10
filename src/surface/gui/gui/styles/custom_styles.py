@@ -1,8 +1,7 @@
-from PyQt6.QtWidgets import QWidget, QPushButton
+from PyQt6.QtWidgets import QPushButton, QWidget
 
 
 class IndicatorMixin(QWidget):
-
     _PROPERTY_NAME = "widgetState"
 
     # A component is running, enabled, or armed

@@ -3,14 +3,9 @@ import re
 from threading import Thread
 
 from PyQt6.QtCore import pyqtBoundSignal
-from rclpy.executors import (
-    SingleThreadedExecutor,
-)
+from rclpy.executors import SingleThreadedExecutor
 from rclpy.node import Node
-from rclpy.qos import (
-    QoSProfile,
-    qos_profile_system_default,
-)
+from rclpy.qos import QoSProfile, qos_profile_system_default
 from rclpy.subscription import MsgType
 
 

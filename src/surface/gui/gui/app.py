@@ -4,13 +4,8 @@ import signal
 
 import qdarktheme
 import rclpy.utilities
-from ament_index_python.packages import (
-    get_package_share_directory,
-)
-from PyQt6.QtWidgets import (
-    QApplication,
-    QWidget,
-)
+from ament_index_python.packages import get_package_share_directory
+from PyQt6.QtWidgets import QApplication, QWidget
 from rclpy.node import Node
 
 

@@ -1,10 +1,7 @@
 import os
 from glob import glob
 
-from setuptools import (
-    find_packages,
-    setup,
-)
+from setuptools import find_packages, setup
 
 PACKAGE_NAME = "vehicle_manager"
 

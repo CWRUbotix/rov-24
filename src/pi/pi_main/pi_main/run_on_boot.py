@@ -5,9 +5,7 @@ import pathlib
 import subprocess  # nosec
 import sys
 
-from ament_index_python.packages import (
-    get_package_share_directory,
-)
+from ament_index_python.packages import get_package_share_directory
 from robot_upstart.job import Job
 
 

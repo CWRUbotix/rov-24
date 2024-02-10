@@ -3,18 +3,12 @@ from dataclasses import dataclass
 
 import rclpy
 from mavros_msgs.msg import State
-from rclpy.executors import (
-    MultiThreadedExecutor,
-)
+from rclpy.executors import MultiThreadedExecutor
 from rclpy.node import Node
-from rclpy.qos import (
-    qos_profile_system_default,
-)
+from rclpy.qos import qos_profile_system_default
 
 from rov_msgs.msg import Heartbeat
-from rov_msgs.msg import (
-    VehicleState as VehicleStateMsg,
-)
+from rov_msgs.msg import VehicleState as VehicleStateMsg
 
 PI_TIMEOUT = 1  # Seconds
 

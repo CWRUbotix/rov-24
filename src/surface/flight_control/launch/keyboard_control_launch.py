@@ -1,11 +1,6 @@
 from launch.actions import GroupAction
-from launch.launch_description import (
-    LaunchDescription,
-)
-from launch_ros.actions import (
-    Node,
-    PushRosNamespace,
-)
+from launch.launch_description import LaunchDescription
+from launch_ros.actions import Node, PushRosNamespace
 
 
 def generate_launch_description() -> LaunchDescription:

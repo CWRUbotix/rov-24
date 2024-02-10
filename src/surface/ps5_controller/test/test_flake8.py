@@ -15,9 +15,7 @@
 # limitations under the License.
 
 import pytest
-from ament_flake8.main import (
-    main_with_errors,
-)
+from ament_flake8.main import main_with_errors
 
 
 @pytest.mark.flake8

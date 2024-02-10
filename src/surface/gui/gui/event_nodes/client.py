@@ -3,11 +3,7 @@ from threading import Thread
 
 import rclpy
 from PyQt6.QtCore import pyqtBoundSignal
-from rclpy.client import (
-    Client,
-    SrvType,
-    SrvTypeRequest,
-)
+from rclpy.client import Client, SrvType, SrvTypeRequest
 from rclpy.node import Node
 
 

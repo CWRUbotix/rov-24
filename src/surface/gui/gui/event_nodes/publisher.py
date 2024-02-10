@@ -2,10 +2,7 @@ import re
 
 from rclpy.node import Node
 from rclpy.publisher import MsgType
-from rclpy.qos import (
-    QoSProfile,
-    qos_profile_system_default,
-)
+from rclpy.qos import QoSProfile, qos_profile_system_default
 
 
 class GUIEventPublisher(Node):
