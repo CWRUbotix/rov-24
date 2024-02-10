@@ -101,8 +101,15 @@ class VideoWidget(QWidget):
             # Switches ethernet's color profile from BayerBGR to BGR
             cv_img = cv2.cvtColor(cv_img, cv2.COLOR_BAYER_BGGR2BGR)
 
+        # Color image
+        if len(cv_img.shape) == 3:
+            h, w, ch = cv_img.shape
+            bytes_per_line = ch * w
+
+            img_format = QImage.Format.Format_RGB888
+
         # Grayscale image
-        if len(cv_img.shape) == 2:
+        elif len(cv_img.shape) == 2:
             h, w = cv_img.shape
             bytes_per_line = w
 
