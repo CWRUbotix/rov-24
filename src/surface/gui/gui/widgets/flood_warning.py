@@ -1,5 +1,5 @@
 from gui.event_nodes.subscriber import GUIEventSubscriber
-from gui.widgets.circle import Indicator
+from gui.widgets.circle import CircleIndicator
 from PyQt6.QtCore import pyqtSignal, pyqtSlot
 from PyQt6.QtGui import QFont
 from PyQt6.QtWidgets import QHBoxLayout, QLabel, QVBoxLayout, QWidget
@@ -27,7 +27,7 @@ class FloodWarning(QWidget):
         font = QFont("Arial", 14)
         label.setFont(font)
         header_layout.addWidget(label)
-        self.indicator_circle = Indicator(radius=10)
+        self.indicator_circle = CircleIndicator(radius=10)
         header_layout.addWidget(self.indicator_circle)
 
         flood_layout.addLayout(header_layout)

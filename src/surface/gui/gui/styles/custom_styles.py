@@ -27,7 +27,7 @@ class WidgetState(Style):
     NO_STATE = ""
 
 
-class WidgetStateInterface(QWidget):
+class IndicatorMixin(QWidget):
 
     def set_on(self) -> None:
         self.setProperty(WidgetState.PROPERTY_NAME, WidgetState.ON)

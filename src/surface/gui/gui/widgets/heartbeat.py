@@ -1,5 +1,5 @@
 from gui.event_nodes.subscriber import GUIEventSubscriber
-from gui.widgets.circle import Indicator
+from gui.widgets.circle import CircleIndicator
 from PyQt6.QtCore import pyqtSignal, pyqtSlot
 from PyQt6.QtGui import QFont
 from PyQt6.QtWidgets import QHBoxLayout, QLabel, QVBoxLayout, QWidget
@@ -27,17 +27,17 @@ class HeartbeatWidget(QWidget):
         self.pi_indicator = QLabel('No Pi Status')
         self.pi_indicator.setFont(font)
         pi_status_layout.addWidget(self.pi_indicator)
-        self.pi_indicator_circle = Indicator(radius=10)
+        self.pi_indicator_circle = CircleIndicator(radius=10)
         pi_status_layout.addWidget(self.pi_indicator_circle)
         heartbeat_layout.addLayout(pi_status_layout)
 
-        pi_status_layout = QHBoxLayout()
+        pixhawk_status_layout = QHBoxLayout()
         self.pixhawk_indicator = QLabel('No Pixhawk Status')
         self.pixhawk_indicator.setFont(font)
-        pi_status_layout.addWidget(self.pixhawk_indicator)
-        self.pixhawk_indicator_circle = Indicator(radius=10)
-        pi_status_layout.addWidget(self.pixhawk_indicator_circle)
-        heartbeat_layout.addLayout(pi_status_layout)
+        pixhawk_status_layout.addWidget(self.pixhawk_indicator)
+        self.pixhawk_indicator_circle = CircleIndicator(radius=10)
+        pixhawk_status_layout.addWidget(self.pixhawk_indicator_circle)
+        heartbeat_layout.addLayout(pixhawk_status_layout)
 
         self.setLayout(heartbeat_layout)
 
