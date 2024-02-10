@@ -17,11 +17,11 @@ def main():
         data3 = lgpio.gpio_read(h, detect3)
 
         print("Pin 2: %s" % data1)
-        print("\n Pin 4: %s" % data2)
-        print("\n Pin 6: %s" % data3)
+        print("Pin 4: %s" % data2)
+        print("Pin 6: %s" % data3)
 
-        if data1 or data2 or data3:
-            print("\n \n Bad Flooding Thing")
+        # if data1 or data2 or data3:
+        #     print("\n \n Bad Flooding Thing")
 
 
 if __name__ == '__main__':
