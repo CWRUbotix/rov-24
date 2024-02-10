@@ -3,7 +3,7 @@ from gui.event_nodes.subscriber import GUIEventSubscriber
 from gui.styles.custom_styles import ButtonIndicator
 from mavros_msgs.srv import CommandBool
 from PyQt6.QtCore import pyqtSignal, pyqtSlot
-from PyQt6.QtWidgets import QHBoxLayout, QPushButton, QWidget
+from PyQt6.QtWidgets import QHBoxLayout, QWidget
 
 from rov_msgs.msg import VehicleState
 
