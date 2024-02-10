@@ -1,6 +1,7 @@
+---
 # Hadolint config files funky right now.
 DOCKERFILE_HADOLINT_ARGUMENTS:
- --ignore SC1091
+  - --ignore SC1091
 
 DISABLE:
   - COPYPASTE
