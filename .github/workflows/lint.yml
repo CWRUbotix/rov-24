@@ -41,8 +41,6 @@
         # issues & post new PR; remove the ones you do not need
         permissions:
           contents: write
-          issues: write
-          pull-requests: write
     
         steps:
     
