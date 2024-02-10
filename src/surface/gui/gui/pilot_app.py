@@ -19,7 +19,7 @@ class PilotApp(App):
         layout = QHBoxLayout()
         self.setLayout(layout)
 
-        # Look into QStackedLayout for possibly switching between
+        # TODO Look into QStackedLayout for possibly switching between
         # 1 big camera feed and 2 smaller ones
         video_area = SwitchableVideoWidget(
             [

@@ -12,6 +12,7 @@ from PyQt6.QtWidgets import (
     QVBoxLayout,
     QWidget,
 )
+from gui.widgets.heartbeat import HeartbeatWidget
 
 
 class DebugWidget(QWidget):
@@ -23,6 +24,9 @@ class DebugWidget(QWidget):
             IPWidget(),
             alignment=Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignLeft,
         )
+
+        top_bar.addWidget(HeartbeatWidget(), alignment=Qt.AlignmentFlag.AlignTop |
+                          Qt.AlignmentFlag.AlignLeft)
 
         right_bar = QVBoxLayout()
         right_bar.addWidget(ThrusterTester())
