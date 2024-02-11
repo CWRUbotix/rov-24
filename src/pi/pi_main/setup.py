@@ -21,7 +21,7 @@ setup(
         (os.path.join('share', PACKAGE_NAME, 'udev_rules'),
          glob('udev_rules/*'))
     ],
-    install_requires=['setuptools', 'flake8==4.0.1', 'mypy >= 1.7', 'socket'],
+    install_requires=['setuptools', 'flake8==4.0.1', 'mypy >= 1.7'],
     zip_safe=True,
     maintainer='Michael Carlstrom',
     maintainer_email='rmc170@case.edu',
