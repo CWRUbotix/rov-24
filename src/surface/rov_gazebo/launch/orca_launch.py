@@ -31,7 +31,7 @@ Includes Gazebo, ArduSub, RViz, mavros, all ROS nodes.
 import os
 
 from ament_index_python.packages import get_package_share_directory
-from launch import LaunchDescription
+from launch.launch_description import LaunchDescription
 from launch.actions import DeclareLaunchArgument, ExecuteProcess, IncludeLaunchDescription
 from launch.conditions import IfCondition, UnlessCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
@@ -39,7 +39,7 @@ from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 
 
-def generate_launch_description():
+def generate_launch_description() -> LaunchDescription:
 
     rov_gazebo_path: str = get_package_share_directory("rov_gazebo")
     # orca_bringup_dir = get_package_share_directory('orca_bringup')
