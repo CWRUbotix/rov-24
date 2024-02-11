@@ -3,7 +3,7 @@ from glob import glob
 
 from setuptools import find_packages, setup
 
-PACKAGE_NAME = 'heartbeat'
+PACKAGE_NAME = 'pi_diagnostics'
 
 setup(
     name=PACKAGE_NAME,
@@ -21,12 +21,13 @@ setup(
     zip_safe=True,
     maintainer='noah',
     maintainer_email='noah@mollerstuen.com',
-    description='Node to send perodic heartbeat messages to the surface',
+    description='Nodes to send information about the pi.',
     license='Apache License 2.0',
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            "heartbeat_node = heartbeat.heartbeat_node:main"
+            "heartbeat_node = pi_diagnostics.heartbeat_node:main",
+            'ip_publisher = pi_diagnostics.ip_publisher:main'
         ],
     },
 )

@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>heartbeat</name>
+  <name>pi_diagnostics</name>
   <version>1.0.0</version>
-  <description>Node to send perodic heartbeat messages to the surface</description>
+  <description>Nodes to send information about the pi.</description>
   <maintainer email="noah@mollerstuen.com">noah</maintainer>
   <license>Apache License 2.0</license>
 
