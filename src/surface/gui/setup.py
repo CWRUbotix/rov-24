@@ -23,6 +23,8 @@ setup(
          glob('gui/styles/*.py')),
         (os.path.join('share', PACKAGE_NAME, 'styles'),
          glob('gui/styles/*.qss')),
+        (os.path.join('share', PACKAGE_NAME, 'doc', 'images'),
+         glob('doc/images/*')),
     ],
     install_requires=['setuptools', 'pyqt6', 'pyqtdarktheme', 'opencv-python>=4.8.1',
                       'numpy>=1.26', 'pytest-qt', 'pytest-xvfb', 'flake8==4.0.1', 'mypy>=1.7'],
