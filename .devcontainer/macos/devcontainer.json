@@ -1,6 +1,6 @@
 {
     "name" : "ROV macOS",
-    "image": "ghcr.io/cwrurobotics/rov-24:sim",
+    "image": "ghcr.io/cwrurobotics/rov-24:iron",
     "containerEnv": {
         "DISPLAY": "unix:0"
     },
