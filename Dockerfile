@@ -34,9 +34,8 @@ RUN --mount=type=bind,source=src/surface/rov_gazebo/scripts/ardusub.sh,target=/t
 # Then removes the 'sshCommand' line from each file
 RUN  find . -name "*config" | grep git | while read -r line; do sed -i '/sshCommand/d' $line; done
 
-# Install geographiclib dependencies for mavros.
-RUN wget -qO- https://raw.githubusercontent.com/mavlink/mavros/ros2/mavros/scripts/install_geographiclib_datasets.sh > install.sh \
-  && . install.sh
+# # Install geographiclib dependencies for mavros.
+# RUN sudo su -c "bash <(wget -qO- https://raw.githubusercontent.com/mavlink/mavros/ros2/mavros/scripts/install_geographiclib_datasets.sh)" root
 
 WORKDIR /root/rov-24
 
@@ -53,5 +52,8 @@ RUN . /root/rov-24/.vscode/rov_setup.sh
 RUN . /root/rov-24/.vscode/install_dependencies.sh
 
 RUN . /opt/ros/iron/setup.sh \
-    && PYTHONWARNINGS=ignore:::setuptools.command.install,ignore:::setuptools.command.easy_install,ignore:::pkg_resources; export PYTHONWARNINGS \
-    && colcon build --symlink-install
+  && PYTHONWARNINGS=ignore:::setuptools.command.install,ignore:::setuptools.command.easy_install,ignore:::pkg_resources; export PYTHONWARNINGS \
+  && colcon build --symlink-install
+
+RUN . /opt/ros/iron/setup.sh \
+  && ros2 run mavros install_geographiclib_datasets.sh 
