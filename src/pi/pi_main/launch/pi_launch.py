@@ -80,7 +80,8 @@ def generate_launch_description() -> LaunchDescription:
         package='pi_main',
         executable='ip_publisher',
         emulate_tty=True,
-        output='screen'
+        output='screen',
+        remappings=[('/pi/ip_address', '/tether/ip_address')]
     )
 
     namespace_launch = GroupAction(
