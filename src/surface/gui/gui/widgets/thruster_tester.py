@@ -154,7 +154,7 @@ class ThrusterTester(QWidget):
 
     def send_test_message(self) -> None:
         for motor_index in range(self.MOTOR_COUNT):
-            self.test_cmd_client.get_logger().info(f"Testing thruster {motor_index}")
+            self.test_cmd_client.get_logger().info(f"Testing thruster {motor_index + 1}")
             self.test_motor_for_time(motor_index, self.TEST_THROTTLE, self.TEST_LENGTH)
             self.test_motor_for_time(motor_index, 0.0, 0.5)
 
