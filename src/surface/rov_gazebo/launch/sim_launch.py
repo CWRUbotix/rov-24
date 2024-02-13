@@ -60,7 +60,7 @@ def generate_launch_description() -> LaunchDescription:
 
     # TODO gz_sim launch might be nice
     start_gazebo = ExecuteProcess(
-        cmd=['gz', 'sim', '-v', '3', '-r', world_path],
+        cmd=['ign', 'gazebo', '-v', '3', '-r', world_path],
         output='screen'
     )
 
@@ -92,50 +92,25 @@ def generate_launch_description() -> LaunchDescription:
         emulate_tty=True
     )
 
-    # # Spawn entity
-    # gz_spawn_entity = Node(
-    #     package="ros_gz_sim",
-    #     executable="create",
-    #     output="screen",
-    #     arguments=[
-    #         "-topic",
-    #         "robot_description",
-    #         "-name",
-    #         "ROV",
-    #         "-allow_renaming",
-    #         "true",
-    #     ],
-    #     namespace=NS,
-    # )
-
-    # gz_spawn_pool = Node(
-    #     package="ros_gz_sim",
-    #     executable="create",
-    #     output="screen",
-    #     arguments=[
-    #         "-topic",
-    #         "pool_description",
-    #         "-name",
-    #         "pool",
-    #         "-allow_renaming",
-    #         "true",
-    #     ],
-    #     namespace=NS,
-    # )
+    # cam_bridge_node = Node(
+    #     package='ros_gz_image',
+    #     executable='image_bridge',
+    #     arguments=['/front_cam'],
+    #     output='screen',
+    # ),
 
     # Not using keyboard launch file
     # TODO?
     # I think we should probably switch over all our single
     # Node launch files to something like this
-    # keyboard_driver = Node(
-    #     package="keyboard_driver",
-    #     executable="keyboard_driver_node",
-    #     output="screen",
-    #     name="keyboard_driver_node",
-    #     namespace=NAMESPACE,
-    #     remappings=[(f"/{NAMESPACE}/manual_control", "/manual_control")],
-    #     emulate_tty=True
-    # )
+    keyboard_control_node = Node(
+        package="flight_control",
+        executable="keyboard_control_node",
+        output="screen",
+        name="keyboard_control_node",
+        remappings=[(f"/{NAMESPACE}/mavros/rc/override", "/tether/mavros/rc/override")],
+        emulate_tty=True
+    )
 
     # cam_bridge = Node(
     #     package="ros_gz_bridge",
@@ -186,7 +161,8 @@ def generate_launch_description() -> LaunchDescription:
             PushRosNamespace(NAMESPACE),
             mav_ros_node,
             heartbeat_node,
-            # keyboard_driver,
+            # cam_bridge_node,
+            keyboard_control_node,
         ]
     )
 

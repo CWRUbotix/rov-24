@@ -4,27 +4,31 @@
 
     <!-- Base Gazebo plugins -->
     <plugin
-        filename="gz-sim-physics-system"
-        name="gz::sim::systems::Physics">
+        filename="ign-gazebo-physics-system"
+        name="ign::gazebo::systems::Physics">
     </plugin>
     <plugin
-        filename="gz-sim-user-commands-system"
-        name="gz::sim::systems::UserCommands">
+        filename="ign-gazebo-user-commands-system"
+        name="ign::gazebo::systems::UserCommands">
     </plugin>
     <plugin
-        filename="gz-sim-scene-broadcaster-system"
-        name="gz::sim::systems::SceneBroadcaster">
+        filename="ign-gazebo-scene-broadcaster-system"
+        name="ign::gazebo::systems::SceneBroadcaster">
     </plugin>
 
     <!-- IMU plugin manages all IMU sensors -->
-    <plugin filename="libgz-sim-imu-system.so"
-            name="gz::sim::systems::Imu">
+    <plugin filename="libign-gazebo-imu-system.so"
+            name="ign::gazebo::systems::Imu">
+    </plugin>
+
+    <plugin filename="ign-gazebo-sensors-system"
+            name="ign::gazebo::systems::Sensors">
     </plugin>
 
     <!-- Buoyancy plugin manages buoyancy for all models -->
     <plugin
-        filename="gz-sim-buoyancy-system"
-        name="gz::sim::systems::Buoyancy">
+        filename="ign-gazebo-buoyancy-system"
+        name="ign::gazebo::systems::Buoyancy">
       <!-- Fluid density is 1 (air) above 0 and 1000 (water) below 0 -->
       <graded_buoyancy>
         <default_density>1000</default_density>
@@ -34,7 +38,7 @@
         </density_change>
       </graded_buoyancy>
       <!-- Enable by model name -->
-      <enable>bluerov2_heavy</enable>
+      <enable>rov24</enable>
     </plugin>
 
     <include>
@@ -42,8 +46,8 @@
     </include>
 
     <include>
-      <uri>model://bluerov2_heavy</uri>
-      <pose>0 0 0 0 0 0</pose>
+      <uri>model://rov24</uri>
+      <pose>-2 0 0 0 0 0</pose>
     </include>
 
     <include>
