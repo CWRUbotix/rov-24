@@ -1,12 +1,8 @@
 {
-    "name" : "ROV macOS",
-    "image": "ghcr.io/cwrurobotics/rov-24:iron",
-    "containerEnv": {
-        "DISPLAY": "unix:0"
+    "name" : "ROV Windows Test",
+    "build": {
+        "dockerfile": "../../Dockerfile"
     },
-    "mounts": [
-        "type=bind,source=/Users/${localEnv:USER}/.ssh,target=/root/.ssh,readonly",
-    ],
     "workspaceFolder": "/root/rov-24",
     "customizations": {
         "vscode" : {
