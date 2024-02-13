@@ -46,9 +46,9 @@
         {
             "label": "Docker Pull",
             "type": "shell",
-            "command": "sudo docker pull ghcr.io/cwrurobotics/rov-24:sim",
+            "command": "sudo docker pull ghcr.io/cwrurobotics/rov-24:iron",
             "windows": {
-                "command": "docker pull ghcr.io/cwrurobotics/rov-24:sim"
+                "command": "docker pull ghcr.io/cwrurobotics/rov-24:iron"
             },
             "hide": true
         },
