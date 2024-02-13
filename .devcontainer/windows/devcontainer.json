@@ -1,6 +1,6 @@
 {
     "name" : "ROV Windows",
-    "image": "ghcr.io/cwrurobotics/rov-24:sim",
+    "image": "ghcr.io/cwrurobotics/rov-24:iron",
     "workspaceFolder": "/root/rov-24",
     "customizations": {
         "vscode" : {
