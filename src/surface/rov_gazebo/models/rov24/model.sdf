@@ -52,6 +52,8 @@
     </link>
 
     <link name="front_flir_cam_link">
+      <pose>0.5 0 0 0 0 0</pose>
+
       <sensor type="camera" name="front_flir_cam">
         <camera>
           <horizontal_fov>1.74</horizontal_fov>
@@ -86,7 +88,7 @@
     <joint name="front_flir_cam_joint" type="fixed">
       <parent>base_link</parent>
       <child>front_flir_cam_link</child>
-      <pose>0.5 0 0 0 0 0</pose>
+      <pose>0 0 0 0 0 0</pose>
     </joint>
 
 
