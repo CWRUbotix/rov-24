@@ -93,10 +93,14 @@ def generate_launch_description() -> LaunchDescription:
     )
 
     cam_bridge_node = Node(
-        package='ros_gz_image',
-        executable='image_bridge',
-        arguments=['/front_cam'],
-        output='screen',
+        package="ros_gz_image",
+        executable="image_bridge",
+        name="image_bridge",
+        arguments=["front_cam"],
+        output="screen",
+        remappings=[
+            (f"/{NAMESPACE}/front_cam", "/tether/front_cam/image_raw"),
+        ],
     )
 
     # Not using keyboard launch file
@@ -112,32 +116,6 @@ def generate_launch_description() -> LaunchDescription:
         emulate_tty=True
     )
 
-    # cam_bridge = Node(
-    #     package="ros_gz_bridge",
-    #     executable="parameter_bridge",
-    #     namespace=NAMESPACE,
-    #     name="cam_bridge",
-    #     arguments=[
-    #         "/bottom_cam/image_raw@sensor_msgs/msg/Image@gz.msgs.Image",
-    #         "/bottom_cam/camera_info@sensor_msgs/msg/CameraInfo@gz.msgs.CameraInfo",
-    #         "/front_cam/image_raw@sensor_msgs/msg/Image@gz.msgs.Image",
-    #         "/front_cam/camera_info@sensor_msgs/msg/CameraInfo@gz.msgs.CameraInfo",
-    #         "/manip_cam/image_raw@sensor_msgs/msg/Image@gz.msgs.Image",
-    #         "/depth_cam@sensor_msgs/msg/Image@gz.msgs.Image",
-    #         "/depth_cam/points@sensor_msgs/msg/PointCloud2@gz.msgs.PointCloudPacked",
-    #     ],
-    #     remappings=[
-    #         (f"/{NAMESPACE}/bottom_cam/image_raw", "/bottom_cam/image_raw"),
-    #         (f"/{NAMESPACE}/bottom_cam/camera_info", "/bottom_cam/camera_info"),
-    #         (f"/{NAMESPACE}/front_cam/image_raw", "/front_cam/image_raw"),
-    #         (f"/{NAMESPACE}/front_cam/camera_info", "/front_cam/camera_info"),
-    #         (f"/{NAMESPACE}/manip_cam/image_raw", "/manip_cam/image_raw"),
-    #         (f"/{NAMESPACE}/depth_cam", "/depth_cam/image_raw"),
-    #         (f"/{NAMESPACE}/depth_cam/points", "/depth_cam/points"),
-    #     ],
-    #     output="screen",
-    #     emulate_tty=True
-    # )
 
     # Launches the pi heartbeat node
     heartbeat_node = Node(
@@ -172,7 +150,7 @@ def generate_launch_description() -> LaunchDescription:
             # pool_state_publisher,
             # gazeboLaunch,
             start_gazebo,
-            # start_ardusub,
+            start_ardusub,
             namespace_launch,
             # gz_spawn_entity,
             # gz_spawn_pool,
