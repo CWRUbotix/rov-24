@@ -92,12 +92,12 @@ def generate_launch_description() -> LaunchDescription:
         emulate_tty=True
     )
 
-    # cam_bridge_node = Node(
-    #     package='ros_gz_image',
-    #     executable='image_bridge',
-    #     arguments=['/front_cam'],
-    #     output='screen',
-    # ),
+    cam_bridge_node = Node(
+        package='ros_gz_image',
+        executable='image_bridge',
+        arguments=['/front_cam'],
+        output='screen',
+    )
 
     # Not using keyboard launch file
     # TODO?
@@ -161,7 +161,7 @@ def generate_launch_description() -> LaunchDescription:
             PushRosNamespace(NAMESPACE),
             mav_ros_node,
             heartbeat_node,
-            # cam_bridge_node,
+            cam_bridge_node,
             keyboard_control_node,
         ]
     )
@@ -172,7 +172,7 @@ def generate_launch_description() -> LaunchDescription:
             # pool_state_publisher,
             # gazeboLaunch,
             start_gazebo,
-            start_ardusub,
+            # start_ardusub,
             namespace_launch,
             # gz_spawn_entity,
             # gz_spawn_pool,
