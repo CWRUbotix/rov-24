@@ -34,15 +34,20 @@ RUN --mount=type=bind,source=src/surface/rov_gazebo/scripts/ardusub.sh,target=/t
 # Then removes the 'sshCommand' line from each file
 RUN  find . -name "*config" | grep git | while read -r line; do sed -i '/sshCommand/d' $line; done
 
+# Install geographiclib dependencies for mavros.
+RUN  wget -qO - https://raw.githubusercontent.com/mavlink/mavros/ros2/mavros/scripts/install_geographiclib_datasets.sh | bash
+
 WORKDIR /root/rov-24
+
+# Setup Models and Gazebo Environment
+RUN --mount=type=bind,source=src/surface/rov_gazebo/scripts/add_models_and_worlds.sh,target=/root/rov-24/src/surface/rov_gazebo/scripts/add_models_and_worlds.sh \
+  . /root/rov-24/src/surface/rov_gazebo/scripts/add_models_and_worlds.sh
 
 COPY . .
 
 # TODO for future nerd to do this via ENTRYPOINT which be better but, I could not get ENTRYPOINT to play with VsCODE.
 RUN . /root/rov-24/.vscode/rov_setup.sh
 
-# Setup Models and Gazebo Environment
-RUN . /root/rov-24/src/surface/rov_gazebo/scripts/add_models_and_worlds.sh
 
 # Installs ROS and python dependencies
 RUN . /root/rov-24/.vscode/install_dependencies.sh
