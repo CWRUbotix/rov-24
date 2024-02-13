@@ -35,6 +35,7 @@ RUN --mount=type=bind,source=src/surface/rov_gazebo/scripts/ardusub.sh,target=/t
 RUN  find . -name "*config" | grep git | while read -r line; do sed -i '/sshCommand/d' $line; done
 
 # # Install geographiclib dependencies for mavros.
+# TODO this
 # RUN sudo su -c "bash <(wget -qO- https://raw.githubusercontent.com/mavlink/mavros/ros2/mavros/scripts/install_geographiclib_datasets.sh)" root
 
 WORKDIR /root/rov-24
