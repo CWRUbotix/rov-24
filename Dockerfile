@@ -35,7 +35,7 @@ RUN --mount=type=bind,source=src/surface/rov_gazebo/scripts/ardusub.sh,target=/t
 RUN  find . -name "*config" | grep git | while read -r line; do sed -i '/sshCommand/d' $line; done
 
 # Install geographiclib dependencies for mavros.
-RUN  wget -qO - https://raw.githubusercontent.com/mavlink/mavros/ros2/mavros/scripts/install_geographiclib_datasets.sh | bash
+RUN  bash <(wget -qO- https://raw.githubusercontent.com/mavlink/mavros/ros2/mavros/scripts/install_geographiclib_datasets.sh)
 
 WORKDIR /root/rov-24
 
@@ -47,7 +47,6 @@ COPY . .
 
 # TODO for future nerd to do this via ENTRYPOINT which be better but, I could not get ENTRYPOINT to play with VsCODE.
 RUN . /root/rov-24/.vscode/rov_setup.sh
-
 
 # Installs ROS and python dependencies
 RUN . /root/rov-24/.vscode/install_dependencies.sh
