@@ -1,7 +1,7 @@
+from launch.actions import GroupAction
 from launch.launch_description import LaunchDescription
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node, PushRosNamespace
-from launch.actions import GroupAction
 
 
 def generate_launch_description() -> LaunchDescription:
@@ -18,7 +18,8 @@ def generate_launch_description() -> LaunchDescription:
                     ("/surface/gui/task_feedback", "/surface/task_feedback"),
                     ("/surface/gui/auto_docker_control", "/surface/auto_docker_control"),
                     ("/surface/gui/vehicle_state_event", "/surface/vehicle_state_event"),
-                    ("/surface/gui/mavros/cmd/arming", "/tether/mavros/cmd/arming")],
+                    ("/surface/gui/mavros/cmd/arming", "/tether/mavros/cmd/arming"),
+                    ("/surface/gui/ip_address", "/tether/ip_address")],
         emulate_tty=True,
         output='screen'
     )
