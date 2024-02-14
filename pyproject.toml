@@ -32,7 +32,7 @@ disallow_untyped_calls = false
 disallow_subclassing_any = false
 
 # Done to handle lots of duplicate file names like setup.py and test files. 
-explicit_package_bases = True
+explicit_package_bases = true
 exclude = src/pi/robot_upstart/
 
 [tool.pytest.ini_options]   
