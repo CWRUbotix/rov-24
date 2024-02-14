@@ -25,6 +25,12 @@ RUN sudo apt-get install geographiclib-tools -y
 # Switch to bash so the process subsition works. aka <()
 SHELL ["/bin/bash", "-c"]
 RUN . <(wget -qO- https://raw.githubusercontent.com/mavlink/mavros/ros2/mavros/scripts/install_geographiclib_datasets.sh)
+COPY pyproject.toml .
+
+RUN pip install --no-cache-dir . \
+  && rm pyproject.toml
+
+COPY . .
 
 #Set up rov user
 ARG USER_NAME=rov
