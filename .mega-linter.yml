@@ -15,7 +15,7 @@ DISABLE:
 
 
 PRE_COMMANDS:
-  - pip install .
+  - command: pip install .
 
 DISABLE_LINTERS:
   - PYTHON_PYLINT
