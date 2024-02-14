@@ -79,6 +79,7 @@
         "pycache",
         "pylint",
         "pynput",
+        "pyproject",
         "pyqt",
         "pyqtdarktheme",
         "pyright",
