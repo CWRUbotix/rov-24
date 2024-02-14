@@ -94,8 +94,8 @@ class ManualControlNode(Node):
             forward=axes[LJOYY],  # Left Joystick Y
             lateral=-axes[LJOYX],  # Left Joystick X
             vertical=(axes[L2PRESS_PERCENT] - axes[R2PRESS_PERCENT]) / 2,  # L2/R2 triggers
-            roll=buttons[R1] - buttons[L1],  # L1/R1 buttons
-            pitch=-axes[DPADVERT],  # DPad
+            roll=buttons[L1] - buttons[R1],  # L1/R1 buttons
+            pitch=axes[RJOYY],  # Right Joysick Y
             yaw=-axes[RJOYX],  # Right Joystick X
         )
 
