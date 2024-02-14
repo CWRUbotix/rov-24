@@ -29,10 +29,7 @@ setup(
         ),
     ],
     install_requires=[
-        "setuptools",
-        "flake8==4.0.1",
-        "mypy>=1.7",
-        "pynput",
+        "setuptools"
     ],
     zip_safe=True,
     maintainer="benjamin",

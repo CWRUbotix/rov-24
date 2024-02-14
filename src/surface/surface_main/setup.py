@@ -31,15 +31,8 @@ setup(
         ),
     ],
     install_requires=[
-        "setuptools",
-        "flake8==4.0.1",
-        "mypy >= 1.7",
-        "isort",
-        "black",
-        "checkov",
-        "ruff",
-        "pyright",
-        "bandit",
+        "setuptools"
+        
     ],
     zip_safe=True,
     maintainer="Michael Carlstrom",

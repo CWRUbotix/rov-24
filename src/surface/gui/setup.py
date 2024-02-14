@@ -52,15 +52,7 @@ setup(
         ),
     ],
     install_requires=[
-        "setuptools",
-        "pyqt6",
-        "pyqtdarktheme",
-        "opencv-python>=4.8.1",
-        "numpy>=1.26",
-        "pytest-qt",
-        "pytest-xvfb",
-        "flake8==4.0.1",
-        "mypy>=1.7",
+        "setuptools"
     ],
     zip_safe=True,
     maintainer="Benjamin Poulin",

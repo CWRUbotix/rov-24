@@ -31,10 +31,9 @@ setup(
         ),
     ],
     install_requires=[
-        "setuptools",
-        "flake8==4.0.1",
-        "mypy >= 1.7",
+        "setuptools"
     ],
+    install_requires=['setuptools'],
     zip_safe=True,
     maintainer="Michael Carlstrom",
     maintainer_email="rmc@carlstrom.com",

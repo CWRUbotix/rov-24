@@ -27,6 +27,11 @@ RUN echo "export PYTHONWARNINGS=ignore:::setuptools.command.install,ignore:::set
 
 WORKDIR /root/rov-24
 
+COPY pyproject.toml .
+
+RUN pip install --no-cache-dir . \
+  && rm pyproject.toml
+
 COPY . .
 
 # TODO for future nerd to do this via ENTRYPOINT which be better but, I could not get ENTRYPOINT to play with VsCODE.
