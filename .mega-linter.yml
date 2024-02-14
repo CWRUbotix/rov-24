@@ -10,6 +10,10 @@ PYTHON_ISORT_CONFIG_FILE: pyproject.toml
 PYTHON_BANDIT_CONFIG_FILE: pyproject.toml
 PYTHON_FLAKE8_CONFIG_FILE: pyproject.toml
 
+PRE_COMMANDS:
+  - command: pip install Flake8-pyproject
+  venv: flake8
+
 DISABLE:
   - COPYPASTE
 
@@ -18,7 +22,7 @@ DISABLE_LINTERS:
   # MYPY is doing enough type checking
   - PYTHON_PYRIGHT
   # MYPY cannot do a good job without install all python dependencies so will disable here and use in ROS linter.
-  - PYTHON_MYPY
+  # - PYTHON_MYPY
   # Seems broken rn
   - JSON_JSONLINT
   # workaround to solve the issue: fatal: detected dubious ownership in repository at '/github/workspace'
