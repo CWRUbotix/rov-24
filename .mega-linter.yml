@@ -14,7 +14,7 @@ PRE_COMMANDS:
   - command: pip install --upgrade pip && pip install Flake8-pyproject
     venv: flake8
 
-# PYTHON_FLAKE8_ARGUMENTS: --toml-config 
+PYTHON_FLAKE8_ARGUMENTS: --toml-config /github/workspace/pyproject.toml
 
 POST_COMMANDS:
   - command: ls
