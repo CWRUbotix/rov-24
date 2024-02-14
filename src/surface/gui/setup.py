@@ -51,9 +51,7 @@ setup(
             glob("gui/styles/*.qss"),
         ),
     ],
-    install_requires=[
-        "setuptools"
-    ],
+    install_requires=["setuptools"],
     zip_safe=True,
     maintainer="Benjamin Poulin",
     maintainer_email="bwp18@case.edu",

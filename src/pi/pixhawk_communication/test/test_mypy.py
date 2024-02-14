@@ -9,4 +9,4 @@ from ament_mypy.main import main
 def test_mypy() -> None:
     """Tests mypy on this module."""
     error_code = main(argv=[])
-    assert error_code == 0, 'Found code style errors / warnings'
+    assert error_code == 0, "Found code style errors / warnings"

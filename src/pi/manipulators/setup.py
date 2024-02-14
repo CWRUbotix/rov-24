@@ -30,9 +30,7 @@ setup(
             glob("launch/*launch.[pxy][yma]*"),
         ),
     ],
-    install_requires=[
-        "setuptools"
-    ],
+    install_requires=["setuptools"],
     zip_safe=True,
     maintainer="Georgia Martinez, Michael Carlstrom",
     maintainer_email="gcm49@case.edu, rmc170@case.edu",

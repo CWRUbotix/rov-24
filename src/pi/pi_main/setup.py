@@ -39,9 +39,7 @@ setup(
             glob("udev_rules/*"),
         ),
     ],
-    install_requires=[
-        "setuptools"
-    ],
+    install_requires=["setuptools"],
     zip_safe=True,
     maintainer="Michael Carlstrom",
     maintainer_email="rmc170@case.edu",
