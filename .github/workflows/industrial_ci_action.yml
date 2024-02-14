@@ -49,6 +49,6 @@ jobs:
           # https://pytest-qt.readthedocs.io/en/latest/troubleshooting.html
           ADDITIONAL_DEBS: 'libxcb-cursor0 xvfb'
           # Crazy one liner for install python dependencies
-          AFTER_INSTALL_TARGET_DEPENDENCIES_EMBED: 'pip install /root/target_ws/'
+          AFTER_INSTALL_TARGET_DEPENDENCIES_EMBED: 'pip install /root/target_ws/src'
           # Used for running our CI but don't necessarily want to run others failing unit tests (ej. robot_upstart)
           UPSTREAM_WORKSPACE: 'github:clearpathrobotics/robot_upstart#foxy-devel'
