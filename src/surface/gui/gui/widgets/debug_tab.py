@@ -18,7 +18,8 @@ class DebugWidget(QWidget):
         )
 
         top_bar.addWidget(
-            HeartbeatWidget(), alignment=Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignLeft
+            HeartbeatWidget(),
+            alignment=Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignLeft,
         )
 
         right_bar = QVBoxLayout()

@@ -5,5 +5,5 @@ shfmt -w .
 
 # Cleans Python files
 isort .
-black --config .python-black .
+black .
 ruff format

@@ -29,6 +29,10 @@ class Circle(QLabel):
 
 
 class CircleIndicator(Circle, IndicatorMixin):
-    def __init__(self, parent: Optional[QWidget] = None, radius: int = 50) -> None:
+    def __init__(
+        self,
+        parent: Optional[QWidget] = None,
+        radius: int = 50,
+    ) -> None:
         super().__init__(parent, radius)
         self.set_inactive()
