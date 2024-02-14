@@ -14,6 +14,9 @@ PRE_COMMANDS:
   - command: pip install Flake8-pyproject
     venv: flake8
 
+POST_COMMANDS:
+  - command: flake8 -h
+
 DISABLE:
   - COPYPASTE
 
