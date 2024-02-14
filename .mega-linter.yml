@@ -14,7 +14,7 @@ PYTHON_BANDIT_CONFIG_FILE: pyproject.toml
 PRE_COMMANDS:
   - command: pip install --upgrade pip && pip install Flake8-pyproject
     venv: flake8
-  - command: pip install --upgrade pip && pip install pytest ament_mypy ament-lint-flake8
+  - command: pip install --upgrade pip && pip install pytest ament_mypy ament-lint-flake8 pyqt6
     venv: mypy
 PYTHON_FLAKE8_ARGUMENTS: --toml-config /github/workspace/pyproject.toml
 
