@@ -21,43 +21,6 @@ def generate_launch_description() -> LaunchDescription:
     params_file = "sub.parm"
     params_path: str = os.path.join(rov_gazebo_path, "config", params_file)
 
-    # Process the URDF file
-    # xacro_file = os.path.join(rov_gazebo_path, "description", "rov.xacro")
-    # robot_description = Command(["xacro ", xacro_file])
-    # params = {"robot_description": robot_description}
-
-    # pool_file = os.path.join(rov_gazebo_path, "description", "pool.xacro")
-    # pool_description = Command(["xacro ", pool_file])
-    # pool_params = {"robot_description": pool_description}
-
-    # # Create a robot_state_publisher node
-    # robot_state_publisher = Node(
-    #     package="robot_state_publisher",
-    #     executable="robot_state_publisher",
-    #     output="screen",
-    #     parameters=[params],
-    #     namespace=NS,
-    #     emulate_tty=True
-    # )
-
-    # pool_state_publisher = Node(
-    #     package="robot_state_publisher",
-    #     executable="robot_state_publisher",
-    #     output="screen",
-    #     parameters=[pool_params],
-    #     namespace=NS,
-    #     remappings=[(f"/{NS}/robot_description", f"/{NS}/pool_description")],
-    #     emulate_tty=True
-    # )
-
-    # # Launches Gazebo
-    # gazeboLaunch = IncludeLaunchDescription(
-    #     PythonLaunchDescriptionSource(
-    #         [os.path.join(ros_gz_sim_path, "launch", "gz_sim.launch.py")]
-    #     ),
-    #     launch_arguments={"gz_args": world_path}.items(),
-    # )
-
     # TODO gz_sim launch might be nice
     start_gazebo = ExecuteProcess(
         cmd=['ign', 'gazebo', '-v', '3', '-r', world_path],
@@ -96,17 +59,14 @@ def generate_launch_description() -> LaunchDescription:
         package="ros_gz_image",
         executable="image_bridge",
         name="image_bridge",
-        arguments=["front_cam"],
+        arguments=["front_cam", "bottom_cam"],
         output="screen",
         remappings=[
             (f"/{NAMESPACE}/front_cam", "/tether/front_cam/image_raw"),
+            (f"/{NAMESPACE}/bottom_cam", "/tether/bottom_cam/image_raw"),
         ],
     )
 
-    # Not using keyboard launch file
-    # TODO?
-    # I think we should probably switch over all our single
-    # Node launch files to something like this
     keyboard_control_node = Node(
         package="flight_control",
         executable="keyboard_control_node",
@@ -115,7 +75,6 @@ def generate_launch_description() -> LaunchDescription:
         remappings=[(f"/{NAMESPACE}/mavros/rc/override", "/tether/mavros/rc/override")],
         emulate_tty=True
     )
-
 
     # Launches the pi heartbeat node
     heartbeat_node = Node(
@@ -146,16 +105,9 @@ def generate_launch_description() -> LaunchDescription:
 
     return LaunchDescription(
         [
-            # robot_state_publisher,
-            # pool_state_publisher,
-            # gazeboLaunch,
             start_gazebo,
             start_ardusub,
             namespace_launch,
-            # gz_spawn_entity,
-            # gz_spawn_pool,
-            # thrust_bridge,
-            # cam_bridge,
             surface_launch,
         ]
     )
