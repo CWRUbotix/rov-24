@@ -8,12 +8,14 @@ PYTHON_BLACK_CONFIG_FILE: pyproject.toml
 PYTHON_RUFF_CONFIG_FILE: pyproject.toml
 PYTHON_ISORT_CONFIG_FILE: pyproject.toml
 PYTHON_BANDIT_CONFIG_FILE: pyproject.toml
-# PYTHON_FLAKE8_CONFIG_FILE: pyproject.toml
 
+# DO this heheheha because of https://github.com/PyCQA/flake8/issues/234
+# Where grown adults just complain and complain lol.
 PRE_COMMANDS:
   - command: pip install --upgrade pip && pip install Flake8-pyproject
     venv: flake8
-
+  - command: pip install --upgrade pip && pip install ament_mypy ament_flake8
+    venv: mypy
 PYTHON_FLAKE8_ARGUMENTS: --toml-config /github/workspace/pyproject.toml
 
 POST_COMMANDS:
