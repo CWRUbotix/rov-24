@@ -15,7 +15,7 @@ PRE_COMMANDS:
   - command: pip install --upgrade pip && pip install Flake8-pyproject
     venv: flake8
     # Adds qmake for pip
-  - command: apk add qt6-qtbase
+  - command: apk add qt6-qtbase-dev
   - command: pip install --upgrade pip && pip install pytest ament_mypy ament-lint-flake8 pyqt6
     venv: mypy
 PYTHON_FLAKE8_ARGUMENTS: --toml-config /github/workspace/pyproject.toml
