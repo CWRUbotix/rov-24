@@ -33,7 +33,6 @@ setup(
     install_requires=[
         "setuptools"
     ],
-    install_requires=['setuptools'],
     zip_safe=True,
     maintainer="Michael Carlstrom",
     maintainer_email="rmc@carlstrom.com",

@@ -13,7 +13,13 @@ dependencies = [
     'opencv-python>=4.8.1',
     'numpy>=1.26',
     'pytest-qt',
-    'pytest-xvfb'
+    'pytest-xvfb',
+    'isort',
+    'black',
+    'checkov',
+    'ruff',
+    'pyright',
+    'bandit',
 ]
 
 [tool]
