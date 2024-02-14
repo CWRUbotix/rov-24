@@ -11,14 +11,18 @@ PYTHON_BANDIT_CONFIG_FILE: pyproject.toml
 
 # DO this heheheha because of https://github.com/PyCQA/flake8/issues/234
 # Where grown adults just complain and complain lol.
-PRE_COMMANDS:
+PYTHON_FLAKE8_ARGUMENTS: --toml-config /github/workspace/pyproject.toml
+PYTHON_FLAKE8_PRE_COMMANDS:
   - command: pip install --upgrade pip && pip install Flake8-pyproject
     venv: flake8
+
+PYTHON_MYPY_PRE_COMMANDS:
     # Adds qmake for pip
   - command: apk add qt6-qtbase-dev
-  - command: export PATH=/usr/lib/qt6/bin:$PATH && pip install --upgrade pip && pip install pytest ament_mypy ament-lint-flake8 pyqt6
+  - command: pip install --upgrade pip && pip install pytest ament_mypy ament-lint-flake8
     venv: mypy
-PYTHON_FLAKE8_ARGUMENTS: --toml-config /github/workspace/pyproject.toml
+  - command: export PATH=/usr/lib/qt6/bin:$PATH && pip install pyqt6
+    venv: mypy
 
 DISABLE:
   - COPYPASTE
