@@ -17,6 +17,15 @@ RUN sudo apt-get install nano -y
 RUN sudo apt-get update -y
 RUN sudo apt-get upgrade -y
 
+RUN sudo apt-get install wget -y
+
+# # Install geographiclib dependencies for mavros.
+# # Done here because file needs sudo perms
+RUN sudo apt-get install geographiclib-tools -y
+# Switch to bash so the process subsition works. aka <()
+SHELL ["/bin/bash", "-c"]
+RUN . <(wget -qO- https://raw.githubusercontent.com/mavlink/mavros/ros2/mavros/scripts/install_geographiclib_datasets.sh)
+
 #Set up rov user
 ARG USER_NAME=rov
 ARG USER_UID=1000
@@ -51,9 +60,6 @@ RUN ./ardupilot_gazebo.sh \
 # Then removes file paths without "git"
 # Then removes the 'sshCommand' line from each file
 RUN  find . -name "*config" | grep git | while read -r line; do sed -i '/sshCommand/d' $line; done
-
-# Install geographiclib dependencies for mavros.
-RUN sudo su -c "bash <(wget -qO- https://raw.githubusercontent.com/mavlink/mavros/ros2/mavros/scripts/install_geographiclib_datasets.sh)" root
 
 WORKDIR /home/${USER_NAME}/rov-24
 
