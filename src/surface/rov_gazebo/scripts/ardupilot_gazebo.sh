@@ -2,7 +2,7 @@
 
 sudo apt-get update
 sudo apt-get install rapidjson-dev libignition-gazebo6-dev -y
-# Can't be ssh because that breaks docker.
+# Can't be ssh clone because that breaks docker.
 # Can either make a second file or just hope that our fork does not need lots of dev work
 git clone -b fortress  https://github.com/cwruRobotics/rov-ardupilot-gazebo-fortress.git ~/ardupilot_gazebo
 cd ~/ardupilot_gazebo
