@@ -4,6 +4,7 @@ name = "rov-24"
 version = "1.1.0"
 
 dependencies = [
+    'setuptools',
     'flake8==4.0.1',
     'mypy >= 1.7',
     'pynput',
@@ -27,7 +28,7 @@ disallow_untyped_calls = false
 # Done because rclpy Node has type Any
 disallow_subclassing_any = false
 
-[tool.pytest]   
+[tool.pytest.ini_options]   
 qt_api = "pyqt6"
 
 [tool.pylintrc]
