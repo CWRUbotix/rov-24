@@ -17,7 +17,7 @@ setup(
         (os.path.join('share', PACKAGE_NAME, 'launch'),
          glob('launch/*launch.[pxy][yma]*'))
     ],
-    install_requires=['setuptools', 'flake8==4.0.1', 'mypy>=1.7', 'pynput'],
+    install_requires=['setuptools'],
     zip_safe=True,
     maintainer='benjamin',
     maintainer_email='bwp18@case.edu',
