@@ -11,7 +11,7 @@ PYTHON_BANDIT_CONFIG_FILE: pyproject.toml
 PYTHON_FLAKE8_CONFIG_FILE: pyproject.toml
 
 PRE_COMMANDS:
-  - command: pip install Flake8-pyproject
+  - command: pip install --upgrade pip && pip install Flake8-pyproject
     venv: flake8
 
 POST_COMMANDS:

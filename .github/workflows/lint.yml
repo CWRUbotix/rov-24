@@ -41,6 +41,9 @@ jobs:
     # issues & post new PR; remove the ones you do not need
     permissions:
       contents: write
+      # Done to add text to github issue
+      issues: write
+      pull-requests: write
 
     steps:
 
