@@ -17,10 +17,9 @@ PYTHON_FLAKE8_PRE_COMMANDS:
     venv: flake8
 
 PYTHON_MYPY_PRE_COMMANDS:
-    # Adds qmake for pip
+    # Install these stub files
   - command: git clone https://github.com/TilmanK/PyQt6-stubs
   - command: python setup.py install
-    venv: mypy
   - command: pip install --upgrade pip && pip install pytest ament_mypy ament-lint-flake8
     venv: mypy
 
