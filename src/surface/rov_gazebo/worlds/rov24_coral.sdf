@@ -24,7 +24,17 @@
     <plugin filename="ignition-gazebo-sensors-system"
             name="ignition::gazebo::systems::Sensors">
     </plugin>
+    Is your feature request related to a problem? Please describeIs your feature request related to a problem? Please describe
 
+    Both GUIs are bad
+    Describe the solution you'd like
+    
+    Redesign to be pretty and make final decisions about where cams will go/how many monitors we'll have.
+
+    Both GUIs are bad
+    Describe the solution you'd like
+    
+    Redesign to be pretty and make final decisions about where cams will go/how many monitors we'll have.
     <!-- Buoyancy plugin manages buoyancy for all models -->
     <plugin
         filename="ignition-gazebo-buoyancy-system"
@@ -56,8 +66,18 @@
     </include>
 
     <include>
-      <uri>model://coral_recovery_area</uri>
-      <pose>0 0 -4 0 0 0</pose>
+      <uri>model://coral_restoration_area</uri>
+      <pose>0 0 -3.98 0 0 0</pose>
+    </include>
+
+    <include>
+      <uri>model://coral_nursery_base</uri>
+      <pose>0.75 -0.75 -4 0 0 0</pose>
+    </include>
+
+    <include>
+      <uri>model://brain_coral</uri>
+      <pose>0.75 -0.75 -4 0 0 0</pose>
     </include>
 
   </world>
