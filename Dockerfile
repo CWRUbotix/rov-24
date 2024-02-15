@@ -37,6 +37,10 @@ RUN pip install --no-cache-dir --upgrade  pip==24.0
 
 WORKDIR /home/${USER_NAME}/rov-24
 
+# One might wonder why the following is done.
+# It is done so that the dependencies can be cached without needing to be reinstalled
+# each and everytime. Since these do not change too often this improves performance in most cases
+
 # Copies in Python deps
 COPY pyproject.toml .
 # Copies in ROS deps
