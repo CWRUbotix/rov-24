@@ -19,9 +19,9 @@ PYTHON_FLAKE8_PRE_COMMANDS:
 PYTHON_MYPY_PRE_COMMANDS:
     # Install these stub files
   - command: git clone https://github.com/TilmanK/PyQt6-stubs
-    cwd: /github/workspace/
+    cwd: /github/workspace
   - command: python setup.py install
-    cwd: /github/workspace/PyQt6-stubs/
+    cwd: /github/workspace/PyQt6-stubs
   - command: pip install --upgrade pip && pip install pytest ament_mypy ament-lint-flake8
     venv: mypy
 
