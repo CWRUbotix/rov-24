@@ -22,7 +22,7 @@ PYTHON_MYPY_PRE_COMMANDS:
     # Install these stub files
   - command: git clone https://github.com/TilmanK/PyQt6-stubs
     venv: mypy
-  - command: cd PyQt6-stubs/ && python setup.py install
+  - command: cd PyQt6-stubs/ && pip install .
     venv: mypy
   - command: pip install pytest ament_mypy ament-lint-flake8
     venv: mypy
