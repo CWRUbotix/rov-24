@@ -12,7 +12,7 @@ from ament_index_python.packages import get_package_share_directory
 class App(QWidget):
     """Main app window."""
 
-    app: QApplication = QApplication([])
+    app = QApplication([])
 
     def __init__(self, node_name: str) -> None:
         if not rclpy.utilities.ok():
