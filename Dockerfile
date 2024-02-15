@@ -17,7 +17,7 @@ RUN apt-get update -y \
   geographiclib-tools=1.52-1 \
   # Install missing libxcb-cursor0 xvfb for PyQt unit testing
 # https://pytest-qt.readthedocs.io/en/latest/troubleshooting.html
-  xvfb \
+  xvfb=2:21.1.4-2ubuntu1.7~22.04.8 \
   && apt-get upgrade -y \
   # Clean for better performance
   && apt-get clean \
