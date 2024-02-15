@@ -1,6 +1,6 @@
 from typing import Callable, Optional
 
-from gui.widgets.video_widget import PauseableVideoWidget
+from gui.widgets.video_widget import CameraDescription, PauseableVideoWidget, CameraType
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import (QFrame, QGridLayout, QHBoxLayout, QLabel,
                              QPushButton, QVBoxLayout, QWidget)
@@ -13,21 +13,20 @@ class SeagrassWidget(QWidget):
     def __init__(self) -> None:
         super().__init__()
 
-        root_layout: QHBoxLayout = QHBoxLayout(self)
+        root_layout = QHBoxLayout(self)
 
-        self.after_grid: SeagrassGrid = SeagrassGrid(self.update_result_text)
-        self.before_grid: SeagrassGrid = SeagrassGrid(self.update_result_text,
-                                                      self.after_grid.set_button)
+        self.after_grid = SeagrassGrid(self.update_result_text)
+        self.before_grid = SeagrassGrid(self.update_result_text, self.after_grid.set_button)
         # Before layout
-        before_layout: QVBoxLayout = QVBoxLayout()
+        before_layout = QVBoxLayout()
 
-        before_btns_layout: QHBoxLayout = QHBoxLayout()
+        before_btns_layout = QHBoxLayout()
 
-        set_all_green: QPushButton = QPushButton("Set All Green")
+        set_all_green = QPushButton("Set All Green")
         set_all_green.setMaximumWidth(self.BUTTON_WIDTH)
         set_all_green.clicked.connect(lambda: self.before_grid.reset_grid(True))
 
-        set_all_white: QPushButton = QPushButton("Set All White")
+        set_all_white = QPushButton("Set All White")
         set_all_white.setMaximumWidth(self.BUTTON_WIDTH)
         set_all_white.clicked.connect(lambda: self.before_grid.reset_grid(False))
 
@@ -40,15 +39,17 @@ class SeagrassWidget(QWidget):
 
         before_layout.addStretch()
 
+        bottom_cam_description = CameraDescription(CameraType.ETHERNET,
+                                                   'bottom_cam/image_raw',
+                                                   'Bottom Camera', 640, 370)
         # Bottom cam
-        self.bottom_cam = PauseableVideoWidget("bottom_cam/image_raw", "Bottom Cam",
-                                               widget_width=640, widget_height=360)
+        self.bottom_cam = PauseableVideoWidget(bottom_cam_description)
 
         # After layout
-        after_layout: QVBoxLayout = QVBoxLayout()
-        after_bttn_layout: QHBoxLayout = QHBoxLayout()
+        after_layout = QVBoxLayout()
+        after_bttn_layout = QHBoxLayout()
 
-        match_before: QPushButton = QPushButton("Match Before")
+        match_before = QPushButton("Match Before")
         match_before.setMaximumWidth(120)
         match_before.clicked.connect(self.before_grid.update_connected_grid)
 
@@ -61,14 +62,14 @@ class SeagrassWidget(QWidget):
         after_layout.addStretch()
 
         # Result layout
-        result_widget: QWidget = QWidget()
-        result_layout: QVBoxLayout = QVBoxLayout()
+        result_widget = QWidget()
+        result_layout = QVBoxLayout()
 
         result_widget.setLayout(result_layout)
 
-        self.before_label: QLabel = QLabel("Before: ")
-        self.after_label: QLabel = QLabel("After: ")
-        self.diff_label: QLabel = QLabel()
+        self.before_label = QLabel("Before: ")
+        self.after_label = QLabel("After: ")
+        self.diff_label = QLabel()
 
         result_layout.addWidget(self.before_label)
         result_layout.addWidget(self.after_label)
@@ -112,13 +113,13 @@ class SeagrassGrid(QWidget):
 
         self.setMaximumWidth(200)
 
-        grid_layout: QGridLayout = QGridLayout()
+        grid_layout = QGridLayout()
         grid_layout.setSpacing(0)
         grid_layout.setContentsMargins(0, 0, 0, 0)
 
         self.setLayout(grid_layout)
 
-        self.frame: QFrame = QFrame()
+        self.frame = QFrame()
         self.frame.setLayout(grid_layout)
         self.frame.setStyleSheet("border: 1px solid gray")
 

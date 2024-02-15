@@ -18,18 +18,19 @@ def generate_launch_description() -> LaunchDescription:
         'dump_node_map': False,
         # set parameters defined in blackfly_s.yaml
         'gain_auto': 'Continuous',
-        # 'pixel_format': 'BayerRG8',
+        'pixel_format': 'BayerRG8',
         'exposure_auto': 'Continuous',
         # These are useful for GigE cameras
         'device_link_throughput_limit': 125000000,
         'gev_scps_packet_size': 9000,
         # ---- to reduce the sensor width and shift the crop
-        #   'image_width': 1280,
-        #   'image_height': 720,
+        'image_width': 720,
+        'image_height': 540,
         # 'offset_x': 16,
         # 'offset_y': 0,
         'binning_x': 2,
         'binning_y': 2,
+        'connect_while_subscribed': True,
         'frame_rate_auto': 'Off',
         'frame_rate': 60.0,
         'frame_rate_enable': True,
@@ -47,10 +48,10 @@ def generate_launch_description() -> LaunchDescription:
     }
 
     # launches node to run front flir camera
-    front_cam: Node = Node(
+    front_cam = Node(
         package='spinnaker_camera_driver',
         executable='camera_driver_node',
-        name='front_camera',
+        name='front_cam',
         emulate_tty=True,
         output='screen',
         parameters=[Parameter('serial_number', '23473577'),
@@ -59,10 +60,10 @@ def generate_launch_description() -> LaunchDescription:
     )
 
     # launches node to run bottom flir camera
-    bottom_cam: Node = Node(
+    bottom_cam = Node(
         package='spinnaker_camera_driver',
         executable='camera_driver_node',
-        name='bottom_camera',
+        name='bottom_cam',
         emulate_tty=True,
         output='screen',
         parameters=[Parameter('serial_number', '23473566'),
