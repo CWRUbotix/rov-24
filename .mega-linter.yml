@@ -18,10 +18,10 @@ PYTHON_FLAKE8_PRE_COMMANDS:
 
 PYTHON_MYPY_PRE_COMMANDS:
     # Adds qmake for pip
-  - command: apk add py3-qt6
-  - command: pip install --upgrade pip && pip install pytest ament_mypy ament-lint-flake8
+  - command: git clone https://github.com/TilmanK/PyQt6-stubs
+  - command: python setup.py install
     venv: mypy
-  - command: export PATH=/usr/lib/qt6/bin:$PATH && pip install pyqt6
+  - command: pip install --upgrade pip && pip install pytest ament_mypy ament-lint-flake8
     venv: mypy
 
 DISABLE:
