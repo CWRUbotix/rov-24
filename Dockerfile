@@ -1,3 +1,6 @@
+# syntax=docker/dockerfile-upstream:master-labs
+# Done so --parents flag works
+
 FROM osrf/ros:iron-desktop-full
 
 RUN apt-get update -y \
@@ -9,11 +12,19 @@ RUN apt-get update -y \
   # Install nano
   nano=6.2-1 \
   # Install pip
-  python3-pip=22.0.2+dfsg-1ubuntu0.4\
+  python3-pip=22.0.2+dfsg-1ubuntu0.4 \
+  # Install geographiclib dependencies for mavros.
+  geographiclib-tools=1.52-1 \
   && apt-get upgrade -y \
   # Clean for better performance
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/*
+
+
+# # Done here because file needs sudo perms
+# Switch to bash so the process subsition works. aka <()
+SHELL ["/bin/bash", "-c"]
+RUN . <(wget -qO- https://raw.githubusercontent.com/mavlink/mavros/ros2/mavros/scripts/install_geographiclib_datasets.sh)
 
 #Set up rov user
 ARG USER_NAME=rov
@@ -44,17 +55,15 @@ WORKDIR /home/${USER_NAME}/rov-24
 # Copies in Python deps
 COPY pyproject.toml .
 # Copies in ROS deps
-RUN mkdir src
-COPY package.xml* ./src
+# https://docs.docker.com/engine/reference/builder/#copy---parents
+COPY --parents --chown=${USER_NAME}:${USER_NAME} ./*/*/package.xml ./*/*/*/package.xml ./
 # Copies in Install Script
 COPY .vscode/install_dependencies.sh .
 
 # Installs ROS and python dependencies
 RUN ./install_dependencies.sh \
   # Clean up
-  && rm -r src \
   && rm install_dependencies.sh
-
 
 # Remove build warnings
 ENV PYTHONWARNINGS ignore:::setuptools.command.install,ignore:::setuptools.command.easy_install,ignore:::pkg_resources
@@ -75,7 +84,7 @@ RUN  find . -name "*config" | grep git | while read -r line; do sed -i "/sshComm
 USER ${USER_NAME}
 
 # Do full copy and build as last step
-COPY . .
+COPY --chown=${USER_NAME}:${USER_NAME} . .
 RUN . /opt/ros/iron/setup.sh \
     && PYTHONWARNINGS=ignore:::setuptools.command.install,ignore:::setuptools.command.easy_install,ignore:::pkg_resources; export PYTHONWARNINGS\
     && colcon build --symlink-install
