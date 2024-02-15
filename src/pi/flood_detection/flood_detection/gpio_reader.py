@@ -11,37 +11,28 @@ class floodDetector(Node):
         self.publisher_ = self.create_publisher(Flooding, '/tether/flooding', 10)
         timer_period = 0.5  # seconds
         self.timer = self.create_timer(timer_period, self.timer_callback)
-        self.i = 0
 
     def timer_callback(self):
         # Pins used for GPIO
-        detect1, detect2, detect3 = 2, 4, 6
+        detect1 = 17
         # GPIO Boilerplate
         h = lgpio.gpiochip_open(0)
         lgpio.gpio_claim_input(h, detect1)
-        lgpio.gpio_claim_input(h, detect2)
-        lgpio.gpio_claim_input(h, detect3)
 
-        # Read Data
-        data1 = lgpio.gpio_read(h, detect1)
-        data2 = lgpio.gpio_read(h, detect2)
-        data3 = lgpio.gpio_read(h, detect3)
+        data1: bool = lgpio.gpio_read(h, detect1)
 
-        print("Pin 2: %s" % data1)
-        print("Pin 4: %s" % data2)
-        print("Pin 6: %s" % data3)
+        print("Pin 17: %s" % data1)
 
         # If any of the sensors detect water, send true to /tether/flooding
 
         msg = Flooding()
 
-        if True:
-            msg.flooding = False
+        if data1:
+            msg.flooding = True
         else:
-            self.fuckthelinter = True
+            msg.flooding = False
         self.publisher_.publish(msg)
-        # self.get_logger().info('Publishing: "%s"' % msg.data)
-        self.i += 1
+        self.get_logger().info('Publishing: "%s"' % msg.flooding)
 
 
 def main(args=None):
