@@ -149,7 +149,7 @@ class ManualControlNode(Node):
 
 
 class ManipButton:
-    def __init__(self, claw: str) -> None:
+    def __init__(self, claw) -> None:
         self.claw: str = claw
         self.last_button_state: bool = False
         self.is_active: bool = False
