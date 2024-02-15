@@ -17,12 +17,14 @@ PYTHON_FLAKE8_PRE_COMMANDS:
     venv: flake8
 
 PYTHON_MYPY_PRE_COMMANDS:
+  - command: pip install --upgrade pip && pip install setuptools
+    venv: mypy
     # Install these stub files
   - command: git clone https://github.com/TilmanK/PyQt6-stubs
     venv: mypy
   - command: cd PyQt6-stubs/ && python setup.py install
     venv: mypy
-  - command: pip install --upgrade pip && pip install pytest ament_mypy ament-lint-flake8
+  - command: pip install pytest ament_mypy ament-lint-flake8
     venv: mypy
 
 DISABLE:
