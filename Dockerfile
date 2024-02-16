@@ -24,7 +24,7 @@ RUN apt-get update -y \
   && rm -rf /var/lib/apt/lists/*
 
 # Done here because file needs sudo perms
-# Switch to bash so the process subsition works. aka <()
+# Switch to bash so the process substitution works. aka <()
 # Runs MAVROS helper install script
 SHELL ["/bin/bash", "-c"]
 RUN . <(wget -qO- https://raw.githubusercontent.com/mavlink/mavros/ros2/mavros/scripts/install_geographiclib_datasets.sh)
@@ -53,7 +53,7 @@ WORKDIR /home/${USER_NAME}/rov-24
 
 # One might wonder why the following is done.
 # It is done so that the dependencies can be cached without needing to be reinstalled
-# each and everytime. Since these do not change too often this improves performance in most cases.
+# each and every time. Since these do not change too often this improves performance in most cases.
 # Copies in Python deps
 COPY pyproject.toml .
 # Copies in ROS deps

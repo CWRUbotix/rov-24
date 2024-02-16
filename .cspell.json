@@ -10,6 +10,7 @@
     "language": "en",
     "version": "0.2",
     "words": [
+        "BGGR",
         "CCACHE",
         "Carlstrom",
         "Colcon",
@@ -26,6 +27,7 @@
         "MYPY",
         "Manip",
         "Mollerstuen",
+        "NOPASSWD",
         "Numpy",
         "PYLINT",
         "PYTHONWARNINGS",
@@ -60,6 +62,7 @@
         "dfsg",
         "distro",
         "ethernets",
+        "geographiclib",
         "hadolint",
         "heheheha",
         "ifname",
@@ -72,6 +75,7 @@
         "mavros",
         "mypy",
         "netplan",
+        "nmcli",
         "ntoa",
         "opencv",
         "osrf",
@@ -93,6 +97,7 @@
         "reflashing",
         "remappings",
         "rosdep",
+        "rosdeps",
         "rosout",
         "schematypens",
         "scps",
@@ -109,5 +114,6 @@
         "xhost",
         "xquartz",
         "xvfb"
-    ]
+    ],
+    "enabled": true
 }
