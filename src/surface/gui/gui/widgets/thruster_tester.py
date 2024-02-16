@@ -150,15 +150,11 @@ class ThrusterTester(QWidget):
             time.sleep(0.05)
 
     def async_send_test_message(self) -> None:
-        """
-        Asynchronously sends a test message.
-        """
+        """Asynchronously send a test message."""
         Thread(target=self.send_test_message, daemon=True, name="thruster_test_thread").start()
 
     def send_test_message(self) -> None:
-        """
-        Sends a test message for each motor.
-        """
+        """Send a test message for each motor."""
         for motor_index in range(self.MOTOR_COUNT):
             self.test_cmd_client.get_logger().info(f"Testing thruster {motor_index + 1}")
             self.test_motor_for_time(motor_index, self.TEST_THROTTLE, self.TEST_LENGTH)
@@ -167,7 +163,7 @@ class ThrusterTester(QWidget):
     @pyqtSlot(CommandLong.Response)
     def command_response_handler(self, res: CommandLong.Response) -> None:
         """
-        Logs response to CommandLong service.
+        Log response to CommandLong service.
 
         Parameters
         ----------
@@ -189,15 +185,13 @@ class ThrusterTester(QWidget):
             self.pull_param()
 
     def pull_param(self) -> None:
-        """
-        Pulls params off pixhawk.
-        """
+        """Pulls params off pixhawk."""
         self.param_pull_client.send_request_async(ParamPull.Request())
 
     @pyqtSlot(ParamPull.Response)
     def pull_param_handler(self, res: ParamPull.Response) -> None:
         """
-        Logs response to ParamPull service.
+        Log response to ParamPull service.
 
         Parameters
         ----------
@@ -209,9 +203,7 @@ class ThrusterTester(QWidget):
         # TODO should this free itself after success?
 
     def send_pin_assignments(self) -> None:
-        """
-        Sends pin assignments to the pixhawk.
-        """
+        """Sends pin assignments to the pixhawk."""
         # https://wiki.ros.org/mavros/Plugins#param
         # https://ardupilot.org/copter/docs/parameters.html#servo10-parameters
 
@@ -235,7 +227,7 @@ class ThrusterTester(QWidget):
     @pyqtSlot(SetParameters.Response)
     def param_send_signal_handler(self, res: SetParameters.Response) -> None:
         """
-        Logs response to SetParameters service.
+        Log response to SetParameters service.
 
         Parameters
         ----------
