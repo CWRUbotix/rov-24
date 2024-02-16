@@ -1,0 +1,50 @@
+# Modified from https://github.com/introlab/rtabmap_ros/blob/ros2/launch/ros2/realsense_d400.launch.py
+
+from launch import LaunchDescription
+from launch_ros.actions import Node
+
+
+def generate_launch_description():
+    parameters = [{
+        'frame_id': 'camera_link',
+        'subscribe_depth': True,
+        'subscribe_odom_info': False,
+        'visual_odometry': True,
+        'approx_sync': True,
+        'approx_sync_max_interval': 0.01,
+        'cloud_output_voxelized': False
+    }]
+
+    remappings = [
+          ('rgb/image', '/camera/color/image_raw'),
+          ('rgb/camera_info', '/camera/color/camera_info'),
+          ('depth/image', '/camera/aligned_depth_to_color/image_raw')]
+
+    return LaunchDescription([
+        # IncludeLaunchDescription(
+        #     PythonLaunchDescriptionSource([
+        #         os.path.join(
+        #             get_package_share_directory('realsense'), 'launch', 'realsense_launch.py'
+        #         )
+        #     ]),
+        #     launch_arguments={"align_depth.enable": "true"}.items()
+        # ),
+
+        Node(
+            package='rtabmap_odom', executable='rgbd_odometry', output='screen',
+            parameters=parameters,
+            remappings=remappings,
+            # prefix=["xterm -e gdb -ex run --args"]
+            ),
+
+        Node(
+            package='rtabmap_slam', executable='rtabmap', output='screen',
+            parameters=parameters,
+            remappings=remappings,
+            arguments=['-d']),
+
+        Node(
+            package='rtabmap_viz', executable='rtabmap_viz', output='screen',
+            parameters=parameters,
+            remappings=remappings),
+    ])
