@@ -4,7 +4,7 @@
     "containerEnv": {
         "DISPLAY": "${localEnv:DISPLAY}"
     },
-    "workspaceFolder": "/root/rov-24",
+    "workspaceFolder": "/home/rov/rov-24",
     "customizations": {
         "vscode": {
             "extensions": [
