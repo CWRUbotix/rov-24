@@ -10,10 +10,8 @@ sudo apt-get update -y
 # Deletes ROS build directories
 rm -rf build install log
 
-# Crazy one liner for install python dependencies
-for d in src/pi/*/ src/surface/*/; do pip install -e "$d"; done
-# Delete generated files
-rm -rf $(find . | grep .egg-info)
+# Install python dependencies
+pip install .
 
 # Install some random package that PyQt requires
 sudo apt-get install libxcb-cursor0 -y
