@@ -4,6 +4,10 @@ FROM osrf/ros:iron-desktop-full
 # Specify no Healthcheck needed.
 HEALTHCHECK NONE
 
+# Install missing libxcb-cursor0 xvfb for PyQt unit testing
+# https://pytest-qt.readthedocs.io/en/latest/troubleshooting.html
+RUN sudo apt-get install xvfb -y
+
 # Install pip
 # Install Video for Linux
 # Install lsusb

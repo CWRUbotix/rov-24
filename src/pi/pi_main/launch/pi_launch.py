@@ -31,6 +31,7 @@ def generate_launch_description() -> LaunchDescription:
     #     ])
     # )
 
+    # Commented out because no usb cams are planned
     # Camera Streamer
     # cam_path: str = get_package_share_directory('camera_streamer')
 
@@ -72,17 +73,16 @@ def generate_launch_description() -> LaunchDescription:
         )
     )
 
-    # realsense_path: str = get_package_share_directory('realsense')
+    realsense_path: str = get_package_share_directory('realsense')
 
-    # # Launches Realsense
-    # realsense_launch = IncludeLaunchDescription(
-    #     PythonLaunchDescriptionSource([
-    #         os.path.join(
-    #             realsense_path, 'launch', 'realsense_launch.py'
-    #         )
-    #     ]),
-    #     launch_arguments={'align_depth.enable': 'true'}.items()
-    # )
+    # Launches Realsense
+    realsense_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([
+            os.path.join(
+                realsense_path, 'launch', 'realsense_launch.py'
+            )
+        ])
+    )
 
     # Launches ip_publisher node.
     ip_publisher_node = Node(
@@ -103,9 +103,10 @@ def generate_launch_description() -> LaunchDescription:
             PushRosNamespace(NAMESPACE),
             # manip_launch,
             pixhawk_launch,
+            # cam_launch,
+            realsense_launch,
             ip_publisher_node,
-            heartbeat_launch,
-            # realsense_launch
+            heartbeat_launch
         ]
     )
 

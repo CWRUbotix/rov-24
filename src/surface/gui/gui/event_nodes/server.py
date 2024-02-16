@@ -3,9 +3,9 @@ import re
 from threading import Thread
 from typing import Callable
 
+from rclpy.service import SrvType, SrvTypeRequest, SrvTypeResponse
 from rclpy.executors import SingleThreadedExecutor
 from rclpy.node import Node
-from rclpy.service import Service, SrvType, SrvTypeRequest, SrvTypeResponse
 
 
 class GUIEventServer(Node):
@@ -29,14 +29,10 @@ class GUIEventServer(Node):
         Remember to use a signal to update the GUI!
         """
         # Name this node with a sanitized version of the topic
-        name: str = f'server_{re.sub(r"[^a-zA-Z0-9_]", "_", topic)}'
+        name = f'server_{re.sub(r"[^a-zA-Z0-9_]", "_", topic)}'
         super().__init__(name, parameter_overrides=[])
 
-        self.srv: Service = self.create_service(
-            srv_type,
-            topic,
-            callback,
-        )
+        self.srv = self.create_service(srv_type, topic, callback)
 
         custom_executor = SingleThreadedExecutor()
         custom_executor.add_node(self)

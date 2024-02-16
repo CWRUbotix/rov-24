@@ -1,7 +1,8 @@
 from gui.event_nodes.subscriber import GUIEventSubscriber
 from PyQt6.QtCore import pyqtSignal, pyqtSlot
-from PyQt6.QtGui import QColor, QFont, QTextCursor
-from PyQt6.QtWidgets import QCheckBox, QHBoxLayout, QTextEdit, QVBoxLayout, QWidget
+from PyQt6.QtGui import QColor, QTextCursor
+from PyQt6.QtWidgets import (QCheckBox, QHBoxLayout, QTextEdit, QVBoxLayout,
+                             QWidget)
 from rcl_interfaces.msg import Log
 from rclpy.impl.logging_severity import LoggingSeverity
 
@@ -19,40 +20,36 @@ SEVERITY_LEVELS_DICT = {
 class Logger(QWidget):
     """Logging widget for displaying ROS logs."""
 
-    print_log_signal: pyqtSignal = pyqtSignal(Log)
+    print_log_signal = pyqtSignal(Log)
 
     def __init__(self) -> None:
         super().__init__()
 
-        layout: QVBoxLayout = QVBoxLayout()
+        layout = QVBoxLayout()
         self.setLayout(layout)
 
         # Layout for severity checkboxes
-        settings_layout: QHBoxLayout = QHBoxLayout()
+        settings_layout = QHBoxLayout()
         layout.addLayout(settings_layout)
 
         self.checkboxes: dict[LoggingSeverity, QCheckBox] = {}
         for severity_key in SEVERITY_LEVELS_DICT:
-            box: QCheckBox = QCheckBox(severity_key.name)
+            box = QCheckBox(severity_key.name)
             box.setChecked(True)
             self.checkboxes[severity_key] = box
             settings_layout.addWidget(box)
 
-        self.textbox: QTextEdit = QTextEdit()
+        self.textbox = QTextEdit()
         self.textbox.setReadOnly(True)
         self.textbox.setLineWrapMode(QTextEdit.LineWrapMode.NoWrap)
         layout.addWidget(self.textbox)
 
-        self.terminal_font: QFont = self.textbox.font()
+        self.terminal_font = self.textbox.font()
         self.terminal_font.setFamily("Courier")
         self.terminal_font.setPointSize(11)
 
         self.print_log_signal.connect(self.print_log)
-        self.subscriber: GUIEventSubscriber = GUIEventSubscriber(
-            Log,
-            "/rosout",
-            self.print_log_signal,
-        )
+        self.subscriber = GUIEventSubscriber(Log, '/rosout', self.print_log_signal)
 
     @pyqtSlot(Log)
     def print_log(self, message: Log) -> None:

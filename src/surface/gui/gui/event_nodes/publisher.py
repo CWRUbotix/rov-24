@@ -15,7 +15,7 @@ class GUIEventPublisher(Node):
         qos_profile: QoSProfile = qos_profile_system_default,
     ) -> None:
         # Name this node with a sanitized version of the topic
-        name: str = f'publisher_{re.sub(r"[^a-zA-Z0-9_]", "_", topic)}'
+        name = f'publisher_{re.sub(r"[^a-zA-Z0-9_]", "_", topic)}'
         super().__init__(name, parameter_overrides=[])
 
         self.publisher = self.create_publisher(

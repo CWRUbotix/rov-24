@@ -12,7 +12,7 @@ from rclpy.node import Node
 class App(QWidget):
     """Main app window."""
 
-    app: QApplication = QApplication([])
+    app = QApplication([])
 
     def __init__(self, node_name: str) -> None:
         if not rclpy.utilities.ok():

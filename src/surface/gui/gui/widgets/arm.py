@@ -51,12 +51,9 @@ class Arm(QWidget):
 
         self.command_response_signal.connect(self.arm_status)
 
-        self.arm_client: GUIEventClient = GUIEventClient(
-            CommandBool,
-            "mavros/cmd/arming",
-            self.command_response_signal,
-            expected_namespace="/tether",
-        )
+        self.arm_client = GUIEventClient(CommandBool, "mavros/cmd/arming",
+                                         self.command_response_signal,
+                                         expected_namespace='/tether')
 
         self.mavros_subscription = GUIEventSubscriber(
             VehicleState,
