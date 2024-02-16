@@ -18,6 +18,8 @@ class PilotApp(App):
         video_layout = QHBoxLayout()
         self.setLayout(main_layout)
 
+        # TODO Look into QStackedLayout for possibly switching between
+        # 1 big camera feed and 2 smaller ones
         front_cam_description = CameraDescription(CameraType.ETHERNET,
                                                   'front_cam/image_raw',
                                                   'Front Camera')
