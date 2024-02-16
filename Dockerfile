@@ -58,7 +58,7 @@ WORKDIR /home/${USER_NAME}/rov-24
 COPY pyproject.toml .
 # Copies in ROS deps
 # https://docs.docker.com/engine/reference/builder/#copy---parents
-COPY --parents --chown=${USER_NAME}:${USER_NAME} ./*/*/package.xml ./*/*/*/package.xml ./
+COPY --parents --chown=${USER_NAME}:${USER_NAME} ./*/*/package.xml ./*/*/*/package.xml ./*/*/*/*/package.xml ./
 # Copies in Install Script
 COPY .vscode/install_dependencies.sh .
 
@@ -89,7 +89,11 @@ COPY --chown=${USER_NAME}:${USER_NAME} . .
 ARG EXPECTED_OUTPUT="All system dependencies have been satisfied"
 
 # Checks that all rosdeps are installed.
-RUN if [[ $(rosdep check -r --from-paths src) != "${EXPECTED_OUTPUT}" ]]; then echo "ROS deps not all installed. Trying adding another layer to COPY instruction for ROS deps."; exit 1; fi
+RUN if [[ $(rosdep check -r --from-paths src --ignore-src) != "${EXPECTED_OUTPUT}" ]]; \ 
+  then echo "ROS deps not all installed. Trying adding another layer to COPY instruction for ROS deps."; \
+  rosdep check -r --from-paths src --ignore-src; \
+  exit 1; \
+  fi
 
 RUN . /opt/ros/iron/setup.sh \
   && colcon build --symlink-install
