@@ -3,7 +3,7 @@ from launch_ros.actions import Node
 
 
 def generate_launch_description() -> LaunchDescription:
-    manual_control_node: Node = Node(
+    manual_control_node = Node(
         package='flight_control',
         executable='manual_control_node',
         remappings=[('/surface/manipulator_control', '/tether/manipulator_control'),
@@ -12,7 +12,7 @@ def generate_launch_description() -> LaunchDescription:
         output='screen'
     )
 
-    auto_docking_node: Node = Node(
+    auto_docking_node = Node(
         package='flight_control',
         executable='auto_docking_node',
         remappings=[('/surface/manipulator_control', '/tether/manipulator_control'),
