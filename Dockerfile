@@ -85,6 +85,11 @@ RUN  find . -name "*config" | grep git | while read -r line; do sed -i "/sshComm
 
 # Do full copy and build as last step
 COPY --chown=${USER_NAME}:${USER_NAME} . .
+
+ARG EXPECTED_OUTPUT="All system dependencies have been satisfied"
+
+# Checks that all rosdeps are installed.
+RUN if [[ $(rosdep check -r --from-paths src) != "${EXPECTED_OUTPUT}" ]]; then echo "ROS deps not all installed. Trying adding another layer to COPY instruction for ROS deps."; exit 1; fi
+
 RUN . /opt/ros/iron/setup.sh \
-    && PYTHONWARNINGS=ignore:::setuptools.command.install,ignore:::setuptools.command.easy_install,ignore:::pkg_resources; export PYTHONWARNINGS\
-    && colcon build --symlink-install
+  && colcon build --symlink-install
