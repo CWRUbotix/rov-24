@@ -169,6 +169,7 @@ class ThrusterTester(QWidget):
         ----------
         res : CommandLong.Response
             CommandLong.Response message.
+
         """
         self.test_cmd_client.get_logger().info(f"Test response: {res.success}, {res.result}")
 
@@ -180,6 +181,7 @@ class ThrusterTester(QWidget):
         ----------
         msg : VehicleState
             VehicleState message.
+
         """
         if msg.pixhawk_connected:
             self.pull_param()
@@ -197,13 +199,14 @@ class ThrusterTester(QWidget):
         ----------
         res : ParamPull.Response
             ParamPull.Response message.
+
         """
         self.param_pull_client.get_logger().info((f"Success: {res.success},"
                                                   f"param_received: {res.param_received}."))
         # TODO should this free itself after success?
 
     def send_pin_assignments(self) -> None:
-        """Sends pin assignments to the pixhawk."""
+        """Send pin assignments to the pixhawk."""
         # https://wiki.ros.org/mavros/Plugins#param
         # https://ardupilot.org/copter/docs/parameters.html#servo10-parameters
 
@@ -233,5 +236,6 @@ class ThrusterTester(QWidget):
         ----------
         res : SetParameters.Response
             SetParameters.Response message.
+
         """
         self.param_send_client.get_logger().info(f"Parameter setting success: {res.results}.")
