@@ -175,7 +175,7 @@ class ThrusterTester(QWidget):
 
     def vehicle_state_callback(self, msg: VehicleState) -> None:
         """
-        Pulls params after the pixhawk is connected.
+        Pull params after the pixhawk is connected.
 
         Parameters
         ----------
@@ -187,7 +187,7 @@ class ThrusterTester(QWidget):
             self.pull_param()
 
     def pull_param(self) -> None:
-        """Pulls params off pixhawk."""
+        """Pull params off pixhawk."""
         self.param_pull_client.send_request_async(ParamPull.Request())
 
     @pyqtSlot(ParamPull.Response)
