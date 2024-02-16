@@ -6,7 +6,7 @@ HEALTHCHECK NONE
 
 # Install missing libxcb-cursor0 xvfb for PyQt unit testing
 # https://pytest-qt.readthedocs.io/en/latest/troubleshooting.html
-RUN sudo apt-get install xvfb -y
+RUN apt-get install xvfb -y
 
 # Install pip
 # Install Video for Linux
