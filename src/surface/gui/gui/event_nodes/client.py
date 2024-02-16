@@ -3,7 +3,7 @@ from threading import Thread
 
 import rclpy
 from PyQt6.QtCore import pyqtBoundSignal
-from rclpy.client import Client, SrvType, SrvTypeRequest
+from rclpy.client import SrvType, SrvTypeRequest
 from rclpy.node import Node
 
 
@@ -18,16 +18,16 @@ class GUIEventClient(Node):
                  timeout: float = 3.0, expected_namespace: str = '/surface/gui') -> None:
 
         # Name this node with a sanitized version of the topic
-        self.name: str = f'client_{re.sub(r"[^a-zA-Z0-9_]", "_", topic)}'
+        self.name = f'client_{re.sub(r"[^a-zA-Z0-9_]", "_", topic)}'
         super().__init__(self.name, parameter_overrides=[])
 
         self.srv_type = srv_type
-        self.topic: str = topic
-        self.signal: pyqtBoundSignal = signal
+        self.topic = topic
+        self.signal = signal
         self.timeout = timeout
         self.expected_namespace = expected_namespace
 
-        self.cli: Client = self.create_client(srv_type, topic)
+        self.cli = self.create_client(srv_type, topic)
         Thread(target=self.__connect_to_service, daemon=True,
                name=f'{self.name}_connect_to_service').start()
 
