@@ -1,9 +1,10 @@
 from gui.event_nodes.client import GUIEventClient
 from gui.event_nodes.subscriber import GUIEventSubscriber
-from gui.styles.custom_styles import WidgetState
+from gui.styles.custom_styles import ButtonIndicator
 from mavros_msgs.srv import CommandBool
 from PyQt6.QtCore import pyqtSignal, pyqtSlot
-from PyQt6.QtWidgets import QHBoxLayout, QPushButton, QWidget
+from PyQt6.QtWidgets import QHBoxLayout, QWidget
+
 from rov_msgs.msg import VehicleState
 
 
@@ -16,7 +17,7 @@ class Arm(QWidget):
     BUTTON_HEIGHT = 60
     BUTTON_STYLESHEET = 'QPushButton { font-size: 20px; }'
 
-    command_response_signal: pyqtSignal = pyqtSignal(CommandBool.Response)
+    command_response_signal = pyqtSignal(CommandBool.Response)
     vehicle_state_signal = pyqtSignal(VehicleState)
 
     def __init__(self) -> None:
@@ -26,8 +27,8 @@ class Arm(QWidget):
         layout = QHBoxLayout()
         self.setLayout(layout)
 
-        self.arm_button = QPushButton()
-        self.disarm_button = QPushButton()
+        self.arm_button = ButtonIndicator()
+        self.disarm_button = ButtonIndicator()
 
         self.arm_button.setText("Arm")
         self.disarm_button.setText("Disarm")
@@ -40,8 +41,8 @@ class Arm(QWidget):
 
         self.arm_button.setStyleSheet(self.BUTTON_STYLESHEET)
         self.disarm_button.setStyleSheet(self.BUTTON_STYLESHEET)
-        self.arm_button.setProperty(WidgetState.PROPERTY_NAME, WidgetState.INACTIVE)
-        self.disarm_button.setProperty(WidgetState.PROPERTY_NAME, WidgetState.INACTIVE)
+        self.arm_button.set_inactive()
+        self.disarm_button.set_inactive()
 
         self.arm_button.clicked.connect(self.arm_clicked)
         self.disarm_button.clicked.connect(self.disarm_clicked)
@@ -51,12 +52,9 @@ class Arm(QWidget):
 
         self.command_response_signal.connect(self.arm_status)
 
-        self.arm_client: GUIEventClient = GUIEventClient(
-            CommandBool,
-            "mavros/cmd/arming",
-            self.command_response_signal,
-            expected_namespace='/tether'
-        )
+        self.arm_client = GUIEventClient(CommandBool, "mavros/cmd/arming",
+                                         self.command_response_signal,
+                                         expected_namespace='/tether')
 
         self.mavros_subscription = GUIEventSubscriber(
             VehicleState,
@@ -81,18 +79,11 @@ class Arm(QWidget):
     def vehicle_state_callback(self, msg: VehicleState) -> None:
         if msg.pixhawk_connected:
             if msg.armed:
-                self.arm_button.setProperty(WidgetState.PROPERTY_NAME, WidgetState.ON)
-                self.disarm_button.setProperty(WidgetState.PROPERTY_NAME, "")
+                self.arm_button.set_on()
+                self.disarm_button.remove_state()
             else:
-                self.arm_button.setProperty(WidgetState.PROPERTY_NAME, "")
-                self.disarm_button.setProperty(WidgetState.PROPERTY_NAME, WidgetState.OFF)
+                self.arm_button.remove_state()
+                self.disarm_button.set_off()
         else:
-            self.arm_button.setProperty(WidgetState.PROPERTY_NAME, WidgetState.INACTIVE)
-            self.disarm_button.setProperty(WidgetState.PROPERTY_NAME, WidgetState.INACTIVE)
-
-        for button in (self.arm_button, self.disarm_button):
-            style = button.style()
-            if style is not None:
-                style.polish(button)
-            else:
-                self.arm_client.get_logger().error("Gui button missing a style")
+            self.arm_button.set_inactive()
+            self.disarm_button.set_inactive()
