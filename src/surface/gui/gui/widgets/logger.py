@@ -1,8 +1,7 @@
 from gui.event_nodes.subscriber import GUIEventSubscriber
 from PyQt6.QtCore import pyqtSignal, pyqtSlot
 from PyQt6.QtGui import QColor, QTextCursor
-from PyQt6.QtWidgets import (QCheckBox, QHBoxLayout, QTextEdit, QVBoxLayout,
-                             QWidget)
+from PyQt6.QtWidgets import QCheckBox, QHBoxLayout, QTextEdit, QVBoxLayout, QWidget
 from rcl_interfaces.msg import Log
 from rclpy.impl.logging_severity import LoggingSeverity
 
@@ -49,7 +48,7 @@ class Logger(QWidget):
         self.terminal_font.setPointSize(11)
 
         self.print_log_signal.connect(self.print_log)
-        self.subscriber = GUIEventSubscriber(Log, '/rosout', self.print_log_signal)
+        self.subscriber = GUIEventSubscriber(Log, "/rosout", self.print_log_signal)
 
     @pyqtSlot(Log)
     def print_log(self, message: Log) -> None:

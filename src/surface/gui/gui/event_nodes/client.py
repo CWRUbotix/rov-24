@@ -33,8 +33,9 @@ class GUIEventClient(Node):
         self.expected_namespace = expected_namespace
 
         self.cli = self.create_client(srv_type, topic)
-        Thread(target=self.__connect_to_service, daemon=True,
-               name=f'{self.name}_connect_to_service').start()
+        Thread(
+            target=self.__connect_to_service, daemon=True, name=f"{self.name}_connect_to_service"
+        ).start()
 
     def __connect_to_service(
         self,

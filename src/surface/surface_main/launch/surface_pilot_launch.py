@@ -8,10 +8,9 @@ from launch_ros.actions import PushRosNamespace
 
 
 def generate_launch_description() -> LaunchDescription:
-
-    gui_path: str = get_package_share_directory('gui')
-    controller_path: str = get_package_share_directory('ps5_controller')
-    flir_path: str = get_package_share_directory('rov_flir')
+    gui_path: str = get_package_share_directory("gui")
+    controller_path: str = get_package_share_directory("ps5_controller")
+    flir_path: str = get_package_share_directory("rov_flir")
 
     # Launches Gui
     gui_launch = IncludeLaunchDescription(
@@ -41,20 +40,11 @@ def generate_launch_description() -> LaunchDescription:
 
     # Launches flir
     flir_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource([
-            os.path.join(
-                flir_path, 'launch', 'flir_launch.py'
-            )
-        ]),
+        PythonLaunchDescriptionSource([os.path.join(flir_path, "launch", "flir_launch.py")]),
     )
 
     namespace_launch = GroupAction(
-        actions=[
-            PushRosNamespace("surface"),
-            gui_launch,
-            controller_launch,
-            flir_launch
-        ]
+        actions=[PushRosNamespace("surface"), gui_launch, controller_launch, flir_launch]
     )
 
     return LaunchDescription([namespace_launch])

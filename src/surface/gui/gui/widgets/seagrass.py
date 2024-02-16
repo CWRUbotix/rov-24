@@ -1,6 +1,6 @@
 from typing import Callable, Optional
 
-from gui.widgets.video_widget import CameraDescription, PauseableVideoWidget, CameraType
+from gui.widgets.video_widget import CameraDescription, CameraType, PauseableVideoWidget
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import (
     QFrame,
@@ -48,9 +48,9 @@ class SeagrassWidget(QWidget):
 
         before_layout.addStretch()
 
-        bottom_cam_description = CameraDescription(CameraType.ETHERNET,
-                                                   'bottom_cam/image_raw',
-                                                   'Bottom Camera', 640, 370)
+        bottom_cam_description = CameraDescription(
+            CameraType.ETHERNET, "bottom_cam/image_raw", "Bottom Camera", 640, 370
+        )
         # Bottom cam
         self.bottom_cam = PauseableVideoWidget(bottom_cam_description)
 

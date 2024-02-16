@@ -5,9 +5,9 @@ from launch_ros.actions import Node, PushRosNamespace
 
 def generate_launch_description() -> LaunchDescription:
     keyboard_control_node = Node(
-        package='flight_control',
-        executable='keyboard_control_node',
-        remappings=[('/surface/mavros/rc/override', '/tether/mavros/rc/override')],
+        package="flight_control",
+        executable="keyboard_control_node",
+        remappings=[("/surface/mavros/rc/override", "/tether/mavros/rc/override")],
         emulate_tty=True,
         output="screen",
     )

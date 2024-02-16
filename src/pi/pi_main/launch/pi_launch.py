@@ -73,15 +73,13 @@ def generate_launch_description() -> LaunchDescription:
         )
     )
 
-    realsense_path: str = get_package_share_directory('realsense')
+    realsense_path: str = get_package_share_directory("realsense")
 
     # Launches Realsense
     realsense_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource([
-            os.path.join(
-                realsense_path, 'launch', 'realsense_launch.py'
-            )
-        ])
+        PythonLaunchDescriptionSource(
+            [os.path.join(realsense_path, "launch", "realsense_launch.py")]
+        )
     )
 
     # Launches ip_publisher node.
@@ -106,7 +104,7 @@ def generate_launch_description() -> LaunchDescription:
             # cam_launch,
             realsense_launch,
             ip_publisher_node,
-            heartbeat_launch
+            heartbeat_launch,
         ]
     )
 

@@ -23,16 +23,14 @@ def generate_launch_description() -> LaunchDescription:
 
     # Launches Realsense
     realsense_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource([
-            os.path.join(
-                realsense_path, 'launch', 'rs_launch.py'
-            )
-        ]),
+        PythonLaunchDescriptionSource([os.path.join(realsense_path, "launch", "rs_launch.py")]),
         # Values are width x height x fps.
-        launch_arguments={'depth_module.profile': '640x360x30',
-                          'initial_reset': 'true',
-                          'rgb_camera.profile': '640x360x30',
-                          'align_depth.enable': 'true'}.items()
+        launch_arguments={
+            "depth_module.profile": "640x360x30",
+            "initial_reset": "true",
+            "rgb_camera.profile": "640x360x30",
+            "align_depth.enable": "true",
+        }.items(),
     )
 
     realsense_action = GroupAction(
