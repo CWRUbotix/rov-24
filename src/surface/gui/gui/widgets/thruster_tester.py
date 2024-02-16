@@ -8,8 +8,8 @@ from gui.event_nodes.subscriber import GUIEventSubscriber
 from mavros_msgs.srv import CommandLong, ParamPull
 from PyQt6.QtCore import pyqtSignal, pyqtSlot
 from PyQt6.QtGui import QIntValidator, QPixmap
-from PyQt6.QtWidgets import (QGridLayout, QLabel, QLineEdit, QPushButton,
-                             QVBoxLayout, QWidget, QHBoxLayout)
+from PyQt6.QtWidgets import (QGridLayout, QHBoxLayout, QLabel, QLineEdit,
+                             QPushButton, QVBoxLayout, QWidget)
 from rcl_interfaces.srv import SetParameters
 from rclpy.parameter import Parameter
 
@@ -23,10 +23,10 @@ class ThrusterTester(QWidget):
     TEST_THROTTLE: float = 0.50  # 50%
     MOTOR_COUNT = 8
 
-    test_command_response_signal = pyqtSignal(CommandLong.Response)
+    test_command_callback_signal = pyqtSignal(CommandLong.Response)
     vehicle_state_callback_signal = pyqtSignal(VehicleState)
-    pull_motors_response_signal = pyqtSignal(ParamPull.Response)
-    param_send_signal = pyqtSignal(SetParameters.Response)
+    pull_motors_callback_signal = pyqtSignal(ParamPull.Response)
+    param_send_callback_signal = pyqtSignal(SetParameters.Response)
 
     def __init__(self) -> None:
         super().__init__()
@@ -35,9 +35,9 @@ class ThrusterTester(QWidget):
         self.test_cmd_client = GUIEventClient(
             CommandLong,
             "mavros/cmd/command",
-            self.test_command_response_signal
+            self.test_command_callback_signal
         )
-        self.test_command_response_signal.connect(self.command_response_handler)
+        self.test_command_callback_signal.connect(self.command_response_handler)
 
         self.vehicle_state_subscriber = GUIEventSubscriber(
             VehicleState,
@@ -49,16 +49,16 @@ class ThrusterTester(QWidget):
         self.param_pull_client = GUIEventClient(
             ParamPull,
             "mavros/param/pull",
-            self.pull_motors_response_signal
+            self.pull_motors_callback_signal
         )
-        self.pull_motors_response_signal.connect(self.pull_param_handler)
+        self.pull_motors_callback_signal.connect(self.pull_param_handler)
 
         self.param_send_client = GUIEventClient(
             SetParameters,
             "mavros/param/set_parameters",
-            self.param_send_signal
+            self.param_send_callback_signal
         )
-        self.param_send_signal.connect(self.param_send_signal_handler)
+        self.param_send_callback_signal.connect(self.param_send_signal_handler)
 
         layout = QVBoxLayout()
 
@@ -150,9 +150,15 @@ class ThrusterTester(QWidget):
             time.sleep(0.05)
 
     def async_send_test_message(self) -> None:
+        """
+        Asynchronously sends a test message.
+        """
         Thread(target=self.send_test_message, daemon=True, name="thruster_test_thread").start()
 
     def send_test_message(self) -> None:
+        """
+        Sends a test message for each motor.
+        """
         for motor_index in range(self.MOTOR_COUNT):
             self.test_cmd_client.get_logger().info(f"Testing thruster {motor_index + 1}")
             self.test_motor_for_time(motor_index, self.TEST_THROTTLE, self.TEST_LENGTH)
@@ -160,27 +166,58 @@ class ThrusterTester(QWidget):
 
     @pyqtSlot(CommandLong.Response)
     def command_response_handler(self, res: CommandLong.Response) -> None:
+        """
+        Logs response to CommandLong service.
+
+        Parameters
+        ----------
+        res : CommandLong.Response
+            CommandLong.Response message.
+        """
         self.test_cmd_client.get_logger().info(f"Test response: {res.success}, {res.result}")
 
     def vehicle_state_callback(self, msg: VehicleState) -> None:
+        """
+        Pulls params after the pixhawk is connected.
+
+        Parameters
+        ----------
+        msg : VehicleState
+            VehicleState message.
+        """
         if msg.pixhawk_connected:
             self.pull_param()
 
     def pull_param(self) -> None:
+        """
+        Pulls params off pixhawk.
+        """
         self.param_pull_client.send_request_async(ParamPull.Request())
 
     @pyqtSlot(ParamPull.Response)
     def pull_param_handler(self, res: ParamPull.Response) -> None:
+        """
+        Logs response to ParamPull service.
+
+        Parameters
+        ----------
+        res : ParamPull.Response
+            ParamPull.Response message.
+        """
         self.param_pull_client.get_logger().info((f"Success: {res.success},"
                                                   f"param_received: {res.param_received}."))
         # TODO should this free itself after success?
 
     def send_pin_assignments(self) -> None:
+        """
+        Sends pin assignments to the pixhawk.
+        """
         # https://wiki.ros.org/mavros/Plugins#param
         # https://ardupilot.org/copter/docs/parameters.html#servo10-parameters
 
-        pin_input_list = list(map(lambda x: int(x.text()), self.pin_input_widgets))
+        pin_input_list = [int(x.text()) for x in self.pin_input_widgets]
 
+        # Data validation to check that all motor values are unique
         if len(pin_input_list) == len(set(pin_input_list)):
             param_list = []
             for i, pin_input in enumerate(pin_input_list):
@@ -197,4 +234,12 @@ class ThrusterTester(QWidget):
 
     @pyqtSlot(SetParameters.Response)
     def param_send_signal_handler(self, res: SetParameters.Response) -> None:
+        """
+        Logs response to SetParameters service.
+
+        Parameters
+        ----------
+        res : SetParameters.Response
+            SetParameters.Response message.
+        """
         self.param_send_client.get_logger().info(f"Parameter setting success: {res.results}.")
