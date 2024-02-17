@@ -1,7 +1,6 @@
 ---
 # Hadolint config files funky right now.
-DOCKERFILE_HADOLINT_ARGUMENTS:
-  --ignore SC1091
+DOCKERFILE_HADOLINT_ARGUMENTS: --ignore SC1091
 
 PYTHON_MYPY_CONFIG_FILE: pyproject.toml
 PYTHON_BLACK_CONFIG_FILE: pyproject.toml
