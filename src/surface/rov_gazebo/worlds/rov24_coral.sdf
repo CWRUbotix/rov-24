@@ -77,7 +77,7 @@
 
     <include>
       <uri>model://brain_coral</uri>
-      <pose>0.75 -0.75 -4 0 0 0</pose>
+      <pose>0.75 -0.75 -3.95 0 0 0</pose>
     </include>
 
   </world>
