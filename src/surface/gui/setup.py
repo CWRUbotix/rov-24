@@ -33,6 +33,7 @@ setup(
     tests_require=['pytest', 'pytest-qt', 'pytest-xvfb'],
     entry_points={
         'console_scripts': ['run_pilot = gui.pilot_app:run_gui_pilot',
-                            'run_operator = gui.operator_app:run_gui_operator'],
+                            'run_operator = gui.operator_app:run_gui_operator',
+                            'run_livestream = gui.livestream_app:run_gui_livestream'],
     },
 )
