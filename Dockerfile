@@ -90,7 +90,7 @@ ARG EXPECTED_OUTPUT="All system dependencies have been satisfied"
 
 # Checks that all rosdeps are installed.
 RUN if [[ $(rosdep check -r --from-paths src --ignore-src) != "${EXPECTED_OUTPUT}" ]]; \ 
-  then echo "ROS deps not all installed. Trying adding another layer to COPY instruction for ROS deps."; \
+  then echo "ROS deps not all installed. Try adding another /* directory layer to the COPY instruction labeled 'Copies in ROS deps'."; \
   rosdep check -r --from-paths src --ignore-src; \
   exit 1; \
   fi
