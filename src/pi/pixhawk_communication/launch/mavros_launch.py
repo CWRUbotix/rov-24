@@ -36,6 +36,7 @@ def generate_launch_description() -> LaunchDescription:
             ('/pi/mavros/cmd/command', '/tether/mavros/cmd/command'),
             ("/pi/mavros/param/pull", "/tether/mavros/param/pull"),
             ("/pi/mavros/param/set_parameters", "/tether/mavros/param/set_parameters"),
+            ("/pi/mavros/param/get_parameters", "/tether/mavros/param/get_parameters"),
         ]
     )
 
