@@ -26,6 +26,9 @@ REVERSED = -1
 
 
 class TestMotorMixin:
+    """
+    Mixin for testing motors.
+    """
     test_cmd_client: GUIEventClient
 
     def asnyc_test_motor_for_time(self, motor_index: int, throttle: float = 0.50,
@@ -77,6 +80,7 @@ class ThrusterBox(QWidget):
     VALIDATOR: QIntValidator
 
     def __init__(self, pin_number: int, button_func: Callable[[int], None]) -> None:
+        """Initialize ThrusterBox."""
         super().__init__()
 
         vert_layout = QVBoxLayout()
@@ -111,6 +115,7 @@ class ThrusterBox(QWidget):
 
 class ThrusterImage(QWidget):
     def __init__(self) -> None:
+        """Initialize ThrusterImage."""
         super().__init__()
         image_layout = QVBoxLayout()
 
@@ -140,10 +145,12 @@ class ThrusterAssignment(QWidget, TestMotorMixin):
     param_get_callback_signal = pyqtSignal(GetParameters.Response)
 
     def __init__(self, test_motor_client: GUIEventClient) -> None:
+        """Initialize Widget and ROS."""
         self.init_widget()
         self.init_ros(test_motor_client)
 
     def init_widget(self) -> None:
+        """Initialize Widget."""
         super().__init__()
         heading = QLabel("Thruster Pin Configuration")
 
@@ -182,6 +189,15 @@ class ThrusterAssignment(QWidget, TestMotorMixin):
         self.setLayout(layout)
 
     def init_ros(self, test_motor_client: GUIEventClient) -> None:
+        """
+        Initialize ROS part of ThrusterAssignement.
+
+        Parameters
+        ----------
+        test_motor_client : GUIEventClient
+            test_motor_client shared with ThrusterTester.
+
+        """
         self.pixhawk_activated = False
 
         self.vehicle_state_subscriber = GUIEventSubscriber(
