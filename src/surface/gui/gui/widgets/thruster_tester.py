@@ -1,6 +1,7 @@
 import os
 import time
 from threading import Thread
+from typing import Callable
 
 from ament_index_python.packages import get_package_share_directory
 from gui.event_nodes.client import GUIEventClient
@@ -23,7 +24,7 @@ SERVO_FUNCTION_OFFSET = 32
 class TestMotorMixin:
     test_cmd_client: GUIEventClient
 
-    def test_motor_for_time(self, motor_index: int, throttle: float, duration: float) -> None:
+    def test_motor_for_time(self, motor_index: int, throttle: float = 0.50, duration: float = 2.0) -> None:
         """
         Run a motor for an (approximate) length of time (blocking).
 
@@ -64,8 +65,10 @@ class ThrusterBox(QWidget):
 
     VALIDATOR: QIntValidator
 
-    def __init__(self, pin_number: int) -> None:
+    def __init__(self, pin_number: int, button_func: Callable[[int], None]) -> None:
         super().__init__()
+
+        vert_layout = QVBoxLayout()
 
         layout = QHBoxLayout()
         label = QLabel(str(pin_number))
@@ -76,13 +79,23 @@ class ThrusterBox(QWidget):
         pin_input.insert(str(pin_number))
         pin_input.setMaximumWidth(20)
 
+        check_box = QCheckBox()
+
         layout.addWidget(label)
         layout.addWidget(pin_input)
+        layout.addWidget(check_box)
 
-        self.setLayout(layout)
+        vert_layout.addLayout(layout)
 
-        self.label = label
+        button = QPushButton(f"Test Motor {pin_number}")
+        button.clicked.connect(lambda: button_func(pin_number - 1))
+
+        vert_layout.addWidget(button)
+
+        self.setLayout(vert_layout)
+
         self.pin_input = pin_input
+        self.button = button
 
 
 class ThrusterImage(QWidget):
@@ -134,7 +147,7 @@ class ThrusterAssignment(QWidget, TestMotorMixin):
 
         for i in range(1, MOTOR_COUNT + 1):
             index = i - 1
-            box = ThrusterBox(i)
+            box = ThrusterBox(i, self.test_motor_for_time)
             self.thruster_boxes.append(box)
 
             on_first_column = index < ROW_COUNT
@@ -282,9 +295,6 @@ class ThrusterAssignment(QWidget, TestMotorMixin):
 class ThrusterTester(QWidget, TestMotorMixin):
     """Widget to command the pixhawk to test the thrusters, and reassign thruster ports."""
 
-    TEST_LENGTH: float = 2.0  # time between adjacent tests of individual thrusters
-    TEST_THROTTLE: float = 0.50  # 50%
-
     test_command_callback_signal = pyqtSignal(CommandLong.Response)
 
     def __init__(self) -> None:
@@ -321,7 +331,7 @@ class ThrusterTester(QWidget, TestMotorMixin):
         """Send a test message for each motor."""
         for motor_index in range(MOTOR_COUNT):
             self.test_cmd_client.get_logger().info(f"Testing thruster {motor_index + 1}")
-            self.test_motor_for_time(motor_index, self.TEST_THROTTLE, self.TEST_LENGTH)
+            self.test_motor_for_time(motor_index)
             self.test_motor_for_time(motor_index, 0.0, 0.5)
 
     @pyqtSlot(CommandLong.Response)
