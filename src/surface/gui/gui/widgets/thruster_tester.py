@@ -19,8 +19,10 @@ from rov_msgs.msg import VehicleState
 
 MOTOR_COUNT = 8
 SERVO_FUNCTION_OFFSET = 32
-NORMAL = 0
-REVERSED = 1
+
+NORMAL = 1
+NO_SPIN = 0
+REVERSED = -1
 
 
 class TestMotorMixin:
@@ -244,7 +246,7 @@ class ThrusterAssignment(QWidget, TestMotorMixin):
 
         param_names = [f"SERVO{x + 1}_FUNCTION" for x in range(MOTOR_COUNT)]
 
-        param_names.extend([f"SERVO{x + 1}_REVERSED" for x in range(MOTOR_COUNT)])
+        param_names.extend([f"MOT_{x + 1}_DIRECTION" for x in range(MOTOR_COUNT)])
 
         self.param_get_client.send_request_async(GetParameters.Request(
             names=param_names
@@ -276,7 +278,7 @@ class ThrusterAssignment(QWidget, TestMotorMixin):
                 val = REVERSED
             else:
                 val = NORMAL
-            param = Parameter(f"SERVO{i + 1}_REVERSED",
+            param = Parameter(f"MOT_{i + 1}_DIRECTION",
                               Parameter.Type.INTEGER,
                               val).to_parameter_msg()
             param_list.append(param)
@@ -323,6 +325,8 @@ class ThrusterAssignment(QWidget, TestMotorMixin):
                 set_check = False
             elif val == REVERSED:
                 set_check = True
+            elif val == NO_SPIN:
+                pass
             else:
                 self.param_get_client.get_logger().warning("Got unexpected input for check boxes.")
 
