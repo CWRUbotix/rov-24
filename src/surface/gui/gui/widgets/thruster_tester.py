@@ -8,134 +8,20 @@ from gui.event_nodes.subscriber import GUIEventSubscriber
 from mavros_msgs.srv import CommandLong, ParamPull
 from PyQt6.QtCore import pyqtSignal, pyqtSlot
 from PyQt6.QtGui import QIntValidator, QPixmap
-from PyQt6.QtWidgets import (QGridLayout, QHBoxLayout, QLabel, QLineEdit,
-                             QPushButton, QVBoxLayout, QWidget)
+from PyQt6.QtWidgets import (QCheckBox, QGridLayout, QHBoxLayout, QLabel,
+                             QLineEdit, QPushButton, QVBoxLayout, QWidget)
 from rcl_interfaces.msg import ParameterValue
 from rcl_interfaces.srv import GetParameters, SetParameters
 from rclpy.parameter import Parameter
 
 from rov_msgs.msg import VehicleState
 
+MOTOR_COUNT = 8
+SERVO_FUNCTION_OFFSET = 32
 
-class ThrusterTester(QWidget):
-    """Widget to command the pixhawk to test the thrusters, and reassign thruster ports."""
 
-    TEST_LENGTH: float = 2.0  # time between adjacent tests of individual thrusters
-    TEST_THROTTLE: float = 0.50  # 50%
-    MOTOR_COUNT = 8
-
-    test_command_callback_signal = pyqtSignal(CommandLong.Response)
-    vehicle_state_callback_signal = pyqtSignal(VehicleState)
-    pull_motors_callback_signal = pyqtSignal(ParamPull.Response)
-    param_send_callback_signal = pyqtSignal(SetParameters.Response)
-    param_get_callback_signal = pyqtSignal(GetParameters.Response)
-
-    def __init__(self) -> None:
-        super().__init__()
-
-        # TODO Our ROS Node count is getting kind of crazy lol
-        self.test_cmd_client = GUIEventClient(
-            CommandLong,
-            "mavros/cmd/command",
-            self.test_command_callback_signal
-        )
-        self.test_command_callback_signal.connect(self.command_response_handler)
-
-        self.vehicle_state_subscriber = GUIEventSubscriber(
-            VehicleState,
-            "vehicle_state_event",
-            self.vehicle_state_callback_signal
-        )
-        self.vehicle_state_callback_signal.connect(self.vehicle_state_callback)
-
-        self.param_pull_client = GUIEventClient(
-            ParamPull,
-            "mavros/param/pull",
-            self.pull_motors_callback_signal,
-            10.0
-        )
-        self.pull_motors_callback_signal.connect(self.pull_param_handler)
-
-        self.param_send_client = GUIEventClient(
-            SetParameters,
-            "mavros/param/set_parameters",
-            self.param_send_callback_signal
-        )
-        self.param_send_callback_signal.connect(self.param_send_signal_handler)
-
-        self.param_get_client = GUIEventClient(
-            GetParameters,
-            "mavros/param/get_parameters",
-            self.param_get_callback_signal
-        )
-        self.param_get_callback_signal.connect(self.param_get_signal_handler)
-
-        layout = QVBoxLayout()
-
-        heading = QLabel("Thruster Pin Configuration")
-
-        pin_numbers_grid = QGridLayout()
-        self.pin_input_widgets: list[QLineEdit] = []
-
-        pin_number_validator = QIntValidator()
-        pin_number_validator.setRange(1, self.MOTOR_COUNT)
-
-        for i in range(1, self.MOTOR_COUNT + 1):
-            pin_label = QLabel(str(i))
-            pin_label.setMaximumWidth(20)
-            pin_input = QLineEdit()
-            pin_input.setValidator(pin_number_validator)
-            pin_input.insert(str(i))
-            pin_input.setMaximumWidth(20)
-            self.pin_input_widgets.append(pin_input)
-
-            on_first_column = i - 1 < self.MOTOR_COUNT / 2
-            column = 1 if on_first_column else 4
-            row = i if on_first_column else i - self.MOTOR_COUNT // 2
-            pin_numbers_grid.addWidget(pin_label, row, column)
-            pin_numbers_grid.addWidget(pin_input, row, column + 1)
-
-        pin_numbers_grid.setColumnStretch(0, 1)
-        pin_numbers_grid.setColumnStretch(3, 1)
-        pin_numbers_grid.setColumnStretch(6, 1)
-
-        pin_assignment_button = QPushButton()
-        pin_assignment_button.setText("Send Pin Assignments")
-        pin_assignment_button.clicked.connect(self.send_pin_assignments)
-
-        test_button = QPushButton()
-        test_button.setText("Test Thrusters")
-        test_button.clicked.connect(self.async_send_test_message)
-
-        image_layout = QVBoxLayout()
-
-        gui_path = get_package_share_directory('gui')
-        picture_path = os.path.join(gui_path, 'doc', 'images', 'vectored6dof-frame.png')
-        image = QLabel()
-        pixmap = QPixmap(picture_path)
-        image.setPixmap(pixmap.scaledToHeight(200))
-
-        # https://www.ardusub.com/quick-start/vehicle-frame.html
-        image_text = QLabel(("Green thrusters indicate counter-clockwise propellers and blue thrusters"
-                            "indicate clockwise propellers (or vice-versa)."))
-
-        image_text.setWordWrap(True)
-
-        image_layout.addWidget(image)
-        image_layout.addWidget(image_text)
-
-        layout.addWidget(heading)
-        layout.addLayout(pin_numbers_grid)
-        layout.addWidget(pin_assignment_button)
-        layout.addWidget(test_button)
-
-        main_layout = QHBoxLayout()
-        main_layout.addLayout(image_layout)
-        main_layout.addLayout(layout)
-
-        self.setLayout(main_layout)
-
-        self.pixhawk_activated = False
+class TestMotorMixin:
+    test_cmd_client: GUIEventClient
 
     def test_motor_for_time(self, motor_index: int, throttle: float, duration: float) -> None:
         """
@@ -172,29 +58,137 @@ class ThrusterTester(QWidget):
 
             time.sleep(0.05)
 
-    def async_send_test_message(self) -> None:
-        """Asynchronously send a test message."""
-        Thread(target=self.send_test_message, daemon=True, name="thruster_test_thread").start()
 
-    def send_test_message(self) -> None:
-        """Send a test message for each motor."""
-        for motor_index in range(self.MOTOR_COUNT):
-            self.test_cmd_client.get_logger().info(f"Testing thruster {motor_index + 1}")
-            self.test_motor_for_time(motor_index, self.TEST_THROTTLE, self.TEST_LENGTH)
-            self.test_motor_for_time(motor_index, 0.0, 0.5)
+# TODO @ben got a better name than this lol
+class ThrusterBox(QWidget):
 
-    @pyqtSlot(CommandLong.Response)
-    def command_response_handler(self, res: CommandLong.Response) -> None:
-        """
-        Log response to CommandLong service.
+    VALIDATOR: QIntValidator
 
-        Parameters
-        ----------
-        res : CommandLong.Response
-            CommandLong.Response message.
+    def __init__(self, pin_number: int) -> None:
+        super().__init__()
 
-        """
-        self.test_cmd_client.get_logger().info(f"Test response: {res.success}, {res.result}")
+        layout = QHBoxLayout()
+        label = QLabel(str(pin_number))
+        label.setMaximumWidth(20)
+
+        pin_input = QLineEdit()
+        pin_input.setValidator(self.VALIDATOR)
+        pin_input.insert(str(pin_number))
+        pin_input.setMaximumWidth(20)
+
+        layout.addWidget(label)
+        layout.addWidget(pin_input)
+
+        self.setLayout(layout)
+
+        self.label = label
+        self.pin_input = pin_input
+
+
+class ThrusterImage(QWidget):
+    def __init__(self) -> None:
+        super().__init__()
+        image_layout = QVBoxLayout()
+
+        gui_path = get_package_share_directory('gui')
+        picture_path = os.path.join(gui_path, 'doc', 'images', 'vectored6dof-frame.png')
+        image = QLabel()
+        pixmap = QPixmap(picture_path)
+        image.setPixmap(pixmap.scaledToHeight(200))
+
+        # https://www.ardusub.com/quick-start/vehicle-frame.html
+        image_text = QLabel(("Green thrusters indicate counter-clockwise propellers and blue thrusters"
+                            "indicate clockwise propellers (or vice-versa)."))
+
+        image_text.setWordWrap(True)
+
+        image_layout.addWidget(image)
+        image_layout.addWidget(image_text)
+        self.setLayout(image_layout)
+
+
+class ThrusterAssignment(QWidget, TestMotorMixin):
+
+    vehicle_state_callback_signal = pyqtSignal(VehicleState)
+    pull_motors_callback_signal = pyqtSignal(ParamPull.Response)
+    param_send_callback_signal = pyqtSignal(SetParameters.Response)
+    param_get_callback_signal = pyqtSignal(GetParameters.Response)
+
+    def __init__(self, test_motor_client: GUIEventClient) -> None:
+        self.init_widget()
+        self.init_ros(test_motor_client)
+
+    def init_widget(self) -> None:
+        super().__init__()
+        heading = QLabel("Thruster Pin Configuration")
+
+        pin_numbers_grid = QGridLayout()
+        self.thruster_boxes: list[ThrusterBox] = []
+
+        pin_number_validator = QIntValidator()
+        pin_number_validator.setRange(1, MOTOR_COUNT)
+
+        ThrusterBox.VALIDATOR = pin_number_validator
+        COL_COUNT = 2
+        ROW_COUNT = int(MOTOR_COUNT / COL_COUNT)
+
+        for i in range(1, MOTOR_COUNT + 1):
+            index = i - 1
+            box = ThrusterBox(i)
+            self.thruster_boxes.append(box)
+
+            on_first_column = index < ROW_COUNT
+            column = 0 if on_first_column else 1
+            row = index % ROW_COUNT
+            pin_numbers_grid.addWidget(box, row, column)
+
+        pin_numbers_grid.setColumnStretch(0, 1)
+        pin_numbers_grid.setColumnStretch(3, 1)
+        pin_numbers_grid.setColumnStretch(6, 1)
+
+        pin_assignment_button = QPushButton()
+        pin_assignment_button.setText("Send Pin Assignments")
+        pin_assignment_button.clicked.connect(self.send_pin_assignments)
+
+        layout = QVBoxLayout()
+        layout.addWidget(heading)
+        layout.addLayout(pin_numbers_grid)
+        layout.addWidget(pin_assignment_button)
+        self.setLayout(layout)
+
+    def init_ros(self, test_motor_client: GUIEventClient) -> None:
+        self.pixhawk_activated = False
+
+        self.vehicle_state_subscriber = GUIEventSubscriber(
+            VehicleState,
+            "vehicle_state_event",
+            self.vehicle_state_callback_signal
+        )
+        self.vehicle_state_callback_signal.connect(self.vehicle_state_callback)
+
+        self.param_pull_client = GUIEventClient(
+            ParamPull,
+            "mavros/param/pull",
+            self.pull_motors_callback_signal,
+            10.0
+        )
+        self.pull_motors_callback_signal.connect(self.pull_param_handler)
+
+        self.param_send_client = GUIEventClient(
+            SetParameters,
+            "mavros/param/set_parameters",
+            self.param_send_callback_signal
+        )
+        self.param_send_callback_signal.connect(self.param_send_signal_handler)
+
+        self.param_get_client = GUIEventClient(
+            GetParameters,
+            "mavros/param/get_parameters",
+            self.param_get_callback_signal
+        )
+        self.param_get_callback_signal.connect(self.param_get_signal_handler)
+
+        self.test_cmd_client = test_motor_client
 
     def vehicle_state_callback(self, msg: VehicleState) -> None:
         """
@@ -225,7 +219,9 @@ class ThrusterTester(QWidget):
         """
         self.param_pull_client.get_logger().info("Succesfully pulled param from pixhawk")
 
-        param_names = [f"SERVO{x + 1}_FUNCTION" for x in range(self.MOTOR_COUNT)]
+        param_names = [f"SERVO{x + 1}_FUNCTION" for x in range(MOTOR_COUNT)]
+
+        param_names.extend([f"SERVO{x + 1}_REVERSED" for x in range(MOTOR_COUNT)])
 
         self.param_get_client.send_request_async(GetParameters.Request(
             names=param_names
@@ -236,14 +232,14 @@ class ThrusterTester(QWidget):
         # https://wiki.ros.org/mavros/Plugins#param
         # https://ardupilot.org/copter/docs/parameters.html#servo10-parameters
 
-        pin_input_list = [int(x.text()) for x in self.pin_input_widgets]
+        pin_input_list = [int(x.pin_input.text()) for x in self.thruster_boxes]
 
         param_list = []
         for i, pin_input in enumerate(pin_input_list):
             # https://ardupilot.org/copter/docs/parameters.html#servo1-function-servo-output-function
             param = Parameter(f"SERVO{i + 1}_FUNCTION",
                               Parameter.Type.INTEGER,
-                              pin_input + 32).to_parameter_msg()
+                              pin_input + SERVO_FUNCTION_OFFSET).to_parameter_msg()
             param_list.append(param)
 
         req = SetParameters.Request(parameters=param_list)
@@ -274,7 +270,69 @@ class ThrusterTester(QWidget):
 
         """
         self.param_get_client.get_logger().info("Succesfully got params from /mavros/param.")
-
         params: list[ParameterValue] = res.values
-        for i, param in enumerate(params):
-            self.pin_input_widgets[i].setText(str(param.integer_value - 32))
+        for i in range(MOTOR_COUNT):
+            self.thruster_boxes[i].pin_input.setText(str(params[i].integer_value - SERVO_FUNCTION_OFFSET))
+
+        for i in range(MOTOR_COUNT, MOTOR_COUNT * 2):
+            # TODO implement
+            pass
+
+
+class ThrusterTester(QWidget, TestMotorMixin):
+    """Widget to command the pixhawk to test the thrusters, and reassign thruster ports."""
+
+    TEST_LENGTH: float = 2.0  # time between adjacent tests of individual thrusters
+    TEST_THROTTLE: float = 0.50  # 50%
+
+    test_command_callback_signal = pyqtSignal(CommandLong.Response)
+
+    def __init__(self) -> None:
+        super().__init__()
+
+        # TODO Our ROS Node count is getting kind of crazy lol
+        self.test_cmd_client = GUIEventClient(
+            CommandLong,
+            "mavros/cmd/command",
+            self.test_command_callback_signal
+        )
+        self.test_command_callback_signal.connect(self.command_response_handler)
+
+        layout = QVBoxLayout()
+
+        test_button = QPushButton()
+        test_button.setText("Test Thrusters")
+        test_button.clicked.connect(self.async_send_test_message)
+
+        layout.addWidget(ThrusterAssignment(self.test_cmd_client))
+        layout.addWidget(test_button)
+
+        main_layout = QHBoxLayout()
+        main_layout.addWidget(ThrusterImage())
+        main_layout.addLayout(layout)
+
+        self.setLayout(main_layout)
+
+    def async_send_test_message(self) -> None:
+        """Asynchronously send a test message."""
+        Thread(target=self.send_test_message, daemon=True, name="thruster_test_thread").start()
+
+    def send_test_message(self) -> None:
+        """Send a test message for each motor."""
+        for motor_index in range(MOTOR_COUNT):
+            self.test_cmd_client.get_logger().info(f"Testing thruster {motor_index + 1}")
+            self.test_motor_for_time(motor_index, self.TEST_THROTTLE, self.TEST_LENGTH)
+            self.test_motor_for_time(motor_index, 0.0, 0.5)
+
+    @pyqtSlot(CommandLong.Response)
+    def command_response_handler(self, res: CommandLong.Response) -> None:
+        """
+        Log response to CommandLong service.
+
+        Parameters
+        ----------
+        res : CommandLong.Response
+            CommandLong.Response message.
+
+        """
+        self.test_cmd_client.get_logger().info(f"Test response: {res.success}, {res.result}")
