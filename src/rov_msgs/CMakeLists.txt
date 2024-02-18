@@ -32,10 +32,9 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/IPAddress.msg"
   "msg/VehicleState.msg"
   "msg/Heartbeat.msg"
-  "msg/MissionTimer.msg"
+  "msg/MissionTimerTick.msg"
   "srv/AutonomousFlight.srv"
-  "srv/MissionTimerSetRunning.srv"
-  "srv/MissionTimerSetTime.srv"
+  "srv/MissionTimerSet.srv"
   DEPENDENCIES std_msgs
 )
 
