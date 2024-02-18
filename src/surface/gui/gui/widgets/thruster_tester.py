@@ -32,7 +32,8 @@ class TestMotorMixin:
         Thread(target=self.test_motor_for_time, daemon=True, name="thruster_test_thread",
                args=[motor_index, throttle, duration]).start()
 
-    def test_motor_for_time(self, motor_index: int, throttle: float = 0.50, duration: float = 2.0) -> None:
+    def test_motor_for_time(self, motor_index: int, throttle: float = 0.50,
+                            duration: float = 2.0) -> None:
         """
         Run a motor for an (approximate) length of time (blocking).
 
@@ -310,7 +311,9 @@ class ThrusterAssignment(QWidget, TestMotorMixin):
         self.param_get_client.get_logger().info("Succesfully got params from /mavros/param.")
         params: list[ParameterValue] = res.values
         for i in range(MOTOR_COUNT):
-            self.thruster_boxes[i].pin_input.setText(str(params[i].integer_value - SERVO_FUNCTION_OFFSET))
+            self.thruster_boxes[i].pin_input.setText(
+                str(params[i].integer_value - SERVO_FUNCTION_OFFSET)
+            )
 
         for i in range(MOTOR_COUNT):
 
