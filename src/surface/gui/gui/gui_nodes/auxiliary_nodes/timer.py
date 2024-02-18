@@ -32,7 +32,7 @@ class TimerNode(Node):
 
         self.lastTimestamp: Optional[Time] = None
 
-    def do_tick(self):
+    def do_tick(self) -> None:
         timestamp = self.get_clock().now()
 
         if self.is_running and self.lastTimestamp is not None:
