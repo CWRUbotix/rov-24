@@ -20,7 +20,7 @@ def generate_launch_description() -> LaunchDescription:
                     ("/surface/gui/mavros/param/pull", "/tether/mavros/param/pull"),
                     ("/surface/gui/mavros/param/set_parameters",
                      "/tether/mavros/param/set_parameters"),
-                     ("/surface/gui/mavros/param/get_parameters",
+                    ("/surface/gui/mavros/param/get_parameters",
                      "/tether/mavros/param/get_parameters"),
                     ("/surface/gui/ip_address", "/tether/ip_address")],
         emulate_tty=True,

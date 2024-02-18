@@ -10,7 +10,7 @@ from PyQt6.QtCore import pyqtSignal, pyqtSlot
 from PyQt6.QtGui import QIntValidator, QPixmap
 from PyQt6.QtWidgets import (QGridLayout, QHBoxLayout, QLabel, QLineEdit,
                              QPushButton, QVBoxLayout, QWidget)
-from rcl_interfaces.msg import ParameterValue, ParameterType
+from rcl_interfaces.msg import ParameterValue
 from rcl_interfaces.srv import GetParameters, SetParameters
 from rclpy.parameter import Parameter
 
@@ -107,11 +107,22 @@ class ThrusterTester(QWidget):
         test_button.setText("Test Thrusters")
         test_button.clicked.connect(self.async_send_test_message)
 
+        image_layout = QVBoxLayout()
+
         gui_path = get_package_share_directory('gui')
         picture_path = os.path.join(gui_path, 'doc', 'images', 'vectored6dof-frame.png')
         image = QLabel()
         pixmap = QPixmap(picture_path)
         image.setPixmap(pixmap.scaledToHeight(200))
+
+        # https://www.ardusub.com/quick-start/vehicle-frame.html
+        image_text = QLabel(("Green thrusters indicate counter-clockwise propellers and blue thrusters"
+                            "indicate clockwise propellers (or vice-versa)."))
+
+        image_text.setWordWrap(True)
+
+        image_layout.addWidget(image)
+        image_layout.addWidget(image_text)
 
         layout.addWidget(heading)
         layout.addLayout(pin_numbers_grid)
@@ -119,7 +130,7 @@ class ThrusterTester(QWidget):
         layout.addWidget(test_button)
 
         main_layout = QHBoxLayout()
-        main_layout.addWidget(image)
+        main_layout.addLayout(image_layout)
         main_layout.addLayout(layout)
 
         self.setLayout(main_layout)
