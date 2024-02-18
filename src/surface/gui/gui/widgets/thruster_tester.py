@@ -19,10 +19,18 @@ from rov_msgs.msg import VehicleState
 
 MOTOR_COUNT = 8
 SERVO_FUNCTION_OFFSET = 32
+NORMAL = 0
+REVERSED = 1
 
 
 class TestMotorMixin:
     test_cmd_client: GUIEventClient
+
+    def asnyc_test_motor_for_time(self, motor_index: int, throttle: float = 0.50,
+                                  duration: float = 2.0) -> None:
+        """Asynchronously tests 1 motor."""
+        Thread(target=self.test_motor_for_time, daemon=True, name="thruster_test_thread",
+               args=[motor_index, throttle, duration]).start()
 
     def test_motor_for_time(self, motor_index: int, throttle: float = 0.50, duration: float = 2.0) -> None:
         """
@@ -95,7 +103,7 @@ class ThrusterBox(QWidget):
         self.setLayout(vert_layout)
 
         self.pin_input = pin_input
-        self.button = button
+        self.checkbox = check_box
 
 
 class ThrusterImage(QWidget):
@@ -104,14 +112,15 @@ class ThrusterImage(QWidget):
         image_layout = QVBoxLayout()
 
         gui_path = get_package_share_directory('gui')
-        picture_path = os.path.join(gui_path, 'doc', 'images', 'vectored6dof-frame.png')
+        picture_path = os.path.join(gui_path, 'doc', 'images',
+                                    'vectored6dof-frame.png')
         image = QLabel()
         pixmap = QPixmap(picture_path)
         image.setPixmap(pixmap.scaledToHeight(200))
 
         # https://www.ardusub.com/quick-start/vehicle-frame.html
-        image_text = QLabel(("Green thrusters indicate counter-clockwise propellers and blue thrusters"
-                            "indicate clockwise propellers (or vice-versa)."))
+        image_text = QLabel(("Green thrusters indicate counter-clockwise propellers and blue"
+                             "thrusters indicate clockwise propellers (or vice-versa)."))
 
         image_text.setWordWrap(True)
 
@@ -147,7 +156,7 @@ class ThrusterAssignment(QWidget, TestMotorMixin):
 
         for i in range(1, MOTOR_COUNT + 1):
             index = i - 1
-            box = ThrusterBox(i, self.test_motor_for_time)
+            box = ThrusterBox(i, self.asnyc_test_motor_for_time)
             self.thruster_boxes.append(box)
 
             on_first_column = index < ROW_COUNT
@@ -247,12 +256,28 @@ class ThrusterAssignment(QWidget, TestMotorMixin):
 
         pin_input_list = [int(x.pin_input.text()) for x in self.thruster_boxes]
 
-        param_list = []
+        param_list: list[Parameter] = []
         for i, pin_input in enumerate(pin_input_list):
             # https://ardupilot.org/copter/docs/parameters.html#servo1-function-servo-output-function
             param = Parameter(f"SERVO{i + 1}_FUNCTION",
                               Parameter.Type.INTEGER,
                               pin_input + SERVO_FUNCTION_OFFSET).to_parameter_msg()
+            param_list.append(param)
+
+        is_checked_list = [x.checkbox.isChecked() for x in self.thruster_boxes]
+
+        self.param_send_client.get_logger().info(str(is_checked_list))
+
+        for i, is_checked in enumerate(is_checked_list):
+            # https://ardupilot.org/copter/docs/parameters.html#servo1-REVERSEDd-servo-REVERSED
+
+            if is_checked:
+                val = REVERSED
+            else:
+                val = NORMAL
+            param = Parameter(f"SERVO{i + 1}_REVERSED",
+                              Parameter.Type.INTEGER,
+                              val).to_parameter_msg()
             param_list.append(param)
 
         req = SetParameters.Request(parameters=param_list)
@@ -287,9 +312,18 @@ class ThrusterAssignment(QWidget, TestMotorMixin):
         for i in range(MOTOR_COUNT):
             self.thruster_boxes[i].pin_input.setText(str(params[i].integer_value - SERVO_FUNCTION_OFFSET))
 
-        for i in range(MOTOR_COUNT, MOTOR_COUNT * 2):
-            # TODO implement
-            pass
+        for i in range(MOTOR_COUNT):
+
+            val = params[i + MOTOR_COUNT].integer_value
+
+            if val == NORMAL:
+                set_check = False
+            elif val == REVERSED:
+                set_check = True
+            else:
+                self.param_get_client.get_logger().warning("Got unexpected input for check boxes.")
+
+            self.thruster_boxes[i].checkbox.setChecked(set_check)
 
 
 class ThrusterTester(QWidget, TestMotorMixin):
