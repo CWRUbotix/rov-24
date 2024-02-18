@@ -14,7 +14,6 @@ class PilotApp(App):
         self.setWindowTitle('Pilot GUI - CWRUbotix ROV 2024')
 
         main_layout = QVBoxLayout()
-        video_layout = QHBoxLayout()
         self.setLayout(main_layout)
 
         # TODO Look into QStackedLayout for possibly switching between
@@ -35,13 +34,12 @@ class PilotApp(App):
         video_area = SwitchableVideoWidget([bottom_cam_description, depth_cam_description],
                                            "camera_switch")
 
-        video_layout.addWidget(main_video, alignment=Qt.AlignmentFlag.AlignHCenter)
-        video_layout.addWidget(video_area, alignment=Qt.AlignmentFlag.AlignHCenter)
-
-        main_layout.addLayout(video_layout)
+        main_layout.addWidget(main_video, alignment=Qt.AlignmentFlag.AlignHCenter)
+        main_layout.addWidget(video_area, alignment=Qt.AlignmentFlag.AlignHCenter)
 
         bottom_screen_layout = QHBoxLayout()
 
+        # TODO replace with Timer from @noah
         place_holder = QWidget()
         bottom_screen_layout.addWidget(place_holder)
 
