@@ -9,8 +9,7 @@ PACKAGE_NAME = 'gui'
 setup(
     name=PACKAGE_NAME,
     version='1.1.0',
-    packages=[PACKAGE_NAME, os.path.join(PACKAGE_NAME, 'widgets'),
-              os.path.join(PACKAGE_NAME, 'event_nodes')],
+    packages=[PACKAGE_NAME, os.path.join(PACKAGE_NAME, 'widgets')],
     data_files=[
         ('share/ament_index/resource_index/packages',
             ['resource/' + PACKAGE_NAME]),
@@ -34,6 +33,7 @@ setup(
     entry_points={
         'console_scripts': ['run_pilot = gui.pilot_app:run_gui_pilot',
                             'run_operator = gui.operator_app:run_gui_operator',
-                            'run_livestream = gui.livestream_app:run_gui_livestream'],
+                            'run_livestream = gui.livestream_app:run_gui_livestream',
+                            'run_timer = gui.gui_nodes.auxiliary_nodes.timer:run_timer'],
     },
 )
