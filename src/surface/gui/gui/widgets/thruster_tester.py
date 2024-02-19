@@ -26,9 +26,7 @@ REVERSED = -1
 
 
 class TestMotorMixin:
-    """
-    Mixin for testing motors.
-    """
+    """Mixin for testing motors."""
     test_cmd_client: GUIEventClient
 
     def asnyc_test_motor_for_time(self, motor_index: int, throttle: float = 0.50,
