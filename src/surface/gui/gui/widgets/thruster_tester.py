@@ -76,8 +76,6 @@ class TestMotorMixin:
 # TODO @ben got a better name than this lol
 class ThrusterBox(QWidget):
 
-    VALIDATOR: QIntValidator
-
     def __init__(self, pin_number: int, button_func: Callable[[int], None]) -> None:
         """Initialize ThrusterBox."""
         super().__init__()
@@ -89,7 +87,11 @@ class ThrusterBox(QWidget):
         label.setMaximumWidth(20)
 
         pin_input = QLineEdit()
-        pin_input.setValidator(self.VALIDATOR)
+
+        pin_number_validator = QIntValidator()
+        pin_number_validator.setRange(1, MOTOR_COUNT)
+        pin_input.setValidator(pin_number_validator)
+
         pin_input.insert(str(pin_number))
         pin_input.setMaximumWidth(20)
 
@@ -105,7 +107,6 @@ class ThrusterBox(QWidget):
         button.clicked.connect(lambda: button_func(pin_number - 1))
 
         vert_layout.addWidget(button)
-
         self.setLayout(vert_layout)
 
         self.pin_input = pin_input
@@ -156,10 +157,6 @@ class ThrusterAssignment(QWidget, TestMotorMixin):
         pin_numbers_grid = QGridLayout()
         self.thruster_boxes: list[ThrusterBox] = []
 
-        pin_number_validator = QIntValidator()
-        pin_number_validator.setRange(1, MOTOR_COUNT)
-
-        ThrusterBox.VALIDATOR = pin_number_validator
         COL_COUNT = 2
         ROW_COUNT = int(MOTOR_COUNT / COL_COUNT)
 
