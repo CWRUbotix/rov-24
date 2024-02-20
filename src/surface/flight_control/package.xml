@@ -10,7 +10,6 @@
   <depend>rclpy</depend>
   <depend>sensor_msgs</depend>
 
-  <exec_depend>rov_msgs</exec_depend>
   <exec_depend>ros2launch</exec_depend>
 
   <test_depend>ament_flake8</test_depend>
