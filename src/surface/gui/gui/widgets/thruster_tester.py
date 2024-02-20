@@ -30,7 +30,7 @@ class TestMotorMixin:
 
     test_cmd_client: GUIEventClient
 
-    def asnyc_test_motor_for_time(self, motor_index: int, throttle: float = 0.50,
+    def async_test_motor_for_time(self, motor_index: int, throttle: float = 0.50,
                                   duration: float = 2.0) -> None:
         """Asynchronously tests 1 motor."""
         Thread(target=self.test_motor_for_time, daemon=True, name="thruster_test_thread",
@@ -137,7 +137,7 @@ class ThrusterImage(QWidget):
         self.setLayout(image_layout)
 
 
-class ThrusterAssignment(QWidget, TestMotorMixin):
+class ThrusterAssigner(QWidget, TestMotorMixin):
 
     vehicle_state_callback_signal = pyqtSignal(VehicleState)
     pull_motors_callback_signal = pyqtSignal(ParamPull.Response)
@@ -162,7 +162,7 @@ class ThrusterAssignment(QWidget, TestMotorMixin):
 
         for i in range(1, MOTOR_COUNT + 1):
             index = i - 1
-            box = ThrusterBox(i, self.asnyc_test_motor_for_time)
+            box = ThrusterBox(i, self.async_test_motor_for_time)
             self.thruster_boxes.append(box)
 
             on_first_column = index < ROW_COUNT
@@ -186,7 +186,7 @@ class ThrusterAssignment(QWidget, TestMotorMixin):
 
     def init_ros(self, test_motor_client: GUIEventClient) -> None:
         """
-        Initialize ROS part of ThrusterAssignement.
+        Initialize ROS part of ThrusterAssigner.
 
         Parameters
         ----------
@@ -367,7 +367,7 @@ class ThrusterTester(QWidget, TestMotorMixin):
         test_button.setText("Test Thrusters")
         test_button.clicked.connect(self.async_send_test_message)
 
-        layout.addWidget(ThrusterAssignment(self.test_cmd_client))
+        layout.addWidget(ThrusterAssigner(self.test_cmd_client))
         layout.addWidget(test_button)
 
         main_layout = QHBoxLayout()
