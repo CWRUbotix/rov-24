@@ -2,10 +2,8 @@ from enum import Enum
 
 from launch.actions import GroupAction
 from launch.launch_description import DeclareLaunchArgument, LaunchDescription
-# from launch.substitution import Substitution
 from launch.substitutions.launch_configuration import LaunchConfiguration
 from launch.substitutions.equals_substitution import EqualsSubstitution
-# from launch.condition import Condition
 from launch.conditions.if_condition import IfCondition
 from launch_ros.actions import Node, PushRosNamespace
 
@@ -18,7 +16,7 @@ class GUIVersion(str, Enum):
 def pilot_node_generator(executable: str, gui_version: GUIVersion,
                          gui_version_substitution: LaunchConfiguration) -> Node:
     """
-    Helper to generate pilot nodes.
+    Generate pilot nodes.
 
     Parameters
     ----------
@@ -35,7 +33,6 @@ def pilot_node_generator(executable: str, gui_version: GUIVersion,
         Return launch_ros Node.
 
     """
-
     return Node(
         package='gui',
         executable=executable,
@@ -54,7 +51,6 @@ def pilot_node_generator(executable: str, gui_version: GUIVersion,
 
 def generate_launch_description() -> LaunchDescription:
     """Asynchronously launches pilot's gui node."""
-
     gui_version_arg = DeclareLaunchArgument('gui', default_value=GUIVersion.PILOT,
                                             choices=[GUIVersion.PILOT, GUIVersion.DEBUG])
 
