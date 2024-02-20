@@ -18,17 +18,28 @@ dependencies = [
     'pytest-xvfb'
 ]
 
-[tool]
-line-length = 100
-
 [tool.mypy]
 strict = true
+warn_unused_configs = true
+allow_untyped_calls = true
+[[tool.mypy.overrides]]
 # Done becuase tons of python packages are missing stubs or py.typed markers
-# ignore_missing_imports = true
-# Done because some calls insides rclpy are not typed
-# disallow_untyped_calls = false
-# Done because rclpy Node has type Any
-# disallow_subclassing_any = false
+module = ["ament_mypy.*",
+          "ament_pep257.*",
+          "ament_flake8.*",
+          "ament_index_python.*",
+          "sensor_msgs.*",
+          "mavros_msgs.*",
+          "launch_ros.*",
+          "launch.*",
+          "robot_upstart.*",
+          "builtin_interfaces.*",
+          "rcl_interfaces.*",
+          "qdarktheme.*",
+          "cv_bridge.*",
+          "pytestqt.*"
+]
+ignore_missing_imports = true
 
 [tool.pytest.ini_options]   
 qt_api = "pyqt6"

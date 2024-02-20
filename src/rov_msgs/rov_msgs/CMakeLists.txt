@@ -11,13 +11,6 @@ find_package(ament_cmake REQUIRED)
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
 
-include(FetchContent) # once in the project to include the module
-
-FetchContent_Declare(rosidl_generator_mypy
-                     GIT_REPOSITORY https://github.com/rospypi/rosidl_generator_mypy.git)
-FetchContent_MakeAvailable(rosidl_generator_mypy)
-
-
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
   # the following line skips the linter which checks for copyrights
@@ -30,6 +23,7 @@ if(BUILD_TESTING)
 endif()
 
 find_package(rosidl_default_generators REQUIRED)
+find_package(rosidl_generator_mypy REQUIRED)
 find_package(std_msgs REQUIRED)
 
 rosidl_generate_interfaces(${PROJECT_NAME}
