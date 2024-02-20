@@ -19,6 +19,7 @@
   <depend>std_msgs</depend>
 
   <buildtool_depend>rosidl_default_generators</buildtool_depend>
+  <build_depend>rosidl_generator_mypy</build_depend>
 
   <exec_depend>rosidl_default_runtime</exec_depend>
 

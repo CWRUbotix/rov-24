@@ -5,9 +5,11 @@ version = "1.1.0"
 
 dependencies = [
     'setuptools',
+    'types-setuptools',
     'flake8==7.0.0',
     'mypy >= 1.7',
     'pynput',
+    'types-pynput',
     'pyqt6',
     'pyqtdarktheme',
     'opencv-python>=4.8.1',
@@ -22,11 +24,11 @@ line-length = 100
 [tool.mypy]
 strict = true
 # Done becuase tons of python packages are missing stubs or py.typed markers
-ignore_missing_imports = true
+# ignore_missing_imports = true
 # Done because some calls insides rclpy are not typed
-disallow_untyped_calls = false
+# disallow_untyped_calls = false
 # Done because rclpy Node has type Any
-disallow_subclassing_any = false
+# disallow_subclassing_any = false
 
 [tool.pytest.ini_options]   
 qt_api = "pyqt6"
