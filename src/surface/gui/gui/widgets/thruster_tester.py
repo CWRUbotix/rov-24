@@ -1,7 +1,6 @@
 import os
 import time
 from threading import Thread
-from typing import Optional
 
 from ament_index_python.packages import get_package_share_directory
 from gui.event_nodes.client import GUIEventClient
