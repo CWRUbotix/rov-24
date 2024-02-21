@@ -1,7 +1,6 @@
 import os
 import time
 from threading import Thread
-from typing import Callable
 
 from ament_index_python.packages import get_package_share_directory
 from gui.event_nodes.client import GUIEventClient
@@ -32,7 +31,8 @@ class TestMotorMixin:
 
     def async_test_motor_for_time(self, motor_index: int, throttle: float = 0.50,
                                   duration: float = 2.0) -> None:
-        """Asynchronously tests 1 motor.
+        """
+        Asynchronously tests 1 motor.
 
         Parameters
         ----------
@@ -88,7 +88,8 @@ class TestMotorMixin:
 class ThrusterBox(QWidget, TestMotorMixin):
 
     def __init__(self, pin_number: int, test_motor_client: GUIEventClient) -> None:
-        """Initialize ThrusterBox.
+        """
+        Initialize ThrusterBox.
 
         Parameters
         ----------
@@ -172,7 +173,8 @@ class ThrusterAssigner(QWidget):
         self.init_ros()
 
     def init_widget(self, test_motor_client: GUIEventClient) -> None:
-        """Initialize widget.
+        """
+        Initialize widget.
 
         Parameters
         ----------
