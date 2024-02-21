@@ -11,4 +11,5 @@
 	branch = connect_while_subscribed
 [submodule "src/rov_msgs/rosidl_generator_mypy"]
 	path = src/rov_msgs/rosidl_generator_mypy
-	url = https://github.com/rospypi/rosidl_generator_mypy.git
+	url = git@github.com:Greenroom-Robotics/rosidl_generator_mypy.git
+	branch = feature/fix-deprecation
