@@ -351,12 +351,12 @@ class ThrusterAssigner(QWidget):
         """
         self.param_get_client.get_logger().info("Succesfully got params from /mavros/param.")
         params: list[ParameterValue] = res.values
-        for i in range(MOTOR_COUNT):
-            self.thruster_boxes[i].pin_input.setText(
+        for i, thruster_box in enumerate(self.thruster_boxes):
+            thruster_box.pin_input.setText(
                 str(params[i].integer_value - SERVO_FUNCTION_OFFSET)
             )
 
-        for i in range(MOTOR_COUNT):
+        for i, thruster_box in enumerate(self.thruster_boxes):
 
             val = params[i + MOTOR_COUNT].integer_value
 
@@ -369,7 +369,7 @@ class ThrusterAssigner(QWidget):
             else:
                 self.param_get_client.get_logger().warning("Got unexpected input for check boxes.")
 
-            self.thruster_boxes[i].checkbox.setChecked(set_check)
+            thruster_box.checkbox.setChecked(set_check)
 
 
 class ThrusterTester(QWidget):
