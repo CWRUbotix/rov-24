@@ -10,11 +10,19 @@ from rov_msgs.srv import MissionTimerSet
 
 
 PUBLISH_RATE = 10  # Hz
-DEFAULT_DURATION = 15 * 60  # Seconds
+DEFAULT_DURATION = Duration(seconds=15 * 60)
 
 
 class TimerNode(Node):
+    """
+    A ROS node which encapsulates a simple countdown timer.
+
+    Publishes the time and whether it's counting down periodically and can be started, stopped,
+    and reset via a service.
+    """
+
     def __init__(self) -> None:
+        """Initialize the publisher, service client, and internal variables."""
         super().__init__("timer_node", parameter_overrides=[])
 
         self.publisher = self.create_publisher(
@@ -27,24 +35,31 @@ class TimerNode(Node):
 
         self.publisher_timer = self.create_timer(1 / PUBLISH_RATE, self.timer_callback)
 
-        self.time_left = Duration(seconds=DEFAULT_DURATION)
+        self.time_left = DEFAULT_DURATION
         self.is_running = False
 
-        self.lastTimestamp: Optional[Time] = None
+        self.last_timestamp: Optional[Time] = None
 
     def do_tick(self) -> None:
+        """
+        Update the time remaining on the timer.
+
+        Reduce the timer's remaining duration by the duration that has elapsed on ROS's clock since
+        the last time do_tick() was called.
+        """
         timestamp = self.get_clock().now()
 
-        if self.is_running and self.lastTimestamp is not None:
-            self.time_left = self.lastTimestamp + self.time_left - timestamp
+        if self.is_running and self.last_timestamp is not None:
+            self.time_left = self.last_timestamp + self.time_left - timestamp
 
             if self.time_left < Duration(seconds=0):
                 self.is_running = False
                 self.time_left = Duration(seconds=0)
 
-        self.lastTimestamp = timestamp
+        self.last_timestamp = timestamp
 
     def publish_tick_message(self) -> None:
+        """Publish an update on the timer's states as a ROS message."""
         msg = MissionTimerTick()
         msg.is_running = self.is_running
         msg.time_left = self.time_left.to_msg()
@@ -52,11 +67,27 @@ class TimerNode(Node):
         self.publisher.publish(msg)
 
     def timer_callback(self) -> None:
+        """Advance the timer and publish an update; called periodically."""
         self.do_tick()
         self.publish_tick_message()
 
     def set_time_callback(self, request: MissionTimerSet.Request,
                           response: MissionTimerSet.Response) -> MissionTimerSet.Response:
+        """
+        Handle a request to start, stop, or reset the timer.
+
+        Parameters
+        ----------
+        request : MissionTimerSet.Request
+            The ROS request sent by the caller of the service; describes the desired action.
+        response : MissionTimerSet.Response
+            The default ROS response to be returned to the caller.
+
+        Returns
+        -------
+        MissionTimerSet.Response
+            The ROS response to be returned to the caller.
+        """
         self.do_tick()
 
         if request.set_running:
@@ -64,7 +95,7 @@ class TimerNode(Node):
 
         if request.set_time:
             self.time_left = Duration.from_msg(request.time)
-            self.lastTimestamp = None
+            self.last_timestamp = None
 
         self.publish_tick_message()
 
@@ -73,6 +104,7 @@ class TimerNode(Node):
 
 
 def run_timer() -> None:
+    """Run the timer node forever."""
     rclpy.init()
     timer_node = TimerNode()
     executor = MultiThreadedExecutor()
