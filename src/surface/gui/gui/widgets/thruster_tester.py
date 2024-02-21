@@ -32,7 +32,18 @@ class TestMotorMixin:
 
     def async_test_motor_for_time(self, motor_index: int, throttle: float = 0.50,
                                   duration: float = 2.0) -> None:
-        """Asynchronously tests 1 motor."""
+        """Asynchronously tests 1 motor.
+
+        Parameters
+        ----------
+        motor_index : int
+            A motor index, from 1 to 8
+        throttle : float
+            A float from -1 to 1, where -1 is full reverse and 1 is full forward
+        duration : float
+            Time in seconds to run the motor
+
+        """
         Thread(target=self.test_motor_for_time, daemon=True, name="thruster_test_thread",
                args=[motor_index, throttle, duration]).start()
 
@@ -74,11 +85,22 @@ class TestMotorMixin:
 
 
 # TODO @ben got a better name than this lol
-class ThrusterBox(QWidget):
+class ThrusterBox(QWidget, TestMotorMixin):
 
-    def __init__(self, pin_number: int, button_func: Callable[[int], None]) -> None:
-        """Initialize ThrusterBox."""
+    def __init__(self, pin_number: int, test_motor_client: GUIEventClient) -> None:
+        """Initialize ThrusterBox.
+
+        Parameters
+        ----------
+        pin_number : int
+            The pin number of the thruster.
+        test_motor_client : GUIEventClient
+            Passed in client from parent widget.
+
+        """
         super().__init__()
+
+        self.test_cmd_client = test_motor_client
 
         vert_layout = QVBoxLayout()
 
@@ -104,7 +126,7 @@ class ThrusterBox(QWidget):
         vert_layout.addLayout(layout)
 
         button = QPushButton(f"Test Motor {pin_number}")
-        button.clicked.connect(lambda: button_func(pin_number - 1))
+        button.clicked.connect(lambda: self.async_test_motor_for_time(pin_number - 1))
 
         vert_layout.addWidget(button)
         self.setLayout(vert_layout)
@@ -137,7 +159,7 @@ class ThrusterImage(QWidget):
         self.setLayout(image_layout)
 
 
-class ThrusterAssigner(QWidget, TestMotorMixin):
+class ThrusterAssigner(QWidget):
 
     vehicle_state_callback_signal = pyqtSignal(VehicleState)
     pull_motors_callback_signal = pyqtSignal(ParamPull.Response)
@@ -146,11 +168,18 @@ class ThrusterAssigner(QWidget, TestMotorMixin):
 
     def __init__(self, test_motor_client: GUIEventClient) -> None:
         """Initialize Widget and ROS."""
-        self.init_widget()
-        self.init_ros(test_motor_client)
+        self.init_widget(test_motor_client)
+        self.init_ros()
 
-    def init_widget(self) -> None:
-        """Initialize Widget."""
+    def init_widget(self, test_motor_client: GUIEventClient) -> None:
+        """Initialize widget.
+
+        Parameters
+        ----------
+        test_motor_client : GUIEventClient
+            Passed in client from parent widget.
+
+        """
         super().__init__()
         heading = QLabel("Thruster Pin Configuration")
 
@@ -162,7 +191,7 @@ class ThrusterAssigner(QWidget, TestMotorMixin):
 
         for i in range(1, MOTOR_COUNT + 1):
             index = i - 1
-            box = ThrusterBox(i, self.async_test_motor_for_time)
+            box = ThrusterBox(i, test_motor_client)
             self.thruster_boxes.append(box)
 
             on_first_column = index < ROW_COUNT
@@ -184,16 +213,8 @@ class ThrusterAssigner(QWidget, TestMotorMixin):
         layout.addWidget(pin_assignment_button)
         self.setLayout(layout)
 
-    def init_ros(self, test_motor_client: GUIEventClient) -> None:
-        """
-        Initialize ROS part of ThrusterAssigner.
-
-        Parameters
-        ----------
-        test_motor_client : GUIEventClient
-            test_motor_client shared with ThrusterTester.
-
-        """
+    def init_ros(self) -> None:
+        """Initialize ROS part of ThrusterAssigner."""
         self.pixhawk_activated = False
 
         self.vehicle_state_subscriber = GUIEventSubscriber(
@@ -224,8 +245,6 @@ class ThrusterAssigner(QWidget, TestMotorMixin):
             self.param_get_callback_signal
         )
         self.param_get_callback_signal.connect(self.param_get_signal_handler)
-
-        self.test_cmd_client = test_motor_client
 
     def vehicle_state_callback(self, msg: VehicleState) -> None:
         """
