@@ -36,36 +36,36 @@ In the config folder are the nodes from the spinnaker api, these are different f
 
 ## Published Topics
 
-* **`/front_camera/image_raw`** ([sensor_msgs/msg/Image])
+* **`/front_cam/image_raw`** ([sensor_msgs/msg/Image])
 
     Image feed for front camera.
 
-* **`/front_camera/meta`** ([flir_camera_msgs/msg/ImageMetaData])
+* **`/front_cam/meta`** ([flir_camera_msgs/msg/ImageMetaData])
 
     Front camera image meta data.
 
-* **`/front_camera/camera_info`** ([sensor_msgs/msg/CameraInfo])
+* **`/front_cam/camera_info`** ([sensor_msgs/msg/CameraInfo])
 
     Front camera info.
 
-* **`/bottom_camera/image_raw`** ([sensor_msgs/msg/Image])
+* **`/bottom_cam/image_raw`** ([sensor_msgs/msg/Image])
 
     Image feed for bottom camera.
 
-* **`/bottom_camera/meta`** ([flir_camera_msgs/msg/ImageMetaData])
+* **`/bottom_cam/meta`** ([flir_camera_msgs/msg/ImageMetaData])
 
     Bottom camera image meta data.
 
-* **`/bottom_camera/camera_info`** ([sensor_msgs/msg/CameraInfo])
+* **`/bottom_cam/camera_info`** ([sensor_msgs/msg/CameraInfo])
 
     Bottom camera info.
 
 ## Subscribed Topics
 
-* **`/front_camera/control`** ([flir_camera_msgs/msg/CameraControl])
+* **`/front_cam/control`** ([flir_camera_msgs/msg/CameraControl])
     Controls exposure and gain.
 
-* **`/bottom_camera/control`** ([flir_camera_msgs/msg/CameraControl])
+* **`/bottom_cam/control`** ([flir_camera_msgs/msg/CameraControl])
     Controls exposure and gain.
 
 [sensor_msgs/msg/Image]: https://docs.ros2.org/latest/api/sensor_msgs/msg/Image.html
