@@ -1,6 +1,7 @@
 import os
 import time
 from threading import Thread
+from typing import Optional
 
 from ament_index_python.packages import get_package_share_directory
 from gui.event_nodes.client import GUIEventClient
@@ -24,10 +25,7 @@ NO_SPIN = 0
 REVERSED = -1
 
 
-class TestMotorMixin:
-    """Mixin for testing motors."""
-
-    test_cmd_client: GUIEventClient
+class TestMotorClient(GUIEventClient):
 
     def async_test_motor_for_time(self, motor_index: int, throttle: float = 0.50,
                                   duration: float = 2.0) -> None:
@@ -69,7 +67,7 @@ class TestMotorMixin:
 
         start_time = time.time()
         while time.time() - start_time < duration:
-            self.test_cmd_client.send_request_async(
+            self.send_request_async(
                 CommandLong.Request(
                     command=209,  # MAV_CMD_DO_MOTOR_TEST
                     param1=float(motor_index),  # Motor number
@@ -85,9 +83,9 @@ class TestMotorMixin:
 
 
 # TODO @ben got a better name than this lol
-class ThrusterBox(QWidget, TestMotorMixin):
+class ThrusterBox(QWidget):
 
-    def __init__(self, pin_number: int, test_motor_client: GUIEventClient) -> None:
+    def __init__(self, pin_number: int, test_motor_client: TestMotorClient) -> None:
         """
         Initialize ThrusterBox.
 
@@ -101,7 +99,7 @@ class ThrusterBox(QWidget, TestMotorMixin):
         """
         super().__init__()
 
-        self.test_cmd_client = test_motor_client
+        self.test_motor_client = test_motor_client
 
         vert_layout = QVBoxLayout()
 
@@ -127,7 +125,8 @@ class ThrusterBox(QWidget, TestMotorMixin):
         vert_layout.addLayout(layout)
 
         button = QPushButton(f"Test Motor {pin_number}")
-        button.clicked.connect(lambda: self.async_test_motor_for_time(pin_number - 1))
+        button.clicked.connect(
+            lambda: self.test_motor_client.async_test_motor_for_time(pin_number - 1))
 
         vert_layout.addWidget(button)
         self.setLayout(vert_layout)
@@ -167,18 +166,27 @@ class ThrusterAssigner(QWidget):
     param_send_callback_signal = pyqtSignal(SetParameters.Response)
     param_get_callback_signal = pyqtSignal(GetParameters.Response)
 
-    def __init__(self, test_motor_client: GUIEventClient) -> None:
-        """Initialize Widget and ROS."""
+    def __init__(self, test_motor_client: TestMotorClient) -> None:
+        """
+        Initialize Widget and ROS.
+
+        Parameters
+        ----------
+        test_motor_client : TestMotorClient
+            Passed in client from parent widget.
+
+        """
+
         self.init_widget(test_motor_client)
         self.init_ros()
 
-    def init_widget(self, test_motor_client: GUIEventClient) -> None:
+    def init_widget(self, test_motor_client: TestMotorClient) -> None:
         """
         Initialize widget.
 
         Parameters
         ----------
-        test_motor_client : GUIEventClient
+        test_motor_client : TestMotorClient
             Passed in client from parent widget.
 
         """
@@ -366,7 +374,7 @@ class ThrusterAssigner(QWidget):
             self.thruster_boxes[i].checkbox.setChecked(set_check)
 
 
-class ThrusterTester(QWidget, TestMotorMixin):
+class ThrusterTester(QWidget):
     """Widget to command the pixhawk to test the thrusters, and reassign thruster ports."""
 
     test_command_callback_signal = pyqtSignal(CommandLong.Response)
@@ -375,7 +383,7 @@ class ThrusterTester(QWidget, TestMotorMixin):
         super().__init__()
 
         # TODO Our ROS Node count is getting kind of crazy lol
-        self.test_cmd_client = GUIEventClient(
+        self.test_cmd_client = TestMotorClient(
             CommandLong,
             "mavros/cmd/command",
             self.test_command_callback_signal
@@ -405,8 +413,8 @@ class ThrusterTester(QWidget, TestMotorMixin):
         """Send a test message for each motor."""
         for motor_index in range(MOTOR_COUNT):
             self.test_cmd_client.get_logger().info(f"Testing thruster {motor_index + 1}")
-            self.test_motor_for_time(motor_index)
-            self.test_motor_for_time(motor_index, 0.0, 0.5)
+            self.test_cmd_client.test_motor_for_time(motor_index)
+            self.test_cmd_client.test_motor_for_time(motor_index, 0.0, 0.5)
 
     @pyqtSlot(CommandLong.Response)
     def command_response_handler(self, res: CommandLong.Response) -> None:
