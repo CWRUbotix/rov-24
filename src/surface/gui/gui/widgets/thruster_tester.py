@@ -175,7 +175,6 @@ class ThrusterAssigner(QWidget):
             Passed in client from parent widget.
 
         """
-
         self.init_widget(test_motor_client)
         self.init_ros()
 
