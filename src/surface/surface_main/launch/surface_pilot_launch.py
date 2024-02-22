@@ -1,16 +1,18 @@
 import os
 
 from ament_index_python.packages import get_package_share_directory
-from launch import LaunchDescription
+from launch.launch_description import LaunchDescription
 from launch.actions import GroupAction, IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import PushRosNamespace
 
 
-def generate_launch_description():
+def generate_launch_description() -> LaunchDescription:
 
     gui_path: str = get_package_share_directory('gui')
     controller_path: str = get_package_share_directory('ps5_controller')
+    flir_path: str = get_package_share_directory('rov_flir')
+
     # Launches Gui
     gui_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([
@@ -29,11 +31,21 @@ def generate_launch_description():
         ]),
     )
 
+    # Launches flir
+    flir_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([
+            os.path.join(
+                flir_path, 'launch', 'flir_launch.py'
+            )
+        ]),
+    )
+
     namespace_launch = GroupAction(
         actions=[
-            PushRosNamespace("/surface"),
+            PushRosNamespace("surface"),
             gui_launch,
             controller_launch,
+            flir_launch
         ]
     )
 
