@@ -19,6 +19,19 @@ dependencies = [
 [tool]
 line-length = 100
 
+[tool.pydocstyle]
+convention = "numpy"
+add-ignore=[
+    "D100",
+    "D101",
+    "D102",
+    "D103",
+    "D104",
+    "D105",
+    "D106",
+    "D107"
+    ]
+
 [tool.mypy]
 strict = true
 # Done becuase tons of python packages are missing stubs or py.typed markers
