@@ -31,6 +31,19 @@ disallow_subclassing_any = false
 [tool.pytest.ini_options]   
 qt_api = "pyqt6"
 
+[tool.pydocstyle]
+convention = "numpy"
+add-ignore=[
+    "D100",
+    "D101",
+    "D102",
+    "D103",
+    "D104",
+    "D105",
+    "D106",
+    "D107"
+    ]
+
 [tool.pylintrc]
 disable = ["duplicate-code", "fixme"]
 extension-pkg-whitelist = ["PyQt6", "cv2"]
