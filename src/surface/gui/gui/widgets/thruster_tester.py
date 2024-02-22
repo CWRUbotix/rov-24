@@ -1,5 +1,6 @@
 import os
 import time
+from enum import IntEnum
 from threading import Thread
 
 from ament_index_python.packages import get_package_share_directory
@@ -18,10 +19,6 @@ from rov_msgs.msg import VehicleState
 
 MOTOR_COUNT = 8
 SERVO_FUNCTION_OFFSET = 32
-
-NORMAL = 1
-NO_SPIN = 0
-REVERSED = -1
 
 
 class TestMotorClient(GUIEventClient):
@@ -81,7 +78,12 @@ class TestMotorClient(GUIEventClient):
             time.sleep(0.05)
 
 
-# TODO @ben got a better name than this lol
+class MotorDirection(IntEnum):
+    NORMAL = 1
+    NO_SPIN = 0
+    REVERSED = -1
+
+
 class ThrusterBox(QWidget):
 
     def __init__(self, pin_number: int, test_motor_client: TestMotorClient) -> None:
@@ -133,6 +135,65 @@ class ThrusterBox(QWidget):
         self.pin_input = pin_input
         self.checkbox = check_box
 
+    def set_pin_from_param(self, pin_val: int) -> None:
+        """
+        Set the pin value of the input from a parameter value.
+
+        Parameters
+        ----------
+        pin_val : int
+            The value to set the input to.
+
+        """
+        self.pin_input.setText(
+                str(pin_val - SERVO_FUNCTION_OFFSET)
+            )
+
+    def get_pin_for_param(self) -> int:
+        """
+        Return the function value.
+
+        Returns
+        -------
+        int
+            The SERVO_FUNCTION value of the box.
+
+        """
+        return int(self.pin_input.text()) + SERVO_FUNCTION_OFFSET
+
+    def get_direction(self) -> MotorDirection:
+        """
+        Return the MotorDirection of the ThrusterBox.
+
+        Returns
+        -------
+        MotorDirection
+            The MotorDirection of the ThrusterBox.
+
+        """
+        return MotorDirection.REVERSED if self.checkbox.isChecked() else MotorDirection.NORMAL
+
+    def set_direction(self, direction: MotorDirection) -> None:
+        """
+        Update the checkbox to the MotorDirection.
+
+        Parameters
+        ----------
+        direction : MotorDirection
+            The Direction to update the checkbox.
+
+        """
+        if direction == MotorDirection.NORMAL:
+            set_check = False
+        elif direction == MotorDirection.REVERSED:
+            set_check = True
+        elif direction == MotorDirection.NO_SPIN:
+            pass
+        else:
+            self.test_motor_client.get_logger().warning("Got unexpected input for check boxes.")
+
+        self.checkbox.setChecked(set_check)
+
 
 class ThrusterImage(QWidget):
     def __init__(self) -> None:
@@ -141,7 +202,7 @@ class ThrusterImage(QWidget):
         image_layout = QVBoxLayout()
 
         gui_path = get_package_share_directory('gui')
-        picture_path = os.path.join(gui_path, 'doc', 'images',
+        picture_path = os.path.join(gui_path, 'images',
                                     'vectored6dof-frame.png')
         image = QLabel()
         pixmap = QPixmap(picture_path)
@@ -283,9 +344,9 @@ class ThrusterAssigner(QWidget):
         """
         self.param_pull_client.get_logger().info("Succesfully pulled param from pixhawk")
 
-        param_names = [f"SERVO{x + 1}_FUNCTION" for x in range(MOTOR_COUNT)]
+        param_names = [f"SERVO{i + 1}_FUNCTION" for i in range(MOTOR_COUNT)]
 
-        param_names.extend([f"MOT_{x + 1}_DIRECTION" for x in range(MOTOR_COUNT)])
+        param_names.extend([f"MOT_{i + 1}_DIRECTION" for i in range(MOTOR_COUNT)])
 
         self.param_get_client.send_request_async(GetParameters.Request(
             names=param_names
@@ -296,30 +357,20 @@ class ThrusterAssigner(QWidget):
         # https://wiki.ros.org/mavros/Plugins#param
         # https://ardupilot.org/copter/docs/parameters.html#servo10-parameters
 
-        pin_input_list = [int(x.pin_input.text()) for x in self.thruster_boxes]
-
         param_list: list[Parameter] = []
-        for i, pin_input in enumerate(pin_input_list):
+        for i, thruster_box in enumerate(self.thruster_boxes):
             # https://ardupilot.org/copter/docs/parameters.html#servo1-function-servo-output-function
+            pin_function = thruster_box.get_pin_for_param()
             param = Parameter(f"SERVO{i + 1}_FUNCTION",
                               Parameter.Type.INTEGER,
-                              pin_input + SERVO_FUNCTION_OFFSET).to_parameter_msg()
+                              pin_function).to_parameter_msg()
             param_list.append(param)
 
-        is_checked_list = [x.checkbox.isChecked() for x in self.thruster_boxes]
-
-        self.param_send_client.get_logger().info(str(is_checked_list))
-
-        for i, is_checked in enumerate(is_checked_list):
-            # https://ardupilot.org/copter/docs/parameters.html#servo1-REVERSEDd-servo-REVERSED
-
-            if is_checked:
-                val = REVERSED
-            else:
-                val = NORMAL
+        for i, thruster_box in enumerate(self.thruster_boxes):
+            direction = thruster_box.get_direction()
             param = Parameter(f"MOT_{i + 1}_DIRECTION",
                               Parameter.Type.INTEGER,
-                              val).to_parameter_msg()
+                              direction).to_parameter_msg()
             param_list.append(param)
 
         req = SetParameters.Request(parameters=param_list)
@@ -352,24 +403,11 @@ class ThrusterAssigner(QWidget):
         self.param_get_client.get_logger().info("Succesfully got params from /mavros/param.")
         params: list[ParameterValue] = res.values
         for i, thruster_box in enumerate(self.thruster_boxes):
-            thruster_box.pin_input.setText(
-                str(params[i].integer_value - SERVO_FUNCTION_OFFSET)
-            )
+            thruster_box.set_pin_from_param(params[i].integer_value)
 
         for i, thruster_box in enumerate(self.thruster_boxes):
-
             val = params[i + MOTOR_COUNT].integer_value
-
-            if val == NORMAL:
-                set_check = False
-            elif val == REVERSED:
-                set_check = True
-            elif val == NO_SPIN:
-                pass
-            else:
-                self.param_get_client.get_logger().warning("Got unexpected input for check boxes.")
-
-            thruster_box.checkbox.setChecked(set_check)
+            thruster_box.set_direction(val)
 
 
 class ThrusterTester(QWidget):
