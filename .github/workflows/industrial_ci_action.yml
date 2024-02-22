@@ -51,6 +51,6 @@ jobs:
           # https://pytest-qt.readthedocs.io/en/latest/troubleshooting.html
           ADDITIONAL_DEBS: 'libxcb-cursor0 xvfb'
           # Crazy one liner for install python dependencies
-          AFTER_INSTALL_TARGET_DEPENDENCIES_EMBED: 'pip install --upgrade pip && pip install /root/target_ws/src/rov-24 --user && rm -r /root/target_ws/src/rov-24/build'
+          AFTER_INSTALL_TARGET_DEPENDENCIES_EMBED: 'pip install --upgrade pip && pip install /root/target_ws/src/rov-24 --user && rm -r /root/target_ws/src/rov-24/build && sudo apt-get remove -y ros-${DISTRO}-ament-pep257'
           # Used for running our CI but don't necessarily want to run others failing unit tests (ej. robot_upstart)
           UPSTREAM_WORKSPACE: 'github:clearpathrobotics/robot_upstart#foxy-devel'
