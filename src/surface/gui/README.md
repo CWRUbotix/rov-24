@@ -94,10 +94,6 @@ Has a surface seagrass grid and pool seagrass grid. In between is the video feed
 
     The video feed from the bottom of the robot.
 
-### Task Selector
-
-TODO after it doesn't suck
-
 ### Timer
 
 A simple start and stop timer that counts down from 15 minutes.
