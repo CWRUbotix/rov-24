@@ -27,11 +27,7 @@ find_package(std_msgs REQUIRED)
 
 rosidl_generate_interfaces(${PROJECT_NAME}
   "srv/AutonomousFlight.srv"
-  "srv/TaskRequest.srv"
-  "action/Example.action"
-  "action/BasicTask.action"
   "msg/FloatCommand.msg"
-  "msg/TaskFeedback.msg"
   "msg/Manip.msg"
   "msg/CameraControllerSwitch.msg"
   "msg/Flooding.msg"
