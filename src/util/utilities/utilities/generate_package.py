@@ -155,7 +155,7 @@ def make_package(package_name: str) -> None:
 
 
 def main() -> None:
-    """Handles arguments for make_package."""
+    """Handle arguments for make_package."""
     args = sys.argv[1:]
 
     if len(args) != 1:
