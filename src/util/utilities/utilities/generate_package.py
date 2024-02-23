@@ -13,12 +13,41 @@ PYTHON_INCLUDE = ["__init__.py"]
 
 
 def generate_ignore_files(directory: str, include: list[str]) -> list[str]:
+    """
+    Generates which files are to be ignored by copy.
+
+    Parameters
+    ----------
+    directory : str
+        The directory to search for skipped files
+    include : list[str]
+        The files to be included.
+
+    Returns
+    -------
+    list[str]
+        The files to not be copied.
+
+    """
     files = os.listdir(directory)
     return list(filter(lambda i: i not in include, files))
 
 
 # This assumes that our copied files don't have the word utilities in them.
 def replace(file_name: str, old: str, new: str) -> None:
+    """
+    Replace text in file with new text.
+
+    Parameters
+    ----------
+    file_name : str
+        The file to replace text
+    old : str
+        The value to be replaced
+    new : str
+        the text that replaces the old value
+
+    """
     # Read in the file
     with open(file_name, 'r', encoding='utf-8') as file:
         filedata = file.read()
@@ -32,6 +61,15 @@ def replace(file_name: str, old: str, new: str) -> None:
 
 
 def make_package(package_name: str) -> None:
+    """
+    Generates a package.
+
+    Parameters
+    ----------
+    package_name : str
+        The package name of the new created package.
+
+    """
     script_dir = os.path.join(PACKAGE_DIR, "generic")
     cwd = os.getcwd()
 
@@ -117,6 +155,7 @@ def make_package(package_name: str) -> None:
 
 
 def main() -> None:
+    """Main of generate packages handles arguments."""
     args = sys.argv[1:]
 
     if len(args) != 1:
