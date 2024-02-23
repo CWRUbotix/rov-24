@@ -68,7 +68,52 @@ def make_package(package_name: str) -> None:
             file = file_or_folder
             replace(file, HOME_PACKAGE, package_name)
 
-    # Add TODOs to files
+    # Add TODOs to package.xml
+    package_xml_path = os.path.join(new_package_path, "package.xml")
+
+    with open(package_xml_path, 'r', encoding='utf-8') as opened_file:
+        data = opened_file.read()
+
+    with open(package_xml_path, 'w', encoding='utf-8') as opened_file:
+        description_str = "<description>"
+        front = data.index(description_str) + len(description_str)
+        end = data.index("</description>")
+        data = data[:front] + "TODO" + data[end:]
+
+        opened_file.write(data)
+
+    # Update setup.py
+    setup_py_path = os.path.join(new_package_path, "setup.py")
+    with open(setup_py_path, 'r', encoding='utf-8') as opened_file:
+        data = opened_file.read()
+
+    with open(setup_py_path, 'w', encoding='utf-8') as opened_file:
+        # Adds TODOs
+        description_str = "description="
+        front = data.index(description_str) + len(description_str)
+        end = data.index(",", front)
+        data = data[:front] + "'TODO'" + data[end:]
+
+        # remove entry points
+        entry_str = "entry_points={"
+        front = data.index(entry_str) + len(entry_str)
+        end = data.index("}", front)
+        data = data[:front] + data[end:]
+
+        # Remove data files
+        install_requires_index = data.index("install_requires")
+        end = data.rindex("]", 0, install_requires_index)
+        comment_str = "# Include all files."
+        front = data.index(comment_str)
+        data = data[:front] + data[end:]
+
+        # Remove imports
+        import_str = "import os"
+        front = data.index(import_str)
+        end = data.rindex("glob") + len("glob")
+        data = data[:front] + data[end:]
+
+        opened_file.write(data)
 
 
 def main() -> None:
