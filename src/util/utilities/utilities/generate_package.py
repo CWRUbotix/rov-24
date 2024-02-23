@@ -14,7 +14,7 @@ PYTHON_INCLUDE = ["__init__.py"]
 
 def generate_ignore_files(directory: str, include: list[str]) -> list[str]:
     """
-    Generates which files are to be ignored by copy.
+    Generate which files are to be ignored by copy.
 
     Parameters
     ----------
@@ -62,7 +62,7 @@ def replace(file_name: str, old: str, new: str) -> None:
 
 def make_package(package_name: str) -> None:
     """
-    Generates a package.
+    Make a package.
 
     Parameters
     ----------
@@ -155,7 +155,7 @@ def make_package(package_name: str) -> None:
 
 
 def main() -> None:
-    """Main of generate packages handles arguments."""
+    """Handles arguments for make_package."""
     args = sys.argv[1:]
 
     if len(args) != 1:
