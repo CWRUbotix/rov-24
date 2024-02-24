@@ -34,6 +34,8 @@ ros2 launch gui pilot_launch.py
 
   * **`theme`** : Theme used by the gui; options are `dark`, `light`, `watermelon`. Default: `dark`.
 
+  * **`gui`** : Wether to use vertical or debug gui; options are `pilot`, `debug`. Default: `pilot`.
+
 ## Event Nodes
 
 ### GUIEventClient
