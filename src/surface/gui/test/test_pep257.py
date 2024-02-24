@@ -13,17 +13,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from ament_pep257.main import main
-import pytest
+import os
 
-IGNORE_CODES = ['D100', 'D101', 'D102', 'D103', 'D104', 'D105', 'D106', 'D107']
+import pytest
+from ament_pep257.main import main
 
 
 @pytest.mark.linter
 @pytest.mark.pep257
 def test_pep257() -> None:
     """Tests pep257 on this module."""
-    argv = ['.', 'test', '--convention', 'numpy', '--add-ignore'] + IGNORE_CODES
-
-    error_code = main(argv=argv)
+    path = os.path.join(os.getcwd(), "..", "..", "..", "pyproject.toml")
+    error_code = main(argv=['.', 'test', '--config', path])
     assert error_code == 0, 'Found code style errors / warnings'
