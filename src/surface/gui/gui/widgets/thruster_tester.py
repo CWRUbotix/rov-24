@@ -4,8 +4,8 @@ from enum import IntEnum
 from threading import Thread
 
 from ament_index_python.packages import get_package_share_directory
-from gui.event_nodes.client import GUIEventClient
-from gui.event_nodes.subscriber import GUIEventSubscriber
+from gui.gui_nodes.event_nodes.client import GUIEventClient
+from gui.gui_nodes.event_nodes.subscriber import GUIEventSubscriber
 from mavros_msgs.srv import CommandLong, ParamPull
 from PyQt6.QtCore import pyqtSignal, pyqtSlot
 from PyQt6.QtGui import QIntValidator, QPixmap
