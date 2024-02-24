@@ -1,6 +1,6 @@
 from gui.app import App
 from gui.widgets.arm import Arm
-from gui.widgets.timer import DisplayTimer
+from gui.widgets.timer import TimerDisplay
 from gui.widgets.flood_warning import FloodWarning
 from gui.widgets.video_widget import (CameraDescription, CameraType,
                                       SwitchableVideoWidget, VideoWidget)
@@ -40,7 +40,7 @@ class PilotApp(App):
 
         bottom_screen_layout = QHBoxLayout()
 
-        timer = DisplayTimer()
+        timer = TimerDisplay()
         bottom_screen_layout.addWidget(timer)
 
         flood_widget = FloodWarning()

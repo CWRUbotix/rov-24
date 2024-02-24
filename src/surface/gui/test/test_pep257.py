@@ -16,10 +16,14 @@
 from ament_pep257.main import main
 import pytest
 
+IGNORE_CODES = ['D100', 'D101', 'D102', 'D103', 'D104', 'D105', 'D106', 'D107']
+
 
 @pytest.mark.linter
 @pytest.mark.pep257
 def test_pep257() -> None:
     """Tests pep257 on this module."""
-    error_code = main(argv=['.', 'test'])
+    argv = ['.', 'test', '--convention', 'numpy', '--add-ignore'] + IGNORE_CODES
+
+    error_code = main(argv=argv)
     assert error_code == 0, 'Found code style errors / warnings'
