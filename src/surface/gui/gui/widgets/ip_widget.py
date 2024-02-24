@@ -1,4 +1,4 @@
-from gui.event_nodes.subscriber import GUIEventSubscriber
+from gui.gui_nodes.event_nodes.subscriber import GUIEventSubscriber
 from PyQt6.QtCore import pyqtSignal, pyqtSlot
 from PyQt6.QtWidgets import QLabel, QVBoxLayout, QWidget
 
