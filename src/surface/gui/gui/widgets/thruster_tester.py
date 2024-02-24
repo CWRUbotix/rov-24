@@ -126,14 +126,20 @@ class ThrusterBox(QWidget):
         vert_layout.addLayout(layout)
 
         button = QPushButton(f"Test Motor {pin_number}")
-        button.clicked.connect(
-            lambda: self.test_motor_client.async_test_motor_for_time(pin_number - 1))
+        # TODO write wrapper
+        button.clicked.connect(self.send_motor_test)
 
         vert_layout.addWidget(button)
         self.setLayout(vert_layout)
 
         self.pin_input = pin_input
         self.checkbox = check_box
+
+    def send_motor_test(self) -> None:
+        """
+        Send motor based on input.
+        """
+        self.test_motor_client.async_test_motor_for_time(int(self.pin_input.text()) - 1)
 
     def set_pin_from_param(self, pin_val: int) -> None:
         """
@@ -188,7 +194,7 @@ class ThrusterBox(QWidget):
         elif direction == MotorDirection.REVERSED:
             set_check = True
         elif direction == MotorDirection.NO_SPIN:
-            pass
+            return
         else:
             self.test_motor_client.get_logger().warning("Got unexpected input for check boxes.")
 
