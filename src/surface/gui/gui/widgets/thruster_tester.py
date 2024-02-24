@@ -139,7 +139,15 @@ class ThrusterBox(QWidget):
         """
         Send motor based on input.
         """
-        self.test_motor_client.async_test_motor_for_time(int(self.pin_input.text()) - 1)
+
+        direction = self.get_direction()
+
+        if direction is MotorDirection.NORMAL:
+            throttle = 0.5
+        elif direction is MotorDirection.REVERSED:
+            throttle = -0.5
+
+        self.test_motor_client.async_test_motor_for_time(int(self.pin_input.text()) - 1, throttle)
 
     def set_pin_from_param(self, pin_val: int) -> None:
         """
