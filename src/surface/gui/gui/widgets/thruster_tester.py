@@ -23,24 +23,6 @@ SERVO_FUNCTION_OFFSET = 32
 
 class TestMotorClient(GUIEventClient):
 
-    def async_test_motor_for_time(self, motor_index: int, throttle: float = 0.50,
-                                  duration: float = 2.0) -> None:
-        """
-        Asynchronously tests 1 motor.
-
-        Parameters
-        ----------
-        motor_index : int
-            A motor index, from 1 to 8
-        throttle : float
-            A float from -1 to 1, where -1 is full reverse and 1 is full forward
-        duration : float
-            Time in seconds to run the motor
-
-        """
-        Thread(target=self.test_motor_for_time, daemon=True, name="thruster_test_thread",
-               args=[motor_index, throttle, duration]).start()
-
     def test_motor_for_time(self, motor_index: int, throttle: float = 0.50,
                             duration: float = 2.0) -> None:
         """
@@ -126,8 +108,7 @@ class ThrusterBox(QWidget):
         vert_layout.addLayout(layout)
 
         button = QPushButton(f"Test Motor {pin_number}")
-        # TODO write wrapper
-        button.clicked.connect(self.send_motor_test)
+        button.clicked.connect(self.async_send_motor_test)
 
         vert_layout.addWidget(button)
         self.setLayout(vert_layout)
@@ -135,11 +116,12 @@ class ThrusterBox(QWidget):
         self.pin_input = pin_input
         self.checkbox = check_box
 
-    def send_motor_test(self) -> None:
-        """
-        Send motor based on input.
-        """
+    def async_send_motor_test(self) -> None:
+        """Send motor test based on input asynchronously."""
+        Thread(target=self.send_motor_test, daemon=True, name="thruster_box_test").start()
 
+    def send_motor_test(self) -> None:
+        """Send motor test based on input."""
         direction = self.get_direction()
 
         if direction is MotorDirection.NORMAL:
@@ -147,7 +129,9 @@ class ThrusterBox(QWidget):
         elif direction is MotorDirection.REVERSED:
             throttle = -0.5
 
-        self.test_motor_client.async_test_motor_for_time(int(self.pin_input.text()) - 1, throttle)
+        current_pin = int(self.pin_input.text()) - 1
+        self.test_motor_client.test_motor_for_time(current_pin, throttle)
+        self.test_motor_client.test_motor_for_time(current_pin, 0.0, 300)
 
     def set_pin_from_param(self, pin_val: int) -> None:
         """
