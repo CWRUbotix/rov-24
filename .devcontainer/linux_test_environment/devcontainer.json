@@ -3,6 +3,9 @@
     "build": {
         "dockerfile": "../../Dockerfile"
     },
+    "containerEnv": {
+        "DISPLAY": "${localEnv:DISPLAY}"
+    },
     "mounts": [
         "type=bind,source=/home/${localEnv:USER}/.ssh,target=/home/rov/.ssh,readonly",
         "source=/tmp/.X11-unix,target=/tmp/.X11-unix,type=bind,consistency=cached",

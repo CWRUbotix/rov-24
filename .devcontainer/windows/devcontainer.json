@@ -1,6 +1,9 @@
 {
     "name" : "ROV Windows",
     "image": "ghcr.io/cwrurobotics/rov-24:iron",
+    "containerEnv": {  
+        "DISPLAY": "${localEnv:DISPLAY}"
+    },
     "workspaceFolder": "/home/rov/rov-24",
     "customizations": {
         "vscode" : {
