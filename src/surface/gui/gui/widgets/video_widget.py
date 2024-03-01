@@ -27,6 +27,7 @@ class CameraType(IntEnum):
     USB = 1
     ETHERNET = 2
     DEPTH = 3
+    SIMULATION = 4
 
 
 class CameraDescription(NamedTuple):

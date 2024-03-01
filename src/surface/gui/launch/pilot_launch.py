@@ -9,7 +9,8 @@ def generate_launch_description() -> LaunchDescription:
     gui_node = Node(
         package='gui',
         executable='run_pilot',
-        parameters=[{'theme': LaunchConfiguration('theme', default='dark')}],
+        parameters=[{'theme': LaunchConfiguration('theme', default='dark')},
+                    {'use_simulation': LaunchConfiguration('use_simulation', default=False)}],
         remappings=[("/surface/gui/mavros/cmd/arming", "/tether/mavros/cmd/arming"),
                     ("/surface/gui/camera_switch", "/surface/camera_switch"),
                     ("/surface/gui/bottom_cam/image_raw", "/surface/bottom_cam/image_raw"),

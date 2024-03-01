@@ -10,6 +10,7 @@ from PyQt6.QtWidgets import QHBoxLayout, QVBoxLayout, QWidget
 class PilotApp(App):
     def __init__(self) -> None:
         super().__init__('pilot_gui_node')
+        self.sim_param = self.node.declare_parameter('use_simulation', False)
 
         self.setWindowTitle('Pilot GUI - CWRUbotix ROV 2024')
 
@@ -19,13 +20,16 @@ class PilotApp(App):
 
         # TODO Look into QStackedLayout for possibly switching between
         # 1 big camera feed and 2 smaller ones
-        front_cam_description = CameraDescription(CameraType.ETHERNET,
+
+        flir_cam_type = CameraType.SIMULATION if self.sim_param.get_parameter_value().bool_value \
+            else CameraType.ETHERNET
+        front_cam_description = CameraDescription(flir_cam_type,
                                                   'front_cam/image_raw',
                                                   'Front Camera')
 
         main_video = VideoWidget(front_cam_description)
 
-        bottom_cam_description = CameraDescription(CameraType.ETHERNET,
+        bottom_cam_description = CameraDescription(flir_cam_type,
                                                    'bottom_cam/image_raw',
                                                    'Bottom Camera')
         depth_cam_description = CameraDescription(CameraType.DEPTH,

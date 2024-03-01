@@ -92,7 +92,7 @@
     </joint>
 
     <link name="bottom_flir_cam_link">
-      <pose>0.6 0.2 0 0 1.57 0</pose>
+      <pose>0.2466 0.0 0.1639 0 1.396 0</pose>
 
       <sensor type="camera" name="front_flir_cam">
         <camera>

@@ -62,8 +62,8 @@ def generate_launch_description() -> LaunchDescription:
         arguments=["front_cam", "bottom_cam"],
         output="screen",
         remappings=[
-            (f"/{NAMESPACE}/front_cam", "/tether/front_cam/image_raw"),
-            (f"/{NAMESPACE}/bottom_cam", "/tether/bottom_cam/image_raw"),
+            (f"/{NAMESPACE}/front_cam", "/surface/front_cam/image_raw"),
+            (f"/{NAMESPACE}/bottom_cam", "/surface/bottom_cam/image_raw"),
         ],
     )
 
@@ -91,6 +91,10 @@ def generate_launch_description() -> LaunchDescription:
         PythonLaunchDescriptionSource(
             [os.path.join(surface_main_path, "launch", "surface_all_nodes_launch.py")]
         ),
+        launch_arguments={
+            "launch_flir": "false",
+            "use_simulation": "true"
+        }.items()
     )
 
     namespace_launch = GroupAction(
