@@ -6,6 +6,8 @@ from setuptools import setup
 
 PACKAGE_NAME = 'utilities'
 
+print(glob('example/*'))
+
 setup(
     name=PACKAGE_NAME,
     version='1.1.0',
@@ -15,22 +17,8 @@ setup(
             ['resource/' + PACKAGE_NAME]),
         ('share/' + PACKAGE_NAME, ['package.xml']),
         # Include all files.
-        (os.path.join('share', PACKAGE_NAME, 'generic', 'test'),
-         glob('test/*[.py]')),
-        (os.path.join('share', PACKAGE_NAME, 'generic', 'resource'),
-         glob('resource/*')),
-        (os.path.join('share', PACKAGE_NAME, 'generic', PACKAGE_NAME),
-         glob(f'{PACKAGE_NAME}/*[.py]')),
-        (os.path.join('share', PACKAGE_NAME, 'generic'),
-         glob('package.xml')),
-        (os.path.join('share', PACKAGE_NAME, 'generic'),
-         glob('README.md')),
-        (os.path.join('share', PACKAGE_NAME, 'generic'),
-         glob('setup.cfg')),
-        (os.path.join('share', PACKAGE_NAME, 'generic'),
-         glob('setup.py')),
-        (os.path.join('share', PACKAGE_NAME, 'generic'),
-         glob('TEMPLATE.md')),
+        (os.path.join('share', PACKAGE_NAME, 'example'),
+         glob('example/*', recursive=True))
     ],
     install_requires=['setuptools'],
     zip_safe=True,
