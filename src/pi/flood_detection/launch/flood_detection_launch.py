@@ -12,7 +12,6 @@ def generate_launch_description() -> LaunchDescription:
         Launches Flood Detection Node
 
     """
-
     # USB 3.0 front (fisheye)
     flood_detection: Node = Node(
         package='flood_detection',
