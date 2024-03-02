@@ -9,8 +9,6 @@ def generate_launch_description():
         namespace='surface',
         package='transceiver',
         executable='serial',
-        remappings=[("transceiver_control", "gui/transceiver_control"),
-                    ("transceiver_data", "gui/transceiver_data")]
     )
 
     return LaunchDescription([

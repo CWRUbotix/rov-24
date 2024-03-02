@@ -59,15 +59,6 @@ def generate_launch_description() -> LaunchDescription:
         ]),
     )
 
-    # Launches Transceiver
-    transceiver_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource([
-            os.path.join(
-                transceiver_path, 'launch', 'serial_reader_launch.py'
-            )
-        ]),
-    )
-
     return LaunchDescription([
         namespace_launch,
         transceiver_launch,
