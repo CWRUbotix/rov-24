@@ -154,52 +154,53 @@ void loop() {
   // Move to next stage if necessary
   bool signal = signalReceived();
 
-  if (
-    millis() >= previous_time + SCHEDULE[stage][1]   ||
-    (SCHEDULE[stage][0] == WAIT && signal) ||
-    (SCHEDULE[stage][0] == SUCK && !digitalRead(LIMIT_FULL)) ||
-    (SCHEDULE[stage][0] == PUMP && !digitalRead(LIMIT_EMPTY))
-  ) {
-    Serial.print(stage);
-    Serial.print(" ");
-    Serial.print(SCHEDULE[stage][0]);
-    Serial.print(" ");
-    Serial.print(previous_time);
-    Serial.print(" ");
-    Serial.print(SCHEDULE[stage][1]);
-    Serial.print(" ");
-    Serial.print(millis());
-    Serial.print(" ");
-    Serial.print(millis() >= previous_time + SCHEDULE[stage][1]);
-    Serial.println();
-
-    previous_time = millis();
-    stage++;
-    digitalWrite(MOTOR_PWM, LOW);
-    digitalWrite(MOTOR_DIR, LOW);
-
-    // If we signal a third profile
-    if (stage >= SCHEDULE_LENGTH) {
-      stage = 1;
-    }
-
-    if (SCHEDULE[stage][0] == SUCK) {
-      digitalWrite(MOTOR_PWM, HIGH);
-      digitalWrite(MOTOR_DIR, HIGH);
-    }
-    else if (SCHEDULE[stage][0] == PUMP) {
-      digitalWrite(MOTOR_PWM, HIGH);
-      digitalWrite(MOTOR_DIR, LOW);
-    }
-
-    Serial.println(stage);
-
-    
-  }
+//  if (
+//    millis() >= previous_time + SCHEDULE[stage][1]   ||
+//    (SCHEDULE[stage][0] == WAIT && signal) ||
+//    (SCHEDULE[stage][0] == SUCK && !digitalRead(LIMIT_FULL)) ||
+//    (SCHEDULE[stage][0] == PUMP && !digitalRead(LIMIT_EMPTY))
+//  ) {
+//    Serial.print(stage);
+//    Serial.print(" ");
+//    Serial.print(SCHEDULE[stage][0]);
+//    Serial.print(" ");
+//    Serial.print(previous_time);
+//    Serial.print(" ");
+//    Serial.print(SCHEDULE[stage][1]);
+//    Serial.print(" ");
+//    Serial.print(millis());
+//    Serial.print(" ");
+//    Serial.print(millis() >= previous_time + SCHEDULE[stage][1]);
+//    Serial.println();
+//
+//    previous_time = millis();
+//    stage++;
+//    digitalWrite(MOTOR_PWM, LOW);
+//    digitalWrite(MOTOR_DIR, LOW);
+//
+//    // If we signal a third profile
+//    if (stage >= SCHEDULE_LENGTH) {
+//      stage = 1;
+//    }
+//
+//    if (SCHEDULE[stage][0] == SUCK) {
+//      digitalWrite(MOTOR_PWM, HIGH);
+//      digitalWrite(MOTOR_DIR, HIGH);
+//    }
+//    else if (SCHEDULE[stage][0] == PUMP) {
+//      digitalWrite(MOTOR_PWM, HIGH);
+//      digitalWrite(MOTOR_DIR, LOW);
+//    }
+//
+//    Serial.println(stage);
+//
+//    
+//  }
 }
 
 bool signalReceived() {
   if (rf95.available()) {
+    Serial.println("RF has signal");
     uint8_t buf[RH_RF95_MAX_MESSAGE_LEN];
     uint8_t len = sizeof(buf);
     Serial.println(len);
@@ -277,9 +278,9 @@ void initRadio() {
   // The default transmitter power is 13dBm, using PA_BOOST.
   // If you are using RFM95/96/97/98 modules which uses the PA_BOOST transmitter pin, then
   // you can set transmitter powers from 5 to 23 dBm:
-  rf95.setTxPower(20, true);  
+  rf95.setTxPower(23, false);  
 
-  Serial.print("RFM95 radio @");  
+  Serial.print("RFM95 radio @ ");  
   Serial.print((int) RF95_FREQ);  
   Serial.println(" MHz");
 }

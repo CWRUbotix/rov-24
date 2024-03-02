@@ -102,24 +102,25 @@ void setup() {
   // The default transmitter power is 13dBm, using PA_BOOST.
   // If you are using RFM95/96/97/98 modules which uses the PA_BOOST transmitter pin, then
   // you can set transmitter powers from 5 to 23 dBm:
-  rf95.setTxPower(20, true);  
+  rf95.setTxPower(23, false);  
 
-  Serial.print("RFM95 radio @");
+  Serial.print("RFM95 radio @ ");
   Serial.print((int) RF95_FREQ);
   Serial.println(" MHz");
 }
 
-
 void loop() {
-  receiveTime();
+//  receiveTime();
 
-  if (Serial.available() == 1) {
+  if (Serial.available() >= 1) {
     String command;
+    Serial.println("Getting serial command...");
     command = Serial.readString();
     Serial.println(command);
     if (command == "submerge" || command == "submerge\n") {
       sendControlSignal("submerge");
-    } else {
+    }
+    else {
       char command_arr[command.length() + 1];
       command.toCharArray(command_arr, command.length() + 1);
       sendControlSignal(command_arr);
