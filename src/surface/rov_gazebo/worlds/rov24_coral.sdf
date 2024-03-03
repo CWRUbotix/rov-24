@@ -24,17 +24,7 @@
     <plugin filename="ignition-gazebo-sensors-system"
             name="ignition::gazebo::systems::Sensors">
     </plugin>
-    Is your feature request related to a problem? Please describeIs your feature request related to a problem? Please describe
 
-    Both GUIs are bad
-    Describe the solution you'd like
-    
-    Redesign to be pretty and make final decisions about where cams will go/how many monitors we'll have.
-
-    Both GUIs are bad
-    Describe the solution you'd like
-    
-    Redesign to be pretty and make final decisions about where cams will go/how many monitors we'll have.
     <!-- Buoyancy plugin manages buoyancy for all models -->
     <plugin
         filename="ignition-gazebo-buoyancy-system"
