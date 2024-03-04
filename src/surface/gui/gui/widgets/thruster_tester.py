@@ -1,7 +1,7 @@
 import os
 import time
 from enum import IntEnum
-from threading import Thread, Event
+from threading import Event, Thread
 from typing import Optional
 
 from ament_index_python.packages import get_package_share_directory
@@ -24,8 +24,8 @@ SERVO_FUNCTION_OFFSET = 32
 
 class TestMotorClient(GUIEventClient):
 
-    def test_motor_for_time(self, motor_index: int, thread_event: Optional[Event] = None, throttle: float = 0.50,
-                            duration: float = 2.0) -> None:
+    def test_motor_for_time(self, motor_index: int, thread_event: Optional[Event] = None,
+                            throttle: float = 0.50, duration: float = 2.0) -> None:
         """
         Run a motor for an (approximate) length of time (blocking).
 
@@ -63,7 +63,6 @@ class TestMotorClient(GUIEventClient):
             if thread_event and thread_event.is_set():
                 self.get_logger().info("pog")
                 break
-
 
 
 class MotorDirection(IntEnum):
@@ -129,7 +128,8 @@ class ThrusterBox(QWidget):
         time.sleep(0.2)
         self.thread_event.clear()
 
-        Thread(target=self.send_motor_test, daemon=True, name="thruster_box_test", args=((self.thread_event,))).start()
+        Thread(target=self.send_motor_test, daemon=True, name="thruster_box_test",
+               args=((self.thread_event,))).start()
 
     def send_motor_test(self, thread_event: Event) -> None:
         """Send motor test based on input."""
