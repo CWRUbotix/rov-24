@@ -35,6 +35,8 @@ class TestMotorClient(GUIEventClient):
         ----------
         motor_index : int
             A motor index, from 1 to 8
+        thread_event: Optional[Event]
+            A thread Event for stopping threads early by default None.
         throttle : float
             A float from -1 to 1, where -1 is full reverse and 1 is full forward
         duration : float
@@ -132,7 +134,15 @@ class ThrusterBox(QWidget):
                args=((self.thread_event,))).start()
 
     def send_motor_test(self, thread_event: Event) -> None:
-        """Send motor test based on input."""
+        """
+        Send motor test based on input.
+
+        Parameters
+        ----------
+        thread_event : Event
+            A thread Event for stopping threads early.
+
+        """
         direction = self.get_direction()
 
         if direction is MotorDirection.NORMAL:
