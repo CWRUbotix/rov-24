@@ -1,7 +1,8 @@
 import os
 import time
 from enum import IntEnum
-from threading import Thread
+from threading import Thread, Event
+from typing import Optional
 
 from ament_index_python.packages import get_package_share_directory
 from gui.gui_nodes.event_nodes.client import GUIEventClient
@@ -23,7 +24,7 @@ SERVO_FUNCTION_OFFSET = 32
 
 class TestMotorClient(GUIEventClient):
 
-    def test_motor_for_time(self, motor_index: int, throttle: float = 0.50,
+    def test_motor_for_time(self, motor_index: int, thread_event: Optional[Event] = None, throttle: float = 0.50,
                             duration: float = 2.0) -> None:
         """
         Run a motor for an (approximate) length of time (blocking).
@@ -58,6 +59,11 @@ class TestMotorClient(GUIEventClient):
             )
 
             time.sleep(0.05)
+
+            if thread_event and thread_event.is_set():
+                self.get_logger().info("pog")
+                break
+
 
 
 class MotorDirection(IntEnum):
@@ -115,12 +121,17 @@ class ThrusterBox(QWidget):
 
         self.pin_input = pin_input
         self.checkbox = check_box
+        self.thread_event = Event()
 
     def async_send_motor_test(self) -> None:
         """Send motor test based on input asynchronously."""
-        Thread(target=self.send_motor_test, daemon=True, name="thruster_box_test").start()
+        self.thread_event.set()
+        time.sleep(0.2)
+        self.thread_event.clear()
 
-    def send_motor_test(self) -> None:
+        Thread(target=self.send_motor_test, daemon=True, name="thruster_box_test", args=((self.thread_event,))).start()
+
+    def send_motor_test(self, thread_event: Event) -> None:
         """Send motor test based on input."""
         direction = self.get_direction()
 
@@ -130,8 +141,8 @@ class ThrusterBox(QWidget):
             throttle = -0.5
 
         current_pin = int(self.pin_input.text()) - 1
-        self.test_motor_client.test_motor_for_time(current_pin, throttle)
-        self.test_motor_client.test_motor_for_time(current_pin, 0.0, 300)
+        self.test_motor_client.test_motor_for_time(current_pin, thread_event, throttle)
+        self.test_motor_client.test_motor_for_time(current_pin, thread_event, 0.0, 300)
 
     def set_pin_from_param(self, pin_val: int) -> None:
         """
@@ -430,7 +441,9 @@ class ThrusterTester(QWidget):
         test_button.setText("Test Thrusters")
         test_button.clicked.connect(self.async_send_test_message)
 
-        layout.addWidget(ThrusterAssigner(self.test_cmd_client))
+        self.thruster_assigner = ThrusterAssigner(self.test_cmd_client)
+
+        layout.addWidget(self.thruster_assigner)
         layout.addWidget(test_button)
 
         main_layout = QHBoxLayout()
@@ -446,9 +459,10 @@ class ThrusterTester(QWidget):
     def send_test_message(self) -> None:
         """Send a test message for each motor."""
         for motor_index in range(MOTOR_COUNT):
+            self.thruster_assigner.thruster_boxes[motor_index].thread_event.set()
             self.test_cmd_client.get_logger().info(f"Testing thruster {motor_index + 1}")
             self.test_cmd_client.test_motor_for_time(motor_index)
-            self.test_cmd_client.test_motor_for_time(motor_index, 0.0, 0.5)
+            self.test_cmd_client.test_motor_for_time(motor_index, None, 0.0, 0.5)
 
     @pyqtSlot(CommandLong.Response)
     def command_response_handler(self, res: CommandLong.Response) -> None:
