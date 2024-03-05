@@ -14,4 +14,4 @@
 	url = git@github.com:InvincibleRMC/ament_pep257.git
 [submodule "src/pi/mmpsu_v2_ros"]
 	path = src/pi/mmpsu_v2_ros
-	url = git@github.com:repowered-robotics/mmpsu_v2_ros.git
+	url = git@github.com:cwruRobotics/mmpsu_v2_ros.git
