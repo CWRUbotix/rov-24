@@ -7,7 +7,7 @@ This package launches the rest of the Pi packages. It should be run on Pi boot u
 ## Setup
 
 ### Flashing
-
+ 
 If something ever happens to the Pi follow [this](https://www.jeffgeerling.com/blog/2020/how-flash-raspberry-pi-os-compute-module-4-emmc-usbboot) tutorial on reflashing it.
 
 ### Setup ad-hoc network between two Ubuntu devices
