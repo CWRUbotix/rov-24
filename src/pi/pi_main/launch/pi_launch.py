@@ -75,6 +75,17 @@ def generate_launch_description() -> LaunchDescription:
         ])
     )
 
+    mmpsu_path = get_package_share_directory('mmpsu_v2')
+
+    # Launches MMPSU
+    mmpsu_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([
+            os.path.join(
+                mmpsu_path, 'launch', 'mmpsu_v2_launch.py'
+            )
+        ])
+    )
+
     # Launches ip_publisher node.
     ip_publisher_node = Node(
         package='pi_main',
@@ -90,6 +101,7 @@ def generate_launch_description() -> LaunchDescription:
             # manip_launch,
             pixhawk_launch,
             # cam_launch,
+            mmpsu_launch,
             realsense_launch,
             ip_publisher_node,
             heartbeat_launch
