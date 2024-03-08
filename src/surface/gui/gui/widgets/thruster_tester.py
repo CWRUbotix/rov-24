@@ -124,9 +124,13 @@ class ThrusterBox(QWidget):
         self.checkbox = check_box
         self.thread_event = Event()
 
+    def all_thrusters(self, thrusters: list['ThrusterBox']) -> None:
+        self.thrusters = thrusters
+
     def async_send_motor_test(self) -> None:
         """Send motor test based on input asynchronously."""
-        self.thread_event.set()
+        for thruster in self.thrusters:
+            thruster.thread_event.set()
         time.sleep(0.2)
         self.thread_event.clear()
 
@@ -286,6 +290,9 @@ class ThrusterAssigner(QWidget):
             column = 0 if on_first_column else 1
             row = index % ROW_COUNT
             pin_numbers_grid.addWidget(box, row, column)
+
+        for thruster_box in self.thruster_boxes:
+            thruster_box.all_thrusters(self.thruster_boxes)
 
         pin_numbers_grid.setColumnStretch(0, 1)
         pin_numbers_grid.setColumnStretch(3, 1)
