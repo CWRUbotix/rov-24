@@ -88,7 +88,6 @@
     <joint name="front_flir_cam_joint" type="fixed">
       <parent>base_link</parent>
       <child>front_flir_cam_link</child>
-      <pose>0 0 0 0 0 0</pose>
     </joint>
 
     <link name="bottom_flir_cam_link">
@@ -128,7 +127,6 @@
     <joint name="bottom_flir_cam_joint" type="fixed">
       <parent>base_link</parent>
       <child>bottom_flir_cam_link</child>
-      <pose>0 0 0 0 0 0</pose>
     </joint>
 
 

@@ -39,6 +39,7 @@
       </graded_buoyancy>
       <!-- Enable by model name -->
       <enable>rov24</enable>
+      <enable>brain_coral</enable>
     </plugin>
 
     <include>
@@ -46,7 +47,7 @@
     </include>
 
     <include>
-      <uri>model://rov24</uri>
+      <uri>model://rov24_with_brain_coral</uri>
       <pose>-2 0 0 0 0 0</pose>
     </include>
 

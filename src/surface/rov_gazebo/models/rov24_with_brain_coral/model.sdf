@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<sdf version="1.6">
+  <model name="rov24_with_brain_coral">
+    <pose>0 0 0 0 0 0</pose>
+
+    <include>
+      <uri>model://rov24</uri>
+      <pose>0 0 0 0 0 0</pose>
+    </include>
+
+    <include>
+      <uri>model://brain_coral</uri>
+      <pose>0.275 -0.135 -0.085 0 0 -0.7854</pose>
+    </include>
+
+    <joint name="gripper_joint" type="fixed">
+      <parent>rov24::base_link</parent>
+      <child>brain_coral::base_link</child>
+    </joint>
+  </model>
+</sdf>

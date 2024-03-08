@@ -2,25 +2,31 @@
 <sdf version="1.6">
     <model name="brain_coral">
         <pose>0 0 0 0 0 0</pose>
-        <static>true</static>
+        
 
         <link name="base_link">
             <pose>0 0 0 0 0 0</pose>
+            <inertial>
+              <mass>0.25</mass>
+            </inertial>
+
             <visual name="base_link_visual">
               <geometry>
                 <mesh>
-                  <uri>model://brain_coral/meshes/Brain_Coral.dae</uri>
+                  <uri>model://brain_coral/meshes/brain_coral.dae</uri>
+                  <scale>0.1 0.1 0.1</scale>
                 </mesh>
               </geometry>
             </visual>
 
-            <!-- <collision name="base_link_collision">
+            <collision name="base_link_collision">
+              <pose>0 0 0.0133 0 0 0</pose>
               <geometry>
-                <mesh>
-                  <uri>model://coral_restoration_area/meshes/coral_restoration_area.dae</uri>
-                </mesh>
+                <box>
+                  <size>0.075 0.075 0.0267</size>
+                </box>
               </geometry>
-          </collision> -->
+          </collision>
         </link>
         
     </model>

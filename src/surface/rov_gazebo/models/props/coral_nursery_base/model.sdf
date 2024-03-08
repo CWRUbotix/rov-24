@@ -9,7 +9,7 @@
             <visual name="base_link_visual">
               <geometry>
                 <mesh>
-                  <uri>model://coral_nursery_base/meshes/Coral_Restoration_Nursery_Base.dae</uri>
+                  <uri>model://coral_nursery_base/meshes/coral_restoration_nursery_base.dae</uri>
                 </mesh>
               </geometry>
             </visual>
