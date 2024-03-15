@@ -9,10 +9,6 @@
 	path = src/surface/flir_camera_driver
 	url = git@github.com:ros-drivers/flir_camera_driver.git
 	branch = connect_while_subscribed
-# [submodule "src/rov_msgs/rosidl_generator_mypy"]
-# 	path = src/rov_msgs/rosidl_generator_mypy
-# 	url = git@github.com:Greenroom-Robotics/rosidl_generator_mypy.git
-	# branch = feature/fix-deprecation
 [submodule "src/util/ament_pep257"]
 	path = src/util/ament_pep257
 	url = git@github.com:InvincibleRMC/ament_pep257.git
