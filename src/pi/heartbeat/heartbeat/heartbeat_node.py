@@ -24,9 +24,9 @@ class HeartbeatNode(Node):
 
 def main() -> None:
     rclpy.init()
-    vehicle_manager = HeartbeatNode()
+    heartbeat_node = HeartbeatNode()
     executor = MultiThreadedExecutor()
-    rclpy.spin(vehicle_manager, executor=executor)
+    rclpy.spin(heartbeat_node, executor=executor)
 
 
 if __name__ == "__main__":
