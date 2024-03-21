@@ -8,11 +8,11 @@ from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QHBoxLayout, QVBoxLayout
 
 
-class LivestreamApp(App):
+class DebugApp(App):
     def __init__(self) -> None:
-        super().__init__('livestream_gui_node')
+        super().__init__('debug_gui_node')
 
-        self.setWindowTitle('Livestream GUI - CWRUbotix ROV 2024')
+        self.setWindowTitle('Debug GUI - CWRUbotix ROV 2024')
 
         main_layout = QVBoxLayout()
         video_layout = QHBoxLayout()
@@ -55,5 +55,5 @@ class LivestreamApp(App):
         main_layout.addLayout(bottom_screen_layout)
 
 
-def run_gui_livestream() -> None:
-    LivestreamApp().run_gui()
+def run_gui_debug() -> None:
+    DebugApp().run_gui()
