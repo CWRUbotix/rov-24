@@ -1,8 +1,8 @@
 from launch_ros.actions import Node
-from launch import LaunchDescription
+from launch.launch_description import LaunchDescription
 
 
-def generate_launch_description():
+def generate_launch_description() -> LaunchDescription:
 
     # launches transceiver
     reader_node: Node = Node(
