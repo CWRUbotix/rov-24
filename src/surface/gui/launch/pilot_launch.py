@@ -56,7 +56,7 @@ def generate_launch_description() -> LaunchDescription:
 
     gui_version_substitution = LaunchConfiguration('gui', default=GUIVersion.PILOT)
     pilot_node = pilot_node_generator('run_pilot', GUIVersion.PILOT, gui_version_substitution)
-    debug_node = pilot_node_generator('run_livestream', GUIVersion.DEBUG, gui_version_substitution)
+    debug_node = pilot_node_generator('run_debug', GUIVersion.DEBUG, gui_version_substitution)
 
     namespace_launch = GroupAction(
         actions=[
