@@ -4,7 +4,6 @@ from gui.event_nodes.publisher import GUIEventPublisher
 from gui.event_nodes.subscriber import GUIEventSubscriber
 from rov_msgs.msg import FloatCommand
 from PyQt6.QtCore import pyqtSignal, pyqtSlot
-from time import sleep
 
 
 class FloatComm(QWidget):
