@@ -4,7 +4,7 @@ from gui.widgets.debug_tab import DebugWidget
 from gui.widgets.float_comm import FloatComm
 from gui.widgets.seagrass import SeagrassWidget
 from gui.widgets.task_selector import TaskSelector
-from gui.widgets.timer import Timer
+from gui.widgets.timer import InteractiveTimer
 from PyQt6.QtWidgets import QGridLayout, QTabWidget, QWidget, QVBoxLayout
 
 
@@ -19,7 +19,7 @@ class OperatorApp(App):
         main_layout = QGridLayout()
         main_tab.setLayout(main_layout)
 
-        timer = Timer()
+        timer = InteractiveTimer()
         main_layout.addWidget(timer, 0, 1)
 
         task_selector = TaskSelector()
