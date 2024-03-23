@@ -21,21 +21,20 @@ class SerialReader(Node):
         self.i = 0
 
     def timer_callback(self) -> None:
-        """
-        Publishes a message from the transceiver
-        """
+        """Publish a message from the transceiver."""
         msg = FloatCommand()
         msg.command = self.ser.readline().decode()
         self.publisher.publish(msg)
 
     def control_callback(self, msg: FloatCommand) -> None:
         """
-        Logs a binary string of the command that was sent
+        Log a binary string of the command that was sent.
 
         Parameters
         ----------
         msg : FloatCommand
             the command that was sent via serial monitor
+
         """
         msg_encode: bytes = msg.command.encode()
         self.ser.write(msg_encode)
@@ -44,9 +43,7 @@ class SerialReader(Node):
 
 
 def main() -> None:
-    """
-    Run the serial reader node
-    """
+    """Run the serial reader node."""
     rclpy.init()
 
     serial_reader = SerialReader()

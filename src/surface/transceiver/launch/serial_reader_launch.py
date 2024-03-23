@@ -12,7 +12,6 @@ def generate_launch_description() -> LaunchDescription:
         Launches serial_reader node.
 
     """
-
     # launches transceiver
     reader_node: Node = Node(
         namespace='surface',
