@@ -7,57 +7,11 @@ version: 2
 updates:
   # Pi python dependencies
   - package-ecosystem: "pip" # See documentation for possible values
-    directory: "/src/pi/camera_streamer" # Location of package manifests
-    schedule:
-      interval: "daily"
-
-  - package-ecosystem: "pip" # See documentation for possible values
-    directory: "/src/pi/manipulators" # Location of package manifests
-    schedule:
-      interval: "daily"
-  
-  - package-ecosystem: "pip" # See documentation for possible values
-    directory: "/src/pi/pi_main" # Location of package manifests
-    schedule:
-      interval: "daily"
-
-  - package-ecosystem: "pip" # See documentation for possible values
-    directory: "/src/pi/pixhawk_communication" # Location of package manifests
-    schedule:
-      interval: "daily"
-
-  - package-ecosystem: "pip" # See documentation for possible values
-    directory: "/src/pi/realsense" # Location of package manifests
-    schedule:
-      interval: "daily"
-
-  # Surface python dependencies
-  - package-ecosystem: "pip" # See documentation for possible values
-    directory: "/src/surface/flight_control" # Location of package manifests
-    schedule:
-      interval: "daily"
-
-  - package-ecosystem: "pip" # See documentation for possible values
-    directory: "/src/surface/gui" # Location of package manifests
-    schedule:
-      interval: "daily"
-  
-  - package-ecosystem: "pip" # See documentation for possible values
-    directory: "/src/surface/ps5-controller" # Location of package manifests
+    directory: "." # Location of package manifests
     schedule:
       interval: "daily"
 
   # ros2_video_streamer not included because it is a submodule.
-
-  - package-ecosystem: "pip" # See documentation for possible values
-    directory: "/src/surface/rov_gazebo" # Location of package manifests
-    schedule:
-      interval: "daily"
-
-  - package-ecosystem: "pip" # See documentation for possible values
-    directory: "/src/surface/surface_main" # Location of package manifests
-    schedule:
-      interval: "daily"
   
   - package-ecosystem: "github-actions" # See documentation for possible values
     directory: "/.github/workflows" # Location of package manifests

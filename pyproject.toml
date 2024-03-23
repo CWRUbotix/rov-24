@@ -1,0 +1,50 @@
+[project]
+name = "rov-24"
+# I know Ben hates this but this required lol
+version = "1.1.0"
+
+dependencies = [
+    'setuptools',
+    'flake8==7.0.0',
+    'mypy >= 1.7',
+    'pynput',
+    'pyqt6',
+    'pyqtdarktheme',
+    'opencv-python>=4.8.1',
+    'numpy>=1.26',
+    'pytest-qt',
+    'pytest-xvfb',
+    'Pyside2'  # can be removed when ament_pep257 is gone
+]
+
+[tool]
+line-length = 100
+
+[tool.pydocstyle]
+convention = "numpy"
+add-ignore=[
+    "D100",
+    "D101",
+    "D102",
+    "D103",
+    "D104",
+    "D105",
+    "D106",
+    "D107"
+]
+
+[tool.mypy]
+strict = true
+# Done becuase tons of python packages are missing stubs or py.typed markers
+ignore_missing_imports = true
+# Done because some calls insides rclpy are not typed
+disallow_untyped_calls = false
+# Done because rclpy Node has type Any
+disallow_subclassing_any = false
+
+[tool.pytest.ini_options]   
+qt_api = "pyqt6"
+
+[tool.pylintrc]
+disable = ["duplicate-code", "fixme"]
+extension-pkg-whitelist = ["PyQt6", "cv2"]
