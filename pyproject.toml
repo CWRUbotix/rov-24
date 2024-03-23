@@ -14,7 +14,8 @@ dependencies = [
     'numpy>=1.26',
     'pytest-qt',
     'pytest-xvfb',
-    'Pyside2'  # can be removed when ament_pep257 is gone
+    'Pyside2',  # can be removed when ament_pep257 is gone
+    'smbus2'
 ]
 
 [tool]
