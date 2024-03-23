@@ -61,7 +61,7 @@ class FloatComm(QWidget):
     @pyqtSlot(FloatCommand)
     def handle_text(self, msg: FloatCommand) -> None:
         """
-        Sets the widget label text to the message in the FloatCommand
+        Set the widget label text to the message in the FloatCommand.
 
         Parameters
         ----------
@@ -71,28 +71,20 @@ class FloatComm(QWidget):
         self.label.setText(msg.command)
 
     def submerge_clicked(self) -> None:
-        """
-        Publishes the command for the float to submerge
-        """
+        """Publish the command for the float to submerge."""
         self.transceiver_publisher.publish(FloatCommand(command="submerge"))
 
     def set_hour_clicked(self) -> None:
-        """
-        Publishes the current hour
-        """
+        """Publish the current hour."""
         utc = datetime.now(timezone.utc)
         self.transceiver_publisher.publish(FloatCommand(command="h" + chr(utc.hour + 50)))
 
     def set_minute_clicked(self) -> None:
-        """
-        Publishes the current minute
-        """
+        """Publish the current minute."""
         utc = datetime.now(timezone.utc)
         self.transceiver_publisher.publish(FloatCommand(command="m" + chr(utc.minute + 50)))
 
     def set_second_clicked(self) -> None:
-        """
-        Publishes the current second
-        """
+        """Publish the current second."""
         utc = datetime.now(timezone.utc)
         self.transceiver_publisher.publish(FloatCommand(command="s" + chr(utc.second + 50)))
