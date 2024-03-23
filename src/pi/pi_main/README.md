@@ -10,6 +10,18 @@ This package launches the rest of the Pi packages. It should be run on Pi boot u
 
 If something ever happens to the Pi follow [this](https://www.jeffgeerling.com/blog/2020/how-flash-raspberry-pi-os-compute-module-4-emmc-usbboot) tutorial on reflashing it.
 
+### Setup ad-hoc network between two Ubuntu devices
+
+Do this to get two Ubuntu devices to network over a single ethernet cable.
+
+Run the following commands on both devices:
+
+```bash
+sudo nmcli connection add type ethernet ifname eth0
+sudo nmcli connection modify ethernet-eth0 ipv4.method link-local
+nmcli connection up ethernet-eth0
+```
+
 ### Setup Pi SSH access over Ethernet
 
 1. Using a monitor keyboard, connect to the Pi and edit `/etc/netplan/50-cloud-init.yaml`. Either use a flash drive to replace that file with the version below or type it out by hand (sorry):
@@ -88,7 +100,7 @@ ros2 run pi_main install
 ```
 
 ```bash
-sudo systemctl daemon-reload
+sudo systemctl daemon-reload && sudo systemctl start cwrubotix_pi
 ```
 
 These commands should be run in the `src` folder after a colcon build in the workspace folder.
@@ -131,6 +143,20 @@ To completely uninstall the `cwrubotix_pi` task:
 ros2 run robot_upstart uninstall cwrubotix_pi
 ```
 
+## Nodes
+
+### ip_publisher
+
+Publishes the current ip address of the network.
+
+#### Published Topics
+
+* **`/ip_address`** ([rov_msgs/msg/IPAddress])
+
+    The IP Address as a string.
+
 ## Launch files
 
-- **pi_launch.py**: launch the manipulators, camera streaming, and pixhawk packages
+* **pi_launch.py**: launch the manipulators, camera streaming, and pixhawk packages
+
+[rov_msgs/msg/IPAddress]: ../../rov_msgs/msg/IPAddress.msg
