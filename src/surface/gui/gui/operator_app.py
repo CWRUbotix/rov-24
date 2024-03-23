@@ -23,8 +23,6 @@ class OperatorApp(App):
 
         task_selector = TaskSelector()
         main_layout.addWidget(task_selector, 1, 1)
-        self.task_selector: TaskSelector = TaskSelector()
-        main_layout.addWidget(self.task_selector, 1, 1)
 
         self.float_comm: FloatComm = FloatComm()
         main_layout.addWidget(self.float_comm, 0, 0)
