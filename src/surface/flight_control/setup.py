@@ -28,7 +28,8 @@ setup(
         'console_scripts': [
             'manual_control_node = flight_control.manual_control_node:main',
             'keyboard_control_node = flight_control.keyboard_control_node:main',
-            'auto_docking_node = flight_control.auto_docking_node:main'
+            'auto_docking_node = flight_control.auto_docking_node:main',
+            'control_inverter_node = flight_control.control_inverter_node:main'
         ],
     },
 )
