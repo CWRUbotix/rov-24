@@ -1,3 +1,6 @@
+import rclpy
+from rclpy.executors import MultiThreadedExecutor
+
 from rclpy.node import Node
 from rclpy.subscription import Subscription
 from rclpy.publisher import Publisher
@@ -52,3 +55,10 @@ class ControlInverterNode(Node):
             msg.channels[ROLL_CHANNEL] *= -1
 
         self.rc_pub.publish(msg=msg)
+
+
+def main() -> None:
+    rclpy.init()
+    control_invert = ControlInverterNode()
+    executor = MultiThreadedExecutor()
+    rclpy.spin(control_invert, executor=executor)
