@@ -47,7 +47,7 @@ class ManualControlNode(Node):
 
         self.rc_pub: Publisher = self.create_publisher(
             OverrideRCIn,
-            'mavros/rc/override',
+            'pixhawk_control',
             qos_profile_system_default
         )
 
