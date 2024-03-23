@@ -55,13 +55,14 @@
 #endif
 
 // H-bridge direction control pins
-#define MOTOR_PWM 9   // Leave 100% cycle for top speed
-#define MOTOR_DIR 10  // Set high for pump (CW when facing down), low for suck (CCW when facing down)
+#define MOTOR_PWM 6   // Leave 100% cycle for top speed
+#define PUMP_PIN 9    // Set high for pump (CW when facing down)
+#define SUCK_PIN 10   // Set high for suck (CCW when facing down)
 
 
 // Limit switch pins
-#define LIMIT_FULL  6  // Low when syringe is full
-#define LIMIT_EMPTY 5  // Low when syringe is empty
+#define LIMIT_FULL  12  // Low when syringe is full
+#define LIMIT_EMPTY 13  // Low when syringe is empty
 
 #define TEAM_NUM 11
 
@@ -72,10 +73,10 @@
 
 // All delays in ms
 #define RELEASE_MAX   1200000
-#define SUCK_MAX      45000
-#define DESCEND_TIME  5000
-#define PUMP_MAX      45000
-#define ASCEND_TIME   5000
+#define SUCK_MAX      60000
+#define DESCEND_TIME  60000
+#define PUMP_MAX      60000
+#define ASCEND_TIME   60000
 #define TX_MAX        60000
 #define ONE_HOUR      360000
 
@@ -127,23 +128,26 @@ RH_RF95 rf95(RFM95_CS, RFM95_INT);
 void setup() {
   Serial.begin(115200);
   // Wait until serial console is open; remove if not tethered to computer
-  while (!Serial) ;
+//   while (!Serial) ;
   
   Serial.println("Float Transceiver");
   Serial.println();
 
   previous_time = millis();
 
-  pinMode(LED_BUILTIN, OUTPUT);
+  // The LED pin must be configured as input to use the limit switches
+  // pinMode(LED_BUILTIN, OUTPUT);
 
   pinMode(LIMIT_EMPTY, INPUT_PULLUP);
   pinMode(LIMIT_FULL,  INPUT_PULLUP);
 
   pinMode(MOTOR_PWM, OUTPUT);
-  pinMode(MOTOR_DIR, OUTPUT);
+  pinMode(SUCK_PIN, OUTPUT);
+  pinMode(PUMP_PIN, OUTPUT);
 
   digitalWrite(MOTOR_PWM, LOW);
-  digitalWrite(MOTOR_DIR, LOW);
+  digitalWrite(SUCK_PIN, LOW);
+  digitalWrite(PUMP_PIN, LOW);
 
   initRadio();
 }
@@ -152,50 +156,45 @@ void setup() {
 void loop() {
 
   // Move to next stage if necessary
-  bool signal = signalReceived();
+  bool submergeReceived = signalReceived();
 
-//  if (
-//    millis() >= previous_time + SCHEDULE[stage][1]   ||
-//    (SCHEDULE[stage][0] == WAIT && signal) ||
-//    (SCHEDULE[stage][0] == SUCK && !digitalRead(LIMIT_FULL)) ||
-//    (SCHEDULE[stage][0] == PUMP && !digitalRead(LIMIT_EMPTY))
-//  ) {
-//    Serial.print(stage);
-//    Serial.print(" ");
-//    Serial.print(SCHEDULE[stage][0]);
-//    Serial.print(" ");
-//    Serial.print(previous_time);
-//    Serial.print(" ");
-//    Serial.print(SCHEDULE[stage][1]);
-//    Serial.print(" ");
-//    Serial.print(millis());
-//    Serial.print(" ");
-//    Serial.print(millis() >= previous_time + SCHEDULE[stage][1]);
-//    Serial.println();
-//
-//    previous_time = millis();
-//    stage++;
-//    digitalWrite(MOTOR_PWM, LOW);
-//    digitalWrite(MOTOR_DIR, LOW);
-//
-//    // If we signal a third profile
-//    if (stage >= SCHEDULE_LENGTH) {
-//      stage = 1;
-//    }
-//
-//    if (SCHEDULE[stage][0] == SUCK) {
-//      digitalWrite(MOTOR_PWM, HIGH);
-//      digitalWrite(MOTOR_DIR, HIGH);
-//    }
-//    else if (SCHEDULE[stage][0] == PUMP) {
-//      digitalWrite(MOTOR_PWM, HIGH);
-//      digitalWrite(MOTOR_DIR, LOW);
-//    }
-//
-//    Serial.println(stage);
-//
-//    
-//  }
+  if (
+    millis() >= previous_time + SCHEDULE[stage][1] ||
+    (SCHEDULE[stage][0] == WAIT && submergeReceived) ||
+    (SCHEDULE[stage][0] == SUCK && !digitalRead(LIMIT_FULL)) ||
+    (SCHEDULE[stage][0] == PUMP && !digitalRead(LIMIT_EMPTY))
+  ) {
+    Serial.print(stage);
+    Serial.print(" ");
+    Serial.print(SCHEDULE[stage][0]);
+    Serial.print(" ");
+    Serial.print(previous_time);
+    Serial.print(" ");
+    Serial.print(SCHEDULE[stage][1]);
+    Serial.print(" ");
+    Serial.print(millis());
+    Serial.print(" ");
+    Serial.print(millis() >= previous_time + SCHEDULE[stage][1]);
+    Serial.println();
+
+    previous_time = millis();
+    stage++;
+    stop();
+
+    // If we signal a third profile, restart the schedule
+    if (stage >= SCHEDULE_LENGTH) {
+      stage = 1;
+    }
+
+    if (SCHEDULE[stage][0] == SUCK) {
+      suck();
+    }
+    else if (SCHEDULE[stage][0] == PUMP) {
+      pump();
+    }
+
+    Serial.println(stage);
+  }
 }
 
 bool signalReceived() {
@@ -223,14 +222,6 @@ bool signalReceived() {
         uint8_t test_packet[] = {50, 60};
         rf95.send(test_packet, strlen(test_packet));
         rf95.waitPacketSent();
-
-        // Jiggle motor
-        // digitalWrite(MOTOR_PWM, HIGH);
-        // digitalWrite(MOTOR_DIR, HIGH);
-        // delay(2000);
-        // delay(100);
-        // digitalWrite(MOTOR_PWM, LOW);
-        // delay(500);
         return true;
       }
       else {
@@ -243,6 +234,25 @@ bool signalReceived() {
   }
 
   return false;
+}
+
+
+void pump() {
+  digitalWrite(MOTOR_PWM, HIGH);
+  digitalWrite(PUMP_PIN, HIGH);
+  digitalWrite(SUCK_PIN, LOW);
+}
+
+void suck() {
+  digitalWrite(MOTOR_PWM, HIGH);
+  digitalWrite(PUMP_PIN, LOW);
+  digitalWrite(SUCK_PIN, HIGH);
+}
+
+void stop() {
+  digitalWrite(MOTOR_PWM, LOW);
+  digitalWrite(PUMP_PIN, LOW);
+  digitalWrite(SUCK_PIN, LOW);
 }
 
 

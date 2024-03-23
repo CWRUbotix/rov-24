@@ -119,6 +119,7 @@ void loop() {
     Serial.println(command);
     if (command == "submerge" || command == "submerge\n") {
       sendControlSignal("submerge");
+      receiveTime();
     }
     else {
       char command_arr[command.length() + 1];
@@ -145,7 +146,9 @@ void receiveTime() {
       Serial.print("Received [");
       Serial.print(len);
       Serial.print("]: ");
-      Serial.println((char*) buf);
+      Serial.print(buf[0]);
+      Serial.print(", ");
+      Serial.println(buf[1]);
       // Serial.print("RSSI: ");
       // Serial.println(rf95.lastRssi(), DEC);
     }
