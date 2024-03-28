@@ -66,7 +66,7 @@ Has two buttons for arming and disarming the pixhawk.
 
     Sends a request to arm or disarm the pixhawk. Receives a confirmation about the success of the arm or disarm.
 
-### Flood Warnng
+### Flood Warning
 
 Shows whether the robot is flooding or not on the GUI
 
