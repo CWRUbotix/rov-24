@@ -1,6 +1,11 @@
 // FLOAT TRANSCEIVER sketch originally built from:
 //  rf95_client.pde
 //  -*- mode: C++ -*-
+//
+// REQUIRED LIBRARIES:
+// RadioHead v1.122.1 by Mike McCauley
+// Blue Robotics MS5837 Library v1.1.1 by BlueRobotics
+//
 // Example sketch showing how to create a simple messageing client
 // with the RH_RF95 class. RH_RF95 class does not provide for addressing or
 // reliability, so you should only use RH_RF95 if you do not need the higher
@@ -62,7 +67,7 @@
 
 // Limit switch pins
 #define LIMIT_FULL  12  // Low when syringe is full
-#define LIMIT_EMPTY 13  // Low when syringe is empty
+#define LIMIT_EMPTY 11  // Low when syringe is empty
 
 #define TEAM_NUM 11
 
@@ -125,6 +130,10 @@ uint8_t key[] = {
 RH_RF95 rf95(RFM95_CS, RFM95_INT);
 
 
+// Singleton instance of the pressure sensor driver
+MS5837 pressureSensor;
+
+
 void setup() {
   Serial.begin(115200);
   // Wait until serial console is open; remove if not tethered to computer
@@ -135,8 +144,8 @@ void setup() {
 
   previous_time = millis();
 
-  // The LED pin must be configured as input to use the limit switches
-  // pinMode(LED_BUILTIN, OUTPUT);
+  pinMode(LED_BUILTIN, OUTPUT);
+  digitalWrite(LED_BUILTIN, HIGH); 
 
   pinMode(LIMIT_EMPTY, INPUT_PULLUP);
   pinMode(LIMIT_FULL,  INPUT_PULLUP);
@@ -150,6 +159,8 @@ void setup() {
   digitalWrite(PUMP_PIN, LOW);
 
   initRadio();
+
+  initPressureSensor();
 }
 
 
@@ -195,6 +206,8 @@ void loop() {
 
     Serial.println(stage);
   }
+
+  Serial.println(pressureSensor.sensor.pressure()) // In mbar. Your problem now!
 }
 
 bool signalReceived() {
@@ -293,4 +306,11 @@ void initRadio() {
   Serial.print("RFM95 radio @ ");  
   Serial.print((int) RF95_FREQ);  
   Serial.println(" MHz");
+}
+
+void initPressureSensor() {
+  pressureSensor.init()
+  
+  pressureSensor.setModel(MS5837::MS5837_02BA);
+  pressureSensor.setFluidDensity(1000); // kg/m^3
 }
