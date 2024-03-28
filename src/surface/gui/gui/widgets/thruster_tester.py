@@ -63,7 +63,6 @@ class TestMotorClient(GUIEventClient):
             time.sleep(0.05)
 
             if thread_event and thread_event.is_set():
-                self.get_logger().info("pog")
                 break
 
 
@@ -358,7 +357,7 @@ class ThrusterAssigner(QWidget):
             self.pixhawk_activated = False
 
     @pyqtSlot(ParamPull.Response)
-    def pull_param_handler(self, _: ParamPull.Response) -> None:
+    def pull_param_handler(self, res: ParamPull.Response) -> None:
         """
         Log response to ParamPull service.
 
@@ -368,7 +367,8 @@ class ThrusterAssigner(QWidget):
             ParamPull.Response message.
 
         """
-        self.param_pull_client.get_logger().info("Succesfully pulled param from pixhawk")
+        if not res.success:
+            self.param_pull_client.get_logger().error("Failed to pull params from Pixhawk")
 
         param_names = [f"SERVO{i + 1}_FUNCTION" for i in range(MOTOR_COUNT)]
 
@@ -401,9 +401,10 @@ class ThrusterAssigner(QWidget):
 
         req = SetParameters.Request(parameters=param_list)
         self.param_send_client.send_request_async(req)
+        self.param_send_client.get_logger().info("Sending Pin Assignments.")
 
     @pyqtSlot(SetParameters.Response)
-    def param_send_signal_handler(self, _: SetParameters.Response) -> None:
+    def param_send_signal_handler(self, res: SetParameters.Response) -> None:
         """
         Log response to SetParameters service.
 
@@ -413,7 +414,10 @@ class ThrusterAssigner(QWidget):
             SetParameters.Response message.
 
         """
-        self.param_send_client.get_logger().info("Succesfully sent params to /mavros/param.")
+        for result in res.results:
+            if not result.successful:
+                self.param_send_client.get_logger().info("Fail to send params to /mavros/param.")
+                break
 
     @pyqtSlot(GetParameters.Response)
     def param_get_signal_handler(self, res: GetParameters.Response) -> None:
@@ -492,4 +496,5 @@ class ThrusterTester(QWidget):
             CommandLong.Response message.
 
         """
-        self.test_cmd_client.get_logger().info(f"Test response: {res.success}, {res.result}")
+        if not res.success:
+            self.test_cmd_client.get_logger().info(f"Failed testing: {res.result}")
