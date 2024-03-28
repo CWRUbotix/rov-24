@@ -26,7 +26,6 @@ find_package(rosidl_default_generators REQUIRED)
 find_package(std_msgs REQUIRED)
 
 rosidl_generate_interfaces(${PROJECT_NAME}
-  "srv/AutonomousFlight.srv"
   "msg/FloatCommand.msg"
   "msg/Manip.msg"
   "msg/CameraControllerSwitch.msg"
@@ -34,6 +33,9 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/IPAddress.msg"
   "msg/VehicleState.msg"
   "msg/Heartbeat.msg"
+  "msg/MissionTimerTick.msg"
+  "srv/AutonomousFlight.srv"
+  "srv/MissionTimerSet.srv"
   DEPENDENCIES std_msgs
 )
 
