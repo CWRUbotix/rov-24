@@ -1,13 +1,12 @@
 from typing import Optional
 
 import rclpy.utilities
-from mavros_msgs.msg import OverrideRCIn
 from rclpy.publisher import Publisher
 from pynput.keyboard import Key, KeyCode, Listener
 from rclpy.node import Node
 from rclpy.qos import qos_profile_system_default
 
-from flight_control.pixhawk_instruction import PixhawkInstruction
+from rov_msgs.msg import PixhawkInstruction
 
 # key bindings
 FORWARD = "w"
@@ -57,7 +56,7 @@ class KeyboardListenerNode(Node):
         super().__init__('keyboard_listener_node', parameter_overrides=[])
 
         self.rc_pub: Publisher = self.create_publisher(
-            OverrideRCIn,
+            PixhawkInstruction,
             'pixhawk_control',
             qos_profile_system_default
         )
@@ -134,7 +133,7 @@ class KeyboardListenerNode(Node):
             yaw=self.status[YAW_LEFT] - self.status[YAW_RIGHT]
         )
 
-        self.rc_pub.publish(instruction.to_override_rc_in())
+        self.rc_pub.publish(instruction)
 
     def spin(self) -> None:
         with Listener(

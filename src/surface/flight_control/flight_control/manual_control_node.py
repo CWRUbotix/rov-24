@@ -7,11 +7,10 @@ from rclpy.publisher import Publisher
 from rclpy.qos import qos_profile_sensor_data, qos_profile_system_default
 from rclpy.subscription import Subscription
 from sensor_msgs.msg import Joy
-from mavros_msgs.msg import OverrideRCIn
 
 from rov_msgs.msg import CameraControllerSwitch, Manip
 
-from flight_control.pixhawk_instruction import PixhawkInstruction
+from rov_msgs.msg import PixhawkInstruction
 
 # Button meanings for PS5 Control might be different for others
 X_BUTTON:        int = 0  # Manipulator 0
@@ -46,7 +45,7 @@ class ManualControlNode(Node):
                          parameter_overrides=[])
 
         self.rc_pub: Publisher = self.create_publisher(
-            OverrideRCIn,
+            PixhawkInstruction,
             'pixhawk_control',
             qos_profile_system_default
         )
@@ -102,7 +101,7 @@ class ManualControlNode(Node):
         # Smooth out adjustments
         instruction.apply(lambda value: value * abs(value))
 
-        self.rc_pub.publish(instruction.to_override_rc_in())
+        self.rc_pub.publish(instruction)
 
     def manip_callback(self, msg: Joy) -> None:
         buttons: MutableSequence[int] = msg.buttons
