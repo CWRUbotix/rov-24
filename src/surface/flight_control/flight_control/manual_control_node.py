@@ -98,9 +98,6 @@ class ManualControlNode(Node):
             yaw=(axes[R2PRESS_PERCENT] - axes[L2PRESS_PERCENT]) / 2  # L2/R2 buttons
         )
 
-        # Smooth out adjustments
-        instruction.apply(lambda value: value * abs(value))
-
         self.rc_pub.publish(instruction)
 
     def manip_callback(self, msg: Joy) -> None:
