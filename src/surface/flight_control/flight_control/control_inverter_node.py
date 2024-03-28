@@ -6,8 +6,22 @@ from rclpy.subscription import Subscription
 from rclpy.publisher import Publisher
 from rclpy.qos import qos_profile_system_default
 from mavros_msgs.msg import OverrideRCIn
+from typing import Callable
 
-from rov_msgs.msg import CameraControllerSwitch
+from rov_msgs.msg import CameraControllerSwitch, PixhawkInstruction
+
+# Brown out protection
+SPEED_THROTTLE: float = 0.85
+
+# Range of values Pixhawk takes
+# In microseconds
+ZERO_SPEED: int = 1500
+MAX_RANGE_SPEED: int = 400
+RANGE_SPEED: float = MAX_RANGE_SPEED * SPEED_THROTTLE
+
+# Channels for RC command
+MAX_CHANNEL: int = 8
+MIN_CHANNEL: int = 1
 
 FORWARD_CHANNEL: int = 4  # X
 THROTTLE_CHANNEL: int = 2  # Z (vertical)
@@ -32,7 +46,7 @@ class ControlInverterNode(Node):
         )
 
         self.control_subscription: Subscription = self.create_subscription(
-            OverrideRCIn,
+            PixhawkInstruction,
             'pixhawk_control',
             self.control_callback,
             qos_profile_system_default
@@ -44,17 +58,41 @@ class ControlInverterNode(Node):
             qos_profile_system_default
         )
 
+    def apply(self, msg: PixhawkInstruction, function_to_apply: Callable[[float], float]) -> None:
+        """Apply a function to each dimension of this PixhawkInstruction."""
+        msg.forward = function_to_apply(msg.forward)
+        msg.vertical = function_to_apply(msg.vertical)
+        msg.lateral = function_to_apply(msg.lateral)
+        msg.pitch = function_to_apply(msg.pitch)
+        msg.yaw = function_to_apply(msg.yaw)
+        msg.roll = function_to_apply(msg.roll)
+
+    def to_override_rc_in(self, msg: PixhawkInstruction) -> OverrideRCIn:
+        """Convert this PixhawkInstruction to an rc_msg with the appropriate channels array."""
+        rc_msg = OverrideRCIn()
+
+        self.apply(msg, lambda value: int(RANGE_SPEED * value) + ZERO_SPEED)
+
+        rc_msg.channels[FORWARD_CHANNEL] = msg.forward
+        rc_msg.channels[THROTTLE_CHANNEL] = msg.vertical
+        rc_msg.channels[LATERAL_CHANNEL] = msg.lateral
+        rc_msg.channels[PITCH_CHANNEL] = msg.pitch
+        rc_msg.channels[YAW_CHANNEL] = msg.yaw
+        rc_msg.channels[ROLL_CHANNEL] = msg.roll
+
+        return rc_msg
+
     def invert_callback(self, msg: CameraControllerSwitch) -> None:
         self.inverted = not self.inverted
 
-    def control_callback(self, msg: OverrideRCIn) -> None:
+    def control_callback(self, msg: PixhawkInstruction) -> None:
         if self.inverted:
-            msg.channels[FORWARD_CHANNEL] *= -1
-            msg.channels[LATERAL_CHANNEL] *= -1
-            msg.channels[PITCH_CHANNEL] *= -1
-            msg.channels[ROLL_CHANNEL] *= -1
+            msg.forward *= -1
+            msg.lateral *= -1
+            msg.pitch *= -1
+            msg.roll *= -1
 
-        self.rc_pub.publish(msg=msg)
+        self.rc_pub.publish(msg=self.to_override_rc_in(msg))
 
 
 def main() -> None:
