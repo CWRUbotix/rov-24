@@ -27,7 +27,7 @@ class FloatComm(QWidget):
         self.label.setText('Waiting for radio...')
         layout.addWidget(self.label)
 
-        self.transceiver_publisher: GUIEventPublisher = GUIEventPublisher(
+        self.transceiver_publisher = GUIEventPublisher(
             FloatCommand,
             "transceiver_control"
         )
