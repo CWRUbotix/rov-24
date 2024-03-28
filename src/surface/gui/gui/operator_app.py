@@ -1,6 +1,6 @@
 from gui.app import App
 from gui.widgets.logger import Logger
-from gui.widgets.debug_tab import DebugWidget
+from gui.widgets.tabs.general_debug_tab import GeneralDebugTab
 from gui.widgets.float_comm import FloatComm
 from gui.widgets.task_selector import TaskSelector
 from gui.widgets.timer import InteractiveTimer
@@ -36,8 +36,7 @@ class OperatorApp(App):
 
         tabs = QTabWidget()
         tabs.addTab(main_tab, "Main")
-        tabs.addTab(DebugWidget(), "Debug")
-
+        tabs.addTab(GeneralDebugTab(), "General Debug")
         root_layout.addWidget(tabs)
 
 
