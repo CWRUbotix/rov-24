@@ -1,8 +1,9 @@
 from gui.app import App
 from gui.widgets.logger import Logger
-from gui.widgets.debug_tab import DebugWidget
+from gui.widgets.tabs.general_debug_tab import GeneralDebugTab
+from gui.widgets.float_comm import FloatComm
 from gui.widgets.task_selector import TaskSelector
-from gui.widgets.timer import Timer
+from gui.widgets.timer import InteractiveTimer
 from PyQt6.QtWidgets import QGridLayout, QTabWidget, QWidget, QVBoxLayout
 
 
@@ -17,11 +18,14 @@ class OperatorApp(App):
         main_layout = QGridLayout()
         main_tab.setLayout(main_layout)
 
-        timer = Timer()
+        timer = InteractiveTimer()
         main_layout.addWidget(timer, 0, 1)
 
         task_selector = TaskSelector()
         main_layout.addWidget(task_selector, 1, 1)
+
+        self.float_comm: FloatComm = FloatComm()
+        main_layout.addWidget(self.float_comm, 0, 0)
 
         logger = Logger()
         main_layout.addWidget(logger, 1, 0)
@@ -32,8 +36,7 @@ class OperatorApp(App):
 
         tabs = QTabWidget()
         tabs.addTab(main_tab, "Main")
-        tabs.addTab(DebugWidget(), "Debug")
-
+        tabs.addTab(GeneralDebugTab(), "General Debug")
         root_layout.addWidget(tabs)
 
 

@@ -1,10 +1,11 @@
 from gui.app import App
 from gui.widgets.arm import Arm
+from gui.widgets.timer import TimerDisplay
 from gui.widgets.flood_warning import FloodWarning
 from gui.widgets.video_widget import (CameraDescription, CameraType,
                                       SwitchableVideoWidget, VideoWidget)
 from PyQt6.QtCore import Qt
-from PyQt6.QtWidgets import QHBoxLayout, QVBoxLayout, QWidget
+from PyQt6.QtWidgets import QHBoxLayout, QVBoxLayout
 
 
 class PilotApp(App):
@@ -14,7 +15,6 @@ class PilotApp(App):
         self.setWindowTitle('Pilot GUI - CWRUbotix ROV 2024')
 
         main_layout = QVBoxLayout()
-        video_layout = QHBoxLayout()
         self.setLayout(main_layout)
 
         # TODO Look into QStackedLayout for possibly switching between
@@ -35,15 +35,13 @@ class PilotApp(App):
         video_area = SwitchableVideoWidget([bottom_cam_description, depth_cam_description],
                                            "camera_switch")
 
-        video_layout.addWidget(main_video, alignment=Qt.AlignmentFlag.AlignHCenter)
-        video_layout.addWidget(video_area, alignment=Qt.AlignmentFlag.AlignHCenter)
-
-        main_layout.addLayout(video_layout)
+        main_layout.addWidget(main_video, alignment=Qt.AlignmentFlag.AlignHCenter)
+        main_layout.addWidget(video_area, alignment=Qt.AlignmentFlag.AlignHCenter)
 
         bottom_screen_layout = QHBoxLayout()
 
-        place_holder = QWidget()
-        bottom_screen_layout.addWidget(place_holder)
+        timer = TimerDisplay()
+        bottom_screen_layout.addWidget(timer)
 
         flood_widget = FloodWarning()
         bottom_screen_layout.addWidget(flood_widget, alignment=Qt.AlignmentFlag.AlignHCenter |
