@@ -1,0 +1,12 @@
+# Whether to set the time to the following field or ignore it
+bool set_time false
+# The new duration to set the timer to
+builtin_interfaces/Duration time
+
+# Whether to set running state to the following field or ignore it
+bool set_running false
+# True if the timer should be counting down, false to stop
+bool running
+---
+# Whether the requested changes were performed successfully
+bool success
