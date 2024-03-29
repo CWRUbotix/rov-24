@@ -6,8 +6,6 @@ from launch.actions import ExecuteProcess, GroupAction, IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node, PushRosNamespace
 
-# from launch.substitutions import Command
-
 NAMESPACE = "simulation"
 
 
@@ -62,8 +60,8 @@ def generate_launch_description() -> LaunchDescription:
         arguments=["front_cam", "bottom_cam"],
         output="screen",
         remappings=[
-            (f"/{NAMESPACE}/front_cam", "/tether/front_cam/image_raw"),
-            (f"/{NAMESPACE}/bottom_cam", "/tether/bottom_cam/image_raw"),
+            (f"/{NAMESPACE}/front_cam", "/surface/front_cam/image_raw"),
+            (f"/{NAMESPACE}/bottom_cam", "/surface/bottom_cam/image_raw"),
         ],
     )
 
