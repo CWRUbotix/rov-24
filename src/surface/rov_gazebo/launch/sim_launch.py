@@ -4,7 +4,7 @@ from ament_index_python.packages import get_package_share_directory
 from launch.launch_description import LaunchDescription
 from launch.actions import ExecuteProcess, GroupAction, IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch_ros.actions import Node, PushRosNamespace
+from launch_ros.actions import Node, PushRosNamespace, SetParameter
 
 NAMESPACE = "simulation"
 
@@ -80,8 +80,16 @@ def generate_launch_description() -> LaunchDescription:
         executable="heartbeat_node",
         remappings=[(f"/{NAMESPACE}/pi_heartbeat", "/tether/pi_heartbeat")],
         emulate_tty=True,
-        output="screen",
+        output="screen"
+    )
 
+    # Launches the ip address node
+    ip_node = Node(
+        package="pi_main",
+        executable="ip_publisher",
+        remappings=[(f"/{NAMESPACE}/ip_address", "/tether/ip_address")],
+        emulate_tty=True,
+        output="screen"
     )
 
     # Launches Surface Nodes
@@ -89,6 +97,8 @@ def generate_launch_description() -> LaunchDescription:
         PythonLaunchDescriptionSource(
             [os.path.join(surface_main_path, "launch", "surface_all_nodes_launch.py")]
         ),
+        launch_arguments=[('simulation', 'true'),
+                          ('gui', 'debug')]
     )
 
     namespace_launch = GroupAction(
@@ -98,6 +108,7 @@ def generate_launch_description() -> LaunchDescription:
             heartbeat_node,
             cam_bridge_node,
             keyboard_control_node,
+            ip_node
         ]
     )
 

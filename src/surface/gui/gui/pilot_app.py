@@ -17,18 +17,28 @@ class PilotApp(App):
         main_layout = QVBoxLayout()
         self.setLayout(main_layout)
 
+        simulation_param = self.node.declare_parameter('simulation', False)
+
+        if simulation_param.value:
+            front_cam_type = CameraType.SIMULATION
+            bottom_cam_type = CameraType.SIMULATION
+            depth_cam_type = CameraType.SIMULATION
+        else:
+            front_cam_type = CameraType.ETHERNET
+            bottom_cam_type = CameraType.ETHERNET
+            depth_cam_type = CameraType.DEPTH
         # TODO Look into QStackedLayout for possibly switching between
         # 1 big camera feed and 2 smaller ones
-        front_cam_description = CameraDescription(CameraType.ETHERNET,
+        front_cam_description = CameraDescription(front_cam_type,
                                                   'front_cam/image_raw',
                                                   'Front Camera')
 
         main_video = VideoWidget(front_cam_description)
 
-        bottom_cam_description = CameraDescription(CameraType.ETHERNET,
+        bottom_cam_description = CameraDescription(bottom_cam_type,
                                                    'bottom_cam/image_raw',
                                                    'Bottom Camera')
-        depth_cam_description = CameraDescription(CameraType.DEPTH,
+        depth_cam_description = CameraDescription(depth_cam_type,
                                                   'depth_cam/image_raw',
                                                   'Depth Camera', 640, 360)
 
