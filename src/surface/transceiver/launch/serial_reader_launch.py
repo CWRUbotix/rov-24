@@ -1,16 +1,22 @@
 from launch_ros.actions import Node
-from launch import LaunchDescription
+from launch.launch_description import LaunchDescription
 
 
-def generate_launch_description():
+def generate_launch_description() -> LaunchDescription:
+    """
+    Generate LaunchDescription for transceiver.
 
+    Returns
+    -------
+    LaunchDescription
+        Launches serial_reader node.
+
+    """
     # launches transceiver
     reader_node: Node = Node(
         namespace='surface',
         package='transceiver',
         executable='serial',
-        remappings=[("transceiver_control", "gui/transceiver_control"),
-                    ("transceiver_data", "gui/transceiver_data")]
     )
 
     return LaunchDescription([

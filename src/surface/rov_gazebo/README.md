@@ -1,50 +1,29 @@
-# Gazebo Simulation
+# rov_gazebo
 
-TODO: REWRITE THIS WHEN THIS PACKAGE WORKS
+## Overview
 
-## 1. Build
+Runs the simulation as well as stores all the description files.
 
-```bash
-cd ~/rov-24
-colcon build
-```
+## Installation
 
-## 2. Run launch file
+Run the `Setup Simulation` Task.
+
+## Usage
+
+Run the simulation and GUI with
 
 ```bash
 ros2 launch rov_gazebo sim_launch.py
 ```
 
-## 3. Play simulation
+## Config files
 
-Press play button or space bar at gazebo window
+`config/`
 
-## 4. Move ROV
+* **pixhawk_dumps.params** A copy of the params from the pixhawk for reference
 
-Don't forget to arm the ROV
+* **pixhawk_dumps.params** Our modified params for the simulated pixhawk
 
-See help message from terminal or use PS5 controller
+## Launch files
 
-## Reference
-
-[Thruster map](https://www.ardusub.com/introduction/features.html)
-
-[Simulation](https://www.ardusub.com/developers/sitl.html)
-
-### Published Topics
-
-/bottom_cam/image_raw
-
-/front_cam/image_raw
-
-/manip_cam/image_raw
-
-/depth_cam/image_raw
-
-/depth_cam/points
-
-## Subscription Topics
-
-/manual_control
-
-/arm
+* **sim_launch.py:** Runs the simulation.

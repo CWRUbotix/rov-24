@@ -9,7 +9,10 @@ PACKAGE_NAME = 'gui'
 setup(
     name=PACKAGE_NAME,
     version='1.1.0',
-    packages=[PACKAGE_NAME, os.path.join(PACKAGE_NAME, 'widgets')],
+    packages=[PACKAGE_NAME, os.path.join(PACKAGE_NAME, 'widgets'),
+              os.path.join(PACKAGE_NAME, 'styles'),
+              os.path.join(PACKAGE_NAME, 'gui_nodes', 'auxiliary_nodes'),
+              os.path.join(PACKAGE_NAME, 'gui_nodes', 'event_nodes')],
     data_files=[
         ('share/ament_index/resource_index/packages',
             ['resource/' + PACKAGE_NAME]),
@@ -18,8 +21,6 @@ setup(
         (os.path.join('share', PACKAGE_NAME, 'launch'),
          glob('launch/*launch.[pxy][yma]*')),
         # Include all style files.
-        (os.path.join('share', PACKAGE_NAME, 'styles'),
-         glob('gui/styles/*.py')),
         (os.path.join('share', PACKAGE_NAME, 'styles'),
          glob('gui/styles/*.qss')),
     ],
@@ -33,6 +34,7 @@ setup(
     entry_points={
         'console_scripts': ['run_pilot = gui.pilot_app:run_gui_pilot',
                             'run_operator = gui.operator_app:run_gui_operator',
+                            'run_debug = gui.debug_app:run_gui_debug',
                             'run_timer = gui.gui_nodes.auxiliary_nodes.timer:run_timer'],
     },
 )
