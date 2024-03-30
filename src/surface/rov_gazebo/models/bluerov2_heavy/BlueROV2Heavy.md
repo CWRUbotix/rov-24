@@ -11,34 +11,34 @@ be installed.
 
 Update the `GZ_SIM_RESOURCE_PATH` to include the BlueROV2 models:
 
-~~~bash
+```bash
 export GZ_SIM_RESOURCE_PATH=$GZ_SIM_RESOURCE_PATH:\
 ~/colcon_ws/src/bluerov2_ignition/models:\
 ~/colcon_ws/src/bluerov2_ignition/worlds
-~~~
+```
 
 ### Start Gazebo
 
-~~~bash
+```bash
 gz sim -v 3 -r bluerov2_heavy_underwater.world
-~~~
+```
 
 ### Run ArduPilot SITL
 
-~~~bash
+```bash
 Tools/autotest/sim_vehicle.py -L RATBeach -v ArduSub -f vectored_6dof --model=JSON --out=udp:0.0.0.0:14550 --console
-~~~
+```
 
 ### Send commands to the ROV
 
-~~~
+```
 arm throttle
 rc 3 1450     
 rc 3 1500
 mode alt_hold
 rc 5 1550
 disarm
-~~~
+```
 
 ## Credits
 
