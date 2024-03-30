@@ -40,13 +40,16 @@ def generate_launch_description() -> LaunchDescription:
             {"system_id": 255},
             {"fcu_url": "tcp://localhost"},
             {"gcs_url": "udp://@localhost:14550"},
-            {"plugin_allowlist": ["rc_io", "sys_status", "command"]}
+            {"plugin_allowlist": ["rc_io", "sys_status", "command", "param"]}
         ],
         remappings=[
             (f'/{NAMESPACE}/mavros/state', '/tether/mavros/state'),
             (f'/{NAMESPACE}/mavros/rc/override', '/tether/mavros/rc/override'),
             (f'/{NAMESPACE}/mavros/cmd/arming', '/tether/mavros/cmd/arming'),
             (f'/{NAMESPACE}/mavros/cmd/command', '/tether/mavros/cmd/command'),
+            (f'/{NAMESPACE}/mavros/param/pull', '/tether/mavros/param/pull'),
+            (f'/{NAMESPACE}/mavros/param/set_parameters', '/tether/mavros/param/set_parameters'),
+            (f'/{NAMESPACE}/mavros/param/get_parameters', '/tether/mavros/param/get_parameters'),
         ],
         emulate_tty=True
     )
