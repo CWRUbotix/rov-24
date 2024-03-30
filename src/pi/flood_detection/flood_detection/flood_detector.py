@@ -7,13 +7,14 @@ import time
 # Pins used for GPIO
 DETECT_PIN: int = 17
 
+
 class floodDetector(Node):
 
-    def __init__(self) -> None:      
+    def __init__(self) -> None:
         super().__init__('gpio_reader', parameter_overrides=[])
         self.publisher = self.create_publisher(Flooding,
-                                                '/tether/flooding',
-                                                10)
+                                               '/tether/flooding',
+                                               10)
         time.sleep(2)
         self.gpio_chip = lgpio.gpiochip_open(0)
         lgpio.gpio_claim_input(self.gpio_chip, DETECT_PIN)
@@ -26,7 +27,7 @@ class floodDetector(Node):
 
         # If any of the sensors detect water, send true to /tether/flooding
         msg = Flooding()
-        
+      
         if data1:
             msg.flooding = True
         else:
