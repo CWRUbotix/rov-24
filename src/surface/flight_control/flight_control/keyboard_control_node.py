@@ -126,12 +126,12 @@ class KeyboardListenerNode(Node):
 
     def pub_rov_control(self) -> None:
         instruction = PixhawkInstruction(
-            pitch=self.status[PITCH_UP] - self.status[PITCH_DOWN],
-            roll=self.status[ROLL_LEFT] - self.status[ROLL_RIGHT],
+            pitch=self.status[PITCH_DOWN] - self.status[PITCH_UP],
+            roll=self.status[ROLL_RIGHT] - self.status[ROLL_LEFT],
             vertical=self.status[UP] - self.status[DOWN],
             forward=self.status[FORWARD] - self.status[BACKWARD],
-            lateral=self.status[LEFT] - self.status[RIGHT],
-            yaw=self.status[YAW_LEFT] - self.status[YAW_RIGHT]
+            lateral=self.status[RIGHT] - self.status[LEFT],
+            yaw=self.status[YAW_RIGHT] - self.status[YAW_LEFT]
         )
 
         self.rc_pub.publish(instruction.to_override_rc_in())
