@@ -16,6 +16,7 @@
 
 #include <SPI.h>
 #include <RH_RF95.h>
+#include <MS5837.h>
 
 #if defined (__AVR_ATmega32U4__)  // Feather 32u4 w/Radio
   #define RFM95_CS    8
@@ -90,6 +91,7 @@
 #define PUMP 2
 #define STOP 3
 
+uint8_t SCHEDULE_LENGTH = 11;
 unsigned long SCHEDULE[][2] = {
   // Wait for max <time> or until surface signal
   {WAIT, RELEASE_MAX },
@@ -111,8 +113,6 @@ unsigned long SCHEDULE[][2] = {
   {WAIT, ONE_HOUR    },
 };
 
-uint8_t SCHEDULE_LENGTH = 11;
-
 uint8_t stage = 0;
 
 unsigned long previous_time;
@@ -133,6 +133,10 @@ RH_RF95 rf95(RFM95_CS, RFM95_INT);
 // Singleton instance of the pressure sensor driver
 MS5837 pressureSensor;
 
+// Buffer of pressures w/max possible length for readings every 5s
+const int PRESSURE_BUFFER_LENGTH = (int) ((SUCK_MAX + DESCEND_TIME + PUMP_MAX + ASCEND_TIME) / 5000);
+float pressureBuffer[PRESSURE_BUFFER_LENGTH];
+int pressureBufferIndex;
 
 void setup() {
   Serial.begin(115200);
@@ -169,6 +173,20 @@ void loop() {
   // Move to next stage if necessary
   bool submergeReceived = signalReceived();
 
+  // Read the pressure if we're profiling
+  if (
+    (1 <= stage && stage <= 4) ||
+    (6 <= stage && stage <= 9)
+  ) {
+    pressureBuffer[pressureBufferIndex] = pressureSensor.sensor.pressure();
+    pressureBufferIndex++;
+  }
+
+  // Transmit the pressure buffer if we're surfaced
+  if (stage == 5 || stage == 10) {
+    
+  }
+
   if (
     millis() >= previous_time + SCHEDULE[stage][1] ||
     (SCHEDULE[stage][0] == WAIT && submergeReceived) ||
@@ -197,6 +215,7 @@ void loop() {
       stage = 1;
     }
 
+    // Switch to sucking/pumping depending on the stage we're entering
     if (SCHEDULE[stage][0] == SUCK) {
       suck();
     }
@@ -207,7 +226,7 @@ void loop() {
     Serial.println(stage);
   }
 
-  Serial.println(pressureSensor.sensor.pressure()) // In mbar. Your problem now!
+  Serial.println(pressureSensor.pressure()) // In mbar. Your problem now!
 }
 
 bool signalReceived() {
@@ -247,6 +266,35 @@ bool signalReceived() {
   }
 
   return false;
+}
+
+void floatToBytes(float f, uint8_t byteArray[4]){ 
+  union {
+    float f;
+    uint8_t byteArray[4];
+  } converter;
+  converter.f = f;
+  memcpy(byteArray, converter.byteArray, 4);
+}
+
+void transmitPressureBuffer() {
+  /* Convert float pressures to bytes */
+  // Converts floats to byte arrays via shared memory
+  union {
+    float floatVar;
+    uint8_t byteArray[4];
+  } converter;
+
+  uint8_t transmission[PRESSURE_BUFFER_LENGTH * sizeof(float)];
+  
+  for (int i = 0; i < PRESSURE_BUFFER_LENGTH; i++) {
+    converter.floatVar = pressureBuffer[i];
+    memcpy(transmission + i * sizeof(float), converter.byteArray, sizeof(float));
+  }
+
+  /* Send the bytes */
+  rf95.send(transmission, strlen(transmission));
+  rf95.waitPacketSent();
 }
 
 
@@ -312,5 +360,5 @@ void initPressureSensor() {
   pressureSensor.init()
   
   pressureSensor.setModel(MS5837::MS5837_02BA);
-  pressureSensor.setFluidDensity(1000); // kg/m^3
+  pressureSensor.setFluidDensity(1000);  // kg/m^3
 }
