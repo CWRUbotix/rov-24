@@ -10,7 +10,7 @@ Run the `Setup Simulation` Task.
 
 ## Usage
 
-Run the main node with
+Run the simulation and GUI with
 
 ```bash
 ros2 launch rov_gazebo sim_launch.py
