@@ -38,8 +38,6 @@ def generate_launch_description() -> LaunchDescription:
         namespace='mavros',
         parameters=[
             {"system_id": 255},
-            # TODO check if needed
-            {"component_id": 240},
             {"fcu_url": "tcp://localhost"},
             {"gcs_url": "udp://@localhost:14550"},
             {"plugin_allowlist": ["rc_io", "sys_status", "command"]}
