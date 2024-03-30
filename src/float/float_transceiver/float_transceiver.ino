@@ -16,6 +16,8 @@
 
 #include <SPI.h>
 #include <RH_RF95.h>
+#include "MS5837.h"
+
 
 #if defined (__AVR_ATmega32U4__)  // Feather 32u4 w/Radio
   #define RFM95_CS    8
@@ -207,7 +209,7 @@ void loop() {
     Serial.println(stage);
   }
 
-  Serial.println(pressureSensor.sensor.pressure()) // In mbar. Your problem now!
+  Serial.println(pressureSensor.pressure()); // In mbar. Your problem now!
 }
 
 bool signalReceived() {
@@ -309,7 +311,7 @@ void initRadio() {
 }
 
 void initPressureSensor() {
-  pressureSensor.init()
+  pressureSensor.init();
   
   pressureSensor.setModel(MS5837::MS5837_02BA);
   pressureSensor.setFluidDensity(1000); // kg/m^3
