@@ -33,6 +33,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/VehicleState.msg"
   "msg/Heartbeat.msg"
   "msg/MissionTimerTick.msg"
+  "msg/FloatCommand.msg"
   "srv/AutonomousFlight.srv"
   "srv/MissionTimerSet.srv"
   DEPENDENCIES std_msgs
