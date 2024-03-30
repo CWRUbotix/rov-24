@@ -123,6 +123,22 @@
                 "revealProblems": "onProblem"
             },
             "problemMatcher": []
+        },
+        {
+            "label": "Setup Simulation",
+            "type": "shell",
+            "command": "bash",
+            "args": [
+                "${workspaceFolder}/src/surface/rov_gazebo/scripts/add_models_and_worlds.sh",
+                "&&",
+                "${workspaceFolder}/src/surface/rov_gazebo/scripts/ardupilot_gazebo.sh",
+                "&&",
+                "${workspaceFolder}/src/surface/rov_gazebo/scripts/ardusub.sh"
+            ],
+            "presentation": {
+                "revealProblems": "onProblem"
+            },
+            "problemMatcher": []
         }
     ]
 }
