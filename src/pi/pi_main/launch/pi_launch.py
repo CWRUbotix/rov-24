@@ -53,8 +53,8 @@ def generate_launch_description() -> LaunchDescription:
         ])
     )
 
-    # Heartbeat
-    heartbeat_path: str = get_package_share_directory('heartbeat')
+    # Pi Info
+    heartbeat_path: str = get_package_share_directory('pi_info')
 
     heartbeat_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([
@@ -75,15 +75,6 @@ def generate_launch_description() -> LaunchDescription:
         ])
     )
 
-    # Launches ip_publisher node.
-    ip_publisher_node = Node(
-        package='pi_main',
-        executable='ip_publisher',
-        emulate_tty=True,
-        output='screen',
-        remappings=[('/pi/ip_address', '/tether/ip_address')]
-    )
-
     namespace_launch = GroupAction(
         actions=[
             PushRosNamespace(NAMESPACE),
@@ -91,7 +82,6 @@ def generate_launch_description() -> LaunchDescription:
             pixhawk_launch,
             # cam_launch,
             realsense_launch,
-            ip_publisher_node,
             heartbeat_launch
         ]
     )
