@@ -161,9 +161,8 @@ void receivePressure() {
       Serial.print(len / sizeof(float));
       Serial.print("]: ");
       for (int i = 0; i < len; i += sizeof(float)) {
-        float f = -1.0;
-        memcpy(&f, &floatBytesUnion.floatVar, sizeof(float));
-        Serial.print(f);
+        memcpy(floatBytesUnion.byteArray, byteBuffer + i, sizeof(float));
+        Serial.print(floatBytesUnion.floatVar);
         Serial.print(", ");
       }
       Serial.println();

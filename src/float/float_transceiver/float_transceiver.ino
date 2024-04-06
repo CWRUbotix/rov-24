@@ -188,7 +188,7 @@ void loop() {
   ) {
     Serial.print("Reading: ");
     previousPressureReadTime = millis();
-    floatBytesUnion.floatVar = 5.0;  // pressureSensor.pressure();
+    floatBytesUnion.floatVar = pressureSensor.pressure();
     memcpy(pressureBuffer + pressureBufferIndex, floatBytesUnion.byteArray, sizeof(float));
     Serial.print(pressureBuffer[pressureBufferIndex]);
     Serial.print(", ");
@@ -248,8 +248,6 @@ void loop() {
 
     Serial.println(stage);
   }
-
-  //Serial.println(pressureSensor.pressure()); // In mbar. Your problem now!
 }
 
 bool signalReceived() {
@@ -292,36 +290,6 @@ bool signalReceived() {
 }
 
 void transmitPressureBuffer() {
-  /* Convert float pressures to bytes */
-//  int fullTransmissionSize = PRESSURE_BUFFER_LENGTH * sizeof(float);
-//  uint8_t transmission[fullTransmissionSize];
-//  
-//  for (int i = 0; i < PRESSURE_BUFFER_LENGTH; i++) {
-//    converter.floatVar = pressureBuffer[i];
-//    Serial.print("Converting: ");
-//    Serial.print(pressureBuffer[i]);
-//    Serial.print(" -> ");
-//    Serial.print(converter.floatVar);
-//    Serial.print(" -> ");
-//    Serial.print(converter.byteArray[0]);
-//    Serial.print(", ");
-//    Serial.print(converter.byteArray[1]);
-//    Serial.print(", ");
-//    Serial.print(converter.byteArray[2]);
-//    Serial.print(", ");
-//    Serial.print(converter.byteArray[3]);
-//    Serial.print(" -> ");
-//    memcpy(transmission + i * sizeof(float), converter.byteArray, sizeof(float));
-//    Serial.print(transmission[i * sizeof(float)]);
-//    Serial.print(", ");
-//    Serial.print(transmission[i * sizeof(float) + 1]);
-//    Serial.print(", ");
-//    Serial.print(transmission[i * sizeof(float) + 2]);
-//    Serial.print(", ");
-//    Serial.println(transmission[i * sizeof(float) + 3]);
-//  }
-
-  /* Send the bytes */
   int packetStart = 0;
   int fullMessageLength =
     pressureBufferIndex < PRESSURE_BUFFER_LENGTH ? pressureBufferIndex : PRESSURE_BUFFER_LENGTH;
