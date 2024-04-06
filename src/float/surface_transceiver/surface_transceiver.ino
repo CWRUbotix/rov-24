@@ -56,17 +56,17 @@
 
 /************ Radio Setup ***************/
 
-// here lies the glorious encryption key, lost to the transition to RF95 :(
-uint8_t key[] = { 
-                  0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE,
-                  0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE
-                };
-
 // Change to 434.0 or other frequency, must match float's freq!
 #define RF95_FREQ 877.0
 
 // Singleton instance of the radio driver
 RH_RF95 rf95(RFM95_CS, RFM95_INT);
+
+// Converts byte arrays to floats via shared memory
+union {
+  float floatVar;
+  uint8_t byteArray[4];
+} floatBytesUnion;
 
 void setup() {
   Serial.begin(115200);
@@ -140,20 +140,33 @@ void receivePressure() {
   Serial.println("Attempting to receive");
   if (rf95.waitAvailableTimeout(1000)) {
     Serial.println("RF95 available");
-    uint8_t buf[RH_RF95_MAX_MESSAGE_LEN];
-    uint8_t len = sizeof(buf);
-    if (rf95.recv(buf, &len)) {
+    uint8_t byteBuffer[RH_RF95_MAX_MESSAGE_LEN];
+    uint8_t len = sizeof(byteBuffer);
+    if (rf95.recv(byteBuffer, &len)) {
       if (!len) {
         Serial.println("Message length 0, dropping");
         return;
       }
-      buf[len] = 0;
-      Serial.print("Received [");
+      byteBuffer[len] = 0;
+      Serial.print("Received bytes [");
       Serial.print(len);
       Serial.print("]: ");
-      Serial.print(buf[0]);
-      Serial.print(", ");
-      Serial.println(buf[1]);
+      for (int i = 0; i < len; i++) {
+        Serial.print(byteBuffer[i]);
+        Serial.print(", ");
+      }
+      Serial.println();
+      
+      Serial.print("Received floats [");
+      Serial.print(len / sizeof(float));
+      Serial.print("]: ");
+      for (int i = 0; i < len; i += sizeof(float)) {
+        float f = -1.0;
+        memcpy(&f, &floatBytesUnion.floatVar, sizeof(float));
+        Serial.print(f);
+        Serial.print(", ");
+      }
+      Serial.println();
       // Serial.print("RSSI: ");
       // Serial.println(rf95.lastRssi(), DEC);
     }
