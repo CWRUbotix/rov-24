@@ -110,7 +110,7 @@ void setup() {
 }
 
 void loop() {
-//  receiveTime();
+  receivePressure();
 
   if (Serial.available() >= 1) {
     String command;
@@ -119,7 +119,7 @@ void loop() {
     Serial.println(command);
     if (command == "submerge" || command == "submerge\n") {
       sendControlSignal("submerge");
-      receiveTime();
+      receivePressure();
     }
     else {
       char command_arr[command.length() + 1];
@@ -136,12 +136,17 @@ void loop() {
   }
 }
 
-void receiveTime() {
-  if (rf95.available()) {
+void receivePressure() {
+  Serial.println("Attempting to receive");
+  if (rf95.waitAvailableTimeout(1000)) {
+    Serial.println("RF95 available");
     uint8_t buf[RH_RF95_MAX_MESSAGE_LEN];
     uint8_t len = sizeof(buf);
     if (rf95.recv(buf, &len)) {
-      if (!len) return;
+      if (!len) {
+        Serial.println("Message length 0, dropping");
+        return;
+      }
       buf[len] = 0;
       Serial.print("Received [");
       Serial.print(len);
@@ -155,6 +160,9 @@ void receiveTime() {
     else {
       Serial.println("Receive failed");
     }
+  }
+  else {
+    Serial.println("RF95 not available"); 
   }
 }
 

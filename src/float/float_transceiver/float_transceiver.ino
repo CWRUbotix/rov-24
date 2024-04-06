@@ -77,13 +77,14 @@
 #define RF95_FREQ 877.0
 
 #define SECOND 1000
+#define PRESSURE_READ_INTERVAL 5000
 
 // All delays in ms
-#define RELEASE_MAX   1200000
-#define SUCK_MAX      60000
-#define DESCEND_TIME  60000
-#define PUMP_MAX      60000
-#define ASCEND_TIME   60000
+#define RELEASE_MAX   300000
+#define SUCK_MAX      10000
+#define DESCEND_TIME  10000
+#define PUMP_MAX      10000
+#define ASCEND_TIME   10000
 #define TX_MAX        60000
 #define ONE_HOUR      360000
 
@@ -116,7 +117,8 @@ unsigned long SCHEDULE[][2] = {
 
 uint8_t stage = 0;
 
-unsigned long previous_time;
+unsigned long previousTime;
+unsigned long previousPressureReadTime;
 
 
 /************ Radio Setup ***************/
@@ -135,19 +137,24 @@ RH_RF95 rf95(RFM95_CS, RFM95_INT);
 MS5837 pressureSensor;
 
 // Buffer of pressures w/max possible length for readings every 5s
-const int PRESSURE_BUFFER_LENGTH = (int) ((SUCK_MAX + DESCEND_TIME + PUMP_MAX + ASCEND_TIME) / 5000);
+const int PRESSURE_BUFFER_LENGTH =
+  (int) (SUCK_MAX / PRESSURE_READ_INTERVAL) +
+  (int) (DESCEND_TIME / PRESSURE_READ_INTERVAL) +
+  (int) (PUMP_MAX / PRESSURE_READ_INTERVAL) + 
+  (int) (ASCEND_TIME / PRESSURE_READ_INTERVAL);
 float pressureBuffer[PRESSURE_BUFFER_LENGTH];
 int pressureBufferIndex;
 
 void setup() {
   Serial.begin(115200);
   // Wait until serial console is open; remove if not tethered to computer
-//   while (!Serial) ;
+   while (!Serial) ;
   
   Serial.println("Float Transceiver");
   Serial.println();
 
-  previous_time = millis();
+  previousTime = millis();
+  previousPressureReadTime = millis();
 
   pinMode(LED_BUILTIN, OUTPUT);
   digitalWrite(LED_BUILTIN, HIGH); 
@@ -176,20 +183,24 @@ void loop() {
 
   // Read the pressure if we're profiling
   if (
-    (1 <= stage && stage <= 4) ||
-    (6 <= stage && stage <= 9)
+    ((1 <= stage && stage <= 4) ||
+    (6 <= stage && stage <= 9)) &&
+    millis() >= previousPressureReadTime + PRESSURE_READ_INTERVAL
   ) {
-    pressureBuffer[pressureBufferIndex] = pressureSensor.sensor.pressure();
+    Serial.println("Reading");
+    previousPressureReadTime = millis();
+    pressureBuffer[pressureBufferIndex] = 5;
+//    pressureBuffer[pressureBufferIndex] = pressureSensor.pressure();
     pressureBufferIndex++;
   }
 
   // Transmit the pressure buffer if we're surfaced
   if (stage == 5 || stage == 10) {
-    
+    transmitPressureBuffer();
   }
 
   if (
-    millis() >= previous_time + SCHEDULE[stage][1] ||
+    millis() >= previousTime + SCHEDULE[stage][1] ||
     (SCHEDULE[stage][0] == WAIT && submergeReceived) ||
     (SCHEDULE[stage][0] == SUCK && !digitalRead(LIMIT_FULL)) ||
     (SCHEDULE[stage][0] == PUMP && !digitalRead(LIMIT_EMPTY))
@@ -198,16 +209,21 @@ void loop() {
     Serial.print(" ");
     Serial.print(SCHEDULE[stage][0]);
     Serial.print(" ");
-    Serial.print(previous_time);
+    Serial.print(previousTime);
     Serial.print(" ");
     Serial.print(SCHEDULE[stage][1]);
     Serial.print(" ");
     Serial.print(millis());
     Serial.print(" ");
-    Serial.print(millis() >= previous_time + SCHEDULE[stage][1]);
+    Serial.print(millis() >= previousTime + SCHEDULE[stage][1]);
     Serial.println();
 
-    previous_time = millis();
+    // Reset the pressure buffer index if we're surfaced
+    if (stage == 5 || stage == 10) {
+      pressureBufferIndex = 0;
+    }
+
+    previousTime = millis();
     stage++;
     stop();
 
@@ -227,11 +243,7 @@ void loop() {
     Serial.println(stage);
   }
 
-<<<<<<< HEAD
-  Serial.println(pressureSensor.pressure()) // In mbar. Your problem now!
-=======
-  Serial.println(pressureSensor.pressure()); // In mbar. Your problem now!
->>>>>>> 94be5ce83f84eb5b8512e2781502a7597d40e2f3
+  //Serial.println(pressureSensor.pressure()); // In mbar. Your problem now!
 }
 
 bool signalReceived() {
@@ -273,15 +285,6 @@ bool signalReceived() {
   return false;
 }
 
-void floatToBytes(float f, uint8_t byteArray[4]){ 
-  union {
-    float f;
-    uint8_t byteArray[4];
-  } converter;
-  converter.f = f;
-  memcpy(byteArray, converter.byteArray, 4);
-}
-
 void transmitPressureBuffer() {
   /* Convert float pressures to bytes */
   // Converts floats to byte arrays via shared memory
@@ -290,7 +293,8 @@ void transmitPressureBuffer() {
     uint8_t byteArray[4];
   } converter;
 
-  uint8_t transmission[PRESSURE_BUFFER_LENGTH * sizeof(float)];
+  int fullTransmissionSize = PRESSURE_BUFFER_LENGTH * sizeof(float);
+  uint8_t transmission[fullTransmissionSize];
   
   for (int i = 0; i < PRESSURE_BUFFER_LENGTH; i++) {
     converter.floatVar = pressureBuffer[i];
@@ -298,8 +302,27 @@ void transmitPressureBuffer() {
   }
 
   /* Send the bytes */
-  rf95.send(transmission, strlen(transmission));
-  rf95.waitPacketSent();
+  int i = 0;
+  while (i < fullTransmissionSize) {
+    uint8_t packet[RH_RF95_MAX_MESSAGE_LEN];
+    for (int j = 0; j < RH_RF95_MAX_MESSAGE_LEN; j++) {
+      packet[j] = transmission[i + j];
+    }
+
+    Serial.print("Sending packet @");
+    Serial.print(i);
+    Serial.print(" with length ");
+    Serial.print(strlen(packet));
+    Serial.print(" and content '");
+    Serial.print((char *) packet);
+    Serial.println("'");
+
+    i += RH_RF95_MAX_MESSAGE_LEN;
+    
+    rf95.send(packet, RH_RF95_MAX_MESSAGE_LEN);
+    rf95.waitPacketSent();
+    delay(1000);
+  }
 }
 
 
