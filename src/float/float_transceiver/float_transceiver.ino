@@ -76,6 +76,9 @@
 // Change to 434.0 or other frequency, must match RX's freq!
 #define RF95_FREQ 877.0
 
+#define PACKET_PREAMBLE_LEN 1
+const int PACKET_PAYLOAD_LEN = RH_RF95_MAX_MESSAGE_LEN - PACKET_PREAMBLE_LEN;
+
 #define SECOND 1000
 #define PRESSURE_READ_INTERVAL 5000
 
@@ -184,11 +187,12 @@ void loop() {
   // Read the pressure if we're profiling
   if (
     ((1 <= stage && stage <= 4) || (6 <= stage && stage <= 9)) &&
-    millis() >= previousPressureReadTime + PRESSURE_READ_INTERVAL
+    millis() >= previousPressureReadTime + PRESSURE_READ_INTERVAL &&
+    pressureBufferIndex < PRESSURE_BUFFER_LENGTH  // Stop recording if we overflow buffer
   ) {
     Serial.print("Reading: ");
     previousPressureReadTime = millis();
-    floatBytesUnion.floatVar = pressureSensor.pressure();
+    floatBytesUnion.floatVar = 5.0; // pressureSensor.pressure();
     memcpy(pressureBuffer + pressureBufferIndex, floatBytesUnion.byteArray, sizeof(float));
     Serial.print(pressureBuffer[pressureBufferIndex]);
     Serial.print(", ");
@@ -290,31 +294,38 @@ bool signalReceived() {
 }
 
 void transmitPressureBuffer() {
+  uint8_t packetNum = 0;
   int packetStart = 0;
   int fullMessageLength =
     pressureBufferIndex < PRESSURE_BUFFER_LENGTH ? pressureBufferIndex : PRESSURE_BUFFER_LENGTH;
   while (packetStart < fullMessageLength) {
     int packetLength = fullMessageLength - packetStart;  // Remaining bytes in message
-    if (packetLength > RH_RF95_MAX_MESSAGE_LEN) {
-      packetLength = RH_RF95_MAX_MESSAGE_LEN;
+    if (packetLength > PACKET_PAYLOAD_LEN) {
+      packetLength = PACKET_PAYLOAD_LEN;
     }
     
-    uint8_t packet[packetLength];
-    for (int j = 0; j < packetLength; j++) {
-      packet[j] = pressureBuffer[packetStart + j];
+    uint8_t packet[PACKET_PREAMBLE_LEN + packetLength];
+    packet[0] = packetNum;
+    for (int i = PACKET_PREAMBLE_LEN; i < packetLength; i++) {
+      packet[i] = pressureBuffer[packetStart + i];
     }
 
-    Serial.print("Sending packet @");
+    Serial.print("Sending packet #");
+    Serial.print(packetNum);
+    Serial.print(" at index ");
     Serial.print(packetStart);
-    Serial.print(" with length ");
+    Serial.print(" with preamble length ");
+    Serial.print(PACKET_PREAMBLE_LEN);
+    Serial.print(", payload length ");
     Serial.print(packetLength);
-    Serial.print(" and content {");
+    Serial.print(", and content {");
     for (int p = 0; p < packetLength; p++) {
       Serial.print(packet[p]);
       Serial.print(", ");
     }
     Serial.println("}");
 
+    packetNum++;
     packetStart += packetLength;
     
     rf95.send(packet, packetLength);
