@@ -15,8 +15,8 @@ dependencies = [
     'pytest-qt',
     'pytest-xvfb',
     'Pyside2',  # can be removed when ament_pep257 is gone
-    'smbus2',
-    'serial'
+    'serial',
+    'git+https://github.com/InvincibleRMC/TCA9555'
 ]
 
 [tool]

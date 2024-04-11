@@ -1,12 +1,7 @@
-import time
-
 import rclpy
 from rclpy.node import Node
-from smbus2 import SMBus
-
 from rov_msgs.msg import Manip
-
-TCA9555_ADDRESS = 0x20
+from tca9555 import TCA9555
 
 
 class Manipulator(Node):
@@ -17,30 +12,50 @@ class Manipulator(Node):
 
         self.subscription = self.create_subscription(
             Manip,
-            'topic',
+            'manipulator_control',
             self.manip_callback,
-            10)
+            100
+        )
 
-        with SMBus(0) as self.bus:
-            while True:
+        self.declare_parameters(
+            namespace="",
+            parameters=[
+                ("claw0", rclpy.Parameter.Type.INTEGER),
+                ("claw1", rclpy.Parameter.Type.INTEGER),
+                ("light", rclpy.Parameter.Type.INTEGER),
+            ])
 
-                self.bus.write_byte(TCA9555_ADDRESS, 0b00000000)
-                time.sleep(1000)
-                self.bus.write_byte(TCA9555_ADDRESS, 0b11111111)
+        # Initialize with standard I2C-bus address of TCA9555 a.k.a 0x20
+        self.gpio = TCA9555()  # can put in the address as a param in hexadecimal
+        self.get_logger().info(str(self.gpio.format_config()))
 
-    def manip_callback(self, msg: Manip) -> None:
-        # self.bus.
-        # self.bus.write_byte()
-        pass
+        # Set pins 0 through 5 as output
+        self.gpio.set_direction(0, bits=(0, 1, 2, 3, 4, 5))
+        self.gpio.unset_bits(bits=(0, 1, 2, 3, 4, 5))
+
+    def manip_callback(self, request: Manip) -> None:
+        manip_id = request.manip_id
+        activated = request.activated
+
+        pin = self._parameters[manip_id].get_parameter_value().integer_value
+
+        if activated:
+            self.gpio.set_bits(bits=(pin))
+        else:
+            self.gpio.unset_bits(bits=(pin))
 
 
 def main() -> None:
     rclpy.init()
 
-    minimal_subscriber = Manipulator()
+    subscriber = Manipulator()
 
-    rclpy.spin(minimal_subscriber)
-    minimal_subscriber.destroy_node()
+    rclpy.spin(subscriber)
+
+    # Destroy the node explicitly
+    # (optional - otherwise it will be done automatically
+    # when the garbage collector destroys the node object)
+    subscriber.destroy_node()
     rclpy.shutdown()
 
 
