@@ -30,11 +30,11 @@ RJOYPRESS:       int = 12
 # Joystick Directions 1 is up/left -1 is down/right
 # X is forward/backward Y is left/right
 # L2 and R2 1 is not pressed and -1 is pressed
-LJOYY:           int = 0
-LJOYX:           int = 1
+LJOYX:           int = 0
+LJOYY:           int = 1
 L2PRESS_PERCENT: int = 2
-RJOYY:           int = 3
-RJOYX:           int = 4
+RJOYX:           int = 3
+RJOYY:           int = 4
 R2PRESS_PERCENT: int = 5
 DPADHOR:         int = 6
 DPADVERT:        int = 7
@@ -73,9 +73,9 @@ class ManualControlNode(Node):
         )
 
         self.manip_buttons: dict[int, ManipButton] = {
-            X_BUTTON: ManipButton("claw0"),
-            O_BUTTON: ManipButton("claw1"),
-            TRI_BUTTON: ManipButton("light")
+            X_BUTTON: ManipButton("left"),
+            O_BUTTON: ManipButton("right"),
+            # TRI_BUTTON: ManipButton("light")
         }
 
         self.seen_left_cam = False
@@ -91,12 +91,12 @@ class ManualControlNode(Node):
         buttons: MutableSequence[int] = msg.buttons
 
         instruction = PixhawkInstruction(
-            pitch=axes[DPADVERT],  # DPad
-            roll=buttons[R1] - buttons[L1],  # L1/R1 buttons
-            vertical=axes[RJOYX],  # Right Joystick Z
-            forward=axes[LJOYX],  # Left Joystick X
-            lateral=-axes[LJOYY],  # Left Joystick Y
-            yaw=(axes[R2PRESS_PERCENT] - axes[L2PRESS_PERCENT]) / 2  # L2/R2 buttons
+            forward=axes[LJOYY],  # Left Joystick Y
+            lateral=-axes[LJOYX],  # Left Joystick X
+            vertical=(axes[L2PRESS_PERCENT] - axes[R2PRESS_PERCENT]) / 2,  # L2/R2 triggers
+            roll=buttons[L1] - buttons[R1],  # L1/R1 buttons
+            pitch=axes[RJOYY],  # Right Joysick Y
+            yaw=-axes[RJOYX],  # Right Joystick X
         )
 
         # Smooth out adjustments
@@ -144,7 +144,7 @@ class ManualControlNode(Node):
 
 class ManipButton:
     def __init__(self, claw: str) -> None:
-        self.claw: str = claw
+        self.claw = claw
         self.last_button_state: bool = False
         self.is_active: bool = False
 
