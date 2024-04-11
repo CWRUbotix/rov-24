@@ -46,6 +46,17 @@ ENV USER ${USER_NAME}
 # Switches to rov user
 USER ${USER_NAME}
 
+WORKDIR /home/${USER_NAME}
+
+# Setup Ardusub
+COPY src/surface/rov_gazebo/scripts/ardusub.sh .
+RUN ./ardusub.sh \
+ && rm ardusub.sh
+
+# Setup Ardupilot Gazebo
+COPY src/surface/rov_gazebo/scripts/ardupilot_gazebo.sh .
+RUN ./ardupilot_gazebo.sh \
+    && rm ardupilot_gazebo.sh
 # Update Pip
 RUN pip install --no-cache-dir --upgrade  pip==24.0 
 
@@ -97,3 +108,6 @@ RUN if [[ $(rosdep check -r --from-paths src --ignore-src) != "${EXPECTED_OUTPUT
 
 RUN . /opt/ros/iron/setup.sh \
   && colcon build --symlink-install
+
+# Setup Models and Gazebo Environment
+RUN ./src/surface/rov_gazebo/scripts/add_models_and_worlds.sh

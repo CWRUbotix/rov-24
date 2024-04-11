@@ -27,6 +27,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
+            'manipulators = manipulators.manipulator_node:main',
+            'test_manipulators = manipulators.manipulator_test:main'
         ],
     },
 )
