@@ -1,4 +1,4 @@
-import rclpy
+from rclpy.parameter import Parameter
 from rclpy.node import Node
 from rov_msgs.msg import Manip
 from tca9555 import TCA9555
@@ -20,9 +20,9 @@ class Manipulator(Node):
         self.declare_parameters(
             namespace="",
             parameters=[
-                ("claw0", rclpy.Parameter.Type.INTEGER),
-                ("claw1", rclpy.Parameter.Type.INTEGER),
-                ("light", rclpy.Parameter.Type.INTEGER),
+                ("claw0", Parameter.Type.INTEGER),
+                ("claw1", Parameter.Type.INTEGER),
+                ("light", Parameter.Type.INTEGER),
             ])
 
         # Initialize with standard I2C-bus address of TCA9555 a.k.a 0x20
