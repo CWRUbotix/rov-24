@@ -20,15 +20,15 @@ def generate_launch_description() -> LaunchDescription:
     """
     NAMESPACE = 'pi'
     # Manipulator Controller
-    # manip_path: str = get_package_share_directory('manipulators')
-    #
-    # manip_launch = IncludeLaunchDescription(
-    #     PythonLaunchDescriptionSource([
-    #         os.path.join(
-    #             manip_path, 'launch', 'manip_launch.py'
-    #         )
-    #     ])
-    # )
+    manip_path = get_package_share_directory('manipulators')
+
+    manip_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([
+            os.path.join(
+                manip_path, 'launch', 'manip_launch.py'
+            )
+        ])
+    )
 
     # Commented out because no usb cams are planned
     # Camera Streamer
@@ -87,7 +87,7 @@ def generate_launch_description() -> LaunchDescription:
     namespace_launch = GroupAction(
         actions=[
             PushRosNamespace(NAMESPACE),
-            # manip_launch,
+            manip_launch,
             pixhawk_launch,
             # cam_launch,
             realsense_launch,
