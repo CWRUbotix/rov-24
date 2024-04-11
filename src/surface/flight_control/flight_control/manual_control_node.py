@@ -29,11 +29,11 @@ RJOYPRESS:       int = 12
 # Joystick Directions 1 is up/left -1 is down/right
 # X is forward/backward Y is left/right
 # L2 and R2 1 is not pressed and -1 is pressed
-LJOYY:           int = 0
-LJOYX:           int = 1
+LJOYX:           int = 0
+LJOYY:           int = 1
 L2PRESS_PERCENT: int = 2
-RJOYY:           int = 3
-RJOYX:           int = 4
+RJOYX:           int = 3
+RJOYY:           int = 4
 R2PRESS_PERCENT: int = 5
 DPADHOR:         int = 6
 DPADVERT:        int = 7
