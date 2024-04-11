@@ -9,6 +9,14 @@ build/
 install/
 log/
 
+# Ardusub mission files
+logs/
+
+# Ardusub Simulation logs and configs
+*.tlog
+*.tlog.raw
+eeprom.bin
+
 # Allows custom tasks
 .vscode/*
 !.vscode/tasks.json
