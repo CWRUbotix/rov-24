@@ -100,8 +100,9 @@ int freeMemory() {
 // Change to 434.0 or other frequency, must match RX's freq!
 #define RF95_FREQ 877.0
 
-#define PACKET_PREAMBLE_LEN 1
-#define PACKET_PAYLOAD_LEN RH_RF95_MAX_MESSAGE_LEN - PACKET_PREAMBLE_LEN
+#define PACKET_LEN RH_RF95_MAX_MESSAGE_LEN
+#define PACKET_PREAMBLE_LEN 3
+#define PACKET_PAYLOAD_LEN PACKET_LEN - PACKET_PREAMBLE_LEN
 
 #define SECOND 1000
 #define PRESSURE_READ_INTERVAL 200
@@ -144,7 +145,7 @@ unsigned long SCHEDULE[][2] = {
 
 uint8_t stage = 0;
 
-unsigned long previousTime;
+unsigned long stageStartTime;
 unsigned long previousPressureReadTime;
 
 
@@ -157,21 +158,23 @@ RH_RF95 rf95(RFM95_CS, RFM95_INT);
 // Singleton instance of the pressure sensor driver
 MS5837 pressureSensor;
 
-// Buffer of pressures w/max length for 1 profile w/readings every PRESSURE_READ_INTERVAL
-// Must divide and cast before adding to avoid overflowing while keeping this a legal index
-const int PRESSURE_BUFFER_LENGTH = sizeof(float) * (
-  (int) (SUCK_MAX / PRESSURE_READ_INTERVAL) +
-  (int) (DESCEND_TIME / PRESSURE_READ_INTERVAL) +
-  (int) (PUMP_MAX / PRESSURE_READ_INTERVAL) + 
-  (int) (ASCEND_TIME / PRESSURE_READ_INTERVAL)
-);
-uint8_t pressureBuffer[PRESSURE_BUFFER_LENGTH];
-int pressureBufferIndex;
-// Converts floats to byte arrays via shared memory
+// Buffers for pressures & time data w/preambles containing:
+// 1 byte team number, 1 byte profile index (0x00, 0x01), and 1 byte isThisATimePacket (true == 0xFF)
+// Every pressure is a 32-bit float stored as 4 uint8_t entries
+// Every time is a 32-bit unsigned long stored as 4 uint8_t entries
+// 3 bytes preamble + (62 * 4 = 248 readings or times) = 251 bytes total = PACKET_SIZE
+uint8_t pressurePacket[PACKET_LEN];
+uint8_t timePacket[PACKET_LEN];
+int packetIndex = PACKET_PREAMBLE_LEN;
+
+// Converts floats and longs to byte arrays via shared memory
 union {
-  float floatVar;
+  float floatVal;
+  unsigned long longVal;
   uint8_t byteArray[4];
-} floatBytesUnion;
+} bytesUnion;
+
+uint8_t profileNum = 0;
 
 void setup() {
   Serial.begin(115200);
@@ -181,7 +184,7 @@ void setup() {
   Serial.println("Float Transceiver");
   Serial.println();
 
-  previousTime = millis();
+  stageStartTime = millis();
   previousPressureReadTime = millis();
 
   pinMode(LED_BUILTIN, OUTPUT);
@@ -198,6 +201,11 @@ void setup() {
   digitalWrite(SUCK_PIN, LOW);
   digitalWrite(PUMP_PIN, LOW);
 
+  pressurePacket[0] = TEAM_NUM;
+  timePacket[0] = TEAM_NUM;
+  pressurePacket[2] = 0;
+  timePacket[2] = 255;
+
   initRadio();
   initPressureSensor();
 }
@@ -212,31 +220,36 @@ void loop() {
   if (
     ((1 <= stage && stage <= 4) || (6 <= stage && stage <= 9)) &&
     millis() >= previousPressureReadTime + PRESSURE_READ_INTERVAL &&
-    pressureBufferIndex < PRESSURE_BUFFER_LENGTH  // Stop recording if we overflow buffer
+    packetIndex < PACKET_LEN  // Stop recording if we overflow buffer
   ) {
     Serial.print("Reading: ");
     previousPressureReadTime = millis();
-    floatBytesUnion.floatVar = 5.0; // pressureSensor.pressure();
-    memcpy(pressureBuffer + pressureBufferIndex, floatBytesUnion.byteArray, sizeof(float));
-    Serial.print(pressureBuffer[pressureBufferIndex]);
+    
+    bytesUnion.floatVal = 5.0; // pressureSensor.pressure();
+    memcpy(pressurePacket + packetIndex, bytesUnion.byteArray, sizeof(float));
+
+    bytesUnion.longVal = millis();
+    memcpy(timePacket + packetIndex, bytesUnion.byteArray, sizeof(long));
+    
+    Serial.print(pressurePacket[packetIndex]);
     Serial.print(", ");
-    Serial.print(pressureBuffer[pressureBufferIndex + 1]);
+    Serial.print(pressurePacket[packetIndex + 1]);
     Serial.print(", ");
-    Serial.print(pressureBuffer[pressureBufferIndex + 2]);
+    Serial.print(pressurePacket[packetIndex + 2]);
     Serial.print(", ");
-    Serial.println(pressureBuffer[pressureBufferIndex + 3]);
-    pressureBufferIndex += sizeof(float);
+    Serial.println(pressurePacket[packetIndex + 3]);
+    packetIndex += sizeof(float);
     Serial.print(" >> ");
     Serial.println(freeMemory());
   }
 
   // Transmit the pressure buffer if we're surfaced
   if (stage == 5 || stage == 10) {
-    transmitPressureBuffer();
+    transmitPressurePacket();
   }
 
   if (
-    millis() >= previousTime + SCHEDULE[stage][1] ||
+    millis() >= stageStartTime + SCHEDULE[stage][1] ||
     (SCHEDULE[stage][0] == WAIT && submergeReceived) ||
     (SCHEDULE[stage][0] == SUCK && !digitalRead(LIMIT_FULL)) ||
     (SCHEDULE[stage][0] == PUMP && !digitalRead(LIMIT_EMPTY))
@@ -245,21 +258,22 @@ void loop() {
     Serial.print(" ");
     Serial.print(SCHEDULE[stage][0]);
     Serial.print(" ");
-    Serial.print(previousTime);
+    Serial.print(stageStartTime);
     Serial.print(" ");
     Serial.print(SCHEDULE[stage][1]);
     Serial.print(" ");
     Serial.print(millis());
     Serial.print(" ");
-    Serial.print(millis() >= previousTime + SCHEDULE[stage][1]);
+    Serial.print(millis() >= stageStartTime + SCHEDULE[stage][1]);
     Serial.println();
 
-    // Reset the pressure buffer index if we just finished our time surfaced
+    // If we just finished our time surfaced
     if (stage == 5 || stage == 10) {
-      pressureBufferIndex = 0;
+      packetIndex = PACKET_PREAMBLE_LEN;
+      profileNum++;
     }
 
-    previousTime = millis();
+    stageStartTime = millis();
     stage++;
     stop();
 
@@ -319,60 +333,52 @@ bool signalReceived() {
   return false;
 }
 
-void transmitPressureBuffer() {
-  uint8_t packetNum = 0;
-  int packetStart = 0;
-  int fullMessageLength =
-    pressureBufferIndex < PRESSURE_BUFFER_LENGTH ? pressureBufferIndex : PRESSURE_BUFFER_LENGTH;
-  while (packetStart < fullMessageLength) {
-    int packetLength = fullMessageLength - packetStart;  // Remaining bytes in message
-    if (packetLength > PACKET_PAYLOAD_LEN) {
-      packetLength = PACKET_PAYLOAD_LEN;
-    }
-    
-    uint8_t packet[PACKET_PREAMBLE_LEN + packetLength];
-    packet[0] = packetNum;
-    for (int i = 0; i < packetLength; i++) {
-      packet[i + PACKET_PREAMBLE_LEN] = pressureBuffer[packetStart + i];
-    }
+void transmitPressurePacket() {
+  Serial.print(" >> ");
+  Serial.println(freeMemory());
 
-    Serial.print(" >> ");
-    Serial.println(freeMemory());
-
-    Serial.print("Sending packet #");
-    Serial.print(packetNum);
-    Serial.print(" at index ");
-    Serial.print(packetStart);
-    Serial.print(" with preamble length ");
-    Serial.print(PACKET_PREAMBLE_LEN);
-    Serial.print(", payload length ");
-    Serial.print(packetLength);
-    Serial.print(", and content {");
-    for (int p = 0; p < packetLength; p++) {
-      Serial.print(packet[p]);
-      Serial.print(", ");
-    }
-    Serial.println("}");
-
-    packetNum++;
-    packetStart += packetLength;
-
-    Serial.print("Sizes: ");
-    Serial.print(RH_RF95_MAX_MESSAGE_LEN);
-    Serial.print(" ");
-    Serial.print(PACKET_PREAMBLE_LEN);
-    Serial.print(" ");
-    Serial.print(PACKET_PAYLOAD_LEN);
-    Serial.print(" ");
-    Serial.print(packetLength);
-    Serial.println();
-    
-    rf95.send(packet, packetLength);
-    Serial.print(" >> ");
-    Serial.println(freeMemory());
-    rf95.waitPacketSent();
-    delay(1000);
+  Serial.print("Sending pressure packet #");
+  Serial.print(profileNum);
+  Serial.print(" with content {");
+  for (int p = 0; p < PACKET_LEN; p++) {
+    Serial.print(pressurePacket[p]);
+    Serial.print(", ");
   }
+  Serial.println("}");
+
+  Serial.print("Sending time packet #");
+  Serial.print(profileNum);
+  Serial.print(" with content {");
+  for (int p = 0; p < PACKET_LEN; p++) {
+    Serial.print(timePacket[p]);
+    Serial.print(", ");
+  }
+  Serial.println("}");
+
+//  Serial.print("Sizes: ");
+//  Serial.print(RH_RF95_MAX_MESSAGE_LEN);
+//  Serial.print(" ");
+//  Serial.print(PACKET_PREAMBLE_LEN);
+//  Serial.print(" ");
+//  Serial.print(PACKET_PAYLOAD_LEN);
+//  Serial.print(" ");
+//  Serial.print(packetLength);
+//  Serial.println();
+
+  pressurePacket[1] = profileNum;
+  timePacket[1] = profileNum;
+  
+  rf95.send(pressurePacket, PACKET_LEN);
+  Serial.print(" >> ");
+  Serial.println(freeMemory());
+  rf95.waitPacketSent();
+  
+  rf95.send(timePacket, PACKET_LEN);
+  Serial.print(" >> ");
+  Serial.println(freeMemory());
+  rf95.waitPacketSent();
+  
+  delay(1000);
 }
 
 
