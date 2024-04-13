@@ -18,6 +18,30 @@
 #include <RH_RF95.h>
 #include "MS5837.h"
 
+//#ifdef __arm__
+//// should use uinstd.h to define sbrk but Due causes a conflict
+//extern "C" char* sbrk(int incr);
+//#else  // __ARM__
+//extern char *__brkval;
+//#endif  // __arm__
+//
+//int freeMemory() {
+//  char top;
+//#ifdef __arm__
+//  return &top - reinterpret_cast<char*>(sbrk(0));
+//#elif defined(CORE_TEENSY) || (ARDUINO > 103 && ARDUINO != 151)
+//  return &top - __brkval;
+//#else  // __arm__
+//  return __brkval ? &top - __brkval : &top - __malloc_heap_start;
+//#endif  // __arm__
+//}
+
+int freeMemory() {
+  extern int __heap_start, *__brkval;
+  int v;
+  return (int)&v - (__brkval == 0  ? (int)&__heap_start : (int) __brkval);  
+}
+
 
 #if defined (__AVR_ATmega32U4__)  // Feather 32u4 w/Radio
   #define RFM95_CS    8
@@ -77,10 +101,10 @@
 #define RF95_FREQ 877.0
 
 #define PACKET_PREAMBLE_LEN 1
-const int PACKET_PAYLOAD_LEN = RH_RF95_MAX_MESSAGE_LEN - PACKET_PREAMBLE_LEN;
+#define PACKET_PAYLOAD_LEN RH_RF95_MAX_MESSAGE_LEN - PACKET_PREAMBLE_LEN
 
 #define SECOND 1000
-#define PRESSURE_READ_INTERVAL 5000
+#define PRESSURE_READ_INTERVAL 200
 
 // All delays in ms
 #define RELEASE_MAX   300000
@@ -202,6 +226,8 @@ void loop() {
     Serial.print(", ");
     Serial.println(pressureBuffer[pressureBufferIndex + 3]);
     pressureBufferIndex += sizeof(float);
+    Serial.print(" >> ");
+    Serial.println(freeMemory());
   }
 
   // Transmit the pressure buffer if we're surfaced
@@ -306,9 +332,12 @@ void transmitPressureBuffer() {
     
     uint8_t packet[PACKET_PREAMBLE_LEN + packetLength];
     packet[0] = packetNum;
-    for (int i = PACKET_PREAMBLE_LEN; i < packetLength; i++) {
-      packet[i] = pressureBuffer[packetStart + i];
+    for (int i = 0; i < packetLength; i++) {
+      packet[i + PACKET_PREAMBLE_LEN] = pressureBuffer[packetStart + i];
     }
+
+    Serial.print(" >> ");
+    Serial.println(freeMemory());
 
     Serial.print("Sending packet #");
     Serial.print(packetNum);
@@ -327,8 +356,20 @@ void transmitPressureBuffer() {
 
     packetNum++;
     packetStart += packetLength;
+
+    Serial.print("Sizes: ");
+    Serial.print(RH_RF95_MAX_MESSAGE_LEN);
+    Serial.print(" ");
+    Serial.print(PACKET_PREAMBLE_LEN);
+    Serial.print(" ");
+    Serial.print(PACKET_PAYLOAD_LEN);
+    Serial.print(" ");
+    Serial.print(packetLength);
+    Serial.println();
     
     rf95.send(packet, packetLength);
+    Serial.print(" >> ");
+    Serial.println(freeMemory());
     rf95.waitPacketSent();
     delay(1000);
   }
@@ -386,10 +427,10 @@ void initRadio() {
   // The default transmitter power is 13dBm, using PA_BOOST.
   // If you are using RFM95/96/97/98 modules which uses the PA_BOOST transmitter pin, then
   // you can set transmitter powers from 5 to 23 dBm:
-  rf95.setTxPower(23, false);  
+  rf95.setTxPower(23, false);
 
-  Serial.print("RFM95 radio @ ");  
-  Serial.print((int) RF95_FREQ);  
+  Serial.print("RFM95 radio @ ");
+  Serial.print((int) RF95_FREQ);
   Serial.println(" MHz");
 }
 

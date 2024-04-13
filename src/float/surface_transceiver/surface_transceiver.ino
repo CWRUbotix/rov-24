@@ -56,6 +56,8 @@
 
 /************ Radio Setup ***************/
 
+#define PACKET_PREAMBLE_LEN 1
+
 // Change to 434.0 or other frequency, must match float's freq!
 #define RF95_FREQ 877.0
 
@@ -148,19 +150,21 @@ void receivePressure() {
         return;
       }
       byteBuffer[len] = 0;
-      Serial.print("Received bytes [");
+      Serial.print("Received packet #");
+      Serial.print(byteBuffer[0]);
+      Serial.print(" with length ");
       Serial.print(len);
-      Serial.print("]: ");
+      Serial.print(": ");
       for (int i = 0; i < len; i++) {
         Serial.print(byteBuffer[i]);
         Serial.print(", ");
       }
       Serial.println();
       
-      Serial.print("Received floats [");
-      Serial.print(len / sizeof(float));
-      Serial.print("]: ");
-      for (int i = 0; i < len; i += sizeof(float)) {
+      Serial.print("= floats with length ");
+      Serial.print((len - PACKET_PREAMBLE_LEN) / sizeof(float));
+      Serial.print(": ");
+      for (int i = PACKET_PREAMBLE_LEN; i < len; i += sizeof(float)) {
         memcpy(floatBytesUnion.byteArray, byteBuffer + i, sizeof(float));
         Serial.print(floatBytesUnion.floatVar);
         Serial.print(", ");
