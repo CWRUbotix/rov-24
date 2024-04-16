@@ -12,13 +12,12 @@ def generate_launch_description() -> LaunchDescription:
         Launches Flood Detection Node
 
     """
-    # USB 3.0 front (fisheye)
-    flood_detection: Node = Node(
+    flood_detection = Node(
         package='flood_detection',
         executable='flood_detector',
         emulate_tty=True,
         output='screen',
-        remappings=[('/pi/ip_address', '/tether/ip_address')]
+        remappings=[('/pi/flood_detection', '/tether/flooding')]
     )
 
     return LaunchDescription([
