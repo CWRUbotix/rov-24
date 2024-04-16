@@ -1,7 +1,5 @@
 # manipulators
 
-<!-- TODO rewrite -->
-
 ## Overview
 
 This package is used to toggle manipulators plugged into the I2C bus on the motherboard.
@@ -11,11 +9,7 @@ This package is used to toggle manipulators plugged into the I2C bus on the moth
 These should be done for you but, in case something has gone wrong use these command and it should fix your installation.
 
 ```bash
-git submodule add git@github.com:leloup314/TCA9555.git src/pi/manipulators/TCA9555
-```
-
-```bash
-pip install wiringpi
+sudo apt install python3-lgpio
 ```
 
 ## Usage
@@ -23,7 +17,7 @@ pip install wiringpi
 Run the main node with
 
 ```bash
-ros2 run manipulators manipulator
+ros2 run manipulators manipulators
 ```
 
 Run the test node with

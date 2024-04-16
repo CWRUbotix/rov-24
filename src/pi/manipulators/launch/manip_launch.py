@@ -15,6 +15,12 @@ def generate_launch_description() -> LaunchDescription:
         remappings=[("/pi/manipulator_control", "/tether/manipulator_control")]
     )
 
+    valve_manip_node = Node(
+        package="manipulators",
+        executable="valve_manipulator"
+    )
+
     return LaunchDescription([
-        manip_node
+        manip_node,
+        valve_manip_node
     ])
