@@ -75,7 +75,7 @@ def generate_launch_description() -> LaunchDescription:
         ])
     )
 
-    flood_sensors_path: str = get_package_share_directory('flood_detection')
+    flood_sensors_path = get_package_share_directory('flood_detection')
 
     # Launches Realsense
     flood_detection_launch = IncludeLaunchDescription(
