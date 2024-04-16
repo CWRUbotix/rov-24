@@ -1,30 +1,31 @@
 import lgpio
 
+# Pins used for GPIO
+DETECT_PIN = 17
+
 
 def main() -> None:
-    # Pins used for GPIO
-    detect1 = 17
     # GPIO Boilerplate
     h = lgpio.gpiochip_open(0)
-    lgpio.gpio_claim_input(h, detect1)
+    lgpio.gpio_claim_input(h, DETECT_PIN)
 
-    data1 = lgpio.gpio_read(h, detect1)
+    data: int = lgpio.gpio_read(h, DETECT_PIN)
 
-    firstRun = True
+    first_run = True
 
     while True:
         # Read Data
-        olddata1: int = data1
+        old_data: int = data
 
-        data1 = lgpio.gpio_read(h, detect1)
+        data = lgpio.gpio_read(h, DETECT_PIN)
 
-        if data1 != olddata1 or firstRun:
-            print("Pin 17: %s" % data1)
+        if data != old_data or first_run:
+            print("Pin 17: %s" % data)
 
-            if data1:
+            if data:
                 print("\nBad Flooding Thing")
 
-            firstRun = False
+            first_run = False
 
 
 if __name__ == '__main__':

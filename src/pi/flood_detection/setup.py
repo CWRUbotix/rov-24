@@ -26,6 +26,7 @@ setup(
     entry_points={
         'console_scripts': [
             'flood_detector = flood_detection.flood_detector:main',
+            'test = flood_detection.gpio_reader_no_ros:main'
         ],
     },
 )
