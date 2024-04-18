@@ -26,7 +26,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            "heartbeat_node = heartbeat.heartbeat_node:main"
+            "heartbeat_node = pi_info.heartbeat_node:main",
+            'ip_publisher = pi_info.ip_publisher:main'
         ],
     },
 )
