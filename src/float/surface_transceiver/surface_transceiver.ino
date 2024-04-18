@@ -56,19 +56,26 @@
 
 /************ Radio Setup ***************/
 
-#define PACKET_PREAMBLE_LEN 1
+#define PACKET_PREAMBLE_LEN 3
 
 // Change to 434.0 or other frequency, must match float's freq!
 #define RF95_FREQ 877.0
+
+#define COMMAND_MAX_LEN 50
 
 // Singleton instance of the radio driver
 RH_RF95 rf95(RFM95_CS, RFM95_INT);
 
 // Converts byte arrays to floats via shared memory
 union {
-  float floatVar;
+  float floatVal;
+  unsigned long longVal;
   uint8_t byteArray[4];
-} floatBytesUnion;
+} bytesUnion;
+
+// Store the last command ordered over serial
+// Spam the float with this until it ACKs
+char pendingCommand[COMMAND_MAX_LEN];
 
 void setup() {
   Serial.begin(115200);
@@ -112,7 +119,7 @@ void setup() {
 }
 
 void loop() {
-  receivePressure();
+  receivePacket();
 
   if (Serial.available() >= 1) {
     String command;
@@ -120,25 +127,30 @@ void loop() {
     command = Serial.readString();
     Serial.println(command);
     if (command == "submerge" || command == "submerge\n") {
-      sendControlSignal("submerge");
-      receivePressure();
+      sendCommand("submerge");
+      receivePacket();
+    }
+    else if (command == "submerge" || command == "submerge\n") {
+      sendCommand("submerge");
+      receivePacket();
     }
     else {
+      Serial.println("Illegal command; sending anyway");
       char command_arr[command.length() + 1];
       command.toCharArray(command_arr, command.length() + 1);
-      sendControlSignal(command_arr);
+      sendCommand(command_arr);
     }
     // else if (command == "extend") {
-    //   sendControlSignal("extend");
+    //   sendCommand("extend");
     // }
     // else if (command == "retract") {
-    //   sendControlSignal("retract");
+    //   sendCommand("retract");
     // }
 
   }
 }
 
-void receivePressure() {
+void receivePacket() {
   Serial.println("Attempting to receive");
   if (rf95.waitAvailableTimeout(1000)) {
     Serial.println("RF95 available");
@@ -149,29 +161,67 @@ void receivePressure() {
         Serial.println("Message length 0, dropping");
         return;
       }
-      byteBuffer[len] = 0;
-      Serial.print("Received packet #");
-      Serial.print(byteBuffer[0]);
-      Serial.print(" with length ");
-      Serial.print(len);
-      Serial.print(": ");
-      for (int i = 0; i < len; i++) {
-        Serial.print(byteBuffer[i]);
-        Serial.print(", ");
+
+      if (len < RH_RF95_MAX_MESSAGE_LEN / 2) {
+        // This packet is probably an ACK
+        Serial.print("Received message packet with length ");
+        Serial.print(len);
+        Serial.print(", string '");
+        byteBuffer[len] = 0;
+        char *charBuf = (char*) byteBuffer;
+        Serial.print(charBuf);
+        Serial.print("', and values: ");
+        for (int i = 0; i < len; i++) {
+          Serial.print(byteBuffer[i]);
+          Serial.print(", ");
+        }
+        Serial.println();
+
+        if (strcmp(pendingCommand, "ACK") == 0) {
+          pendingCommand[0] = 0;
+        }
       }
-      Serial.println();
-      
-      Serial.print("= floats with length ");
-      Serial.print((len - PACKET_PREAMBLE_LEN) / sizeof(float));
-      Serial.print(": ");
-      for (int i = PACKET_PREAMBLE_LEN; i < len; i += sizeof(float)) {
-        memcpy(floatBytesUnion.byteArray, byteBuffer + i, sizeof(float));
-        Serial.print(floatBytesUnion.floatVar);
-        Serial.print(", ");
+      else {
+        // This packet is probably a data packet
+        bool isTimePacket = byteBuffer[2];
+        
+        Serial.print("Received ");
+        Serial.print(isTimePacket ? "time" : "pressure");
+        Serial.print(" packet for team ");
+        Serial.print(byteBuffer[0]);
+        Serial.print(" on profile ");
+        Serial.print(byteBuffer[1]);
+        Serial.print(" with length ");
+        Serial.print(len);
+        Serial.print(": ");
+        for (int i = 0; i < len; i++) {
+          Serial.print(byteBuffer[i]);
+          Serial.print(", ");
+        }
+        Serial.println();
+  
+        if (isTimePacket) {
+          Serial.print("= longs with length ");
+          Serial.print((len - PACKET_PREAMBLE_LEN) / sizeof(long));
+          Serial.print(": ");
+          for (int i = PACKET_PREAMBLE_LEN; i < len; i += sizeof(long)) {
+            memcpy(bytesUnion.byteArray, byteBuffer + i, sizeof(long));
+            Serial.print(bytesUnion.longVal);
+            Serial.print(", ");
+          }
+        }
+        else {
+          Serial.print("= floats with length ");
+          Serial.print((len - PACKET_PREAMBLE_LEN) / sizeof(float));
+          Serial.print(": ");
+          for (int i = PACKET_PREAMBLE_LEN; i < len; i += sizeof(float)) {
+            memcpy(bytesUnion.byteArray, byteBuffer + i, sizeof(float));
+            Serial.print(bytesUnion.floatVal);
+            Serial.print(", ");
+          }
+        }
+        Serial.println();
       }
-      Serial.println();
-      // Serial.print("RSSI: ");
-      // Serial.println(rf95.lastRssi(), DEC);
     }
     else {
       Serial.println("Receive failed");
@@ -182,9 +232,12 @@ void receivePressure() {
   }
 }
 
-void sendControlSignal(char* message) {
-  rf95.send(message, sizeof(message));
+void sendCommand(char *message) {
+  strcpy(pendingCommand, message);
+  
+  rf95.send(message, strlen(message));
   rf95.waitPacketSent();
   Serial.print(message);
+  Serial.print(strlen(message));
   Serial.println(" signal sent!");
 }

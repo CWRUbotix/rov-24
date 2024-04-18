@@ -109,10 +109,10 @@ int freeMemory() {
 
 // All delays in ms
 #define RELEASE_MAX   300000
-#define SUCK_MAX      10000
-#define DESCEND_TIME  10000
-#define PUMP_MAX      10000
-#define ASCEND_TIME   10000
+#define SUCK_MAX      1000
+#define DESCEND_TIME  1000
+#define PUMP_MAX      1000
+#define ASCEND_TIME   1000
 #define TX_MAX        60000
 #define ONE_HOUR      360000
 
@@ -120,6 +120,8 @@ int freeMemory() {
 #define SUCK 1
 #define PUMP 2
 #define STOP 3
+
+uint8_t overrideState = 0;
 
 uint8_t SCHEDULE_LENGTH = 11;
 unsigned long SCHEDULE[][2] = {
@@ -214,8 +216,19 @@ void setup() {
 void loop() {
 
   // Move to next stage if necessary
-  bool submergeReceived = signalReceived();
+  bool submergeReceived = receiveCommand();
+//  Serial.print("Submerge: ");
+//  Serial.println(submergeReceived);
 
+  if (overrideState == SUCK) {
+    suck();
+    return;
+  }
+  else if (overrideState == PUMP) {
+    pump();
+    return;
+  }
+  
   // Read the pressure if we're profiling
   if (
     ((1 <= stage && stage <= 4) || (6 <= stage && stage <= 9)) &&
@@ -224,8 +237,11 @@ void loop() {
   ) {
     Serial.print("Reading: ");
     previousPressureReadTime = millis();
-    
-    bytesUnion.floatVal = 5.0; // pressureSensor.pressure();
+
+    pressureSensor.read();
+    bytesUnion.floatVal = pressureSensor.pressure(); // 5.0
+    Serial.print("Pressure: ");
+    Serial.println(pressureSensor.pressure());
     memcpy(pressurePacket + packetIndex, bytesUnion.byteArray, sizeof(float));
 
     bytesUnion.longVal = millis();
@@ -246,6 +262,7 @@ void loop() {
   // Transmit the pressure buffer if we're surfaced
   if (stage == 5 || stage == 10) {
     transmitPressurePacket();
+    delay(300);
   }
 
   if (
@@ -294,36 +311,62 @@ void loop() {
   }
 }
 
-bool signalReceived() {
-  if (rf95.available()) {
+bool receiveCommand() {
+  Serial.println("Receiving command...");
+  if (rf95.waitAvailableTimeout(900)) {
     Serial.println("RF has signal");
-    uint8_t buf[RH_RF95_MAX_MESSAGE_LEN];
-    uint8_t len = sizeof(buf);
+    uint8_t uintBuf[RH_RF95_MAX_MESSAGE_LEN];
+    uint8_t len = sizeof(uintBuf);
     Serial.println(len);
-    if (rf95.recv(buf, &len)) {
+    if (rf95.recv(uintBuf, &len)) {
       if (!len) return false;
-      buf[len] = 0;
+      uintBuf[len] = 0;
+      char *charBuf = (char*) uintBuf;
+      
       Serial.print("Received [");
       Serial.print(len);
       Serial.print("]: '");
-      Serial.print((char*) buf);
+      Serial.print(charBuf);
       Serial.println("'");
       Serial.print("RSSI: ");
       Serial.println(rf95.lastRssi(), DEC);
 
-      Serial.print(buf[0]);
+      Serial.print(charBuf[0]);
       Serial.print(", ");
-      Serial.println(buf[1]);
+      Serial.println(charBuf[1]);
 
-      if (strcmp((char*) buf, "su") == 0) {
-        uint8_t test_packet[] = {50, 60};
-        rf95.send(test_packet, strlen(test_packet));
-        rf95.waitPacketSent();
-        return true;
+      char response[32];
+      bool shouldSubmerge = false;
+
+      // Submerging
+      // Invalid command
+      // Overriding: pump
+      // Overriding: suck
+
+      if (strcmp(charBuf, "submerge") == 0) {
+        strcpy(response, "ACK SUBMERGING");
+        shouldSubmerge = true;
+      }
+      else if (strcmp(charBuf, "pump") == 0) {
+        strcpy(response, "ACK PUMPING");
+        overrideState = PUMP;
+      }
+      else if (strcmp(charBuf, "suck") == 0) {
+        strcpy(response, "ACK SUCKING");
+        overrideState = SUCK;
+      }
+      else if (strcmp(charBuf, "return") == 0) {
+        strcpy(response, "ACK RETURNING TO SCHEDULE");
+        overrideState = 0;
       }
       else {
+        strcpy(response, "Invalid command");
         Serial.println("Invalid command");
       }
+
+      rf95.send((uint8_t*) response, strlen(response));
+      rf95.waitPacketSent();
+      return shouldSubmerge;
     }
     else {
       Serial.println("Receive failed");
@@ -383,18 +426,21 @@ void transmitPressurePacket() {
 
 
 void pump() {
+  Serial.println("PUMPING");
   digitalWrite(MOTOR_PWM, HIGH);
   digitalWrite(PUMP_PIN, HIGH);
   digitalWrite(SUCK_PIN, LOW);
 }
 
 void suck() {
+  Serial.println("SUCKING");
   digitalWrite(MOTOR_PWM, HIGH);
   digitalWrite(PUMP_PIN, LOW);
   digitalWrite(SUCK_PIN, HIGH);
 }
 
 void stop() {
+  Serial.println("STOPPING");
   digitalWrite(MOTOR_PWM, LOW);
   digitalWrite(PUMP_PIN, LOW);
   digitalWrite(SUCK_PIN, LOW);
@@ -444,5 +490,8 @@ void initPressureSensor() {
   pressureSensor.init();
   
   pressureSensor.setModel(MS5837::MS5837_02BA);
-  pressureSensor.setFluidDensity(1000);  // kg/m^3
+  pressureSensor.setFluidDensity(997);  // kg/m^3
+
+  Serial.print("PRESSURE: ");
+  Serial.println(pressureSensor.pressure());
 }
