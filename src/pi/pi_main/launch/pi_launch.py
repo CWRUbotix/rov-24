@@ -54,12 +54,12 @@ def generate_launch_description() -> LaunchDescription:
     )
 
     # Pi Info
-    heartbeat_path: str = get_package_share_directory('pi_info')
+    pi_info_path: str = get_package_share_directory('pi_info')
 
-    heartbeat_launch = IncludeLaunchDescription(
+    pi_info_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([
             os.path.join(
-                heartbeat_path, 'launch', 'heartbeat_launch.py'
+                pi_info_path, 'launch', 'pi_info_launch.py'
             )
         ])
     )
@@ -82,7 +82,7 @@ def generate_launch_description() -> LaunchDescription:
             pixhawk_launch,
             # cam_launch,
             realsense_launch,
-            heartbeat_launch
+            pi_info_launch
         ]
     )
 

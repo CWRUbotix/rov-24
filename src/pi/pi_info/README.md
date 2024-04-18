@@ -9,12 +9,12 @@ This package launches nodes to publish information about the pi such as the curr
 Run the main node with
 
 ```bash
-ros2 launch pi_info heartbeat_launch.py
+ros2 launch pi_info pi_info_launch.py
 ```
 
 ## Launch files
 
-* **heartbeat_launch.py:** launches the heartbeat and ip_publisher nodes
+* **pi_info_launch.py:** launches the heartbeat and ip_publisher nodes
 
 ## Nodes
 
