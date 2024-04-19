@@ -14,7 +14,7 @@ class FloodDetector(Node):
         self.publisher = self.create_publisher(Flooding, 'flooding', 10)
         self.gpio_chip = lgpio.gpiochip_open(0)
         lgpio.gpio_claim_input(self.gpio_chip, DETECT_PIN)
-        timer_period = 0.5  # seconds
+        timer_period = 0.1  # seconds
         self.timer = self.create_timer(timer_period, self.timer_callback)
 
     def timer_callback(self) -> None:
