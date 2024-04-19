@@ -2,7 +2,6 @@ import rclpy
 from rclpy.node import Node
 from rov_msgs.msg import Flooding
 import lgpio
-import time
 
 # Pins used for GPIO
 DETECT_PIN = 17
