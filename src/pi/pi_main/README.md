@@ -137,18 +137,9 @@ sudo journalctl -f -u pi_main.service
 
 ## Nodes
 
-### ip_publisher
-
-Publishes the current ip address of the network.
-
-#### Published Topics
-
-* **`/ip_address`** ([rov_msgs/msg/IPAddress])
-
-    The IP Address as a string.
+There are no nodes in this package.
 
 ## Launch files
 
 * **pi_launch.py**: launch the manipulators, camera streaming, and pixhawk packages
 
-[rov_msgs/msg/IPAddress]: ../../rov_msgs/msg/IPAddress.msg
