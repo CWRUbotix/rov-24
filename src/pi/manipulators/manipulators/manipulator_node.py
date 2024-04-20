@@ -41,8 +41,7 @@ class Manipulator(Node):
         activated = message.activated
 
         if manip_id != "valve":
-            # TODO should probably not be using private _parameters
-            pin = self._parameters[manip_id].get_parameter_value().integer_value
+            pin = self.get_parameter(manip_id).get_parameter_value().integer_value
 
             if activated:
                 self.i2c.set_bits(bits=(pin))
