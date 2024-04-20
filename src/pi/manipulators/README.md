@@ -34,13 +34,24 @@ ros2 run manipulators test
 
 ### manipulator
 
-On receiving a msg it toggles a manipulator on or off.
+Toggle a manipulator on or off on receiving a msg.
 
 #### Subscribed Topics
 
 * **`/manipulator_control`** ([msg/Manip])
 
-    The control msg for activating manipulators.
+    The control message for activating manipulators. Set `manip_id` to anything other than "valve" to control the claw manips.
+
+
+### valve_manipulator
+
+Toggle the servo on or off on receiving a message.
+
+#### Subscribed Topics
+
+* **`/manipulator_control`** ([msg/Manip])
+
+    The control message for activating manipulators. Set `manip_id` to "valve" to control the valve manip.
 
 ### test
 
