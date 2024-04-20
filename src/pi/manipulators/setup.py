@@ -28,9 +28,9 @@ setup(
     entry_points={
         'console_scripts': [
             'manipulators = manipulators.manipulator_node:main',
-            'test_manipulators = manipulators.manipulator_test:main',
+            'test_manipulators = manipulators.manipulator_no_ros:main',
             'valve_manipulator = manipulators.valve_manipulator_node:main',
-            'test_valve_manipulator = manipulators.valve_manipulator_test:main'
+            'test_valve_manipulator = manipulators.valve_manipulator_no_ros:main'
         ],
     },
 )
