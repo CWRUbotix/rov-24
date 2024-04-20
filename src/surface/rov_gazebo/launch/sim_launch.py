@@ -74,7 +74,7 @@ def generate_launch_description() -> LaunchDescription:
 
     # Launches the pi heartbeat node
     heartbeat_node = Node(
-        package="heartbeat",
+        package="pi_info",
         executable="heartbeat_node",
         remappings=[(f"/{NAMESPACE}/pi_heartbeat", "/tether/pi_heartbeat")],
         emulate_tty=True,
@@ -83,7 +83,7 @@ def generate_launch_description() -> LaunchDescription:
 
     # Launches the ip address node
     ip_node = Node(
-        package="pi_main",
+        package="pi_info",
         executable="ip_publisher",
         remappings=[(f"/{NAMESPACE}/ip_address", "/tether/ip_address")],
         emulate_tty=True,
