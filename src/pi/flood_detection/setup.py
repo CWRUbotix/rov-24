@@ -20,13 +20,13 @@ setup(
     zip_safe=True,
     maintainer='Michael Carlstrom',
     maintainer_email='rmc@carlstrom.com',
-    description='PI to Pixhawk Communication',
+    description='Flood detection',
     license='Apache License 2.0',
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
             'flood_detector = flood_detection.flood_detector:main',
-            'test = flood_detection.gpio_reader_no_ros:main'
+            'dry_run = flood_detection.gpio_reader_dry_run:main'
         ],
     },
 )
