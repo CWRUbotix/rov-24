@@ -32,7 +32,7 @@ def generate_launch_description() -> LaunchDescription:
 
     # Commented out because no usb cams are planned
     # Camera Streamer
-    # cam_path: str = get_package_share_directory('camera_streamer')
+    # cam_path = get_package_share_directory('camera_streamer')
 
     # cam_launch = IncludeLaunchDescription(
     #     PythonLaunchDescriptionSource([
@@ -43,7 +43,7 @@ def generate_launch_description() -> LaunchDescription:
     # )
 
     # Pixhawk Communication
-    pixhawk_path: str = get_package_share_directory('pixhawk_communication')
+    pixhawk_path = get_package_share_directory('pixhawk_communication')
 
     pixhawk_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([
@@ -54,7 +54,7 @@ def generate_launch_description() -> LaunchDescription:
     )
 
     # Pi Info
-    pi_info_path: str = get_package_share_directory('pi_info')
+    pi_info_path = get_package_share_directory('pi_info')
 
     pi_info_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([
@@ -64,13 +64,24 @@ def generate_launch_description() -> LaunchDescription:
         ])
     )
 
-    realsense_path: str = get_package_share_directory('realsense')
+    realsense_path = get_package_share_directory('realsense')
 
     # Launches Realsense
     realsense_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([
             os.path.join(
                 realsense_path, 'launch', 'realsense_launch.py'
+            )
+        ])
+    )
+
+    flood_sensors_path = get_package_share_directory('flood_detection')
+
+    # Launches Realsense
+    flood_detection_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([
+            os.path.join(
+                flood_sensors_path, 'launch', 'flood_detection_launch.py'
             )
         ])
     )
@@ -82,6 +93,7 @@ def generate_launch_description() -> LaunchDescription:
             pixhawk_launch,
             # cam_launch,
             realsense_launch,
+            flood_detection_launch,
             pi_info_launch
         ]
     )
