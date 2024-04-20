@@ -6,14 +6,15 @@ import lgpio
 import time
 
 # Configuration
-PINS = range(0, 40)
 SERVO_PIN = 12  # pin used to drive PWM fan
 FREQ = 50
 
 gpio_handle = lgpio.gpiochip_open(0)
 
-def test_gpio(width: int, freq: int):
+
+def test_gpio(width: int, freq: int) -> None:
     lgpio.tx_servo(gpio_handle, SERVO_PIN, width, freq)
+
 
 try:
     print('Starting loop')
@@ -34,5 +35,5 @@ try:
 
 except KeyboardInterrupt:
     # Turn the fan to medium speed
-    lgpio.tx_pwm(h, FAN, FREQ, 50)
-    lgpio.gpiochip_close(h)
+    lgpio.tx_pwm(gpio_handle, SERVO_PIN, FREQ, 50)
+    lgpio.gpiochip_close(gpio_handle)
