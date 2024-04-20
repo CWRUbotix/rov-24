@@ -24,10 +24,12 @@ class ValveManipulator(Node):
         lgpio.tx_servo(self.gpio_handle, SERVO_PIN, width, freq)
 
     def manip_callback(self, message: Manip) -> None:
-        if message.activated:
-            self.servo(2500)
-        else:
-            self.servo(0)
+
+        if message.manip_id == "valve":
+            if message.activated:
+                self.servo(2500)
+            else:
+                self.servo(0)
 
 
 def main() -> None:

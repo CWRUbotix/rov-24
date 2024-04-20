@@ -75,7 +75,7 @@ class ManualControlNode(Node):
         self.manip_buttons: dict[int, ManipButton] = {
             X_BUTTON: ManipButton("left"),
             O_BUTTON: ManipButton("right"),
-            # TRI_BUTTON: ManipButton("light")
+            TRI_BUTTON: ManipButton("valve")
         }
 
         self.seen_left_cam = False

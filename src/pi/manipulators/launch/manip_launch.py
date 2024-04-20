@@ -19,7 +19,7 @@ def generate_launch_description() -> LaunchDescription:
 
     valve_manip_node = Node(
         package="manipulators",
-        executable="test_gpio",
+        executable="valve_manipulator",
         remappings=[("/pi/manipulator_control", "/tether/manipulator_control")],
         emulate_tty=True,
         output="screen"
