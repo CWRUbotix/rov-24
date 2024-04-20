@@ -4,7 +4,7 @@
   <name>flood_detection</name>
   <version>0.0.3</version>
   <description>Detects flood</description>
-  <maintainer email="hwo2@case.edu">Henry Odza</maintainer>
+  <maintainer email="rmc170@case.edu">Michael Carlstrom</maintainer>
   <license>Apache License 2.0</license>
 
   <exec_depend>ros2launch</exec_depend>
