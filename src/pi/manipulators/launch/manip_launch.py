@@ -12,12 +12,17 @@ def generate_launch_description() -> LaunchDescription:
             {"right": 1},
             # {"light": 2},
         ],
-        remappings=[("/pi/manipulator_control", "/tether/manipulator_control")]
+        remappings=[("/pi/manipulator_control", "/tether/manipulator_control")],
+        emulate_tty=True,
+        output="screen"
     )
 
     valve_manip_node = Node(
         package="manipulators",
-        executable="valve_manipulator"
+        executable="test_gpio",
+        remappings=[("/pi/manipulator_control", "/tether/manipulator_control")],
+        emulate_tty=True,
+        output="screen"
     )
 
     return LaunchDescription([
