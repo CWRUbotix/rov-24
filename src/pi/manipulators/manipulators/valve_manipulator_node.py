@@ -2,7 +2,7 @@ import lgpio
 import rclpy
 from rclpy.node import Node
 from rclpy.qos import qos_profile_system_default
-from rov_msgs.msg import Manip
+from rov_msgs.msg import ValveManip
 
 # Configuration
 SERVO_PIN = 12  # pin used to drive Valve Manip
@@ -12,7 +12,7 @@ class ValveManipulator(Node):
     def __init__(self) -> None:
         super().__init__('valve_manipulator')
         self.create_subscription(
-            Manip,
+            ValveManip,
             'manipulator_control',
             self.manip_callback,
             qos_profile_system_default
@@ -23,13 +23,11 @@ class ValveManipulator(Node):
     def servo(self, width: int, freq: int = 50) -> None:
         lgpio.tx_servo(self.gpio_handle, SERVO_PIN, width, freq)
 
-    def manip_callback(self, message: Manip) -> None:
-
-        if message.manip_id == "valve":
-            if message.activated:
-                self.servo(2500)
-            else:
-                self.servo(0)
+    def manip_callback(self, message: ValveManip) -> None:
+        if message.active:
+            self.servo(2500)
+        else:
+            self.servo(0)
 
 
 def main() -> None:
