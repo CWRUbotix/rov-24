@@ -29,7 +29,7 @@ setup(
         'console_scripts': [
             'manipulators = manipulators.manipulator_node:main',
             'test_manipulators = manipulators.manipulator_test:main',
-            'valve_manipulator = manipulators.gpio_node:main'
+            'test_gpio = manipulators.test_gpio:main'
         ],
     },
 )
