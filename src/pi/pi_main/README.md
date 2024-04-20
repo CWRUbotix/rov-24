@@ -123,6 +123,10 @@ To run the `pi_main` task in the background (happens on Pi startup):
 sudo systemctl start pi_main.service
 ```
 
+To kill the `pi_main` background task (**do this before starting the foreground task**):
+```bash
+sudo systemctl stop pi_main.service
+```
 To run the `pi_main` task in the foreground runs the shell scripst in the pi_main/scripts folder.
 
 ```bash
