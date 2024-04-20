@@ -1,7 +1,3 @@
-#  Control a 5V PWM fan speed with the lgpio library
-#  Uses lgpio library, compatible with kernel 5.11
-#  Author: William 'jawn-smith' Wilson
-
 import lgpio
 import time
 
