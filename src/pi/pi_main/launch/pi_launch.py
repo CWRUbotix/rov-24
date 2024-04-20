@@ -5,7 +5,7 @@ from ament_index_python.packages import get_package_share_directory
 from launch.launch_description import LaunchDescription
 from launch.actions import GroupAction, IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch_ros.actions import PushRosNamespace, Node
+from launch_ros.actions import PushRosNamespace
 
 
 def generate_launch_description() -> LaunchDescription:
@@ -32,7 +32,7 @@ def generate_launch_description() -> LaunchDescription:
 
     # Commented out because no usb cams are planned
     # Camera Streamer
-    # cam_path: str = get_package_share_directory('camera_streamer')
+    # cam_path = get_package_share_directory('camera_streamer')
 
     # cam_launch = IncludeLaunchDescription(
     #     PythonLaunchDescriptionSource([
@@ -43,7 +43,7 @@ def generate_launch_description() -> LaunchDescription:
     # )
 
     # Pixhawk Communication
-    pixhawk_path: str = get_package_share_directory('pixhawk_communication')
+    pixhawk_path = get_package_share_directory('pixhawk_communication')
 
     pixhawk_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([
@@ -53,18 +53,18 @@ def generate_launch_description() -> LaunchDescription:
         ])
     )
 
-    # Heartbeat
-    heartbeat_path: str = get_package_share_directory('heartbeat')
+    # Pi Info
+    pi_info_path = get_package_share_directory('pi_info')
 
-    heartbeat_launch = IncludeLaunchDescription(
+    pi_info_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([
             os.path.join(
-                heartbeat_path, 'launch', 'heartbeat_launch.py'
+                pi_info_path, 'launch', 'pi_info_launch.py'
             )
         ])
     )
 
-    realsense_path: str = get_package_share_directory('realsense')
+    realsense_path = get_package_share_directory('realsense')
 
     # Launches Realsense
     realsense_launch = IncludeLaunchDescription(
@@ -86,15 +86,6 @@ def generate_launch_description() -> LaunchDescription:
         ])
     )
 
-    # Launches ip_publisher node.
-    ip_publisher_node = Node(
-        package='pi_main',
-        executable='ip_publisher',
-        emulate_tty=True,
-        output='screen',
-        remappings=[('/pi/ip_address', '/tether/ip_address')]
-    )
-
     namespace_launch = GroupAction(
         actions=[
             PushRosNamespace(NAMESPACE),
@@ -102,9 +93,8 @@ def generate_launch_description() -> LaunchDescription:
             pixhawk_launch,
             # cam_launch,
             realsense_launch,
-            ip_publisher_node,
-            heartbeat_launch,
-            flood_detection_launch
+            flood_detection_launch,
+            pi_info_launch
         ]
     )
 
