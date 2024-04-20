@@ -18,16 +18,14 @@ class FloodDetector(Node):
         self.timer = self.create_timer(timer_period, self.timer_callback)
 
     def timer_callback(self) -> None:
-        data1 = lgpio.gpio_read(self.gpio_chip, DETECT_PIN)
+        # If any of the sensors detect water, send true to /tether/flooding
+        flood_reading = lgpio.gpio_read(self.gpio_chip, DETECT_PIN)
 
         # If any of the sensors detect water, send true to /tether/flooding
         msg = Flooding()
-
-        if data1 == lgpio.HIGH:
-            msg.flooding = True
+        msg.flooding = (flood_reading == lgpio.HIGH)
+        if msg.flooding:
             self.get_logger().error("The ebay is flooding")
-        else:
-            msg.flooding = False
         self.publisher.publish(msg)
 
 
