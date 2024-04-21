@@ -28,11 +28,11 @@ class ValveManipulator(Node):
         if message.active:
             if not self.curr_active:
                 self.curr_active = True
-                self.servo(2500)
+                self.servo(1900)
         else:
             if self.curr_active:
                 self.curr_active = False
-                self.servo(1250)
+                self.servo(1500)
 
 
 def main() -> None:
