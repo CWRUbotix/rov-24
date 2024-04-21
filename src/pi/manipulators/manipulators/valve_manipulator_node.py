@@ -27,7 +27,7 @@ class ValveManipulator(Node):
         if message.active:
             self.servo(2500)
         else:
-            self.servo(0)
+            self.servo(1250)
 
 
 def main() -> None:
