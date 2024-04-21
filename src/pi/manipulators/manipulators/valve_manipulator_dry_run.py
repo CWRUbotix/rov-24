@@ -8,7 +8,7 @@ FREQ = 50
 gpio_handle = lgpio.gpiochip_open(0)
 
 
-def test_gpio(width: int, freq: int) -> None:
+def test_gpio(width: int, freq: int = 50) -> None:
     lgpio.tx_servo(gpio_handle, SERVO_PIN, width, freq)
 
 
@@ -16,18 +16,16 @@ def main() -> None:
     try:
         print('Starting loop')
         while True:
-            # Turn the fan off
-            test_gpio(2000, 50)
+            print('one way')
+            test_gpio(1900, 50)
             time.sleep(2)
 
-            print('on')
-            # Turn the fan to medium speed
-            test_gpio(1000, 200)
+            print('off')
+            test_gpio(1500, 200)
             time.sleep(2)
 
-            print('more on')
-            # Turn the fan to max speed
-            test_gpio(500, 400)
+            print('other way')
+            test_gpio(1100, 400)
             time.sleep(2)
 
     except KeyboardInterrupt:
