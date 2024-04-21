@@ -3,13 +3,11 @@ from collections.abc import MutableSequence
 import rclpy
 from rclpy.executors import MultiThreadedExecutor
 from rclpy.node import Node
-from rclpy.publisher import Publisher
 from rclpy.qos import qos_profile_sensor_data, qos_profile_system_default
-from rclpy.subscription import Subscription
 from sensor_msgs.msg import Joy
 from mavros_msgs.msg import OverrideRCIn
 
-from rov_msgs.msg import CameraControllerSwitch, Manip
+from rov_msgs.msg import CameraControllerSwitch, Manip, ValveManip
 
 from flight_control.pixhawk_instruction import PixhawkInstruction
 
@@ -45,13 +43,13 @@ class ManualControlNode(Node):
         super().__init__('manual_control_node',
                          parameter_overrides=[])
 
-        self.rc_pub: Publisher = self.create_publisher(
+        self.rc_pub = self.create_publisher(
             OverrideRCIn,
             'mavros/rc/override',
             qos_profile_system_default
         )
 
-        self.subscription: Subscription = self.create_subscription(
+        self.subscription = self.create_subscription(
             Joy,
             'joy',
             self.controller_callback,
@@ -59,9 +57,16 @@ class ManualControlNode(Node):
         )
 
         # Manipulators
-        self.manip_publisher: Publisher = self.create_publisher(
+        self.manip_publisher = self.create_publisher(
             Manip,
             'manipulator_control',
+            qos_profile_system_default
+        )
+
+        # Valve Manip
+        self.valve_manip = self.create_publisher(
+            ValveManip,
+            "valve_manipulator",
             qos_profile_system_default
         )
 
@@ -74,8 +79,7 @@ class ManualControlNode(Node):
 
         self.manip_buttons: dict[int, ManipButton] = {
             X_BUTTON: ManipButton("left"),
-            O_BUTTON: ManipButton("right"),
-            # TRI_BUTTON: ManipButton("light")
+            O_BUTTON: ManipButton("right")
         }
 
         self.seen_left_cam = False
@@ -83,6 +87,7 @@ class ManualControlNode(Node):
 
     def controller_callback(self, msg: Joy) -> None:
         self.joystick_to_pixhawk(msg)
+        self.valve_manip_callback(msg)
         self.manip_callback(msg)
         self.camera_toggle(msg)
 
@@ -125,6 +130,12 @@ class ManualControlNode(Node):
                 self.manip_publisher.publish(manip_msg)
 
             manip_button.last_button_state = just_pressed
+
+    def valve_manip_callback(self, msg: Joy) -> None:
+        if msg.buttons[TRI_BUTTON] == 1:
+            self.valve_manip.publish(ValveManip(active=True))
+        else:
+            self.valve_manip.publish(ValveManip(active=False))
 
     def camera_toggle(self, msg: Joy) -> None:
         """Cycles through connected cameras on pilot GUI using menu and pairing buttons."""
