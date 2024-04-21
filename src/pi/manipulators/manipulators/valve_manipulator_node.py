@@ -13,7 +13,7 @@ class ValveManipulator(Node):
         super().__init__('valve_manipulator')
         self.create_subscription(
             ValveManip,
-            'manipulator_control',
+            'valve_manipulator',
             self.manip_callback,
             qos_profile_system_default
         )
