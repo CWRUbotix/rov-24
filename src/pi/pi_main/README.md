@@ -115,7 +115,7 @@ This should automatically be done by the prior command `ros2 run pi_main install
 
 ### Testing without Rebooting
 
-Installing & setting up this package creates a startup task called `pi_main`. You can manually start and stop this task.
+Installing & setting up this package creates a startup task called `pi_main`. You can manually start and stop this task. I had the `pi_main.service` located in `/etc/systemmd/systemd/pi_main.service`.
 
 To run the `pi_main` task in the background (happens on Pi startup):
 
