@@ -19,15 +19,20 @@ class ValveManipulator(Node):
         )
 
         self.gpio_handle = lgpio.gpiochip_open(0)
+        self.curr_active = False
 
     def servo(self, width: int, freq: int = 50) -> None:
         lgpio.tx_servo(self.gpio_handle, SERVO_PIN, width, freq)
 
     def manip_callback(self, message: ValveManip) -> None:
         if message.active:
-            self.servo(2500)
+            if not self.curr_active:
+                self.curr_active = True
+                self.servo(2500)
         else:
-            self.servo(1250)
+            if self.curr_active:
+                self.curr_active = False
+                self.servo(1250)
 
 
 def main() -> None:
