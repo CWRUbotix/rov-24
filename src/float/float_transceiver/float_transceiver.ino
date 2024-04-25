@@ -109,10 +109,10 @@ int freeMemory() {
 
 // All delays in ms
 #define RELEASE_MAX   300000
-#define SUCK_MAX      1000
-#define DESCEND_TIME  1000
-#define PUMP_MAX      1000
-#define ASCEND_TIME   1000
+#define SUCK_MAX      10000
+#define DESCEND_TIME  10000
+#define PUMP_MAX      10000
+#define ASCEND_TIME   10000
 #define TX_MAX        60000
 #define ONE_HOUR      360000
 
@@ -123,8 +123,8 @@ int freeMemory() {
 
 uint8_t overrideState = 0;
 
-uint8_t SCHEDULE_LENGTH = 11;
-unsigned long SCHEDULE[][2] = {
+const uint8_t SCHEDULE_LENGTH = 11;
+unsigned long SCHEDULE[SCHEDULE_LENGTH][2] = {
   // Wait for max <time> or until surface signal
   {WAIT, RELEASE_MAX },
 
@@ -221,11 +221,21 @@ void loop() {
 //  Serial.println(submergeReceived);
 
   if (overrideState == SUCK) {
-    suck();
+    if (digitalRead(LIMIT_FULL) == HIGH) {
+      suck();
+    }
+    else {
+      stop();
+    }
     return;
   }
   else if (overrideState == PUMP) {
-    pump();
+    if (digitalRead(LIMIT_EMPTY) == HIGH) {
+      pump();
+    }
+    else {
+      stop();
+    }
     return;
   }
   
