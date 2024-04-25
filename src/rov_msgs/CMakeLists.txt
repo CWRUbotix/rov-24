@@ -31,6 +31,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/Flooding.msg"
   "msg/IPAddress.msg"
   "msg/VehicleState.msg"
+  "msg/ValveManip.msg"
   "msg/Heartbeat.msg"
   "msg/MissionTimerTick.msg"
   "msg/FloatCommand.msg"
