@@ -5,85 +5,17 @@
 // REQUIRED LIBRARIES:
 // RadioHead v1.122.1 by Mike McCauley
 // Blue Robotics MS5837 Library v1.1.1 by BlueRobotics
-//
-// Example sketch showing how to create a simple messageing client
-// with the RH_RF95 class. RH_RF95 class does not provide for addressing or
-// reliability, so you should only use RH_RF95 if you do not need the higher
-// level messaging abilities.
-// It is designed to work with the other example rf95_server
-// Tested with Anarduino MiniWirelessLoRa, Rocket Scream Mini Ultra Pro with
-// the RFM95W, Adafruit Feather M0 with RFM95
 
 #include <SPI.h>
 #include <RH_RF95.h>
 #include "MS5837.h"
-
-//#ifdef __arm__
-//// should use uinstd.h to define sbrk but Due causes a conflict
-//extern "C" char* sbrk(int incr);
-//#else  // __ARM__
-//extern char *__brkval;
-//#endif  // __arm__
-//
-//int freeMemory() {
-//  char top;
-//#ifdef __arm__
-//  return &top - reinterpret_cast<char*>(sbrk(0));
-//#elif defined(CORE_TEENSY) || (ARDUINO > 103 && ARDUINO != 151)
-//  return &top - __brkval;
-//#else  // __arm__
-//  return __brkval ? &top - __brkval : &top - __malloc_heap_start;
-//#endif  // __arm__
-//}
+#include "rov_common.hpp"
 
 int freeMemory() {
   extern int __heap_start, *__brkval;
   int v;
   return (int)&v - (__brkval == 0  ? (int)&__heap_start : (int) __brkval);  
 }
-
-
-#if defined (__AVR_ATmega32U4__)  // Feather 32u4 w/Radio
-  #define RFM95_CS    8
-  #define RFM95_INT   7
-  #define RFM95_RST   4
-
-#elif defined(ADAFRUIT_FEATHER_M0) || defined(ADAFRUIT_FEATHER_M0_EXPRESS) || defined(ARDUINO_SAMD_FEATHER_M0)  // Feather M0 w/Radio
-  #define RFM95_CS    8
-  #define RFM95_INT   3
-  #define RFM95_RST   4
-
-#elif defined(ARDUINO_ADAFRUIT_FEATHER_RP2040_RFM)  // Feather RP2040 w/Radio
-  #define RFM95_CS   16
-  #define RFM95_INT  21
-  #define RFM95_RST  17
-
-#elif defined (__AVR_ATmega328P__)  // Feather 328P w/wing
-  #define RFM95_CS    4  //
-  #define RFM95_INT   3  //
-  #define RFM95_RST   2  // "A"
-
-#elif defined(ESP8266)  // ESP8266 feather w/wing
-  #define RFM95_CS    2  // "E"
-  #define RFM95_INT  15  // "B"
-  #define RFM95_RST  16  // "D"
-
-#elif defined(ARDUINO_ADAFRUIT_FEATHER_ESP32S2) || defined(ARDUINO_NRF52840_FEATHER) || defined(ARDUINO_NRF52840_FEATHER_SENSE)
-  #define RFM95_CS   10  // "B"
-  #define RFM95_INT   9  // "A"
-  #define RFM95_RST  11  // "C"
-
-#elif defined(ESP32)  // ESP32 feather w/wing
-  #define RFM95_CS   33  // "B"
-  #define RFM95_INT  27  // "A"
-  #define RFM95_RST  13
-
-#elif defined(ARDUINO_NRF52832_FEATHER)  // nRF52832 feather w/wing
-  #define RFM95_CS   11  // "B"
-  #define RFM95_INT  31  // "C"
-  #define RFM95_RST   7  // "A"
-
-#endif
 
 // H-bridge direction control pins
 #define MOTOR_PWM 6   // Leave 100% cycle for top speed
