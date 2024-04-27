@@ -53,7 +53,7 @@ class PilotApp(App):
             self.setWindowTitle('Debug GUI - CWRUbotix ROV 2024')
 
             video_layout = QHBoxLayout()
-            
+
             video_layout.addWidget(main_video, alignment=Qt.AlignmentFlag.AlignHCenter)
             video_layout.addWidget(video_area, alignment=Qt.AlignmentFlag.AlignHCenter)
 
