@@ -11,8 +11,8 @@ INO_EXTENSION = ".ino"
 CPP_EXTENSION = ".cpp"
 SKETCHES = ["float_transceiver", "surface_transceiver"]
 TMP = "/tmp"
-# SRC = "src"
-# INCLUDE = "include"
+SRC = "src"
+INCLUDE = "include"
 
 
 @pytest.mark.linter
@@ -32,9 +32,10 @@ def test_cpplint() -> None:
         os.rename(os.path.join(TMP, folder, folder + INO_EXTENSION),
                   os.path.join(TMP, folder, folder + CPP_EXTENSION))
 
-    # regular_cpp = [os.path.join(os.getcwd(), folder) for folder in [SRC, INCLUDE]]
-    regular_cpp = []
-    regular_cpp.extend([os.path.join(TMP, folder, folder + CPP_EXTENSION) for folder in SKETCHES])
+    regular_cpp = [
+        *[os.path.join(os.getcwd(), folder) for folder in [SRC, INCLUDE]],
+        *[os.path.join(TMP, folder, folder + CPP_EXTENSION) for folder in SKETCHES]
+    ]
     for file in regular_cpp:
         error_code = main(argv=["paths", file])
         assert error_code == 0, 'Found code style errors / warnings'
