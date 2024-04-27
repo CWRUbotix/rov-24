@@ -58,7 +58,8 @@ class ControlInverterNode(Node):
             qos_profile_system_default
         )
 
-    def apply(self, msg: PixhawkInstruction, function_to_apply: Callable[[float], float]) -> None:
+    @staticmethod
+    def apply(msg: PixhawkInstruction, function_to_apply: Callable[[float], float]) -> None:
         """Apply a function to each dimension of this PixhawkInstruction."""
         msg.forward = function_to_apply(msg.forward)
         msg.vertical = function_to_apply(msg.vertical)
@@ -67,11 +68,12 @@ class ControlInverterNode(Node):
         msg.yaw = function_to_apply(msg.yaw)
         msg.roll = function_to_apply(msg.roll)
 
-    def to_override_rc_in(self, msg: PixhawkInstruction) -> OverrideRCIn:
+    @staticmethod
+    def to_override_rc_in(msg: PixhawkInstruction) -> OverrideRCIn:
         """Convert this PixhawkInstruction to an rc_msg with the appropriate channels array."""
         rc_msg = OverrideRCIn()
 
-        self.apply(msg, lambda value: int(RANGE_SPEED * value) + ZERO_SPEED)
+        ControlInverterNode.apply(msg, lambda value: int(RANGE_SPEED * value) + ZERO_SPEED)
 
         rc_msg.channels[FORWARD_CHANNEL] = msg.forward
         rc_msg.channels[THROTTLE_CHANNEL] = msg.vertical
