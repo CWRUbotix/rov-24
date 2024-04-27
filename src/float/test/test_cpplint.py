@@ -13,7 +13,6 @@ SKETCHES = ["float_transceiver", "surface_transceiver"]
 TMP = "/tmp"
 # SRC = "src"
 # INCLUDE = "include"
-CPP = ".cpp"
 
 
 @pytest.mark.linter
