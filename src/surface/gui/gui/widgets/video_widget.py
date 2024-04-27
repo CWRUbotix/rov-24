@@ -165,7 +165,7 @@ class SwitchableVideoWidget(VideoWidget):
     def controller_camera_switch(self, switch: CameraControllerSwitch) -> None:
         self.camera_switch(switch.toggle_right)
 
-    def gui_camera_switch(self,) -> None:
+    def gui_camera_switch(self) -> None:
         self.controller_publisher.publish(CameraControllerSwitch(toggle_right=True))
 
     def camera_switch(self, toggle_right: bool) -> None:
