@@ -7,7 +7,8 @@ import pytest
 from ament_cpplint.main import main
 
 
-INO = ".ino"
+INO_EXTENSION = ".ino"
+CPP_EXTENSION = ".cpp"
 SKETCHES = ["float_transceiver", "surface_transceiver"]
 TMP = "/tmp"
 # SRC = "src"
