@@ -25,9 +25,9 @@ MIN_CHANNEL: int = 1
 
 FORWARD_CHANNEL: int = 4  # X
 THROTTLE_CHANNEL: int = 2  # Z (vertical)
-LATERAL_CHANNEL: int = 3  # Y (left & right)
+LATERAL_CHANNEL: int = 5  # Y (left & right)
 PITCH_CHANNEL: int = 0  # Pitch
-YAW_CHANNEL: int = 5  # Yaw
+YAW_CHANNEL: int = 3  # Yaw
 ROLL_CHANNEL: int = 1  # Roll
 
 

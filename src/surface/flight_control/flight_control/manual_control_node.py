@@ -95,12 +95,12 @@ class ManualControlNode(Node):
         buttons: MutableSequence[int] = msg.buttons
 
         instruction = PixhawkInstruction(
-            pitch=float(axes[DPADVERT]),  # DPad
-            roll=float(buttons[R1] - buttons[L1]),  # L1/R1 buttons
-            vertical=float(axes[RJOYX]),  # Right Joystick Z
-            forward=float(axes[LJOYX]),  # Left Joystick X
-            lateral=-float(axes[LJOYY]),  # Left Joystick Y
-            yaw=float(axes[R2PRESS_PERCENT] - axes[L2PRESS_PERCENT]) / 2  # L2/R2 buttons
+            forward=float(axes[LJOYY]), # Left Joystick Y
+            lateral=-float(axes[LJOYX]), # Left Joystick X
+            vertical=float(axes[L2PRESS_PERCENT] - axes[R2PRESS_PERCENT]) / 2, # L2/R2 triggers
+            roll=float(buttons[L1] - buttons[R1]), # L1/R1 buttons
+            pitch=float(axes[RJOYY]), # Right Joystick Y
+            yaw=-float(axes[RJOYX]) # Right Joystick X
         )
 
         self.rc_pub.publish(instruction)
