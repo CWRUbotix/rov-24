@@ -113,50 +113,37 @@ This should automatically be done by the prior command `ros2 run pi_main install
 
 ## Usage
 
-[Tutorial followed](https://roboticsbackend.com/make-ros-launch-start-on-boot-with-robot_upstart/)
-
 ### Testing without Rebooting
 
-Installing & setting up this package creates a startup task called `cwrubotix_pi`. You can manually start and stop this task.
+Installing & setting up this package creates a startup task called `pi_main`. You can manually start and stop this task. I had the `pi_main.service` located in `/etc/systemmd/systemd/pi_main.service`.
 
-You should run the `cwrubotix_pi` task in the foreground for testing (**make sure to kill the background task first - see below**):
+To run the `pi_main` task in the background (happens on Pi startup):
 
 ```bash
-sudo cwrubotix_pi-start
+sudo systemctl start pi_main.service
 ```
 
-To run the `cwrubotix_pi` task in the background (happens on Pi startup):
+To kill the `pi_main` background task (**do this before starting the foreground task**):
+```bash
+sudo systemctl stop pi_main.service
+```
+To run the `pi_main` task in the foreground runs the shell scripst in the pi_main/scripts folder.
 
 ```bash
-sudo systemctl start cwrubotix_pi.service
+source pi_main.sh
 ```
 
-To kill the `cwrubotix_pi` background task (**do this before starting the foreground task**):
+To get output of task
 
 ```bash
-sudo systemctl stop cwrubotix_pi.service
-```
-
-To completely uninstall the `cwrubotix_pi` task:
-
-```bash
-ros2 run robot_upstart uninstall cwrubotix_pi
+sudo journalctl -f -u pi_main.service
 ```
 
 ## Nodes
 
-### ip_publisher
-
-Publishes the current ip address of the network.
-
-#### Published Topics
-
-* **`/ip_address`** ([rov_msgs/msg/IPAddress])
-
-    The IP Address as a string.
+There are no nodes in this package.
 
 ## Launch files
 
 * **pi_launch.py**: launch the manipulators, camera streaming, and pixhawk packages
 
-[rov_msgs/msg/IPAddress]: ../../rov_msgs/msg/IPAddress.msg
