@@ -1,4 +1,7 @@
-import serial
+import time
+
+from serial import Serial
+from serial.serialutil import SerialException
 import rclpy
 from rclpy.node import Node
 from rov_msgs.msg import FloatCommand
@@ -16,9 +19,27 @@ class SerialReader(Node):
             self.control_callback,
             10)
         timer_period = .5
-        self.ser = serial.Serial('/dev/ttyTransceiver', 115200)
-        self.timer = self.create_timer(timer_period, self.timer_callback)
-        self.i = 0
+
+        first_attempt = True
+        self.ser: Serial | None = None
+
+        while not self.ser:
+            try:
+                self.ser = Serial('/dev/ttyTransceiver', 115200)
+            except SerialException:
+                if first_attempt:
+                    self.get_logger().warning('Transceiver not plugged in.')
+                    first_attempt = False
+                time.sleep(1)
+
+        self.create_timer(timer_period, self.timer_callback)
+
+    @property
+    def serial(self) -> Serial:
+        return self._serial
+    
+    @property.setter
+    def serial(self, Serial)
 
     def timer_callback(self) -> None:
         """Publish a message from the transceiver."""
