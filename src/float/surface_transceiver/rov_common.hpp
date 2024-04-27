@@ -62,3 +62,17 @@ union {
   unsigned long longVal;
   uint8_t byteArray[4];
 } bytesUnion;
+
+/**
+ * printf the arguments with a line break at the end to the provided serial port.
+ *  i.e. printfln(&Serial, "Here's a float: %f", 123.45);
+ * Supports these interpolation codes:
+ *  %% : escaped "%"
+ *  %s : strings
+ *  %d : integers (decimal)
+ *  %b : integers (binary)
+ *  %o : integers (octal)
+ *  %x : integers (hex)
+ *  %f : floats/doubles
+*/
+void printfln(Stream *serialPointer, const char* input...);
