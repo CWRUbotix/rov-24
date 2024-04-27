@@ -89,7 +89,7 @@ class ControlInverterNode(Node):
 
     def control_callback(self, msg: PixhawkInstruction) -> None:
         # Smooth out adjustments
-        self.apply(msg, lambda value: value * abs(value))
+        ControlInverterNode.apply(msg, lambda value: value * abs(value))
 
         if self.inverted:
             msg.forward *= -1
