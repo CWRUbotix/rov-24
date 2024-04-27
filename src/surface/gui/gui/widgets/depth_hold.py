@@ -1,7 +1,6 @@
 from gui.gui_nodes.event_nodes.client import GUIEventClient
 from gui.gui_nodes.event_nodes.subscriber import GUIEventSubscriber
 from gui.styles.custom_styles import ButtonIndicator
-from mavros_msgs.srv import CommandBool
 from PyQt6.QtCore import pyqtSignal, pyqtSlot
 from PyQt6.QtWidgets import QVBoxLayout, QHBoxLayout, QWidget, QLabel
 
@@ -57,7 +56,6 @@ class DepthHold(QWidget):
 
         layout.addLayout(h_layout)
 
-
         self.command_response_signal.connect(self.response_callback)
 
         self.set_mode_callback = GUIEventClient(SetMode, "mavros/set_mode",
@@ -78,9 +76,9 @@ class DepthHold(QWidget):
     def disable_clicked(self) -> None:
         self.set_mode_callback.send_request_async(self.DISABLE_REQUEST)
 
-    @pyqtSlot(CommandBool.Response)
-    def response_callback(self, res: CommandBool.Response) -> None:
-        if not res:
+    @pyqtSlot(SetMode.Response)
+    def response_callback(self, res: SetMode.Response) -> None:
+        if not res.mode_sent:
             self.set_mode_callback.get_logger().warn("Failed to set pixhawk mode.")
 
     @pyqtSlot(VehicleState)
