@@ -12,12 +12,11 @@ class PilotApp(App):
     def __init__(self) -> None:
         super().__init__('pilot_gui_node')
 
-        self.setWindowTitle('Pilot GUI - CWRUbotix ROV 2024')
-
         main_layout = QVBoxLayout()
         self.setLayout(main_layout)
 
         simulation_param = self.node.declare_parameter('simulation', False)
+        gui_param = self.node.declare_parameter('gui', 'pilot')
 
         if simulation_param.value:
             front_cam_type = CameraType.SIMULATION
@@ -45,8 +44,20 @@ class PilotApp(App):
         video_area = SwitchableVideoWidget([bottom_cam_description, depth_cam_description],
                                            "camera_switch")
 
-        main_layout.addWidget(main_video, alignment=Qt.AlignmentFlag.AlignHCenter)
-        main_layout.addWidget(video_area, alignment=Qt.AlignmentFlag.AlignHCenter)
+        if gui_param.value == 'pilot':
+            self.setWindowTitle('Pilot GUI - CWRUbotix ROV 2024')
+
+            main_layout.addWidget(main_video, alignment=Qt.AlignmentFlag.AlignHCenter)
+            main_layout.addWidget(video_area, alignment=Qt.AlignmentFlag.AlignHCenter)
+        else:
+            self.setWindowTitle('Debug GUI - CWRUbotix ROV 2024')
+
+            video_layout = QHBoxLayout()
+            
+            video_layout.addWidget(main_video, alignment=Qt.AlignmentFlag.AlignHCenter)
+            video_layout.addWidget(video_area, alignment=Qt.AlignmentFlag.AlignHCenter)
+
+            main_layout.addLayout(video_layout)
 
         bottom_screen_layout = QHBoxLayout()
 
