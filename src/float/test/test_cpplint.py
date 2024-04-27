@@ -25,10 +25,10 @@ def test_cpplint() -> None:
     except FileNotFoundError:
         pass
 
-    [shutil.copytree(os.path.join(os.getcwd(), folder),
-                     os.path.join(TMP, folder)) for folder in SKETCHES]
-
     for folder in SKETCHES:
+        # Copies folders
+        shutil.copytree(os.path.join(os.getcwd(), folder), os.path.join(TMP, folder))
+        # Renames files
         os.rename(os.path.join(TMP, folder, folder + INO),
                   os.path.join(TMP, folder, folder + CPP))
 
