@@ -39,3 +39,26 @@
   #define RFM95_RST   7  // "A"
 
 #endif
+
+
+// Buffers for pressures & time data w/preambles containing:
+// 1 byte team number, 1 byte profile index (0x00, 0x01), and 1 byte isThisATimePacket (true == 0xFF)
+// Every pressure is a 32-bit float stored as 4 uint8_t entries
+// Every time is a 32-bit unsigned long stored as 4 uint8_t entries
+// 3 bytes preamble + (62 * 4 = 248 readings or times) = 251 bytes total = PACKET_SIZE
+#define PKT_LEN           RH_RF95_MAX_MESSAGE_LEN
+#define PKT_IDX_TEAM_NUM  0
+#define PKT_IDX_PROFILE   1
+#define PKT_IDX_IS_TIME   2
+#define PKT_PREAMBLE_LEN  3
+#define PKT_PAYLOAD_LEN   PACKET_LEN - PACKET_PREAMBLE_LEN
+
+#define RF95_FREQ 877.0
+
+
+// Converts byte arrays to floats via shared memory
+union {
+  float floatVal;
+  unsigned long longVal;
+  uint8_t byteArray[4];
+} bytesUnion;

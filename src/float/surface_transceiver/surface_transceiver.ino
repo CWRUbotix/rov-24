@@ -10,25 +10,10 @@
 #include <RH_RF95.h>
 #include "rov_common.hpp"
 
-
-/************ Radio Setup ***************/
-
-#define PACKET_PREAMBLE_LEN 3
-
-// Change to 434.0 or other frequency, must match float's freq!
-#define RF95_FREQ 877.0
-
 #define COMMAND_MAX_LEN 50
 
 // Singleton instance of the radio driver
 RH_RF95 rf95(RFM95_CS, RFM95_INT);
-
-// Converts byte arrays to floats via shared memory
-union {
-  float floatVal;
-  unsigned long longVal;
-  uint8_t byteArray[4];
-} bytesUnion;
 
 // Store the last command ordered over serial
 // Spam the float with this until it ACKs
@@ -140,14 +125,14 @@ void receivePacket() {
       }
       else {
         // This packet is probably a data packet
-        bool isTimePacket = byteBuffer[2];
+        bool isTimePacket = byteBuffer[PKT_IDX_IS_TIME];
         
         Serial.print("Received ");
         Serial.print(isTimePacket ? "time" : "pressure");
         Serial.print(" packet for team ");
-        Serial.print(byteBuffer[0]);
+        Serial.print(byteBuffer[PKT_IDX_TEAM_NUM]);
         Serial.print(" on profile ");
-        Serial.print(byteBuffer[1]);
+        Serial.print(byteBuffer[PKT_IDX_PROFILE]);
         Serial.print(" with length ");
         Serial.print(len);
         Serial.print(": ");
@@ -159,9 +144,9 @@ void receivePacket() {
   
         if (isTimePacket) {
           Serial.print("= longs with length ");
-          Serial.print((len - PACKET_PREAMBLE_LEN) / sizeof(long));
+          Serial.print((len - PKT_PREAMBLE_LEN) / sizeof(long));
           Serial.print(": ");
-          for (int i = PACKET_PREAMBLE_LEN; i < len; i += sizeof(long)) {
+          for (int i = PKT_PREAMBLE_LEN; i < len; i += sizeof(long)) {
             memcpy(bytesUnion.byteArray, byteBuffer + i, sizeof(long));
             Serial.print(bytesUnion.longVal);
             Serial.print(", ");
@@ -169,9 +154,9 @@ void receivePacket() {
         }
         else {
           Serial.print("= floats with length ");
-          Serial.print((len - PACKET_PREAMBLE_LEN) / sizeof(float));
+          Serial.print((len - PKT_PREAMBLE_LEN) / sizeof(float));
           Serial.print(": ");
-          for (int i = PACKET_PREAMBLE_LEN; i < len; i += sizeof(float)) {
+          for (int i = PKT_PREAMBLE_LEN; i < len; i += sizeof(float)) {
             memcpy(bytesUnion.byteArray, byteBuffer + i, sizeof(float));
             Serial.print(bytesUnion.floatVal);
             Serial.print(", ");
