@@ -35,34 +35,36 @@
 #define TX_MAX        60000
 #define ONE_HOUR      360000
 
-#define WAIT 0
-#define SUCK 1
-#define PUMP 2
-#define STOP 3
+#define WAIT_PROFILING 0
+#define WAIT_SURFACED 1
+#define SUCK 2
+#define PUMP 3
+#define STOP 4
+
+#define SCHEDULE_LENGTH 11
 
 uint8_t overrideState = 0;
 uint8_t currentStage = 0;
 
-const uint8_t SCHEDULE_LENGTH = 11;
 unsigned long SCHEDULE[SCHEDULE_LENGTH][2] = {
   // Wait for max <time> or until surface signal
-  {WAIT, RELEASE_MAX },
+  {WAIT_SURFACED,  RELEASE_MAX },
 
   // Profile 1
-  {SUCK, SUCK_MAX    },
-  {WAIT, DESCEND_TIME},
-  {PUMP, PUMP_MAX    },
-  {WAIT, ASCEND_TIME },
+  {SUCK,           SUCK_MAX    },
+  {WAIT_PROFILING, DESCEND_TIME},
+  {PUMP,           PUMP_MAX    },
+  {WAIT_PROFILING, ASCEND_TIME },
 
-  {WAIT, TX_MAX      },
+  {WAIT_SURFACED,  TX_MAX      },
 
   // Profile 2
-  {SUCK, SUCK_MAX    },
-  {WAIT, DESCEND_TIME},
-  {PUMP, PUMP_MAX    },
-  {WAIT, ASCEND_TIME },
+  {SUCK,           SUCK_MAX    },
+  {WAIT_PROFILING, DESCEND_TIME},
+  {PUMP,           PUMP_MAX    },
+  {WAIT_PROFILING, ASCEND_TIME },
 
-  {WAIT, ONE_HOUR    },
+  {WAIT_SURFACED,  ONE_HOUR    },
 };
 
 unsigned long stageStartTime;
@@ -120,8 +122,6 @@ void loop() {
 
   // Move to next stage if necessary
   bool submergeReceived = receiveCommand();
-//  Serial.print("Submerge: ");
-//  Serial.println(submergeReceived);
 
   if (overrideState == SUCK) {
     if (digitalRead(LIMIT_FULL) == HIGH) {
@@ -144,7 +144,7 @@ void loop() {
   
   // Read the pressure if we're profiling
   if (
-    ((1 <= currentStage && currentStage <= 4) || (6 <= currentStage && currentStage <= 9)) &&
+    SCHEDULE[currentStage][0] != WAIT_SURFACED &&
     millis() >= previousPressureReadTime + PRESSURE_READ_INTERVAL &&
     packetIndex < PKT_LEN  // Stop recording if we overflow buffer
   ) {
@@ -152,7 +152,7 @@ void loop() {
     previousPressureReadTime = millis();
 
     pressureSensor.read();
-    bytesUnion.floatVal = pressureSensor.pressure(); // 5.0
+    bytesUnion.floatVal = pressureSensor.pressure();
     Serial.print("Pressure: ");
     Serial.println(pressureSensor.pressure());
     memcpy(pressurePacket + packetIndex, bytesUnion.byteArray, sizeof(float));
@@ -171,14 +171,14 @@ void loop() {
   }
 
   // Transmit the pressure buffer if we're surfaced
-  if (currentStage == 5 || currentStage == 10) {
+  if (SCHEDULE[currentStage][0] == WAIT_SURFACED) {
     transmitPressurePacket();
     delay(300);
   }
 
   if (
     millis() >= stageStartTime + SCHEDULE[currentStage][1] ||
-    (SCHEDULE[currentStage][0] == WAIT && submergeReceived) ||
+    (SCHEDULE[currentStage][0] == WAIT_SURFACED && submergeReceived) ||
     (SCHEDULE[currentStage][0] == SUCK && !digitalRead(LIMIT_FULL)) ||
     (SCHEDULE[currentStage][0] == PUMP && !digitalRead(LIMIT_EMPTY))
   ) {
@@ -248,11 +248,6 @@ bool receiveCommand() {
 
       char response[32];
       bool shouldSubmerge = false;
-
-      // Submerging
-      // Invalid command
-      // Overriding: pump
-      // Overriding: suck
 
       if (strcmp(charBuf, "submerge") == 0) {
         strcpy(response, "ACK SUBMERGING");
