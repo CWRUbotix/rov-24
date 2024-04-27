@@ -31,7 +31,7 @@ def test_joystick_profiles() -> None:
         roll=0.92
     )
 
-    msg: OverrideRCIn = ControlInverterNode.to_override_rc_in(instruction)
+    msg: OverrideRCIn = ControlInverterNode().to_override_rc_in(msg=instruction)
 
     assert msg.channels[FORWARD_CHANNEL] == ZERO_SPEED
     assert msg.channels[THROTTLE_CHANNEL] == (ZERO_SPEED + RANGE_SPEED)

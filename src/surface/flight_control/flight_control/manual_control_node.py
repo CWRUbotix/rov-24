@@ -42,7 +42,7 @@ class ManualControlNode(Node):
         super().__init__('manual_control_node',
                          parameter_overrides=[])
 
-        self.rc_pub: Publisher = self.create_publisher(
+        self.rc_pub = self.create_publisher(
             PixhawkInstruction,
             'pixhawk_control',
             qos_profile_system_default
@@ -95,12 +95,12 @@ class ManualControlNode(Node):
         buttons: MutableSequence[int] = msg.buttons
 
         instruction = PixhawkInstruction(
-            forward=float(axes[LJOYY]), # Left Joystick Y
-            lateral=-float(axes[LJOYX]), # Left Joystick X
-            vertical=float(axes[L2PRESS_PERCENT] - axes[R2PRESS_PERCENT]) / 2, # L2/R2 triggers
-            roll=float(buttons[L1] - buttons[R1]), # L1/R1 buttons
-            pitch=float(axes[RJOYY]), # Right Joystick Y
-            yaw=-float(axes[RJOYX]) # Right Joystick X
+            forward=float(axes[LJOYY]),  # Left Joystick Y
+            lateral=-float(axes[LJOYX]),  # Left Joystick X
+            vertical=float(axes[L2PRESS_PERCENT] - axes[R2PRESS_PERCENT]) / 2,  # L2/R2 triggers
+            roll=float(buttons[L1] - buttons[R1]),  # L1/R1 buttons
+            pitch=float(axes[RJOYY]),  # Right Joystick Y
+            yaw=-float(axes[RJOYX])  # Right Joystick X
         )
 
         self.rc_pub.publish(instruction)
