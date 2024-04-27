@@ -5,11 +5,10 @@ from rclpy.executors import MultiThreadedExecutor
 from rclpy.node import Node
 from rclpy.qos import qos_profile_sensor_data, qos_profile_system_default
 from sensor_msgs.msg import Joy
-from mavros_msgs.msg import OverrideRCIn
 
 from rov_msgs.msg import CameraControllerSwitch, Manip, ValveManip
 
-from flight_control.pixhawk_instruction import PixhawkInstruction
+from rov_msgs.msg import PixhawkInstruction
 
 # Button meanings for PS5 Control might be different for others
 X_BUTTON:        int = 0  # Manipulator 0
@@ -44,8 +43,8 @@ class ManualControlNode(Node):
                          parameter_overrides=[])
 
         self.rc_pub = self.create_publisher(
-            OverrideRCIn,
-            'mavros/rc/override',
+            PixhawkInstruction,
+            'pixhawk_control',
             qos_profile_system_default
         )
 
@@ -96,18 +95,15 @@ class ManualControlNode(Node):
         buttons: MutableSequence[int] = msg.buttons
 
         instruction = PixhawkInstruction(
-            forward=axes[LJOYY],  # Left Joystick Y
-            lateral=-axes[LJOYX],  # Left Joystick X
-            vertical=(axes[L2PRESS_PERCENT] - axes[R2PRESS_PERCENT]) / 2,  # L2/R2 triggers
-            roll=buttons[L1] - buttons[R1],  # L1/R1 buttons
-            pitch=axes[RJOYY],  # Right Joysick Y
-            yaw=-axes[RJOYX],  # Right Joystick X
+            forward=float(axes[LJOYY]),  # Left Joystick Y
+            lateral=-float(axes[LJOYX]),  # Left Joystick X
+            vertical=float(axes[L2PRESS_PERCENT] - axes[R2PRESS_PERCENT]) / 2,  # L2/R2 triggers
+            roll=float(buttons[L1] - buttons[R1]),  # L1/R1 buttons
+            pitch=float(axes[RJOYY]),  # Right Joystick Y
+            yaw=-float(axes[RJOYX])  # Right Joystick X
         )
 
-        # Smooth out adjustments
-        instruction.apply(lambda value: value * abs(value))
-
-        self.rc_pub.publish(instruction.to_override_rc_in())
+        self.rc_pub.publish(instruction)
 
     def manip_callback(self, msg: Joy) -> None:
         buttons: MutableSequence[int] = msg.buttons

@@ -22,7 +22,16 @@ def generate_launch_description() -> LaunchDescription:
         output='screen'
     )
 
+    control_inverter_node = Node(
+        package='flight_control',
+        executable='control_inverter_node',
+        remappings=[('/surface/mavros/rc/override', '/tether/mavros/rc/override')],
+        emulate_tty=True,
+        output='screen'
+    )
+
     return LaunchDescription([
         manual_control_node,
-        auto_docking_node
+        auto_docking_node,
+        control_inverter_node
     ])
