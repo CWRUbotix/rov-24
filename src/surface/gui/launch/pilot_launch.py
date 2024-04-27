@@ -1,10 +1,6 @@
-from enum import Enum
-
 from launch.actions import GroupAction
-from launch.launch_description import DeclareLaunchArgument, LaunchDescription
+from launch.launch_description import LaunchDescription
 from launch.substitutions.launch_configuration import LaunchConfiguration
-from launch.substitutions.equals_substitution import EqualsSubstitution
-from launch.conditions.if_condition import IfCondition
 from launch_ros.actions import Node, PushRosNamespace
 
 
