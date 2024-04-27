@@ -7,16 +7,17 @@ import pytest
 from ament_cpplint.main import main
 
 
+INO = ".ino"
+SKETCHES = ["float_transceiver", "surface_transceiver"]
+TMP = "/tmp"
+# SRC = "src"
+# INCLUDE = "include"
+CPP = ".cpp"
+
+
 @pytest.mark.linter
 def test_cpplint() -> None:
     """Tests cpplint on this module."""
-
-    INO = ".ino"
-    SKETCHES = ["float_transceiver", "surface_transceiver"]
-    TMP = "/tmp"
-    # SRC = "src"
-    # INCLUDE = "include"
-    CPP = ".cpp"
 
     try:
         for folder in SKETCHES:
