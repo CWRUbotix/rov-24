@@ -10,7 +10,7 @@ def generate_launch_description() -> LaunchDescription:
         emulate_tty=True,
         output='screen'
     )
-    
+
     control_inverter_node = Node(
         package='flight_control',
         executable='control_inverter_node',
