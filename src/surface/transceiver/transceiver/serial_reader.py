@@ -8,14 +8,14 @@ from rclpy.qos import qos_profile_sensor_data
 from serial import Serial
 from serial.serialutil import SerialException
 
-from rov_msgs.msg import FloatDepthData
+from rov_msgs.msg import FloatData
 
 
 class SerialReader(Node):
 
     def __init__(self) -> None:
         super().__init__('serial_reader')
-        self.publisher = self.create_publisher(FloatDepthData, 'transceiver_data', qos_profile_sensor_data)
+        self.publisher = self.create_publisher(FloatData, 'transceiver_data', qos_profile_sensor_data)
         timer_period = .5
 
         self.first_attempt = True
@@ -36,19 +36,21 @@ class SerialReader(Node):
 
     def timer_callback(self) -> None:
         """Publish a message from the transceiver."""
-        msg = FloatDepthData()
+        msg = FloatData()
 
         packet = self.serial.readline()
 
         # TODO handle readline returning empty byte
 
-        prefix = packet[0:FloatDepthData.PREFIX_LENGTH]
-        data = packet[FloatDepthData.PREFIX_LENGTH:]
+        msg.is_empty = False
+
+        prefix = packet[0:FloatData.PREFIX_LENGTH]
+        data = packet[FloatData.PREFIX_LENGTH:]
 
         # Better to round down and miss one set of data
         data_size = floor(len(data) / 2)
 
-        if data_size > FloatDepthData.DATA_MAX_LENGTH:
+        if data_size > FloatData.DATA_MAX_LENGTH:
             self.get_logger().warning("Somehow data is longer than max data size")
 
         msg.team_number = int(prefix[0:1])

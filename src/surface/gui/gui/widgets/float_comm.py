@@ -1,13 +1,13 @@
 from PyQt6.QtWidgets import QPushButton, QHBoxLayout, QLabel, QWidget
 from gui.gui_nodes.event_nodes.publisher import GUIEventPublisher
-from rov_msgs.msg import FloatCommand
+from rov_msgs.msg import FloatData
 from PyQt6.QtCore import pyqtSignal, pyqtSlot
 
 
 class FloatComm(QWidget):
     """FloatComm widget for sending Float Communication Commands."""
 
-    handle_scheduler_response_signal: pyqtSignal = pyqtSignal(FloatCommand)
+    handle_scheduler_response_signal: pyqtSignal = pyqtSignal(FloatData)
 
     def __init__(self) -> None:
         super().__init__()
