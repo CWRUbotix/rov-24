@@ -1,6 +1,6 @@
 import time
 from math import floor
-from typing import TYPE_CHECKING, Optional
+from typing import Optional
 
 import rclpy
 from rclpy.node import Node
@@ -13,9 +13,6 @@ from rov_msgs.msg import FloatDepthData
 
 class SerialReader(Node):
 
-    if TYPE_CHECKING:
-        _serial: Optional[Serial]
-
     def __init__(self) -> None:
         super().__init__('serial_reader')
         self.publisher = self.create_publisher(FloatDepthData, 'transceiver_data', qos_profile_sensor_data)
@@ -23,6 +20,7 @@ class SerialReader(Node):
 
         self.first_attempt = True
         self.create_timer(timer_period, self.timer_callback)
+        self._serial: Optional[Serial] = None
 
     @property
     def serial(self) -> Serial:
