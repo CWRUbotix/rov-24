@@ -64,17 +64,6 @@ def generate_launch_description() -> LaunchDescription:
         ])
     )
 
-    realsense_path = get_package_share_directory('realsense')
-
-    # Launches Realsense
-    realsense_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource([
-            os.path.join(
-                realsense_path, 'launch', 'realsense_launch.py'
-            )
-        ])
-    )
-
     flood_sensors_path = get_package_share_directory('flood_detection')
 
     # Launches Realsense
