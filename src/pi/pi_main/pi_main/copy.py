@@ -16,6 +16,6 @@ if __name__ == '__main__':
     service_dst_folder = os.path.join('/etc', 'systemmd', 'systemd')
     service_dst = os.path.join(service_dst_folder, 'pi_main.service')
 
-    os.makedirs(service_dst_folder)
+    os.makedirs(service_dst_folder, exist_ok=True)
     shutil.copy(service_src, service_dst)
     print("Copying files.")
