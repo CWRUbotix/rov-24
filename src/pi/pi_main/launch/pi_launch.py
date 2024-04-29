@@ -81,7 +81,6 @@ def generate_launch_description() -> LaunchDescription:
             manip_launch,
             pixhawk_launch,
             # cam_launch,
-            realsense_launch,
             flood_detection_launch,
             pi_info_launch
         ]
