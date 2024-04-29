@@ -34,7 +34,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/ValveManip.msg"
   "msg/Heartbeat.msg"
   "msg/MissionTimerTick.msg"
-  "msg/FloatCommand.msg"
+  "msg/FloatDepthData.msg"
   "msg/PixhawkInstruction.msg"
   "srv/AutonomousFlight.srv"
   "srv/MissionTimerSet.srv"

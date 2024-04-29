@@ -1,66 +1,67 @@
 import time
+from math import floor
+from typing import TYPE_CHECKING, Optional
 
-from serial import Serial
-from serial.serialutil import SerialException
 import rclpy
 from rclpy.node import Node
-from rov_msgs.msg import FloatCommand
+from rclpy.qos import qos_profile_sensor_data
+from serial import Serial
+from serial.serialutil import SerialException
+
+from rov_msgs.msg import FloatDepthData
 
 
 class SerialReader(Node):
 
+    if TYPE_CHECKING:
+        _serial: Optional[Serial]
+
     def __init__(self) -> None:
-        super().__init__('serial_reader',
-                         parameter_overrides=[])
-        self.publisher = self.create_publisher(FloatCommand, 'transceiver_data', 10)
-        self.listener = self.create_subscription(
-            FloatCommand,
-            'transceiver_control',
-            self.control_callback,
-            10)
+        super().__init__('serial_reader')
+        self.publisher = self.create_publisher(FloatDepthData, 'transceiver_data', qos_profile_sensor_data)
         timer_period = .5
 
-        first_attempt = True
-        self.ser: Serial | None = None
-
-        while not self.ser:
-            try:
-                self.ser = Serial('/dev/ttyTransceiver', 115200)
-            except SerialException:
-                if first_attempt:
-                    self.get_logger().warning('Transceiver not plugged in.')
-                    first_attempt = False
-                time.sleep(1)
-
+        self.first_attempt = True
         self.create_timer(timer_period, self.timer_callback)
 
     @property
     def serial(self) -> Serial:
+        while not self._serial:
+            try:
+                self._serial = Serial('/dev/ttyTransceiver', 115200)
+            except SerialException:
+                if self.first_attempt:
+                    self.get_logger().warning('Transceiver not plugged in.')
+                    self.first_attempt = False
+                time.sleep(1)
         return self._serial
-    
-    @property.setter
-    def serial(self, Serial)
 
     def timer_callback(self) -> None:
         """Publish a message from the transceiver."""
-        msg = FloatCommand()
-        msg.command = self.ser.readline().decode()
+        msg = FloatDepthData()
+
+        packet = self.serial.readline()
+
+        # TODO handle readline returning empty byte
+
+        prefix = packet[0:FloatDepthData.PREFIX_LENGTH]
+        data = packet[FloatDepthData.PREFIX_LENGTH:]
+
+        # Better to round down and miss one set of data
+        data_size = floor(len(data) / 2)
+
+        if data_size > FloatDepthData.DATA_MAX_LENGTH:
+            self.get_logger().warning("Somehow data is longer than max data size")
+
+        msg.team_number = int(prefix[0:1])
+        msg.profile_number = int(prefix[1:2])
+
+        # Byte 3 is no longer being used
+
+        msg.depth_data = [int(data) for data in data[0:data_size]]
+        msg.time_data = [float(data) for data in data[data_size:2*data_size]]
+
         self.publisher.publish(msg)
-
-    def control_callback(self, msg: FloatCommand) -> None:
-        """
-        Log a binary string of the command that was sent.
-
-        Parameters
-        ----------
-        msg : FloatCommand
-            the command that was sent via serial monitor
-
-        """
-        msg_encode: bytes = msg.command.encode()
-        self.ser.write(msg_encode)
-        # !r is to print a binary string
-        self.get_logger().info(f'Command sent via serial monitor: {msg_encode!r}')
 
 
 def main() -> None:
