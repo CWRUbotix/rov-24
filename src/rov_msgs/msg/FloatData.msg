@@ -6,6 +6,7 @@ bool is_empty true
 uint8 team_number
 uint8 profile_number
 
-
-uint32[<=124] time_data
+# Seconds
+float32[<=124] time_data
+# Meter of head
 float32[<=124] depth_data

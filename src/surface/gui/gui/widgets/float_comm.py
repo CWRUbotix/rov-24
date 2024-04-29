@@ -1,49 +1,48 @@
-from PyQt6.QtWidgets import QPushButton, QHBoxLayout, QLabel, QWidget
-from gui.gui_nodes.event_nodes.publisher import GUIEventPublisher
-from rov_msgs.msg import FloatData
+from gui.gui_nodes.event_nodes.subscriber import GUIEventSubscriber
 from PyQt6.QtCore import pyqtSignal, pyqtSlot
+from PyQt6.QtWidgets import QHBoxLayout, QLabel, QWidget
+from qwt.plot import QwtPlot
+from qwt.plot_curve import QwtPlotCurve
+
+from rov_msgs.msg import FloatData
 
 
 class FloatComm(QWidget):
     """FloatComm widget for sending Float Communication Commands."""
 
-    handle_scheduler_response_signal: pyqtSignal = pyqtSignal(FloatData)
+    handle_scheduler_response_signal = pyqtSignal(FloatData)
 
     def __init__(self) -> None:
         super().__init__()
 
-        layout: QHBoxLayout = QHBoxLayout()
+        layout = QHBoxLayout()
         self.setLayout(layout)
 
-        submerge_button = QPushButton()
-        submerge_button.setText("Submerge")
-        submerge_button.setFixedSize(300, 200)
-        submerge_button.clicked.connect(self.submerge_clicked)
-        layout.addWidget(submerge_button)
+        self.handle_scheduler_response_signal.connect(self.handle_data)
+        GUIEventSubscriber(FloatData, "transceiver_data", self.handle_scheduler_response_signal)
 
-        self.handle_scheduler_response_signal.connect(self.handle_text)
+        # TODO add label for team number 
+        # and maybe profile number for debugging
+        # self.label: QLabel = QLabel()
+        # self.label.setText('Waiting for radio...')
+        # layout.addWidget(self.label)
+        self.plot = QwtPlot("Meter of Head Versus Seconds")
+        self.plot.setAutoReplot(True)
+        self.plot.show()
+        layout.addWidget(self.plot)
 
-        self.label: QLabel = QLabel()
-        self.label.setText('Waiting for radio...')
-        layout.addWidget(self.label)
-
-        self.transceiver_publisher = GUIEventPublisher(
-            FloatCommand,
-            "transceiver_control"
-        )
-
-    @pyqtSlot(FloatCommand)
-    def handle_text(self, msg: FloatCommand) -> None:
+    @pyqtSlot(FloatData)
+    def handle_data(self, msg: FloatData) -> None:
         """
         Set the widget label text to the message in the FloatCommand.
 
         Parameters
         ----------
-        msg : FloatCommand
-            the command that determines the label text
+        msg : FloatData
+            the data from the float
         """
-        self.label.setText(msg.command)
 
-    def submerge_clicked(self) -> None:
-        """Publish the command for the float to submerge."""
-        self.transceiver_publisher.publish(FloatCommand(command="submerge"))
+        if msg.is_empty:
+            return
+
+        QwtPlotCurve.make(msg.time_data, msg.depth_data, plot=self.plot)
