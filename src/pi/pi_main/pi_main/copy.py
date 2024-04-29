@@ -10,4 +10,12 @@ if __name__ == '__main__':
     udev_dst_dir = os.path.join('/etc', 'udev', 'rules.d')
 
     shutil.copytree(udev_src_dir, udev_dst_dir, dirs_exist_ok=True)
-    print("Copying udev rules.")
+
+    service_src = os.path.join(SHARE_DIR, 'services', 'pi_main.service')
+
+    service_dst_folder = os.path.join('/etc', 'systemmd', 'systemd')
+    service_dst = os.path.join(service_dst_folder, 'pi_main.service')
+
+    os.makedirs(service_dst_folder, exist_ok=True)
+    shutil.copy(service_src, service_dst)
+    print("Copying udev rules and services")
