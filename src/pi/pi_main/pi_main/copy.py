@@ -18,4 +18,4 @@ if __name__ == '__main__':
 
     os.makedirs(service_dst_folder, exist_ok=True)
     shutil.copy(service_src, service_dst)
-    print("Copying files.")
+    print("Copying udev rules and services")
