@@ -11,6 +11,7 @@ from serial.serialutil import SerialException
 from rov_msgs.msg import FloatData
 
 MILLISECONDS_TO_SECONDS = 1/1000
+SECONDS_TO_MINUTES = 1/60
 MBAR_TO_METER_OF_HEAD = 0.010199773339984
 
 
@@ -44,8 +45,8 @@ class SerialReader(Node):
         packet = self.serial.readline()
 
         # TODO handle readline returning empty byte
-
-        msg.is_empty = False
+        if False:
+            return
 
         prefix = packet[0:FloatData.PREFIX_LENGTH]
         data = packet[FloatData.PREFIX_LENGTH:]
@@ -62,10 +63,12 @@ class SerialReader(Node):
         # Byte 3 is no longer being used
 
         # Starts out as unsigned long
-        msg.depth_data = [int(data) * MBAR_TO_METER_OF_HEAD for data in data[0:data_size]]
+        msg.depth_data = [int(data1, data2, data3, data4) * MBAR_TO_METER_OF_HEAD
+                          for data1, data2, data3, data4 in data[0:data_size]]
         # Starts out as float32
-        msg.time_data = [float(data) *
-                         MILLISECONDS_TO_SECONDS for data in data[data_size:2*data_size]]
+        msg.time_data = [float(data1 + data2 + data3 + data4) * MILLISECONDS_TO_SECONDS *
+                         SECONDS_TO_MINUTES
+                         for data1, data2, data3, data4 in data[data_size:2*data_size]]
 
         self.publisher.publish(msg)
 

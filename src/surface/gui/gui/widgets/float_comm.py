@@ -42,7 +42,4 @@ class FloatComm(QWidget):
             the data from the float
         """
 
-        if msg.is_empty:
-            return
-
         QwtPlotCurve.make(msg.time_data, msg.depth_data, plot=self.plot)
