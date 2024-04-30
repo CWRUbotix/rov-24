@@ -6,7 +6,9 @@ setup(
     name=PACKAGE_NAME,
     version='1.1.0',
     packages=[PACKAGE_NAME],
-    data_files=[],
+    data_files=[
+        ('share/' + PACKAGE_NAME, ['package.xml']),
+    ],
     install_requires=['setuptools'],
     zip_safe=True,
     maintainer='benjamin',
