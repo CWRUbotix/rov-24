@@ -2,7 +2,7 @@ from typing import Optional
 import rclpy
 from rclpy.node import Node
 from rclpy.executors import MultiThreadedExecutor
-from rclpy.qos import qos_profile_system_default
+from rclpy.qos import QoSPresetProfiles
 from rclpy.time import Time
 from rclpy.duration import Duration
 from rov_msgs.msg import MissionTimerTick
@@ -26,7 +26,7 @@ class TimerNode(Node):
         super().__init__("timer_node", parameter_overrides=[])
 
         self.publisher = self.create_publisher(
-            MissionTimerTick, "mission_timer", qos_profile_system_default
+            MissionTimerTick, "mission_timer", QoSPresetProfiles.DEFAULT.value
         )
 
         self.set_time_service = self.create_service(

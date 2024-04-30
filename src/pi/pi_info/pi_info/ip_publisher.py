@@ -4,7 +4,7 @@ import struct
 
 import rclpy
 from rclpy.node import Node
-from rclpy.qos import qos_profile_system_default
+from rclpy.qos import QoSPresetProfiles
 
 from rov_msgs.msg import IPAddress
 
@@ -15,7 +15,7 @@ class IPPublisher(Node):
         """Create IP Publisher node."""
         super().__init__('ip_publisher')
         self.publisher = self.create_publisher(IPAddress, 'ip_address',
-                                               qos_profile_system_default)
+                                               QoSPresetProfiles.DEFAULT.value)
         timer_period = 0.5  # seconds
         self.create_timer(timer_period, self.timer_callback)
         self.failed_ethernet = False

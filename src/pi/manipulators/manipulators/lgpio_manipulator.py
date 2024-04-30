@@ -1,7 +1,7 @@
 import lgpio
 import rclpy
 from rclpy.node import Node
-from rclpy.qos import qos_profile_system_default
+from rclpy.qos import QoSPresetProfiles
 
 from rov_msgs.msg import Manip
 
@@ -19,7 +19,7 @@ class Manipulator(Node):
             Manip,
             'manipulator_control',
             self.manip_callback,
-            qos_profile_system_default
+            QoSPresetProfiles.DEFAULT.value
         )
 
         self.gpio_handle = lgpio.gpiochip_open(0)

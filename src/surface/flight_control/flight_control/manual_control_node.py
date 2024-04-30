@@ -3,7 +3,7 @@ from collections.abc import MutableSequence
 import rclpy
 from rclpy.executors import MultiThreadedExecutor
 from rclpy.node import Node
-from rclpy.qos import qos_profile_sensor_data, qos_profile_system_default
+from rclpy.qos import QoSPresetProfiles
 from sensor_msgs.msg import Joy
 
 from rov_msgs.msg import CameraControllerSwitch, Manip, ValveManip
@@ -45,35 +45,35 @@ class ManualControlNode(Node):
         self.rc_pub = self.create_publisher(
             PixhawkInstruction,
             'pixhawk_control',
-            qos_profile_system_default
+            QoSPresetProfiles.DEFAULT.value
         )
 
         self.subscription = self.create_subscription(
             Joy,
             'joy',
             self.controller_callback,
-            qos_profile_sensor_data
+            QoSPresetProfiles.SENSOR_DATA.value
         )
 
         # Manipulators
         self.manip_publisher = self.create_publisher(
             Manip,
             'manipulator_control',
-            qos_profile_system_default
+            QoSPresetProfiles.DEFAULT.value
         )
 
         # Valve Manip
         self.valve_manip = self.create_publisher(
             ValveManip,
             "valve_manipulator",
-            qos_profile_system_default
+            QoSPresetProfiles.DEFAULT.value
         )
 
         # Cameras
         self.camera_toggle_publisher = self.create_publisher(
             CameraControllerSwitch,
             "camera_switch",
-            qos_profile_system_default
+            QoSPresetProfiles.DEFAULT.value
         )
 
         self.manip_buttons: dict[int, ManipButton] = {

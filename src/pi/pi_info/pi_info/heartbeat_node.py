@@ -1,7 +1,7 @@
 import rclpy
 from rclpy.executors import MultiThreadedExecutor
 from rclpy.node import Node
-from rclpy.qos import qos_profile_system_default
+from rclpy.qos import QoSPresetProfiles
 
 from rov_msgs.msg import Heartbeat
 
@@ -13,7 +13,7 @@ class HeartbeatNode(Node):
         super().__init__("heartbeat_node", parameter_overrides=[])
 
         self.publisher = self.create_publisher(
-            Heartbeat, "pi_heartbeat", qos_profile_system_default
+            Heartbeat, "pi_heartbeat", QoSPresetProfiles.DEFAULT.value
         )
 
         self.timer = self.create_timer(1 / PUBLISH_RATE, self.timer_callback)

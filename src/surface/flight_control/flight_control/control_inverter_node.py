@@ -4,7 +4,7 @@ from rclpy.executors import MultiThreadedExecutor
 from rclpy.node import Node
 from rclpy.subscription import Subscription
 from rclpy.publisher import Publisher
-from rclpy.qos import qos_profile_system_default
+from rclpy.qos import QoSPresetProfiles
 from mavros_msgs.msg import OverrideRCIn
 from typing import Callable
 
@@ -42,20 +42,20 @@ class ControlInverterNode(Node):
             CameraControllerSwitch,
             'camera_switch',
             self.invert_callback,
-            qos_profile_system_default
+            QoSPresetProfiles.DEFAULT.value
         )
 
         self.control_subscription: Subscription = self.create_subscription(
             PixhawkInstruction,
             'pixhawk_control',
             self.control_callback,
-            qos_profile_system_default
+            QoSPresetProfiles.DEFAULT.value
         )
 
         self.rc_pub: Publisher = self.create_publisher(
             OverrideRCIn,
             'mavros/rc/override',
-            qos_profile_system_default
+            QoSPresetProfiles.DEFAULT.value
         )
 
     @staticmethod

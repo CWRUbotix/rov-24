@@ -5,7 +5,7 @@ from threading import Thread
 from PyQt6.QtCore import pyqtBoundSignal
 from rclpy.executors import SingleThreadedExecutor
 from rclpy.node import Node
-from rclpy.qos import QoSProfile, qos_profile_system_default
+from rclpy.qos import QoSProfile, QoSPresetProfiles
 from rclpy.subscription import MsgType
 
 
@@ -13,7 +13,7 @@ class GUIEventSubscriber(Node):
     """Multithreaded subscriber for receiving messages to the GUI."""
 
     def __init__(self, msg_type: MsgType, topic: str, signal: pyqtBoundSignal,
-                 qos_profile: QoSProfile = qos_profile_system_default):
+                 qos_profile: QoSProfile = QoSPresetProfiles.DEFAULT.value):
         # Name this node with a sanitized version of the topic
         name: str = f'subscriber_{re.sub(r"[^a-zA-Z0-9_]", "_", topic)}'
         super().__init__(name, parameter_overrides=[])
