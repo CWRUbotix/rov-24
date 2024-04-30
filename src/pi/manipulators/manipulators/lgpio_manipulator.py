@@ -38,9 +38,9 @@ class Manipulator(Node):
                 lgpio.gpio_write(self.gpio_handle, MANIP_PIN_ONE, lgpio.LOW)
         elif manip_id == "right":
             if activated:
-                lgpio.gpio_write(self.gpio_handle, MANIP_PIN_ONE, lgpio.HIGH)
+                lgpio.gpio_write(self.gpio_handle, MANIP_PIN_TWO, lgpio.HIGH)
             else:
-                lgpio.gpio_write(self.gpio_handle, MANIP_PIN_ONE, lgpio.LOW)
+                lgpio.gpio_write(self.gpio_handle, MANIP_PIN_TWO, lgpio.LOW)
 
 
 def main() -> None:
