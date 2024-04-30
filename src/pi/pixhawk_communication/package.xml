@@ -16,7 +16,6 @@
   <depend>mavros</depend>
 
   <!-- Dependencies for mavproxy -->
-  <depend>mavlink</depend>
   <depend>python3</depend>
   <depend>python3-yaml</depend>
   <depend>python3-opencv</depend>
