@@ -12,4 +12,4 @@ def test_install_on_boot() -> None:
     expected_rules_files = set(["i2c.rules", "camera.rules", "pixhawk.rules"])
     assert expected_rules_files.issubset(actual_rules_files)
 
-    assert os.path.exists(os.path.join('/etc', 'systemmd', 'systemd', 'pi_main.service'))
+    assert os.path.exists(os.path.join('/etc', 'systemd', 'system', 'pi_main.service'))
