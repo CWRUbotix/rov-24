@@ -14,6 +14,12 @@ We communicate to the Pixhawk by using [mavros](https://github.com/mavlink/mavro
 
 To set up a Pixhawk USB port use [this](https://docs.px4.io/main/en/companion_computer/pixhawk_companion.html) guide.
 
+To remotely use QGroundControl ssh into the pi and run the following.
+
+```bash
+mavproxy.py --out {You IP adress}:14550
+```
+
 ## Installation
 
 Install geographiclib dependencies.
