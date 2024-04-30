@@ -5,7 +5,7 @@ from gui.widgets.flood_warning import FloodWarning
 from gui.widgets.video_widget import (CameraDescription, CameraType,
                                       SwitchableVideoWidget, VideoWidget)
 from PyQt6.QtCore import Qt
-from PyQt6.QtWidgets import QHBoxLayout, QVBoxLayout, QBoxLayout
+from PyQt6.QtWidgets import QHBoxLayout, QVBoxLayout
 
 
 class PilotApp(App):
@@ -30,7 +30,7 @@ class PilotApp(App):
         if gui_param.value == 'pilot':
             title = 'Pilot GUI - CWRUbotix ROV 2024'
 
-            video_layout: QHBoxLayout | QBoxLayout = main_layout
+            video_layout: QHBoxLayout | QVBoxLayout = main_layout
             front_cam_size = [1280, 720]
             bottom_cam_size = front_cam_size
             depth_cam_size = [640, 360]
