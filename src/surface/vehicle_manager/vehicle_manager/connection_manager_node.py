@@ -5,7 +5,7 @@ import rclpy
 from mavros_msgs.msg import State
 from rclpy.executors import MultiThreadedExecutor
 from rclpy.node import Node
-from rclpy.qos import qos_profile_system_default
+from rclpy.qos import QoSPresetProfiles
 
 from rov_msgs.msg import Heartbeat
 from rov_msgs.msg import VehicleState as VehicleStateMsg
@@ -25,7 +25,7 @@ class VehicleManagerNode(Node):
         super().__init__("connection_manager_node", parameter_overrides=[])
 
         self.state_publisher = self.create_publisher(
-            VehicleStateMsg, "vehicle_state_event", qos_profile_system_default
+            VehicleStateMsg, "vehicle_state_event", QoSPresetProfiles.DEFAULT.value
         )
 
         self.mavros_subscription = self.create_subscription(

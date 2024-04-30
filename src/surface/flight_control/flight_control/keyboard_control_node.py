@@ -4,7 +4,7 @@ import rclpy.utilities
 from rclpy.publisher import Publisher
 from pynput.keyboard import Key, KeyCode, Listener
 from rclpy.node import Node
-from rclpy.qos import qos_profile_system_default
+from rclpy.qos import QoSPresetProfiles
 
 from rov_msgs.msg import PixhawkInstruction
 
@@ -58,7 +58,7 @@ class KeyboardListenerNode(Node):
         self.rc_pub: Publisher = self.create_publisher(
             PixhawkInstruction,
             'pixhawk_control',
-            qos_profile_system_default
+            QoSPresetProfiles.DEFAULT.value
         )
 
         self.get_logger().info(HELP_MSG)
