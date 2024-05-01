@@ -16,14 +16,19 @@ def main() -> None:
     gpio.set_direction(0, bits=ALL_BITS)
     print(gpio.format_config())
 
-    # Turn on the LEDs
-    gpio.set_bits(bits=ALL_BITS)
-    print(gpio.format_config())
-    time.sleep(5)
+    try:
+        while True:
+            # Turn on the LEDs
+            gpio.set_bits(bits=ALL_BITS)
+            print(gpio.format_config())
+            time.sleep(2)
 
-    # # Turn off the LEDs
-    gpio.unset_bits(bits=ALL_BITS)
-    print(gpio.format_config())
+            # # Turn off the LEDs
+            gpio.unset_bits(bits=ALL_BITS)
+            print(gpio.format_config())
+            time.sleep(2)
+    except KeyboardInterrupt:
+        gpio.unset_bits(bits=ALL_BITS)
 
 
 if __name__ == "__main__":
