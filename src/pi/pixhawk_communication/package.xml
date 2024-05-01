@@ -24,6 +24,9 @@
   <depend>python3-lxml</depend>
   <depend>python3-pygame</depend>
 
+  <!-- Dependencies for pymavlink -->
+  <depend>python3-future</depend>
+
   <export>
     <build_type>ament_python</build_type>
   </export>
