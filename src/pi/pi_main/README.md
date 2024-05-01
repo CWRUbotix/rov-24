@@ -24,26 +24,42 @@ nmcli connection up ethernet-eth0
 
 ### Setup Pi SSH access over Ethernet
 
-1. Using a monitor keyboard, connect to the Pi and edit `/etc/netplan/50-cloud-init.yaml`. Either use a flash drive to replace that file with the version below or type it out by hand (sorry):
+1. Using a monitor keyboard, connect to the Pi and edit `/etc/netplan/50-cloud-init.yaml`. Either use a flash drive to replace that file with the version below or in `network_config/50-cloud-init.yaml`
 
-    ```yaml
-    network:
-        ethernets:
-            eth0:
-                dhcp4: no
-                addresses: [192.168.2.1/24]
-                optional: true
-                nameservers:
-                    addresses: [8.8.8.8]
-                routes:
-                - to: default
-                    via: 192.168.2.2
-        version: 2
-    ```
+```yaml
+# This file is generated from information provided by the datasource.  Changes
+# to it will not persist across an instance reboot.  To disable cloud-init's
+# network configuration capabilities, write a file
+# /etc/cloud/cloud.cfg.d/99-disable-network-config.cfg with the following:
+# network: {config: disabled}
+network:
+    ethernets:
+        eth0:
+# Settings for static ip
+            dhcp4: false
+            dhcp6: false
+            addresses:
+            - 192.168.1.2/24
+            routes:
+            - to: default
+            via: 192.168.1.1
+            nameservers:
+            addresses: [8.8.8.8, 8.8.4.4, 192.168.1.1]
+# Settings for dhcp below
+#            dhcp4: true
+#            optional: true
+    version: 2
+```
 
-2. On the Pi, run `sudo netplan try`, then press enter to accept the changes.
+2. Then run the following command to set network configuration to manual.
 
-3. Connect the Pi to your PC with an ethernet cable
+```bash
+sudo bash -c 'echo "network: {config: disabled}" > /etc/cloud/cloud.cfg.d/99-disable-network-config.cfg'
+```
+
+3. On the Pi, run `sudo netplan apply`, then press enter to accept the changes.
+
+4. Connect the Pi to your PC with an ethernet cable
 
 #### Linux
 
