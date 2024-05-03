@@ -129,7 +129,9 @@ class ManualControlNode(Node):
 
     def valve_manip_callback(self, msg: Joy) -> None:
         if msg.buttons[TRI_BUTTON] == 1:
-            self.valve_manip.publish(ValveManip(active=True))
+            self.valve_manip.publish(ValveManip(active=True, pwm=ValveManip.MAX_PWM))
+        elif msg.buttons[SQUARE_BUTTON] == 1:
+            self.valve_manip.publish(ValveManip(active=True, pwm=ValveManip.MIN_PWM))
         else:
             self.valve_manip.publish(ValveManip(active=False))
 
