@@ -1,12 +1,7 @@
 from gui.app import App
 from gui.widgets.logger import Logger
-<<<<<<< HEAD
-from gui.widgets.debug_tab import DebugWidget
-=======
 from gui.widgets.tabs.general_debug_tab import GeneralDebugTab
 from gui.widgets.float_comm import FloatComm
-from gui.widgets.task_selector import TaskSelector
->>>>>>> main
 from gui.widgets.timer import InteractiveTimer
 from PyQt6.QtWidgets import QGridLayout, QTabWidget, QWidget, QVBoxLayout
 
