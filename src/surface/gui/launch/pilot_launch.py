@@ -1,15 +1,17 @@
 from launch.actions import GroupAction
 from launch.launch_description import LaunchDescription
-from launch.substitutions import LaunchConfiguration
+from launch.substitutions.launch_configuration import LaunchConfiguration
 from launch_ros.actions import Node, PushRosNamespace
 
 
 def generate_launch_description() -> LaunchDescription:
     """Asynchronously launches pilot's gui node."""
-    gui_node = Node(
+    pilot_node = Node(
         package='gui',
         executable='run_pilot',
-        parameters=[{'theme': LaunchConfiguration('theme', default='dark')}],
+        parameters=[{'theme': LaunchConfiguration('theme', default='dark')},
+                    {'simulation': LaunchConfiguration('simulation', default='false')},
+                    {'gui': LaunchConfiguration('gui', default='pilot')}],
         remappings=[("/surface/gui/mavros/cmd/arming", "/tether/mavros/cmd/arming"),
                     ("/surface/gui/camera_switch", "/surface/camera_switch"),
                     ("/surface/gui/bottom_cam/image_raw", "/surface/bottom_cam/image_raw"),
@@ -24,7 +26,7 @@ def generate_launch_description() -> LaunchDescription:
     namespace_launch = GroupAction(
         actions=[
             PushRosNamespace('gui'),
-            gui_node
+            pilot_node
         ]
     )
 

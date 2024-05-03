@@ -6,18 +6,18 @@ FROM osrf/ros:iron-desktop-full
 RUN apt-get update -y \
   && apt-get install --no-install-recommends -y \
   # Install Video for Linux
-  v4l-utils=1.22.1-2build1 -y \
+  v4l-utils -y \
   # Install lsusb
-  usbutils=1:014-1build1 \
+  usbutils \
   # Install nano
-  nano=6.2-1 \
+  nano \
   # Install pip
-  python3-pip=22.0.2+dfsg-1ubuntu0.4 \
+  python3-pip \
   # Install geographiclib dependencies for mavros.
-  geographiclib-tools=1.52-1 \
+  geographiclib-tools \
   # Install missing libxcb-cursor0 xvfb for PyQt unit testing
 # https://pytest-qt.readthedocs.io/en/latest/troubleshooting.html
-  xvfb=2:21.1.4-2ubuntu1.7~22.04.8 \
+  xvfb \
   && apt-get upgrade -y \
   # Clean for better performance
   && apt-get clean \
@@ -46,6 +46,17 @@ ENV USER ${USER_NAME}
 # Switches to rov user
 USER ${USER_NAME}
 
+WORKDIR /home/${USER_NAME}
+
+# Setup Ardusub
+COPY src/surface/rov_gazebo/scripts/ardusub.sh .
+RUN ./ardusub.sh \
+ && rm ardusub.sh
+
+# Setup Ardupilot Gazebo
+COPY src/surface/rov_gazebo/scripts/ardupilot_gazebo.sh .
+RUN ./ardupilot_gazebo.sh \
+    && rm ardupilot_gazebo.sh
 # Update Pip
 RUN pip install --no-cache-dir --upgrade  pip==24.0 
 
@@ -97,3 +108,6 @@ RUN if [[ $(rosdep check -r --from-paths src --ignore-src) != "${EXPECTED_OUTPUT
 
 RUN . /opt/ros/iron/setup.sh \
   && colcon build --symlink-install
+
+# Setup Models and Gazebo Environment
+RUN ./src/surface/rov_gazebo/scripts/add_models_and_worlds.sh

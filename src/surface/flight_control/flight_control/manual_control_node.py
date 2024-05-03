@@ -3,15 +3,12 @@ from collections.abc import MutableSequence
 import rclpy
 from rclpy.executors import MultiThreadedExecutor
 from rclpy.node import Node
-from rclpy.publisher import Publisher
 from rclpy.qos import qos_profile_sensor_data, qos_profile_system_default
-from rclpy.subscription import Subscription
 from sensor_msgs.msg import Joy
-from mavros_msgs.msg import OverrideRCIn
 
-from rov_msgs.msg import CameraControllerSwitch, Manip
+from rov_msgs.msg import CameraControllerSwitch, Manip, ValveManip
 
-from flight_control.pixhawk_instruction import PixhawkInstruction
+from rov_msgs.msg import PixhawkInstruction
 
 # Button meanings for PS5 Control might be different for others
 X_BUTTON:        int = 0  # Manipulator 0
@@ -30,11 +27,11 @@ RJOYPRESS:       int = 12
 # Joystick Directions 1 is up/left -1 is down/right
 # X is forward/backward Y is left/right
 # L2 and R2 1 is not pressed and -1 is pressed
-LJOYY:           int = 0
-LJOYX:           int = 1
+LJOYX:           int = 0
+LJOYY:           int = 1
 L2PRESS_PERCENT: int = 2
-RJOYY:           int = 3
-RJOYX:           int = 4
+RJOYX:           int = 3
+RJOYY:           int = 4
 R2PRESS_PERCENT: int = 5
 DPADHOR:         int = 6
 DPADVERT:        int = 7
@@ -45,13 +42,13 @@ class ManualControlNode(Node):
         super().__init__('manual_control_node',
                          parameter_overrides=[])
 
-        self.rc_pub: Publisher = self.create_publisher(
-            OverrideRCIn,
-            'mavros/rc/override',
+        self.rc_pub = self.create_publisher(
+            PixhawkInstruction,
+            'pixhawk_control',
             qos_profile_system_default
         )
 
-        self.subscription: Subscription = self.create_subscription(
+        self.subscription = self.create_subscription(
             Joy,
             'joy',
             self.controller_callback,
@@ -59,9 +56,16 @@ class ManualControlNode(Node):
         )
 
         # Manipulators
-        self.manip_publisher: Publisher = self.create_publisher(
+        self.manip_publisher = self.create_publisher(
             Manip,
             'manipulator_control',
+            qos_profile_system_default
+        )
+
+        # Valve Manip
+        self.valve_manip = self.create_publisher(
+            ValveManip,
+            "valve_manipulator",
             qos_profile_system_default
         )
 
@@ -73,9 +77,8 @@ class ManualControlNode(Node):
         )
 
         self.manip_buttons: dict[int, ManipButton] = {
-            X_BUTTON: ManipButton("claw0"),
-            O_BUTTON: ManipButton("claw1"),
-            TRI_BUTTON: ManipButton("light")
+            X_BUTTON: ManipButton("left"),
+            O_BUTTON: ManipButton("right")
         }
 
         self.seen_left_cam = False
@@ -83,6 +86,7 @@ class ManualControlNode(Node):
 
     def controller_callback(self, msg: Joy) -> None:
         self.joystick_to_pixhawk(msg)
+        self.valve_manip_callback(msg)
         self.manip_callback(msg)
         self.camera_toggle(msg)
 
@@ -91,18 +95,15 @@ class ManualControlNode(Node):
         buttons: MutableSequence[int] = msg.buttons
 
         instruction = PixhawkInstruction(
-            pitch=axes[DPADVERT],  # DPad
-            roll=buttons[R1] - buttons[L1],  # L1/R1 buttons
-            vertical=axes[RJOYX],  # Right Joystick Z
-            forward=axes[LJOYX],  # Left Joystick X
-            lateral=-axes[LJOYY],  # Left Joystick Y
-            yaw=(axes[R2PRESS_PERCENT] - axes[L2PRESS_PERCENT]) / 2  # L2/R2 buttons
+            forward=float(axes[LJOYY]),  # Left Joystick Y
+            lateral=-float(axes[LJOYX]),  # Left Joystick X
+            vertical=float(axes[L2PRESS_PERCENT] - axes[R2PRESS_PERCENT]) / 2,  # L2/R2 triggers
+            roll=float(buttons[L1] - buttons[R1]),  # L1/R1 buttons
+            pitch=float(axes[RJOYY]),  # Right Joystick Y
+            yaw=-float(axes[RJOYX])  # Right Joystick X
         )
 
-        # Smooth out adjustments
-        instruction.apply(lambda value: value * abs(value))
-
-        self.rc_pub.publish(instruction.to_override_rc_in())
+        self.rc_pub.publish(instruction)
 
     def manip_callback(self, msg: Joy) -> None:
         buttons: MutableSequence[int] = msg.buttons
@@ -126,6 +127,12 @@ class ManualControlNode(Node):
 
             manip_button.last_button_state = just_pressed
 
+    def valve_manip_callback(self, msg: Joy) -> None:
+        if msg.buttons[TRI_BUTTON] == 1:
+            self.valve_manip.publish(ValveManip(active=True))
+        else:
+            self.valve_manip.publish(ValveManip(active=False))
+
     def camera_toggle(self, msg: Joy) -> None:
         """Cycles through connected cameras on pilot GUI using menu and pairing buttons."""
         buttons: MutableSequence[int] = msg.buttons
@@ -144,7 +151,7 @@ class ManualControlNode(Node):
 
 class ManipButton:
     def __init__(self, claw: str) -> None:
-        self.claw: str = claw
+        self.claw = claw
         self.last_button_state: bool = False
         self.is_active: bool = False
 
