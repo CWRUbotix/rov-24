@@ -8,8 +8,8 @@ def generate_launch_description() -> LaunchDescription:
         package="manipulators",
         executable="manipulators",
         parameters=[
-            {"left": 0},
-            {"right": 2},
+            {"left": 2},
+            {"right": 3},
             # {"light": 2},
         ],
         remappings=[("/pi/manipulator_control", "/tether/manipulator_control")],
