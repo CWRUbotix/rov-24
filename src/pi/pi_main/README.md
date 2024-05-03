@@ -155,6 +155,18 @@ To get output of task
 sudo journalctl -f -u pi_main.service
 ```
 
+### Slow Boot Times?
+
+This occurs because the below service waits for internet before allowing boot. 
+
+Note `systemctl disable systemd-networkd-wait-online` does not work. The disable option is really more of a suggestion than an actual disable.
+
+[![pensivecowboybread](https://cdn3.emoji.gg/emojis/4111-pensivecowboybread.png)](https://emoji.gg/emoji/4111-pensivecowboybread)
+
+```bash
+systemctl mask systemd-networkd-wait-online
+```
+
 ## Nodes
 
 There are no nodes in this package.
