@@ -20,8 +20,8 @@ class OperatorApp(App):
         timer = InteractiveTimer()
         main_layout.addWidget(timer, 0, 1)
 
-        task_selector = TaskSelector()
-        main_layout.addWidget(task_selector, 1, 1)
+        # task_selector = TaskSelector()
+        # main_layout.addWidget(task_selector, 1, 1)
 
         logger = Logger()
         main_layout.addWidget(logger, 1, 0)
