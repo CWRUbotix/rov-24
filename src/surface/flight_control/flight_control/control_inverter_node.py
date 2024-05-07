@@ -34,6 +34,13 @@ YAW_CHANNEL: int = 3  # Yaw
 ROLL_CHANNEL: int = 1  # Roll
 
 
+def joystick_map(raw: float) -> float:
+    mapped = abs(raw) ** JOYSTICK_EXPONENT
+    if raw < 0:
+        mapped *= -1
+    return mapped
+
+
 class ControlInverterNode(Node):
     def __init__(self) -> None:
         super().__init__('control_inverter_node',
@@ -92,12 +99,6 @@ class ControlInverterNode(Node):
 
     def control_callback(self, msg: PixhawkInstruction) -> None:
         # Smooth out adjustments
-
-        def joystick_map(raw: float) -> float:
-            val = abs(raw) ** JOYSTICK_EXPONENT
-            if raw < 0:
-                val *= -1
-            return val
 
         ControlInverterNode.apply(msg, joystick_map)
 
