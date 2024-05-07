@@ -19,7 +19,7 @@ class Watchdog():
         self.start_process()
 
     def start_process(self) -> None:
-        self.process = Popen(self.args)
+        self.process = Popen(self.args, stdout=sys.stdout, stderr=sys.stderr)
 
     def poll(self) -> None:
         if self.process is not None and self.process.poll() is not None:
