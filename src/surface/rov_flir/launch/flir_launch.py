@@ -19,7 +19,7 @@ def generate_launch_description() -> LaunchDescription:
 
     parameters = {
         'debug': False,
-        'acquisition_timeout': 2.0,
+        'acquisition_timeout': 0.5,
         'compute_brightness': False,
         'adjust_timestamp': True,
         'dump_node_map': False,
