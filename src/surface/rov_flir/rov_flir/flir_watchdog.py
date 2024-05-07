@@ -3,6 +3,7 @@ from rclpy.executors import MultiThreadedExecutor
 from rclpy.node import Node
 from subprocess import Popen
 import atexit
+import sys
 
 from typing import Optional
 
