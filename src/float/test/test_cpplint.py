@@ -15,7 +15,7 @@ TMP = "/tmp"
 # INCLUDE = "include"
 
 # List of errors from cpplint.py
-IGNORE_ERRORS = ["legal/copyright"]
+IGNORE_ERRORS = ["-legal/copyright"]
 
 
 @pytest.mark.linter
