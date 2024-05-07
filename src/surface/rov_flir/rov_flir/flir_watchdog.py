@@ -12,14 +12,14 @@ NAMESPACE = "surface"
 
 class Watchdog():
     def __init__(self, node: Node, args: List[str]) -> None:
-        self.node: Node = node
+        self.node = node
         self.args = args
         self.process: Optional[Popen[bytes]] = None
 
         self.start_process()
 
     def start_process(self) -> None:
-        self.process = Popen(self.args)
+        self.process = Popen(self.args, stdout=sys.stdout, stderr=sys.stderr)
 
     def poll(self) -> None:
         if self.process is not None and self.process.poll() is not None:
