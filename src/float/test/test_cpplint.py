@@ -15,7 +15,7 @@ TMP = "/tmp"
 # INCLUDE = "include"
 
 # List of errors from cpplint.py
-IGNORE_ERRORS = ["-legal/copyright"]
+LEGAL_ERROR = "-legal/copyright"
 
 
 @pytest.mark.linter
@@ -39,5 +39,5 @@ def test_cpplint() -> None:
     regular_cpp = []
     regular_cpp.extend([os.path.join(TMP, folder, folder + CPP_EXTENSION) for folder in SKETCHES])
     for file in regular_cpp:
-        error_code = main(argv=["paths", file, '--filters', *IGNORE_ERRORS])
+        error_code = main(argv=["paths", file, f'--filters {LEGAL_ERROR}'])
         assert error_code == 0, 'Found code style errors / warnings'
