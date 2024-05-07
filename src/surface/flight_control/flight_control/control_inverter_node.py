@@ -13,6 +13,9 @@ from rov_msgs.msg import CameraControllerSwitch, PixhawkInstruction
 # Brown out protection
 SPEED_THROTTLE: float = 0.85
 
+# Joystick curve
+JOYSTICK_EXPONENT = 3
+
 # Range of values Pixhawk takes
 # In microseconds
 ZERO_SPEED: int = 1500
@@ -89,7 +92,14 @@ class ControlInverterNode(Node):
 
     def control_callback(self, msg: PixhawkInstruction) -> None:
         # Smooth out adjustments
-        ControlInverterNode.apply(msg, lambda value: value * abs(value))
+
+        def joystick_map(raw: float) -> float:
+            val = abs(raw) ** JOYSTICK_EXPONENT
+            if raw < 0:
+                val *= -1
+            return val
+
+        ControlInverterNode.apply(msg, joystick_map)
 
         if self.inverted:
             msg.forward *= -1
