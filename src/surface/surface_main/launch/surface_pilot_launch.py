@@ -44,7 +44,8 @@ def generate_launch_description() -> LaunchDescription:
     #     ]),
     #     condition=UnlessCondition(simulation_configuration)
     # )
-    flir_launch = Node(
+
+    flir_watchdog = Node(
         package='rov_flir',
         executable='flir_watchdog',
         name='flir_watchdog',
@@ -58,7 +59,7 @@ def generate_launch_description() -> LaunchDescription:
             PushRosNamespace("surface"),
             gui_launch,
             controller_launch,
-            flir_launch
+            flir_watchdog
         ]
     )
 
