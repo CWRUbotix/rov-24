@@ -1,11 +1,10 @@
+import atexit
+import sys
+from subprocess import Popen
+
 import rclpy
 from rclpy.executors import MultiThreadedExecutor
 from rclpy.node import Node
-from subprocess import Popen
-import atexit
-import sys
-
-from typing import Optional
 
 WATCHDOG_RATE = 10
 NAMESPACE = "surface"
@@ -13,9 +12,9 @@ NAMESPACE = "surface"
 
 class Watchdog():
     def __init__(self, node: Node, args: list[str]) -> None:
-        self.node: Node = node
+        self.node = node
         self.args = args
-        self.process: Optional[Popen[bytes]] = None
+        self.process: Popen[bytes]
 
         self.start_process()
 
@@ -23,18 +22,17 @@ class Watchdog():
         self.process = Popen(self.args, stdout=sys.stdout, stderr=sys.stderr)
 
     def poll(self) -> None:
-        if self.process is not None and self.process.poll() is not None:
+        if self.process.poll() is not None:
             self.node.get_logger().warning("Detected camera crash, restarting...")
             self.start_process()
 
     def kill(self) -> None:
-        if self.process:
-            self.process.kill()
+        self.process.kill()
 
 
 class FlirWatchdogNode(Node):
     def __init__(self) -> None:
-        super().__init__("flir_watchdog_node", parameter_overrides=[])
+        super().__init__("flir_watchdog_node")
 
         self.timer = self.create_timer(1 / WATCHDOG_RATE, self.timer_callback)
 
@@ -43,12 +41,12 @@ class FlirWatchdogNode(Node):
         self.front_watchdog = Watchdog(
             node=self,
             args=["ros2", "launch", "rov_flir", "flir_launch.py",
-                  "launch_bottom:=false", f"ns:={NAMESPACE}"],
+                  "launch_bottom:=false", f"ns:={NAMESPACE}"]
         )
         self.bottom_watchdog = Watchdog(
             node=self,
             args=["ros2", "launch", "rov_flir", "flir_launch.py",
-                  "launch_front:=false", f"ns:={NAMESPACE}"],
+                  "launch_front:=false", f"ns:={NAMESPACE}"]
         )
 
         atexit.register(self.front_watchdog.kill)
