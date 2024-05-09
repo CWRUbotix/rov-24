@@ -19,7 +19,9 @@ setup(
         (os.path.join('share', PACKAGE_NAME, 'launch'),
          glob('launch/*launch.[pxy][yma]*')),
         (os.path.join('share', PACKAGE_NAME, 'udev_rules'),
-         glob('udev_rules/*'))
+         glob('udev_rules/*')),
+        (os.path.join('share', PACKAGE_NAME, 'services'),
+         glob('services/*'))
     ],
     install_requires=['setuptools'],
     zip_safe=True,

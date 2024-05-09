@@ -28,11 +28,11 @@ class ValveManipulator(Node):
         if message.active:
             if not self.curr_active:
                 self.curr_active = True
-                self.servo(1900)
+                self.servo(message.pwm)
         else:
             if self.curr_active:
                 self.curr_active = False
-                self.servo(1500)
+                self.servo(ValveManip.NEUTRAL_PWM)
 
 
 def main() -> None:
