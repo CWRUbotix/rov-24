@@ -2,10 +2,10 @@
 
 import os
 import shutil
+from typing import Literal
 
 import pytest
 from ament_cpplint.main import main
-
 
 INO_EXTENSION = ".ino"
 CPP_EXTENSION = ".cpp"
@@ -39,6 +39,12 @@ def test_cpplint() -> None:
         *[os.path.join(os.getcwd(), folder) for folder in [SRC, INCLUDE]],
         *[os.path.join(TMP, folder, folder + CPP_EXTENSION) for folder in SKETCHES]
     ]
+
+    error_codes: list[Literal[0, 1]] = []
+
     for file in regular_cpp:
         error_code = main(argv=["paths", file, f'--filters={LEGAL_ERROR}'])
-        assert error_code == 0, 'Found code style errors / warnings'
+        error_codes.append(error_code)
+
+    for code in error_codes:
+        assert code == 0, 'Found code style errors / warnings'
