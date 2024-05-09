@@ -46,5 +46,6 @@ def test_cpplint() -> None:
         error_code = main(argv=["paths", file, f'--filters={LEGAL_ERROR}'])
         error_codes.append(error_code)
 
+    # Done so code fails "slow"
     for code in error_codes:
         assert code == 0, 'Found code style errors / warnings'
