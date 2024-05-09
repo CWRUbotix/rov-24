@@ -28,8 +28,7 @@ void setup() {
   pinMode(RFM95_RST, OUTPUT);
   digitalWrite(RFM95_RST, HIGH);
 
-  Serial.println("Feather RFM95 RX Test!");
-  Serial.println();
+  Serial.println("Feather RFM95 RX Test!\n");
 
   digitalWrite(RFM95_RST, LOW);
   delay(10);
@@ -55,9 +54,7 @@ void setup() {
   // you can set transmitter powers from 5 to 23 dBm:
   rf95.setTxPower(23, false);  
 
-  Serial.print("RFM95 radio @ ");
-  Serial.print((int) RF95_FREQ);
-  Serial.println(" MHz");
+  printfln(&Serial, "RFM95 radio @ %d MHz", (int) RF95_FREQ);
 }
 
 void loop() {
@@ -106,13 +103,8 @@ void receivePacket() {
 
       if (len < RH_RF95_MAX_MESSAGE_LEN / 2) {
         // This packet is probably an ACK
-        Serial.print("Received message packet with length ");
-        Serial.print(len);
-        Serial.print(", string '");
-        byteBuffer[len] = 0;
-        char *charBuf = (char*) byteBuffer;
-        Serial.print(charBuf);
-        Serial.print("', and values: ");
+        printfln("Received message packet with length %d, string '%s', and values: ",
+                 len, (char*) byteBuffer);
         for (int i = 0; i < len; i++) {
           Serial.print(byteBuffer[i]);
           Serial.print(", ");

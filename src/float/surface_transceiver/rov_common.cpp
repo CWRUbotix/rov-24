@@ -13,6 +13,7 @@ void printfln(Stream *serialPointer, const char* input...) {
     switch (*c) {
       case '%': serialPointer->print('%'); break;
       case 's': serialPointer->print(va_arg(args, char*)); break;
+      case 'y': serialPointer->print(va_arg(args, uint8_t), DEC); break;
       case 'd': serialPointer->print(va_arg(args, int), DEC); break;
       case 'b': serialPointer->print(va_arg(args, int), BIN); break;
       case 'o': serialPointer->print(va_arg(args, int), OCT); break;
