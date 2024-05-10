@@ -54,7 +54,7 @@ void setup() {
   // you can set transmitter powers from 5 to 23 dBm:
   rf95.setTxPower(23, false);  
 
-  printfln(&Serial, "RFM95 radio @ %d MHz", (int) RF95_FREQ);
+  serprintf("RFM95 radio @ %d MHz\n", (int) RF95_FREQ);
 }
 
 void loop() {
@@ -103,11 +103,12 @@ void receivePacket() {
 
       if (len < RH_RF95_MAX_MESSAGE_LEN / 2) {
         // This packet is probably an ACK
-        printfln("Received message packet with length %d, string '%s', and values: ",
-                 len, (char*) byteBuffer);
+        serprintf(
+          "Received message packet with length %d, string '%s', and values: ",
+           len, (char*) byteBuffer
+        );
         for (int i = 0; i < len; i++) {
-          Serial.print(byteBuffer[i]);
-          Serial.print(", ");
+          serprintf(", ", byteBuffer[i]);
         }
         Serial.println();
 
@@ -118,26 +119,25 @@ void receivePacket() {
       else {
         // This packet is probably a data packet
         bool isTimePacket = byteBuffer[PKT_IDX_IS_TIME];
-        
-        Serial.print("Received ");
-        Serial.print(isTimePacket ? "time" : "pressure");
-        Serial.print(" packet for team ");
-        Serial.print(byteBuffer[PKT_IDX_TEAM_NUM]);
-        Serial.print(" on profile ");
-        Serial.print(byteBuffer[PKT_IDX_PROFILE]);
-        Serial.print(" with length ");
-        Serial.print(len);
-        Serial.print(": ");
+
+        serprintf(
+          "Received %s packet for team %d on profile %d with length %d: ",
+          isTimePacket ? "time" : "pressure",
+          byteBuffer[PKT_IDX_TEAM_NUM],
+          byteBuffer[PKT_IDX_PROFILE],
+          len
+        );
+
         for (int i = 0; i < len; i++) {
-          Serial.print(byteBuffer[i]);
-          Serial.print(", ");
+          serprintf("%d, ", byteBuffer[i]);
         }
         Serial.println();
   
         if (isTimePacket) {
-          Serial.print("= longs with length ");
-          Serial.print((len - PKT_PREAMBLE_LEN) / sizeof(long));
-          Serial.print(": ");
+          serprintf(
+            "= longs with length %d: ",
+            (len - PKT_PREAMBLE_LEN) / sizeof(long)
+          );
           for (int i = PKT_PREAMBLE_LEN; i < len; i += sizeof(long)) {
             memcpy(bytesUnion.byteArray, byteBuffer + i, sizeof(long));
             Serial.print(bytesUnion.longVal);
@@ -145,9 +145,10 @@ void receivePacket() {
           }
         }
         else {
-          Serial.print("= floats with length ");
-          Serial.print((len - PKT_PREAMBLE_LEN) / sizeof(float));
-          Serial.print(": ");
+          serprintf(
+            "= floats with length %d: ",
+            (len - PKT_PREAMBLE_LEN) / sizeof(float)
+          );
           for (int i = PKT_PREAMBLE_LEN; i < len; i += sizeof(float)) {
             memcpy(bytesUnion.byteArray, byteBuffer + i, sizeof(float));
             Serial.print(bytesUnion.floatVal);
@@ -171,7 +172,6 @@ void sendCommand(char *message) {
   
   rf95.send(message, strlen(message));
   rf95.waitPacketSent();
-  Serial.print(message);
-  Serial.print(strlen(message));
-  Serial.println(" signal sent!");
+
+  serprintf("'%s' (len=%d) signal sent!\n", message, strlen(message));
 }

@@ -1,25 +1,25 @@
 #include <stdarg.h>
 #include <Arduino.h>
 
-void printfln(Stream *serialPointer, const char* input...) {
+void serprintf(const char *input...) {
   va_list args;
   va_start(args, input);
-  for (const char* c = input; *c != 0; c++) {
+  for (const char *c = input; *c != 0; c++) {
     if (*c != '%') {
-        serialPointer->print(*c);
+        Serial.print(*c);
         continue;
     }
     c++;
     switch (*c) {
-      case '%': serialPointer->print('%'); break;
-      case 's': serialPointer->print(va_arg(args, char*)); break;
-      case 'd': serialPointer->print(va_arg(args, int), DEC); break;
-      case 'b': serialPointer->print(va_arg(args, int), BIN); break;
-      case 'o': serialPointer->print(va_arg(args, int), OCT); break;
-      case 'x': serialPointer->print(va_arg(args, int), HEX); break;
-      case 'f': serialPointer->print(va_arg(args, double), 2); break;
+      case '%': Serial.print('%'); break;
+      case 's': Serial.print(va_arg(args, char*)); break;
+      case 'd': Serial.print(va_arg(args, int), DEC); break;
+      case 'b': Serial.print(va_arg(args, int), BIN); break;
+      case 'o': Serial.print(va_arg(args, int), OCT); break;
+      case 'x': Serial.print(va_arg(args, int), HEX); break;
+      case 'f': Serial.print(va_arg(args, double), 2); break;
     }
   }
-  serialPointer->println();
+  // Serial.println();
   va_end(args);
 }

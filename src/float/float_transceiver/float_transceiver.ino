@@ -86,7 +86,7 @@ uint8_t profileNum = 0;
 void setup() {
   Serial.begin(115200);
   // Wait until serial console is open; remove if not tethered to computer
-  while (!Serial) ;
+//  while (!Serial) ;
   
   Serial.println("Float Transceiver");
   Serial.println();

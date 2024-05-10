@@ -75,4 +75,4 @@ union {
  *  %x : integers (hex)
  *  %f : floats/doubles
 */
-void printfln(Stream *serialPointer, const char* input...);
+void serprintf(const char* input...);
