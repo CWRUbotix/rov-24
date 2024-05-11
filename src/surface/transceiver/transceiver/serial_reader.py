@@ -7,7 +7,7 @@ from rclpy.qos import QoSPresetProfiles
 from serial import Serial
 from serial.serialutil import SerialException
 
-from rov_msgs.msg import FloatData
+from rov_msgs.msg import FloatData, FloatCommand
 
 MILLISECONDS_TO_SECONDS = 1/1000
 SECONDS_TO_MINUTES = 1/60
@@ -26,6 +26,9 @@ class SerialReader(Node):
         super().__init__('serial_reader')
         self.publisher = self.create_publisher(FloatData, 'transceiver_data',
                                                QoSPresetProfiles.SENSOR_DATA.value)
+
+        self.create_subscription(FloatCommand, "float_command", self.send_command,
+                                 QoSPresetProfiles.DEFAULT.value)
         timer_period = .5
 
         self.first_attempt = True
@@ -43,8 +46,12 @@ class SerialReader(Node):
                     self.first_attempt = False
                 time.sleep(1)
 
+        self.get_logger().info('Transceiver connected.')
         self.first_attempt = True
         return self._serial
+
+    def send_command(self, msg: FloatCommand) -> None:
+        self.serial.write(msg.command.encode())
 
     def timer_callback(self) -> None:
         """Publish a message from the transceiver."""
