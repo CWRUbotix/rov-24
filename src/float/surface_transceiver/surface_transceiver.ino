@@ -106,7 +106,7 @@ void receivePacket() {
   }
   else {
     // This packet is probably a data packet
-    int numDatapoints = (int) ((len - PKT_PREAMBLE_LEN) / 4);
+    int numDatapoints = (int) ((len - (PKT_PREAMBLE_LEN) >> 2));
     
     serprintf(
       "Received packet for team %d on profile %d half %d with length %d (%d datapoints): ",
@@ -122,23 +122,21 @@ void receivePacket() {
     }
     Serial.println();
 
-    int i = PKT_PREAMBLE_LEN;
-
-    Serial.print("= datapoints: ");
+    serprintf(
+      "ROS:%d,%d,%d:",
+      byteBuffer[PKT_IDX_TEAM_NUM],
+      byteBuffer[PKT_IDX_PROFILE_NUM],
+      byteBuffer[PKT_IDX_PROFILE_HALF],
+      numDatapoints >> 1
+    );
     for (int i = PKT_PREAMBLE_LEN; i < len; ) {
       memcpy(bytesUnion.byteArray, byteBuffer + i, sizeof(long));
-      serprintf("(%l, ", bytesUnion.longVal);
+      serprintf("%l,", bytesUnion.longVal);
       i += sizeof(long);
 
       memcpy(bytesUnion.byteArray, byteBuffer + i, sizeof(float));
-      serprintf("%f), ", bytesUnion.floatVal);
+      serprintf("%f;", bytesUnion.floatVal);
       i += sizeof(float);
-    }
-    Serial.println();
-
-    Serial.print(ROS_DATA_PREFIX);
-    for (i = 0; i < len; i++) {
-      Serial.print((char) byteBuffer[i]);
     }
     Serial.println();
   }
