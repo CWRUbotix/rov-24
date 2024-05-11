@@ -42,6 +42,8 @@ class SerialReader(Node):
                     self.get_logger().warning('Transceiver not plugged in.')
                     self.first_attempt = False
                 time.sleep(1)
+
+        self.first_attempt = True
         return self._serial
 
     def timer_callback(self) -> None:
