@@ -13,6 +13,8 @@
 #define COMMAND_SPAM_TIMES 5
 #define COMMAND_SPAM_DELAY 500
 
+char ROS_DATA_PREFIX[4] = "ROS$";
+
 // Singleton instance of the radio driver
 RH_RF95 rf95(RFM95_CS, RFM95_INT);
 
@@ -123,7 +125,7 @@ void receivePacket() {
     int i = PKT_PREAMBLE_LEN;
 
     Serial.print("= datapoints: ");
-    while (i < len) {
+    for (int i = PKT_PREAMBLE_LEN; i < len; ) {
       memcpy(bytesUnion.byteArray, byteBuffer + i, sizeof(long));
       serprintf("(%l, ", bytesUnion.longVal);
       i += sizeof(long);
@@ -131,6 +133,12 @@ void receivePacket() {
       memcpy(bytesUnion.byteArray, byteBuffer + i, sizeof(float));
       serprintf("%f), ", bytesUnion.floatVal);
       i += sizeof(float);
+    }
+    Serial.println();
+
+    Serial.print(ROS_DATA_PREFIX);
+    for (i = 0; i < len; i++) {
+      Serial.print((char) byteBuffer[i]);
     }
     Serial.println();
   }
