@@ -81,7 +81,7 @@ RH_RF95 rf95(RFM95_CS, RFM95_INT);
 MS5837 pressureSensor;
 
 byte packets[2][PKT_LEN];
-int packetIndex = PKT_PREAMBLE_LEN;
+int packetIndex = PKT_HEADER_LEN;
 
 byte profileNum = 0;
 byte profileHalf = 0;
@@ -165,13 +165,13 @@ void loop() {
 
     pressureSensor.read();
     bytesUnion.floatVal = pressureSensor.pressure();
-    serprintf("Reading pressure: %f\n", pressureSensor.pressure());
+    serialPrintf("Reading pressure: %f\n", pressureSensor.pressure());
     memcpy(packets[profileHalf] + packetIndex, bytesUnion.byteArray, sizeof(float));
     packetIndex += sizeof(float);
 
     if (profileHalf == 0 && packetIndex >= PKT_LEN) {
       profileHalf = 1;
-      packetIndex = PKT_PREAMBLE_LEN;
+      packetIndex = PKT_HEADER_LEN;
     }
   }
 
@@ -190,7 +190,7 @@ void loop() {
     (SCHEDULE[currentStage][0] == SUCK && !digitalRead(LIMIT_FULL)) ||
     (SCHEDULE[currentStage][0] == PUMP && !digitalRead(LIMIT_EMPTY))
   ) {
-    serprintf(
+    serialPrintf(
       "Stage #%d, type: %d, start time: %l, max wait time: %l, current time: %l\n",
       currentStage,
       SCHEDULE[currentStage][0],
@@ -201,7 +201,7 @@ void loop() {
 
     // If we just finished our time surfaced
     if (currentStage == 5 || currentStage == 10) {
-      packetIndex = PKT_PREAMBLE_LEN;
+      packetIndex = PKT_HEADER_LEN;
       profileNum++;
       profileHalf = 0;
       clearPacketPayloads();
@@ -236,8 +236,8 @@ bool receiveCommand() {
   }
   
   Serial.println("RF has signal");
-  byte byteBuffer[RH_RF95_MAX_MESSAGE_LEN];
-  byte len = sizeof(byteBuffer);
+  byte len = RH_RF95_MAX_MESSAGE_LEN;
+  byte byteBuffer[len];
   
   if (!rf95.recv(byteBuffer, &len)) {
     Serial.println("Receive failed");
@@ -251,54 +251,55 @@ bool receiveCommand() {
   byteBuffer[len] = 0;
   char *charBuf = (char*) byteBuffer;
 
-  serprintf("Received [%d]: '%s'\n", len, charBuf);
+  serialPrintf("Received [%d]: '%s'\n", len, charBuf);
   
-  char response[32];
+  String response;
   bool shouldSubmerge = false;
 
   // TODO: Use a string or add \0 to these????
   if (strcmp(charBuf, "submerge") == 0) {
-    strcpy(response, "ACK SUBMERGING");
+    response = "ACK SUBMERGING";
     shouldSubmerge = true;
   }
   else if (strcmp(charBuf, "pump") == 0) {
     if (!motorIs(SUCK)) {
-      strcpy(response, "ACK PUMPING");
+      response = "ACK PUMPING";
       overrideState = PUMP;
     }
     else {
-      strcpy(response, "NACK RETURN FIRST");
+      response = "NACK RETURN FIRST";
     }
   }
   else if (strcmp(charBuf, "suck") == 0) {
     if (!motorIs(PUMP)) {
-      strcpy(response, "ACK SUCKING");
+      response = "ACK SUCKING";
       overrideState = SUCK;
     }
     else {
-      strcpy(response, "NACK RETURN FIRST");
+      response = "NACK RETURN FIRST";
     }
   }
   else if (strcmp(charBuf, "return") == 0) {
-    strcpy(response, "ACK RETURNING TO SCHEDULE");
+    response = "ACK RETURNING TO SCHEDULE";
     stop();
     overrideState = NO_OVERRIDE;
   }
   else {
-    strcpy(response, "NACK INVALID COMMAND");
+    response = "NACK INVALID COMMAND";
   }
 
-  Serial.println(response);
-  rf95.send((byte*) response, strlen(response));
+  byte responseBytes[response.length() + 1];
+  response.getBytes(responseBytes, response.length() + 1);
+  rf95.send(responseBytes, response.length() + 1);
   rf95.waitPacketSent();
   return shouldSubmerge;
 }
 
 void transmitPressurePacket() {
   for (int half = 0; half < 2; half++) {
-    serprintf("Sending packet #%d half %d with content {", profileNum, half);
+    serialPrintf("Sending packet #%d half %d with content {", profileNum, half);
     for (int p = 0; p < PKT_LEN; p++) {
-      serprintf("%d, ", packets[half][p]);
+      serialPrintf("%d, ", packets[half][p]);
     }
     Serial.println("}");
 
@@ -339,7 +340,7 @@ bool motorIs(int doingThis) {
 
 void clearPacketPayloads() {
   for (int half = 0; half < 2; half++) {
-    for (int i = PKT_PREAMBLE_LEN; i < PKT_LEN; i++) {
+    for (int i = PKT_HEADER_LEN; i < PKT_LEN; i++) {
       packets[half][i] = 0;
     }
   }
@@ -380,7 +381,7 @@ void initRadio() {
   // you can set transmitter powers from 5 to 23 dBm:
   rf95.setTxPower(23, false);
 
-  serprintf("RFM95 radio @%d MHz\n", (int) RF95_FREQ);
+  serialPrintf("RFM95 radio @%d MHz\n", (int) RF95_FREQ);
 }
 
 void initPressureSensor() {
@@ -389,5 +390,5 @@ void initPressureSensor() {
   pressureSensor.setModel(MS5837::MS5837_02BA);
   pressureSensor.setFluidDensity(997);  // kg/m^3
 
-  serprintf("PRESSURE: %f\n", pressureSensor.pressure());
+  serialPrintf("PRESSURE: %f\n", pressureSensor.pressure());
 }

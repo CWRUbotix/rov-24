@@ -13,8 +13,6 @@
 #define COMMAND_SPAM_TIMES 5
 #define COMMAND_SPAM_DELAY 500
 
-char ROS_DATA_PREFIX[4] = "ROS$";
-
 // Singleton instance of the radio driver
 RH_RF95 rf95(RFM95_CS, RFM95_INT);
 
@@ -53,7 +51,7 @@ void setup() {
   // you can set transmitter powers from 5 to 23 dBm:
   rf95.setTxPower(23, false);  
 
-  serprintf("RFM95 radio @ %d MHz\n", (int) RF95_FREQ);
+  serialPrintf("RFM95 radio @ %d MHz\n", (int) RF95_FREQ);
 }
 
 void loop() {
@@ -95,20 +93,20 @@ void receivePacket() {
 
   if (len < RH_RF95_MAX_MESSAGE_LEN / 2) {
     // This packet is probably an ACK
-    serprintf(
+    serialPrintf(
       "Received response packet with length %d, string '%s', and values: ",
        len, (char*) byteBuffer
     );
     for (int i = 0; i < len; i++) {
-      serprintf("%d, ", byteBuffer[i]);
+      serialPrintf("%d, ", byteBuffer[i]);
     }
     Serial.println();
   }
   else {
     // This packet is probably a data packet
-    int numDatapoints = (int) ((len - (PKT_PREAMBLE_LEN) >> 2));
+    int numDatapoints = (int) ((len - (PKT_HEADER_LEN) >> 2));
     
-    serprintf(
+    serialPrintf(
       "Received packet for team %d on profile %d half %d with length %d (%d datapoints): ",
       byteBuffer[PKT_IDX_TEAM_NUM],
       byteBuffer[PKT_IDX_PROFILE_NUM],
@@ -118,24 +116,23 @@ void receivePacket() {
     );
 
     for (int i = 0; i < len; i++) {
-      serprintf("%d, ", byteBuffer[i]);
+      serialPrintf("%d, ", byteBuffer[i]);
     }
     Serial.println();
 
-    serprintf(
+    serialPrintf(
       "ROS:%d,%d,%d:",
       byteBuffer[PKT_IDX_TEAM_NUM],
       byteBuffer[PKT_IDX_PROFILE_NUM],
-      byteBuffer[PKT_IDX_PROFILE_HALF],
-      numDatapoints >> 1
+      byteBuffer[PKT_IDX_PROFILE_HALF]
     );
-    for (int i = PKT_PREAMBLE_LEN; i < len; ) {
+    for (int i = PKT_HEADER_LEN; i < len; ) {
       memcpy(bytesUnion.byteArray, byteBuffer + i, sizeof(long));
-      serprintf("%l,", bytesUnion.longVal);
+      serialPrintf("%l,", bytesUnion.longVal);
       i += sizeof(long);
 
       memcpy(bytesUnion.byteArray, byteBuffer + i, sizeof(float));
-      serprintf("%f;", bytesUnion.floatVal);
+      serialPrintf("%f;", bytesUnion.floatVal);
       i += sizeof(float);
     }
     Serial.println();
@@ -150,6 +147,6 @@ void sendCommand(char *message) {
 
     delay(COMMAND_SPAM_DELAY);
   
-    serprintf("'%s' (len=%d) command sent! Iteration: %d\n", message, strlen(message), i);
+    serialPrintf("'%s' (len=%d) command sent! Iteration: %d\n", message, strlen(message), i);
   }
 }

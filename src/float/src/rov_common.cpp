@@ -1,7 +1,7 @@
 #include <stdarg.h>
 #include <Arduino.h>
 
-void serprintf(const char *input...) {
+void serialPrintf(const char *input...) {
   va_list args;
   va_start(args, input);
   for (const char *c = input; *c != 0; c++) {

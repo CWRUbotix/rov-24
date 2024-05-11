@@ -51,7 +51,7 @@
 #define PKT_IDX_TEAM_NUM     0
 #define PKT_IDX_PROFILE_NUM  1
 #define PKT_IDX_PROFILE_HALF 2
-#define PKT_PREAMBLE_LEN     3
+#define PKT_HEADER_LEN     3
 #define PKT_PAYLOAD_LEN      PACKET_LEN - PACKET_PREAMBLE_LEN
 
 #define RF95_FREQ 877.0
@@ -76,4 +76,4 @@ union {
  *  %x : integers (hex)
  *  %f : floats/doubles
 */
-void serprintf(const char* input...);
+void serialPrintf(const char* input...);
