@@ -13,6 +13,7 @@ void serprintf(const char *input...) {
     switch (*c) {
       case '%': Serial.print('%'); break;
       case 's': Serial.print(va_arg(args, char*)); break;
+      case 'l': Serial.print(va_arg(args, unsigned long)); break;
       case 'd': Serial.print(va_arg(args, int), DEC); break;
       case 'b': Serial.print(va_arg(args, int), BIN); break;
       case 'o': Serial.print(va_arg(args, int), OCT); break;

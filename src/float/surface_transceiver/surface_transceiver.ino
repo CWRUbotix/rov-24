@@ -10,14 +10,11 @@
 #include <RH_RF95.h>
 #include "rov_common.hpp"
 
-#define COMMAND_MAX_LEN 50
+#define COMMAND_SPAM_TIMES 5
+#define COMMAND_SPAM_DELAY 500
 
 // Singleton instance of the radio driver
 RH_RF95 rf95(RFM95_CS, RFM95_INT);
-
-// Store the last command ordered over serial
-// Spam the float with this until it ACKs
-char pendingCommand[COMMAND_MAX_LEN];
 
 void setup() {
   Serial.begin(115200);
@@ -61,117 +58,101 @@ void loop() {
   receivePacket();
 
   if (Serial.available() >= 1) {
-    String command;
     Serial.println("Getting serial command...");
-    command = Serial.readString();
-    Serial.println(command);
-    if (command == "submerge" || command == "submerge\n") {
-      sendCommand("submerge");
-      receivePacket();
+    String command = Serial.readString();
+    if (command.charAt(command.length() - 1) == '\n') {
+      command.remove(command.length() - 1);
     }
-    else if (command == "submerge" || command == "submerge\n") {
-      sendCommand("submerge");
-      receivePacket();
-    }
-    else {
-      Serial.println("Illegal command; sending anyway");
-      char command_arr[command.length() + 1];
-      command.toCharArray(command_arr, command.length() + 1);
-      sendCommand(command_arr);
-    }
-    // else if (command == "extend") {
-    //   sendCommand("extend");
-    // }
-    // else if (command == "retract") {
-    //   sendCommand("retract");
-    // }
-
+    char command_arr[command.length() + 1];
+    command.toCharArray(command_arr, command.length() + 1);
+    sendCommand(command_arr);
   }
 }
 
 void receivePacket() {
   Serial.println("Attempting to receive");
-  if (rf95.waitAvailableTimeout(1000)) {
-    Serial.println("RF95 available");
-    uint8_t byteBuffer[RH_RF95_MAX_MESSAGE_LEN];
-    uint8_t len = sizeof(byteBuffer);
-    if (rf95.recv(byteBuffer, &len)) {
-      if (!len) {
-        Serial.println("Message length 0, dropping");
-        return;
-      }
-
-      if (len < RH_RF95_MAX_MESSAGE_LEN / 2) {
-        // This packet is probably an ACK
-        serprintf(
-          "Received message packet with length %d, string '%s', and values: ",
-           len, (char*) byteBuffer
-        );
-        for (int i = 0; i < len; i++) {
-          serprintf(", ", byteBuffer[i]);
-        }
-        Serial.println();
-
-        if (strcmp(pendingCommand, "ACK") == 0) {
-          pendingCommand[0] = 0;
-        }
-      }
-      else {
-        // This packet is probably a data packet
-        bool isTimePacket = byteBuffer[PKT_IDX_IS_TIME];
-
-        serprintf(
-          "Received %s packet for team %d on profile %d with length %d: ",
-          isTimePacket ? "time" : "pressure",
-          byteBuffer[PKT_IDX_TEAM_NUM],
-          byteBuffer[PKT_IDX_PROFILE],
-          len
-        );
-
-        for (int i = 0; i < len; i++) {
-          serprintf("%d, ", byteBuffer[i]);
-        }
-        Serial.println();
   
-        if (isTimePacket) {
-          serprintf(
-            "= longs with length %d: ",
-            (len - PKT_PREAMBLE_LEN) / sizeof(long)
-          );
-          for (int i = PKT_PREAMBLE_LEN; i < len; i += sizeof(long)) {
-            memcpy(bytesUnion.byteArray, byteBuffer + i, sizeof(long));
-            Serial.print(bytesUnion.longVal);
-            Serial.print(", ");
-          }
-        }
-        else {
-          serprintf(
-            "= floats with length %d: ",
-            (len - PKT_PREAMBLE_LEN) / sizeof(float)
-          );
-          for (int i = PKT_PREAMBLE_LEN; i < len; i += sizeof(float)) {
-            memcpy(bytesUnion.byteArray, byteBuffer + i, sizeof(float));
-            Serial.print(bytesUnion.floatVal);
-            Serial.print(", ");
-          }
-        }
-        Serial.println();
+  if (!rf95.waitAvailableTimeout(1000)) {
+    Serial.println("RF95 not available");
+    return;
+  }
+  
+  Serial.println("RF95 available");
+  uint8_t byteBuffer[RH_RF95_MAX_MESSAGE_LEN];
+  uint8_t len = sizeof(byteBuffer);
+  
+  if (!rf95.recv(byteBuffer, &len)) {
+    Serial.println("Receive failed");
+    return;
+  }
+  
+  if (!len) {
+    Serial.println("Message length 0, dropping");
+    return;
+  }
+
+  if (len < RH_RF95_MAX_MESSAGE_LEN / 2) {
+    // This packet is probably an ACK
+    serprintf(
+      "Received message packet with length %d, string '%s', and values: ",
+       len, (char*) byteBuffer
+    );
+    for (int i = 0; i < len; i++) {
+      serprintf("%d, ", byteBuffer[i]);
+    }
+    Serial.println();
+  }
+  else {
+    // This packet is probably a data packet
+    bool isTimePacket = byteBuffer[PKT_IDX_IS_TIME];
+
+    serprintf(
+      "Received %s packet for team %d on profile %d with length %d: ",
+      isTimePacket ? "time" : "pressure",
+      byteBuffer[PKT_IDX_TEAM_NUM],
+      byteBuffer[PKT_IDX_PROFILE],
+      len
+    );
+
+    for (int i = 0; i < len; i++) {
+      serprintf("%d, ", byteBuffer[i]);
+    }
+    Serial.println();
+
+    if (isTimePacket) {
+      serprintf(
+        "= longs with length %d: ",
+        (len - PKT_PREAMBLE_LEN) / sizeof(long)
+      );
+      for (int i = PKT_PREAMBLE_LEN; i < len; i += sizeof(long)) {
+        memcpy(bytesUnion.byteArray, byteBuffer + i, sizeof(long));
+        Serial.print(bytesUnion.longVal);
+        Serial.print(", ");
       }
     }
     else {
-      Serial.println("Receive failed");
+      serprintf(
+        "= floats with length %d: ",
+        (len - PKT_PREAMBLE_LEN) / sizeof(float)
+      );
+      for (int i = PKT_PREAMBLE_LEN; i < len; i += sizeof(float)) {
+        memcpy(bytesUnion.byteArray, byteBuffer + i, sizeof(float));
+        Serial.print(bytesUnion.floatVal);
+        Serial.print(", ");
+      }
     }
-  }
-  else {
-    Serial.println("RF95 not available"); 
+    Serial.println();
   }
 }
 
 void sendCommand(char *message) {
-  strcpy(pendingCommand, message);
-  
-  rf95.send(message, strlen(message));
-  rf95.waitPacketSent();
+  for (int i = 0; i < COMMAND_SPAM_TIMES; i++) {
+    rf95.send(message, strlen(message));
+    rf95.waitPacketSent();
+    receivePacket();
 
-  serprintf("'%s' (len=%d) signal sent!\n", message, strlen(message));
+    delay(COMMAND_SPAM_DELAY);
+  
+    serprintf("'%s' (len=%d) command sent! Iteration: %d\n", message, strlen(message), i);
+  }
 }

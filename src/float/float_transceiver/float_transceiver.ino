@@ -24,6 +24,7 @@
 
 #define TEAM_NUM 11
 #define PRESSURE_READ_INTERVAL 200
+#define PACKET_SEND_INTERVAL   1000
 
 
 // Schedule (all delays in ms)
@@ -35,6 +36,7 @@
 #define TX_MAX        60000
 #define ONE_HOUR      360000
 
+#define NO_OVERRIDE 0
 #define WAIT_PROFILING 0
 #define WAIT_SURFACED 1
 #define SUCK 2
@@ -69,6 +71,7 @@ unsigned long SCHEDULE[SCHEDULE_LENGTH][2] = {
 
 unsigned long stageStartTime;
 unsigned long previousPressureReadTime;
+unsigned long previousPacketSendTime;
 
 
 // Singleton instance of the radio driver
@@ -93,6 +96,7 @@ void setup() {
 
   stageStartTime = millis();
   previousPressureReadTime = millis();
+  previousPacketSendTime = millis();
 
   pinMode(LED_BUILTIN, OUTPUT);
   digitalWrite(LED_BUILTIN, HIGH);
@@ -129,6 +133,7 @@ void loop() {
     }
     else {
       stop();
+      overrideState = NO_OVERRIDE;
     }
     return;
   }
@@ -138,6 +143,7 @@ void loop() {
     }
     else {
       stop();
+      overrideState = NO_OVERRIDE;
     }
     return;
   }
@@ -148,13 +154,11 @@ void loop() {
     millis() >= previousPressureReadTime + PRESSURE_READ_INTERVAL &&
     packetIndex < PKT_LEN  // Stop recording if we overflow buffer
   ) {
-    Serial.print("Reading: ");
     previousPressureReadTime = millis();
 
     pressureSensor.read();
     bytesUnion.floatVal = pressureSensor.pressure();
-    Serial.print("Pressure: ");
-    Serial.println(pressureSensor.pressure());
+    serprintf("Reading pressure: %f\n", pressureSensor.pressure());
     memcpy(pressurePacket + packetIndex, bytesUnion.byteArray, sizeof(float));
 
     bytesUnion.longVal = millis();
@@ -171,9 +175,12 @@ void loop() {
   }
 
   // Transmit the pressure buffer if we're surfaced
-  if (SCHEDULE[currentStage][0] == WAIT_SURFACED) {
+  if (
+    SCHEDULE[currentStage][0] == WAIT_SURFACED &&
+    millis() >= previousPacketSendTime + PACKET_SEND_INTERVAL
+  ) {
     transmitPressurePacket();
-    delay(300);
+    previousPacketSendTime = millis();
   }
 
   if (
@@ -182,18 +189,14 @@ void loop() {
     (SCHEDULE[currentStage][0] == SUCK && !digitalRead(LIMIT_FULL)) ||
     (SCHEDULE[currentStage][0] == PUMP && !digitalRead(LIMIT_EMPTY))
   ) {
-    Serial.print(currentStage);
-    Serial.print(" ");
-    Serial.print(SCHEDULE[currentStage][0]);
-    Serial.print(" ");
-    Serial.print(stageStartTime);
-    Serial.print(" ");
-    Serial.print(SCHEDULE[currentStage][1]);
-    Serial.print(" ");
-    Serial.print(millis());
-    Serial.print(" ");
-    Serial.print(millis() >= stageStartTime + SCHEDULE[currentStage][1]);
-    Serial.println();
+    serprintf(
+      "Stage #%d, type: %d, start time: %l, max wait time: %l, current time: %l\n",
+      currentStage,
+      SCHEDULE[currentStage][0],
+      stageStartTime,
+      SCHEDULE[currentStage][1],
+      millis()
+    );
 
     // If we just finished our time surfaced
     if (currentStage == 5 || currentStage == 10) {
@@ -224,92 +227,82 @@ void loop() {
 
 bool receiveCommand() {
   Serial.println("Receiving command...");
-  if (rf95.waitAvailableTimeout(900)) {
-    Serial.println("RF has signal");
-    uint8_t uintBuf[RH_RF95_MAX_MESSAGE_LEN];
-    uint8_t len = sizeof(uintBuf);
-    Serial.println(len);
-    if (rf95.recv(uintBuf, &len)) {
-      if (!len) return false;
-      uintBuf[len] = 0;
-      char *charBuf = (char*) uintBuf;
-      
-      Serial.print("Received [");
-      Serial.print(len);
-      Serial.print("]: '");
-      Serial.print(charBuf);
-      Serial.println("'");
-      Serial.print("RSSI: ");
-      Serial.println(rf95.lastRssi(), DEC);
+  
+  if (!rf95.waitAvailableTimeout(900)) {
+    return false;
+  }
+  
+  Serial.println("RF has signal");
+  uint8_t uintBuf[RH_RF95_MAX_MESSAGE_LEN];
+  uint8_t len = sizeof(uintBuf);
+  
+  if (!rf95.recv(uintBuf, &len)) {
+    Serial.println("Receive failed");
+    return false;
+  }
+  if (!len) {
+    Serial.println("Received with length 0; dropping");
+    return false;
+  }
+  
+  uintBuf[len] = 0;
+  char *charBuf = (char*) uintBuf;
 
-      Serial.print(charBuf[0]);
-      Serial.print(", ");
-      Serial.println(charBuf[1]);
+  serprintf("Received [%d]: '%s'\n", len, charBuf);
+  
+  char response[32];
+  bool shouldSubmerge = false;
 
-      char response[32];
-      bool shouldSubmerge = false;
-
-      if (strcmp(charBuf, "submerge") == 0) {
-        strcpy(response, "ACK SUBMERGING");
-        shouldSubmerge = true;
-      }
-      else if (strcmp(charBuf, "pump") == 0) {
-        strcpy(response, "ACK PUMPING");
-        overrideState = PUMP;
-      }
-      else if (strcmp(charBuf, "suck") == 0) {
-        strcpy(response, "ACK SUCKING");
-        overrideState = SUCK;
-      }
-      else if (strcmp(charBuf, "return") == 0) {
-        strcpy(response, "ACK RETURNING TO SCHEDULE");
-        overrideState = 0;
-      }
-      else {
-        strcpy(response, "Invalid command");
-        Serial.println("Invalid command");
-      }
-
-      rf95.send((uint8_t*) response, strlen(response));
-      rf95.waitPacketSent();
-      return shouldSubmerge;
+  // TODO: Use a string or add \0 to these????
+  if (strcmp(charBuf, "submerge") == 0) {
+    strcpy(response, "ACK SUBMERGING");
+    shouldSubmerge = true;
+  }
+  else if (strcmp(charBuf, "pump") == 0) {
+    if (!motorIs(SUCK)) {
+      strcpy(response, "ACK PUMPING");
+      overrideState = PUMP;
     }
     else {
-      Serial.println("Receive failed");
+      strcpy(response, "NACK RETURN FIRST");
     }
   }
+  else if (strcmp(charBuf, "suck") == 0) {
+    if (!motorIs(PUMP)) {
+      strcpy(response, "ACK SUCKING");
+      overrideState = SUCK;
+    }
+    else {
+      strcpy(response, "NACK RETURN FIRST");
+    }
+  }
+  else if (strcmp(charBuf, "return") == 0) {
+    strcpy(response, "ACK RETURNING TO SCHEDULE");
+    stop();
+    overrideState = NO_OVERRIDE;
+  }
+  else {
+    strcpy(response, "NACK INVALID COMMAND");
+  }
 
-  return false;
+  Serial.println(response);
+  rf95.send((uint8_t*) response, strlen(response));
+  rf95.waitPacketSent();
+  return shouldSubmerge;
 }
 
 void transmitPressurePacket() {
-  Serial.print("Sending pressure packet #");
-  Serial.print(profileNum);
-  Serial.print(" with content {");
+  serprintf("Sending pressure packet #%d with content {", profileNum);
   for (int p = 0; p < PKT_LEN; p++) {
-    Serial.print(pressurePacket[p]);
-    Serial.print(", ");
+    serprintf("%d, ", pressurePacket[p]);
   }
   Serial.println("}");
 
-  Serial.print("Sending time packet #");
-  Serial.print(profileNum);
-  Serial.print(" with content {");
+  serprintf("Sending time packet #%d with content {", profileNum);
   for (int p = 0; p < PKT_LEN; p++) {
-    Serial.print(timePacket[p]);
-    Serial.print(", ");
+    serprintf("%d, ", timePacket[p]);
   }
   Serial.println("}");
-
-//  Serial.print("Sizes: ");
-//  Serial.print(RH_RF95_MAX_MESSAGE_LEN);
-//  Serial.print(" ");
-//  Serial.print(PKT_PREAMBLE_LEN);
-//  Serial.print(" ");
-//  Serial.print(PKT_PAYLOAD_LEN);
-//  Serial.print(" ");
-//  Serial.print(packetLength);
-//  Serial.println();
 
   pressurePacket[PKT_IDX_PROFILE] = profileNum;
   timePacket[PKT_IDX_PROFILE] = profileNum;
@@ -343,6 +336,12 @@ void stop() {
   digitalWrite(MOTOR_PWM, LOW);
   digitalWrite(PUMP_PIN, LOW);
   digitalWrite(SUCK_PIN, LOW);
+}
+
+bool motorIs(int doingThis) {
+  // doingThis should be PUMP or SUCK
+  return overrideState == doingThis ||
+         (overrideState == NO_OVERRIDE && SCHEDULE[currentStage][0] == doingThis);
 }
 
 
@@ -380,9 +379,7 @@ void initRadio() {
   // you can set transmitter powers from 5 to 23 dBm:
   rf95.setTxPower(23, false);
 
-  Serial.print("RFM95 radio @ ");
-  Serial.print((int) RF95_FREQ);
-  Serial.println(" MHz");
+  serprintf("RFM95 radio @%d MHz\n", (int) RF95_FREQ);
 }
 
 void initPressureSensor() {
@@ -391,6 +388,5 @@ void initPressureSensor() {
   pressureSensor.setModel(MS5837::MS5837_02BA);
   pressureSensor.setFluidDensity(997);  // kg/m^3
 
-  Serial.print("PRESSURE: ");
-  Serial.println(pressureSensor.pressure());
+  serprintf("PRESSURE: %f\n", pressureSensor.pressure());
 }
