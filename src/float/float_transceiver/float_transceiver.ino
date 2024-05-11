@@ -80,11 +80,11 @@ RH_RF95 rf95(RFM95_CS, RFM95_INT);
 // Singleton instance of the pressure sensor driver
 MS5837 pressureSensor;
 
-uint8_t pressurePacket[PKT_LEN];
-uint8_t timePacket[PKT_LEN];
+uint8_t packets[2][PKT_LEN];
 int packetIndex = PKT_PREAMBLE_LEN;
 
 uint8_t profileNum = 0;
+uint8_t profileHalf = 0;
 
 void setup() {
   Serial.begin(115200);
@@ -112,10 +112,13 @@ void setup() {
   digitalWrite(SUCK_PIN, LOW);
   digitalWrite(PUMP_PIN, LOW);
 
-  pressurePacket[PKT_IDX_TEAM_NUM] = TEAM_NUM;
-  timePacket[PKT_IDX_TEAM_NUM] = TEAM_NUM;
-  pressurePacket[PKT_IDX_IS_TIME] = 0;
-  timePacket[PKT_IDX_IS_TIME] = 255;
+  clearPacketPayloads();
+
+  packets[0][PKT_IDX_TEAM_NUM] = TEAM_NUM;
+  packets[0][PKT_IDX_PROFILE_HALF] = 0;
+  
+  packets[1][PKT_IDX_TEAM_NUM] = TEAM_NUM;
+  packets[1][PKT_IDX_PROFILE_HALF] = 1;
 
   initRadio();
   initPressureSensor();
@@ -156,22 +159,20 @@ void loop() {
   ) {
     previousPressureReadTime = millis();
 
+    bytesUnion.longVal = millis();
+    memcpy(packets[profileHalf] + packetIndex, bytesUnion.byteArray, sizeof(long));
+    packetIndex += sizeof(long);
+
     pressureSensor.read();
     bytesUnion.floatVal = pressureSensor.pressure();
     serprintf("Reading pressure: %f\n", pressureSensor.pressure());
-    memcpy(pressurePacket + packetIndex, bytesUnion.byteArray, sizeof(float));
-
-    bytesUnion.longVal = millis();
-    memcpy(timePacket + packetIndex, bytesUnion.byteArray, sizeof(long));
-    
-    Serial.print(pressurePacket[packetIndex]);
-    Serial.print(", ");
-    Serial.print(pressurePacket[packetIndex + 1]);
-    Serial.print(", ");
-    Serial.print(pressurePacket[packetIndex + 2]);
-    Serial.print(", ");
-    Serial.println(pressurePacket[packetIndex + 3]);
+    memcpy(packets[profileHalf] + packetIndex, bytesUnion.byteArray, sizeof(float));
     packetIndex += sizeof(float);
+
+    if (profileHalf == 0 && packetIndex >= PKT_LEN) {
+      profileHalf = 1;
+      packetIndex = PKT_PREAMBLE_LEN;
+    }
   }
 
   // Transmit the pressure buffer if we're surfaced
@@ -202,6 +203,8 @@ void loop() {
     if (currentStage == 5 || currentStage == 10) {
       packetIndex = PKT_PREAMBLE_LEN;
       profileNum++;
+      profileHalf = 0;
+      clearPacketPayloads();
     }
 
     stageStartTime = millis();
@@ -292,26 +295,18 @@ bool receiveCommand() {
 }
 
 void transmitPressurePacket() {
-  serprintf("Sending pressure packet #%d with content {", profileNum);
-  for (int p = 0; p < PKT_LEN; p++) {
-    serprintf("%d, ", pressurePacket[p]);
-  }
-  Serial.println("}");
+  for (int half = 0; half < 2; half++) {
+    serprintf("Sending packet #%d half %d with content {", profileNum, half);
+    for (int p = 0; p < PKT_LEN; p++) {
+      serprintf("%d, ", packets[half][p]);
+    }
+    Serial.println("}");
 
-  serprintf("Sending time packet #%d with content {", profileNum);
-  for (int p = 0; p < PKT_LEN; p++) {
-    serprintf("%d, ", timePacket[p]);
-  }
-  Serial.println("}");
+    packets[half][PKT_IDX_PROFILE_NUM] = profileNum;
 
-  pressurePacket[PKT_IDX_PROFILE] = profileNum;
-  timePacket[PKT_IDX_PROFILE] = profileNum;
-  
-  rf95.send(pressurePacket, PKT_LEN);
-  rf95.waitPacketSent();
-  
-  rf95.send(timePacket, PKT_LEN);
-  rf95.waitPacketSent();
+    rf95.send(packets[half], PKT_LEN);
+    rf95.waitPacketSent();
+  }
   
   delay(1000);
 }
@@ -342,6 +337,14 @@ bool motorIs(int doingThis) {
   // doingThis should be PUMP or SUCK
   return overrideState == doingThis ||
          (overrideState == NO_OVERRIDE && SCHEDULE[currentStage][0] == doingThis);
+}
+
+void clearPacketPayloads() {
+  for (int half = 0; half < 2; half++) {
+    for (int i = PKT_PREAMBLE_LEN; i < PKT_LEN; i++) {
+      packets[half][i] = 0;
+    }
+  }
 }
 
 

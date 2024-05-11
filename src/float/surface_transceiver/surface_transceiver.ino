@@ -94,7 +94,7 @@ void receivePacket() {
   if (len < RH_RF95_MAX_MESSAGE_LEN / 2) {
     // This packet is probably an ACK
     serprintf(
-      "Received message packet with length %d, string '%s', and values: ",
+      "Received response packet with length %d, string '%s', and values: ",
        len, (char*) byteBuffer
     );
     for (int i = 0; i < len; i++) {
@@ -104,14 +104,15 @@ void receivePacket() {
   }
   else {
     // This packet is probably a data packet
-    bool isTimePacket = byteBuffer[PKT_IDX_IS_TIME];
-
+    int numDatapoints = (int) ((len - PKT_PREAMBLE_LEN) / 4);
+    
     serprintf(
-      "Received %s packet for team %d on profile %d with length %d: ",
-      isTimePacket ? "time" : "pressure",
+      "Received packet for team %d on profile %d half %d with length %d (%d datapoints): ",
       byteBuffer[PKT_IDX_TEAM_NUM],
-      byteBuffer[PKT_IDX_PROFILE],
-      len
+      byteBuffer[PKT_IDX_PROFILE_NUM],
+      byteBuffer[PKT_IDX_PROFILE_HALF],
+      len,
+      numDatapoints
     );
 
     for (int i = 0; i < len; i++) {
@@ -119,27 +120,17 @@ void receivePacket() {
     }
     Serial.println();
 
-    if (isTimePacket) {
-      serprintf(
-        "= longs with length %d: ",
-        (len - PKT_PREAMBLE_LEN) / sizeof(long)
-      );
-      for (int i = PKT_PREAMBLE_LEN; i < len; i += sizeof(long)) {
-        memcpy(bytesUnion.byteArray, byteBuffer + i, sizeof(long));
-        Serial.print(bytesUnion.longVal);
-        Serial.print(", ");
-      }
-    }
-    else {
-      serprintf(
-        "= floats with length %d: ",
-        (len - PKT_PREAMBLE_LEN) / sizeof(float)
-      );
-      for (int i = PKT_PREAMBLE_LEN; i < len; i += sizeof(float)) {
-        memcpy(bytesUnion.byteArray, byteBuffer + i, sizeof(float));
-        Serial.print(bytesUnion.floatVal);
-        Serial.print(", ");
-      }
+    int i = PKT_PREAMBLE_LEN;
+
+    Serial.print("= datapoints: ");
+    while (i < len) {
+      memcpy(bytesUnion.byteArray, byteBuffer + i, sizeof(long));
+      serprintf("(%l, ", bytesUnion.longVal);
+      i += sizeof(long);
+
+      memcpy(bytesUnion.byteArray, byteBuffer + i, sizeof(float));
+      serprintf("%f), ", bytesUnion.floatVal);
+      i += sizeof(float);
     }
     Serial.println();
   }
