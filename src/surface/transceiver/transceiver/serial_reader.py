@@ -7,7 +7,7 @@ from rclpy.qos import QoSPresetProfiles
 from serial import Serial
 from serial.serialutil import SerialException
 
-from rov_msgs.msg import FloatData, FloatCommand
+from rov_msgs.msg import FloatData, FloatCommand, FloatSerial
 
 MILLISECONDS_TO_SECONDS = 1/1000
 SECONDS_TO_MINUTES = 1/60
@@ -24,43 +24,34 @@ class SerialReader(Node):
 
     def __init__(self) -> None:
         super().__init__('serial_reader')
-        self.publisher = self.create_publisher(FloatData, 'transceiver_data',
+        self.data_publisher = self.create_publisher(FloatData, 'transceiver_data',
                                                QoSPresetProfiles.SENSOR_DATA.value)
 
-        self.create_subscription(FloatCommand, "float_command", self.send_command,
+        self.create_subscription(FloatCommand, 'float_command', self.send_command,
                                  QoSPresetProfiles.DEFAULT.value)
+
+        self.serial_publisher = self.create_publisher(FloatSerial, 'float_serial',
+                                                      QoSPresetProfiles.SENSOR_DATA.value)
         timer_period = .5
 
         self.first_attempt = True
         self.create_timer(timer_period, self.timer_callback)
-        self._serial: Optional[Serial] = None
-
-    @property
-    def serial(self) -> Serial:
-        while not self._serial:
-            try:
-                self._serial = Serial('/dev/ttyTransceiver', 115200)
-            except SerialException:
-                if self.first_attempt:
-                    self.get_logger().warning('Transceiver not plugged in.')
-                    self.first_attempt = False
-                time.sleep(1)
-
-        self.get_logger().info('Transceiver connected.')
-        self.first_attempt = True
-        return self._serial
+        self.serial = Serial("dev/ttyTransceiver", 115200)
 
     def send_command(self, msg: FloatCommand) -> None:
         self.serial.write(msg.command.encode())
 
     def timer_callback(self) -> None:
         """Publish a message from the transceiver."""
-        msg = FloatData()
 
         packet = self.serial.readline().decode()
 
+        self.serial_publisher.publish(FloatSerial(serial=packet))
+
         if ROS_PACKET not in packet:
             return
+
+        msg = FloatData()
 
         packet_sections = packet.split(SECTION_SEPARATOR)
         header = packet_sections[1]
@@ -82,7 +73,7 @@ class SerialReader(Node):
 
         msg.time_data = time_data_list
         msg.depth_data = depth_data_list
-        self.publisher.publish(msg)
+        self.data_publisher.publish(msg)
 
 
 def main() -> None:

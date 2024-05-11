@@ -21,7 +21,7 @@ class FloatComm(QWidget):
         self.handle_scheduler_response_signal.connect(self.handle_data)
         GUIEventSubscriber(FloatData, "transceiver_data", self.handle_scheduler_response_signal)
 
-        # TODO add label for team number 
+        # TODO add label for team number
         # and maybe profile number for debugging
         # self.label: QLabel = QLabel()
         # self.label.setText('Waiting for radio...')
