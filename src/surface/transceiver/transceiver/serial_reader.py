@@ -1,10 +1,9 @@
 import time
-from math import floor
 from typing import Optional
 
 import rclpy
 from rclpy.node import Node
-from rclpy.qos import qos_profile_sensor_data
+from rclpy.qos import QoSPresetProfiles
 from serial import Serial
 from serial.serialutil import SerialException
 
@@ -15,11 +14,18 @@ SECONDS_TO_MINUTES = 1/60
 MBAR_TO_METER_OF_HEAD = 0.010199773339984
 
 
+ROS_PACKET = "ROS:"
+SECTION_SEPARATOR = ":"
+DATA_SEPARATOR = ";"
+COMMA_SEPARATOR = ","
+
+
 class SerialReader(Node):
 
     def __init__(self) -> None:
         super().__init__('serial_reader')
-        self.publisher = self.create_publisher(FloatData, 'transceiver_data', qos_profile_sensor_data)
+        self.publisher = self.create_publisher(FloatData, 'transceiver_data',
+                                               QoSPresetProfiles.SENSOR_DATA.value)
         timer_period = .5
 
         self.first_attempt = True
@@ -42,34 +48,31 @@ class SerialReader(Node):
         """Publish a message from the transceiver."""
         msg = FloatData()
 
-        packet = self.serial.readline()
+        packet = self.serial.readline().decode()
 
-        # TODO handle readline returning empty byte
-        if False:
+        if ROS_PACKET not in packet:
             return
 
-        prefix = packet[0:FloatData.PREFIX_LENGTH]
-        data = packet[FloatData.PREFIX_LENGTH:]
+        packet_sections = packet.split(SECTION_SEPARATOR)
+        header = packet_sections[1]
+        data = packet_sections[2]
 
-        # Better to round down and miss one set of data
-        data_size = floor(len(data) / 2)
+        msg.team_number = int(header[0])
+        msg.profile_number = int(header[1])
+        msg.profile_half = int(header[2])
 
-        if data_size > FloatData.DATA_MAX_LENGTH:
-            self.get_logger().warning("Somehow data is longer than max data size")
+        time_data_list: list[float] = []
+        depth_data_list: list[float] = []
+        for time_data, depth_data in [data.split(COMMA_SEPARATOR) for data in
+                                      data.split(DATA_SEPARATOR)]:
+            # Starts out as float32
+            time_data_list.append(float(time_data) * MILLISECONDS_TO_SECONDS * SECONDS_TO_MINUTES)
 
-        msg.team_number = int(prefix[0:1])
-        msg.profile_number = int(prefix[1:2])
+            # Starts out as unsigned long
+            depth_data_list.append(int(depth_data) * MBAR_TO_METER_OF_HEAD)
 
-        # Byte 3 is no longer being used
-
-        # Starts out as unsigned long
-        msg.depth_data = [int(data1, data2, data3, data4) * MBAR_TO_METER_OF_HEAD
-                          for data1, data2, data3, data4 in data[0:data_size]]
-        # Starts out as float32
-        msg.time_data = [float(data1 + data2 + data3 + data4) * MILLISECONDS_TO_SECONDS *
-                         SECONDS_TO_MINUTES
-                         for data1, data2, data3, data4 in data[data_size:2*data_size]]
-
+        msg.time_data = time_data_list
+        msg.depth_data = depth_data_list
         self.publisher.publish(msg)
 
 

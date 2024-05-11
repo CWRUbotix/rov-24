@@ -1,8 +1,6 @@
-uint8 PREFIX_LENGTH=3
-uint8 DATA_MAX_LENGTH=31
-
 uint8 team_number
 uint8 profile_number
+uint8 profile_half
 
 # Minutes
 float32[<=31] time_data
