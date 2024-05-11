@@ -43,8 +43,8 @@
 
 // Buffers for pressures & time data w/preambles containing:
 // 1 byte team number, 1 byte profile index (0x00, 0x01), and 1 byte profile half index (0x00, 0x01)
-// Every pressure is a 32-bit float stored as 4 uint8_t entries
-// Every time is a 32-bit unsigned long stored as 4 uint8_t entries
+// Every pressure is a 32-bit float stored as 4 byte entries
+// Every time is a 32-bit unsigned long stored as 4 byte entries
 // Times and pressures are interleaved: [team #, profile index, profile half, time, pressure, time, pressure, ...]
 // 3 bytes preamble + (62 readings or times * 4 bytes = 248 bytes) = 251 bytes total = PKT_LEN = RH_RF95_MAX_MESSAGE_LEN
 #define PKT_LEN              RH_RF95_MAX_MESSAGE_LEN
@@ -61,7 +61,7 @@
 union {
   float floatVal;
   unsigned long longVal;
-  uint8_t byteArray[4];
+  byte byteArray[4];
 } bytesUnion;
 
 /**

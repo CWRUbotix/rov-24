@@ -45,8 +45,8 @@
 
 #define SCHEDULE_LENGTH 11
 
-uint8_t overrideState = 0;
-uint8_t currentStage = 0;
+byte overrideState = 0;
+byte currentStage = 0;
 
 unsigned long SCHEDULE[SCHEDULE_LENGTH][2] = {
   // Wait for max <time> or until surface signal
@@ -80,11 +80,11 @@ RH_RF95 rf95(RFM95_CS, RFM95_INT);
 // Singleton instance of the pressure sensor driver
 MS5837 pressureSensor;
 
-uint8_t packets[2][PKT_LEN];
+byte packets[2][PKT_LEN];
 int packetIndex = PKT_PREAMBLE_LEN;
 
-uint8_t profileNum = 0;
-uint8_t profileHalf = 0;
+byte profileNum = 0;
+byte profileHalf = 0;
 
 void setup() {
   Serial.begin(115200);
@@ -236,10 +236,10 @@ bool receiveCommand() {
   }
   
   Serial.println("RF has signal");
-  uint8_t uintBuf[RH_RF95_MAX_MESSAGE_LEN];
-  uint8_t len = sizeof(uintBuf);
+  byte byteBuffer[RH_RF95_MAX_MESSAGE_LEN];
+  byte len = sizeof(byteBuffer);
   
-  if (!rf95.recv(uintBuf, &len)) {
+  if (!rf95.recv(byteBuffer, &len)) {
     Serial.println("Receive failed");
     return false;
   }
@@ -248,8 +248,8 @@ bool receiveCommand() {
     return false;
   }
   
-  uintBuf[len] = 0;
-  char *charBuf = (char*) uintBuf;
+  byteBuffer[len] = 0;
+  char *charBuf = (char*) byteBuffer;
 
   serprintf("Received [%d]: '%s'\n", len, charBuf);
   
@@ -289,7 +289,7 @@ bool receiveCommand() {
   }
 
   Serial.println(response);
-  rf95.send((uint8_t*) response, strlen(response));
+  rf95.send((byte*) response, strlen(response));
   rf95.waitPacketSent();
   return shouldSubmerge;
 }
@@ -307,8 +307,6 @@ void transmitPressurePacket() {
     rf95.send(packets[half], PKT_LEN);
     rf95.waitPacketSent();
   }
-  
-  delay(1000);
 }
 
 

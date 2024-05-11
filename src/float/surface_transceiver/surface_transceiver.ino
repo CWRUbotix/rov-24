@@ -80,8 +80,8 @@ void receivePacket() {
   }
   
   Serial.println("RF95 available");
-  uint8_t byteBuffer[RH_RF95_MAX_MESSAGE_LEN];
-  uint8_t len = sizeof(byteBuffer);
+  byte byteBuffer[RH_RF95_MAX_MESSAGE_LEN];
+  byte len = sizeof(byteBuffer);
   
   if (!rf95.recv(byteBuffer, &len)) {
     Serial.println("Receive failed");
