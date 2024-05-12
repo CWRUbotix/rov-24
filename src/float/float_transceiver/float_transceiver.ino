@@ -25,6 +25,7 @@
 #define TEAM_NUM 11
 #define PRESSURE_READ_INTERVAL 200
 #define PACKET_SEND_INTERVAL   1000
+#define FLOAT_PKT_RX_TIMEOUT 900
 
 
 // Schedule (all delays in ms)
@@ -36,37 +37,45 @@
 #define TX_MAX        60000
 #define ONE_HOUR      360000
 
-#define NO_OVERRIDE 0
-#define WAIT_PROFILING 0
-#define WAIT_SURFACED 1
-#define SUCK 2
-#define PUMP 3
-#define STOP 4
+//#define NO_OVERRIDE 0
+//#define WAIT_PROFILING 0
+//#define WAIT_SURFACED 1
+// #define SUCK 2
+// #define PUMP 3
 
 #define SCHEDULE_LENGTH 11
 
-byte overrideState = 0;
+enum class StageType { WaitProfiling, WaitSurfaced, Suck, Pump };
+enum class OverrideState { NoOverride, Stop, Suck, Pump };
+enum class MotorState { Stop, Suck, Pump };
+
+struct Stage {
+  StageType type;
+  unsigned long timeoutMillis;
+};
+
+OverrideState overrideState = OverrideState::NoOverride;
 byte currentStage = 0;
 
-unsigned long SCHEDULE[SCHEDULE_LENGTH][2] = {
+Stage SCHEDULE[SCHEDULE_LENGTH] = {
   // Wait for max <time> or until surface signal
-  {WAIT_SURFACED,  RELEASE_MAX },
+  {StageType::WaitSurfaced,  RELEASE_MAX },
 
   // Profile 1
-  {SUCK,           SUCK_MAX    },
-  {WAIT_PROFILING, DESCEND_TIME},
-  {PUMP,           PUMP_MAX    },
-  {WAIT_PROFILING, ASCEND_TIME },
+  {StageType::Suck,          SUCK_MAX    },
+  {StageType::WaitProfiling, DESCEND_TIME},
+  {StageType::Pump,          PUMP_MAX    },
+  {StageType::WaitProfiling, ASCEND_TIME },
 
-  {WAIT_SURFACED,  TX_MAX      },
+  {StageType::WaitSurfaced,  TX_MAX      },
 
   // Profile 2
-  {SUCK,           SUCK_MAX    },
-  {WAIT_PROFILING, DESCEND_TIME},
-  {PUMP,           PUMP_MAX    },
-  {WAIT_PROFILING, ASCEND_TIME },
+  {StageType::Suck,          SUCK_MAX    },
+  {StageType::WaitProfiling, DESCEND_TIME},
+  {StageType::Pump,          PUMP_MAX    },
+  {StageType::WaitProfiling, ASCEND_TIME },
 
-  {WAIT_SURFACED,  ONE_HOUR    },
+  {StageType::WaitSurfaced,  ONE_HOUR    },
 };
 
 unsigned long stageStartTime;
@@ -130,43 +139,46 @@ void loop() {
   // Move to next stage if necessary
   bool submergeReceived = receiveCommand();
 
-  if (overrideState == SUCK) {
+  if (overrideState == OverrideState::Suck) {
     if (digitalRead(LIMIT_FULL) == HIGH) {
       suck();
     }
     else {
       stop();
-      overrideState = NO_OVERRIDE;
+      overrideState = OverrideState::Stop;
     }
     return;
   }
-  else if (overrideState == PUMP) {
+  else if (overrideState == OverrideState::Pump) {
     if (digitalRead(LIMIT_EMPTY) == HIGH) {
       pump();
     }
     else {
       stop();
-      overrideState = NO_OVERRIDE;
+      overrideState = OverrideState::Stop;
     }
+    return;
+  }
+  else if (overrideState == OverrideState::Stop) {
+    stop();
     return;
   }
   
   // Read the pressure if we're profiling
   if (
-    SCHEDULE[currentStage][0] != WAIT_SURFACED &&
+    SCHEDULE[currentStage].type != StageType::WaitSurfaced &&
     millis() >= previousPressureReadTime + PRESSURE_READ_INTERVAL &&
     packetIndex < PKT_LEN  // Stop recording if we overflow buffer
   ) {
     previousPressureReadTime = millis();
 
-    bytesUnion.longVal = millis();
-    memcpy(packets[profileHalf] + packetIndex, bytesUnion.byteArray, sizeof(long));
+    memcpy(packets[profileHalf] + packetIndex, &previousPressureReadTime, sizeof(long));
     packetIndex += sizeof(long);
 
     pressureSensor.read();
-    bytesUnion.floatVal = pressureSensor.pressure();
-    serialPrintf("Reading pressure: %f\n", pressureSensor.pressure());
-    memcpy(packets[profileHalf] + packetIndex, bytesUnion.byteArray, sizeof(float));
+    float pressure = pressureSensor.pressure();
+    memcpy(packets[profileHalf] + packetIndex, &pressure, sizeof(float));
+    serialPrintf("Reading pressure: %f\n", pressure);
     packetIndex += sizeof(float);
 
     if (profileHalf == 0 && packetIndex >= PKT_LEN) {
@@ -177,7 +189,7 @@ void loop() {
 
   // Transmit the pressure buffer if we're surfaced
   if (
-    SCHEDULE[currentStage][0] == WAIT_SURFACED &&
+    SCHEDULE[currentStage].type == StageType::WaitSurfaced &&
     millis() >= previousPacketSendTime + PACKET_SEND_INTERVAL
   ) {
     transmitPressurePacket();
@@ -185,17 +197,17 @@ void loop() {
   }
 
   if (
-    millis() >= stageStartTime + SCHEDULE[currentStage][1] ||
-    (SCHEDULE[currentStage][0] == WAIT_SURFACED && submergeReceived) ||
-    (SCHEDULE[currentStage][0] == SUCK && !digitalRead(LIMIT_FULL)) ||
-    (SCHEDULE[currentStage][0] == PUMP && !digitalRead(LIMIT_EMPTY))
+    millis() >= stageStartTime + SCHEDULE[currentStage].timeoutMillis ||
+    (SCHEDULE[currentStage].type == StageType::WaitSurfaced && submergeReceived) ||
+    (SCHEDULE[currentStage].type == StageType::Suck && !digitalRead(LIMIT_FULL)) ||
+    (SCHEDULE[currentStage].type == StageType::Pump && !digitalRead(LIMIT_EMPTY))
   ) {
     serialPrintf(
       "Stage #%d, type: %d, start time: %l, max wait time: %l, current time: %l\n",
       currentStage,
-      SCHEDULE[currentStage][0],
+      SCHEDULE[currentStage].type,
       stageStartTime,
-      SCHEDULE[currentStage][1],
+      SCHEDULE[currentStage].timeoutMillis,
       millis()
     );
 
@@ -217,10 +229,10 @@ void loop() {
     }
 
     // Switch to sucking/pumping depending on the stage we're entering
-    if (SCHEDULE[currentStage][0] == SUCK) {
+    if (SCHEDULE[currentStage].type == StageType::Suck) {
       suck();
     }
-    else if (SCHEDULE[currentStage][0] == PUMP) {
+    else if (SCHEDULE[currentStage].type == StageType::Pump) {
       pump();
     }
 
@@ -231,7 +243,7 @@ void loop() {
 bool receiveCommand() {
   Serial.println("Receiving command...");
   
-  if (!rf95.waitAvailableTimeout(900)) {
+  if (!rf95.waitAvailableTimeout(FLOAT_PKT_RX_TIMEOUT)) {
     return false;
   }
   
@@ -262,27 +274,31 @@ bool receiveCommand() {
     shouldSubmerge = true;
   }
   else if (strcmp(charBuf, "pump") == 0) {
-    if (!motorIs(SUCK)) {
+    if (getMotorState() != MotorState::Suck) {
       response = "ACK PUMPING";
-      overrideState = PUMP;
+      overrideState = OverrideState::Pump;
     }
     else {
       response = "NACK RETURN FIRST";
     }
   }
   else if (strcmp(charBuf, "suck") == 0) {
-    if (!motorIs(PUMP)) {
+    if (getMotorState() != MotorState::Pump) {
       response = "ACK SUCKING";
-      overrideState = SUCK;
+      overrideState = OverrideState::Suck;
     }
     else {
       response = "NACK RETURN FIRST";
     }
   }
+  else if (strcmp(charBuf, "stop") == 0) {
+    response = "ACK STOPPING";
+    overrideState = OverrideState::Stop;
+  }
   else if (strcmp(charBuf, "return") == 0) {
     response = "ACK RETURNING TO SCHEDULE";
     stop();
-    overrideState = NO_OVERRIDE;
+    overrideState = OverrideState::NoOverride;
   }
   else {
     response = "NACK INVALID COMMAND";
@@ -332,10 +348,21 @@ void stop() {
   digitalWrite(SUCK_PIN, LOW);
 }
 
-bool motorIs(int doingThis) {
-  // doingThis should be PUMP or SUCK
-  return overrideState == doingThis ||
-         (overrideState == NO_OVERRIDE && SCHEDULE[currentStage][0] == doingThis);
+MotorState getMotorState() {
+  if (overrideState != OverrideState::NoOverride) {
+    switch (overrideState) {
+      case OverrideState::Stop: return MotorState::Stop;
+      case OverrideState::Suck: return MotorState::Suck;
+      case OverrideState::Pump: return MotorState::Pump;
+    }
+  }
+
+  switch (SCHEDULE[currentStage].type) {
+    case StageType::WaitProfiling: return MotorState::Stop;
+    case StageType::WaitSurfaced: return MotorState::Stop;
+    case StageType::Suck: return MotorState::Suck;
+    case StageType::Pump: return MotorState::Pump;
+  }
 }
 
 void clearPacketPayloads() {

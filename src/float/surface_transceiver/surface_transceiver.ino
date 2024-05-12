@@ -12,6 +12,8 @@
 
 #define COMMAND_SPAM_TIMES 5
 #define COMMAND_SPAM_DELAY 500
+#define SURFACE_PKT_RX_TIMEOUT 1000
+#define MAX_RESPONSE_LEN RH_RF95_MAX_MESSAGE_LEN >> 1  // Max length for ACKs/NACKs
 
 // Singleton instance of the radio driver
 RH_RF95 rf95(RFM95_CS, RFM95_INT);
@@ -63,18 +65,22 @@ void loop() {
     if (command.charAt(command.length() - 1) == '\n') {
       command.remove(command.length() - 1);
     }
-    char command_arr[command.length() + 1];
-    command.toCharArray(command_arr, command.length() + 1);
-    sendCommand(command_arr);
+    
+    sendCommand(command);
   }
 }
 
-void receivePacket() {
+/**
+ * Try to receive a packet for SURFACE_PKT_RX_TIMEOUT ms.
+ * Return true if a packet was received and it was an ACK/NACK packet; else return false.
+ * Print data from data packets (note we return false if data packets are successfully received).
+ */
+bool receivePacket() {
   Serial.println("Attempting to receive");
   
-  if (!rf95.waitAvailableTimeout(1000)) {
+  if (!rf95.waitAvailableTimeout(SURFACE_PKT_RX_TIMEOUT)) {
     Serial.println("RF95 not available");
-    return;
+    return false;
   }
   
   Serial.println("RF95 available");
@@ -83,16 +89,16 @@ void receivePacket() {
   
   if (!rf95.recv(byteBuffer, &len)) {
     Serial.println("Receive failed");
-    return;
+    return false;
   }
   
   if (!len) {
     Serial.println("Message length 0, dropping");
-    return;
+    return false;
   }
 
-  if (len < RH_RF95_MAX_MESSAGE_LEN / 2) {
-    // This packet is probably an ACK
+  if (len < MAX_RESPONSE_LEN) {
+    // This packet is probably an ACK/NACK
     serialPrintf(
       "Received response packet with length %d, string '%s', and values: ",
        len, (char*) byteBuffer
@@ -101,6 +107,8 @@ void receivePacket() {
       serialPrintf("%d, ", byteBuffer[i]);
     }
     Serial.println();
+
+    return true;
   }
   else {
     // This packet is probably a data packet
@@ -127,26 +135,33 @@ void receivePacket() {
       byteBuffer[PKT_IDX_PROFILE_HALF]
     );
     for (int i = PKT_HEADER_LEN; i < len; ) {
-      memcpy(bytesUnion.byteArray, byteBuffer + i, sizeof(long));
-      serialPrintf("%l,", bytesUnion.longVal);
+      serialPrintf("%l,", * (unsigned long*) (byteBuffer + i));
       i += sizeof(long);
 
-      memcpy(bytesUnion.byteArray, byteBuffer + i, sizeof(float));
-      serialPrintf("%f;", bytesUnion.floatVal);
+      serialPrintf("%f;", * (float*) (byteBuffer + i));
       i += sizeof(float);
     }
     Serial.println();
   }
+
+  return false;
 }
 
-void sendCommand(char *message) {
+void sendCommand(String command) {
+  byte commandBytes[command.length() + 1];
+  command.getBytes(commandBytes, command.length() + 1);
+  
   for (int i = 0; i < COMMAND_SPAM_TIMES; i++) {
-    rf95.send(message, strlen(message));
+    rf95.send(commandBytes, command.length() + 1);
     rf95.waitPacketSent();
-    receivePacket();
+    bool receivedACK = receivePacket();
+
+    serialPrintf("'%s' (len=%d) command sent! Iteration: %d\n", commandBytes, command.length() + 1, i);
+
+    if (receivedACK) {
+      break;
+    }
 
     delay(COMMAND_SPAM_DELAY);
-  
-    serialPrintf("'%s' (len=%d) command sent! Iteration: %d\n", message, strlen(message), i);
   }
 }

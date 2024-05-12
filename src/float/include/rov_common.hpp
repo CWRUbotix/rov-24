@@ -1,3 +1,5 @@
+#include <RH_RF95.h>
+
 #if defined (__AVR_ATmega32U4__)  // Feather 32u4 w/Radio
   #define RFM95_CS    8
   #define RFM95_INT   7
@@ -51,18 +53,11 @@
 #define PKT_IDX_TEAM_NUM     0
 #define PKT_IDX_PROFILE_NUM  1
 #define PKT_IDX_PROFILE_HALF 2
-#define PKT_HEADER_LEN     3
+#define PKT_HEADER_LEN       3
 #define PKT_PAYLOAD_LEN      PACKET_LEN - PACKET_PREAMBLE_LEN
 
 #define RF95_FREQ 877.0
 
-
-// Converts byte arrays to floats via shared memory
-union {
-  float floatVal;
-  unsigned long longVal;
-  byte byteArray[4];
-} bytesUnion;
 
 /**
  * printf the arguments with a line break at the end to the provided serial port.
