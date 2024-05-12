@@ -2,8 +2,9 @@ import rclpy
 from rclpy.node import Node
 from rclpy.qos import QoSPresetProfiles
 from serial import Serial
+from serial.serialutil import SerialException
 
-from rov_msgs.msg import FloatData, FloatCommand, FloatSerial
+from rov_msgs.msg import FloatCommand, FloatData, FloatSerial
 
 MILLISECONDS_TO_SECONDS = 1/1000
 SECONDS_TO_MINUTES = 1/60
@@ -32,7 +33,11 @@ class SerialReader(Node):
 
         self.first_attempt = True
         self.create_timer(timer_period, self.timer_callback)
-        self.serial = Serial("dev/ttyTransceiver", 115200)
+        try:
+            self.serial = Serial("/dev/ttyTransceiver", 115200)
+            self.get_logger().info("Serial device connected.")
+        except SerialException:
+            self.get_logger().error("Error no transceiver connected.")
 
     def send_command(self, msg: FloatCommand) -> None:
         self.serial.write(msg.command.encode())
