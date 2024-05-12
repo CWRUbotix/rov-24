@@ -38,6 +38,7 @@ class SerialReader(Node):
             self.get_logger().info("Serial device connected.")
         except SerialException:
             self.get_logger().error("Error no transceiver connected.")
+            exit(1)
 
     def send_command(self, msg: FloatCommand) -> None:
         self.serial.write(msg.command.encode())
