@@ -37,15 +37,9 @@
 #define TX_MAX        60000
 #define ONE_HOUR      360000
 
-//#define NO_OVERRIDE 0
-//#define WAIT_PROFILING 0
-//#define WAIT_SURFACED 1
-// #define SUCK 2
-// #define PUMP 3
-
 #define SCHEDULE_LENGTH 11
 
-enum class StageType { WaitProfiling, WaitSurfaced, Suck, Pump };
+enum class StageType { WaitDeploying, WaitTransmitting, WaitProfiling, Suck, Pump };
 enum class OverrideState { NoOverride, Stop, Suck, Pump };
 enum class MotorState { Stop, Suck, Pump };
 
@@ -59,23 +53,23 @@ byte currentStage = 0;
 
 Stage SCHEDULE[SCHEDULE_LENGTH] = {
   // Wait for max <time> or until surface signal
-  {StageType::WaitSurfaced,  RELEASE_MAX },
+  {StageType::WaitDeploying,     RELEASE_MAX },
 
   // Profile 1
-  {StageType::Suck,          SUCK_MAX    },
-  {StageType::WaitProfiling, DESCEND_TIME},
-  {StageType::Pump,          PUMP_MAX    },
-  {StageType::WaitProfiling, ASCEND_TIME },
+  {StageType::Suck,              SUCK_MAX    },
+  {StageType::WaitProfiling,     DESCEND_TIME},
+  {StageType::Pump,              PUMP_MAX    },
+  {StageType::WaitProfiling,     ASCEND_TIME },
 
-  {StageType::WaitSurfaced,  TX_MAX      },
+  {StageType::WaitTransmitting,  TX_MAX      },
 
   // Profile 2
-  {StageType::Suck,          SUCK_MAX    },
-  {StageType::WaitProfiling, DESCEND_TIME},
-  {StageType::Pump,          PUMP_MAX    },
-  {StageType::WaitProfiling, ASCEND_TIME },
+  {StageType::Suck,              SUCK_MAX    },
+  {StageType::WaitProfiling,     DESCEND_TIME},
+  {StageType::Pump,              PUMP_MAX    },
+  {StageType::WaitProfiling,     ASCEND_TIME },
 
-  {StageType::WaitSurfaced,  ONE_HOUR    },
+  {StageType::WaitTransmitting,  ONE_HOUR    },
 };
 
 unsigned long stageStartTime;
@@ -135,8 +129,6 @@ void setup() {
 
 
 void loop() {
-
-  // Move to next stage if necessary
   bool submergeReceived = receiveCommand();
 
   if (overrideState == OverrideState::Suck) {
@@ -166,19 +158,18 @@ void loop() {
   
   // Read the pressure if we're profiling
   if (
-    SCHEDULE[currentStage].type != StageType::WaitSurfaced &&
+    !isSurfaced() &&
     millis() >= previousPressureReadTime + PRESSURE_READ_INTERVAL &&
     packetIndex < PKT_LEN  // Stop recording if we overflow buffer
   ) {
     previousPressureReadTime = millis();
-
     memcpy(packets[profileHalf] + packetIndex, &previousPressureReadTime, sizeof(long));
     packetIndex += sizeof(long);
 
     pressureSensor.read();
     float pressure = pressureSensor.pressure();
-    memcpy(packets[profileHalf] + packetIndex, &pressure, sizeof(float));
     serialPrintf("Reading pressure: %f\n", pressure);
+    memcpy(packets[profileHalf] + packetIndex, &pressure, sizeof(float));
     packetIndex += sizeof(float);
 
     if (profileHalf == 0 && packetIndex >= PKT_LEN) {
@@ -189,21 +180,22 @@ void loop() {
 
   // Transmit the pressure buffer if we're surfaced
   if (
-    SCHEDULE[currentStage].type == StageType::WaitSurfaced &&
+    isSurfaced() &&
     millis() >= previousPacketSendTime + PACKET_SEND_INTERVAL
   ) {
     transmitPressurePacket();
     previousPacketSendTime = millis();
   }
 
+  // Go to next stage if we've timed out or reached another stage end condition
   if (
     millis() >= stageStartTime + SCHEDULE[currentStage].timeoutMillis ||
-    (SCHEDULE[currentStage].type == StageType::WaitSurfaced && submergeReceived) ||
+    (isSurfaced() && submergeReceived) ||
     (SCHEDULE[currentStage].type == StageType::Suck && !digitalRead(LIMIT_FULL)) ||
     (SCHEDULE[currentStage].type == StageType::Pump && !digitalRead(LIMIT_EMPTY))
   ) {
     serialPrintf(
-      "Stage #%d, type: %d, start time: %l, max wait time: %l, current time: %l\n",
+      "Ending stage #%d, type: %d, start time: %l, max wait time: %l, current time: %l\n",
       currentStage,
       SCHEDULE[currentStage].type,
       stageStartTime,
@@ -211,8 +203,8 @@ void loop() {
       millis()
     );
 
-    // If we just finished our time surfaced
-    if (currentStage == 5 || currentStage == 10) {
+    // If we just finished transmitting on the surface, go to the next profile
+    if (SCHEDULE[currentStage].type == StageType::WaitTransmitting) {
       packetIndex = PKT_HEADER_LEN;
       profileNum++;
       profileHalf = 0;
@@ -235,8 +227,6 @@ void loop() {
     else if (SCHEDULE[currentStage].type == StageType::Pump) {
       pump();
     }
-
-    Serial.println(currentStage);
   }
 }
 
@@ -268,7 +258,6 @@ bool receiveCommand() {
   String response;
   bool shouldSubmerge = false;
 
-  // TODO: Use a string or add \0 to these????
   if (strcmp(charBuf, "submerge") == 0) {
     response = "ACK SUBMERGING";
     shouldSubmerge = true;
@@ -358,11 +347,17 @@ MotorState getMotorState() {
   }
 
   switch (SCHEDULE[currentStage].type) {
+    case StageType::WaitDeploying:
+    case StageType::WaitTransmitting:
     case StageType::WaitProfiling: return MotorState::Stop;
-    case StageType::WaitSurfaced: return MotorState::Stop;
     case StageType::Suck: return MotorState::Suck;
     case StageType::Pump: return MotorState::Pump;
   }
+}
+
+bool isSurfaced() {
+  return SCHEDULE[currentStage].type == StageType::WaitDeploying ||
+         SCHEDULE[currentStage].type == StageType::WaitTransmitting;
 }
 
 void clearPacketPayloads() {
@@ -372,6 +367,8 @@ void clearPacketPayloads() {
     }
   }
 }
+
+
 
 
 /******* Setup Methods (down here cause they're lorge) *******/
