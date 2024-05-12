@@ -1,11 +1,7 @@
-import time
-from typing import Optional
-
 import rclpy
 from rclpy.node import Node
 from rclpy.qos import QoSPresetProfiles
 from serial import Serial
-from serial.serialutil import SerialException
 
 from rov_msgs.msg import FloatData, FloatCommand, FloatSerial
 
