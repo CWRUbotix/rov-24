@@ -60,6 +60,7 @@ class Logger(QWidget):
             return
 
         self.textbox.moveCursor(QTextCursor.MoveOperation.End)
+        # TODO why set it in callback?
         self.textbox.setCurrentFont(self.terminal_font)
         self.textbox.setTextColor(SEVERITY_LEVELS_DICT[severity_key])
         self.textbox.insertPlainText(f'[{severity_key.name}]\t{message.msg}\n')

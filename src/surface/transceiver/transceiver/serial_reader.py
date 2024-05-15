@@ -22,7 +22,7 @@ class SerialReader(Node):
     def __init__(self) -> None:
         super().__init__('serial_reader')
         self.data_publisher = self.create_publisher(FloatData, 'transceiver_data',
-                                               QoSPresetProfiles.SENSOR_DATA.value)
+                                                    QoSPresetProfiles.SENSOR_DATA.value)
 
         self.create_subscription(FloatCommand, 'float_command', self.send_command,
                                  QoSPresetProfiles.DEFAULT.value)
