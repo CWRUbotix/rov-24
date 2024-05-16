@@ -52,7 +52,6 @@ class SerialReader(Node):
 
     def timer_callback(self) -> None:
         """Publish a message from the transceiver."""
-
         try:
             with self.serial:
                 packet = self.serial.readline().decode().strip()

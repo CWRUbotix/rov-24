@@ -116,6 +116,5 @@ class FloatComm(QWidget):
         msg : FloatSerial
             the serial from the float
         """
-
         self.console.moveCursor(QTextCursor.MoveOperation.End)
         self.console.insertPlainText(f'{msg.serial}\n')
