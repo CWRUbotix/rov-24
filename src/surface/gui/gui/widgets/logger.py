@@ -61,8 +61,4 @@ class Logger(QWidget):
         self.textbox.moveCursor(QTextCursor.MoveOperation.End)
         self.textbox.setCurrentFont(self.terminal_font)
         self.textbox.setTextColor(SEVERITY_LEVELS_DICT[severity_key])
-        if message.msg[-2:] == '\n':
-            self.subscriber.get_logger().debug("womp womp")
-            message.msg = message.msg[-2:]
-
         self.textbox.insertPlainText(f'[{severity_key.name}]\t{message.msg}\n')
