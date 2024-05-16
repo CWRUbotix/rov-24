@@ -84,7 +84,6 @@ class FloatComm(QWidget):
         self.console.setFont(font)
 
         self.plot = PlotWidget()
-        # self.plot.show()
 
         left_side_layout.addLayout(info_and_buttons)
         left_side_layout.addWidget(self.console)
@@ -105,7 +104,6 @@ class FloatComm(QWidget):
         self.team_number.setText(f"Team #: {msg.team_number}")
         self.profile_number.setText(f"Profile #: {msg.profile_number}")
         self.profile_half.setText(f"Profile half: {msg.profile_half}")
-        # self.plot.make(msg.time_data, msg.depth_data, plot=self.plot)
         self.plot.plot(msg.time_data, msg.depth_data)
 
     @pyqtSlot(FloatSerial)
