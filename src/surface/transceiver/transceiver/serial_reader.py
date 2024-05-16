@@ -34,19 +34,32 @@ class SerialReader(Node):
         self.first_attempt = True
         self.create_timer(timer_period, self.timer_callback)
         try:
-            self.serial = Serial("/dev/ttyTransceiver", 115200)
-            self.get_logger().info("Serial device connected.")
-        except SerialException:
+            with Serial("/dev/serial/by-id/usb-Adafruit_Feather_32u4-if00", 115200) as ser:
+                self.serial = ser
+                self.get_logger().info("Serial device connected.")
+        except SerialException as e:
             self.get_logger().error("Error no transceiver connected.")
+            self.get_logger().error(str(e))
             exit(1)
 
     def send_command(self, msg: FloatCommand) -> None:
-        self.serial.write(msg.command.encode())
+        try:
+            with self.serial:
+                self.serial.write(msg.command.encode())
+        except SerialException as e:
+            self.get_logger().error("Command send failed.")
+            self.get_logger().error(str(e))
 
     def timer_callback(self) -> None:
         """Publish a message from the transceiver."""
 
-        packet = self.serial.readline().decode()
+        try:
+            with self.serial:
+                packet = self.serial.readline().decode()
+        except SerialException as e:
+            self.get_logger().error("Serial read failed.")
+            self.get_logger().error(str(e))
+            return
 
         self.serial_publisher.publish(FloatSerial(serial=packet))
 

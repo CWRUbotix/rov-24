@@ -1,11 +1,15 @@
+from functools import partial
+
+from gui.gui_nodes.event_nodes.publisher import GUIEventPublisher
 from gui.gui_nodes.event_nodes.subscriber import GUIEventSubscriber
 from PyQt6.QtCore import pyqtSignal, pyqtSlot
-from PyQt6.QtWidgets import QHBoxLayout, QLabel, QWidget, QTextEdit
 from PyQt6.QtGui import QTextCursor
+from PyQt6.QtWidgets import (QHBoxLayout, QLabel, QPushButton, QTextEdit,
+                             QVBoxLayout, QWidget)
 from qwt.plot import QwtPlot
 from qwt.plot_curve import QwtPlotCurve
 
-from rov_msgs.msg import FloatData, FloatSerial, FloatCommand
+from rov_msgs.msg import FloatCommand, FloatData, FloatSerial
 
 
 class FloatComm(QWidget):
@@ -25,16 +29,51 @@ class FloatComm(QWidget):
         GUIEventSubscriber(FloatData, "transceiver_data", self.handle_data_signal)
         GUIEventSubscriber(FloatSerial, "float_serial", self.handle_serial_signal)
 
+        command_pub = GUIEventPublisher(FloatCommand, "float_command")
+
         # TODO add label for team number
         # and maybe profile number for debugging
-        # self.label: QLabel = QLabel()
+        # self.label = QLabel()
         # self.label.setText('Waiting for radio...')
         # layout.addWidget(self.label)
-        self.plot = QwtPlot("Meter of Head Versus Seconds")
-        self.plot.setAutoReplot(True)
-        self.plot.show()
 
-        layout.addWidget(self.plot)
+        info_layout = QVBoxLayout()
+
+        self.team_number = QLabel('Waiting for Team #')
+        self.profile_number = QLabel("Waiting for profile #")
+        self.profile_half = QLabel("Waitng for profile half")
+
+        left_side_layout = QVBoxLayout()
+
+        info_layout.addWidget(self.team_number)
+        info_layout.addWidget(self.profile_number)
+        info_layout.addWidget(self.profile_half)
+
+        info_and_buttons = QHBoxLayout()
+        info_and_buttons.addLayout(info_layout)
+
+        submerge_button = QPushButton("Submerge")
+        pump_button = QPushButton("Pump")
+        suck_button = QPushButton("Suck")
+        return_button = QPushButton("Return")
+        stop_button = QPushButton("Stop")
+
+        submerge_button.clicked.connect(partial(command_pub.publish,
+                                                FloatCommand(command=FloatCommand.SUBMERGE)))
+        pump_button.clicked.connect(partial(command_pub.publish,
+                                            FloatCommand(command=FloatCommand.PUMP)))
+        suck_button.clicked.connect(partial(command_pub.publish,
+                                    FloatCommand(command=FloatCommand.SUCK)))
+        return_button.clicked.connect(partial(command_pub.publish,
+                                              FloatCommand(command=FloatCommand.RETURN)))
+        stop_button.clicked.connect(partial(command_pub.publish,
+                                            FloatCommand(command=FloatCommand.STOP)))
+
+        info_and_buttons.addWidget(submerge_button)
+        info_and_buttons.addWidget(pump_button)
+        info_and_buttons.addWidget(suck_button)
+        info_and_buttons.addWidget(return_button)
+        info_and_buttons.addWidget(stop_button)
 
         self.console = QTextEdit()
         self.console.setReadOnly(True)
@@ -45,7 +84,15 @@ class FloatComm(QWidget):
         font.setPointSize(11)
         self.console.setFont(font)
 
-        layout.addWidget(self.console)
+        self.plot = QwtPlot("Meter of Head Versus Seconds")
+        self.plot.setAutoReplot(True)
+        self.plot.show()
+
+        left_side_layout.addLayout(info_and_buttons)
+        left_side_layout.addWidget(self.console)
+
+        layout.addLayout(left_side_layout)
+        layout.addWidget(self.plot)
 
     @pyqtSlot(FloatData)
     def handle_data(self, msg: FloatData) -> None:
@@ -57,8 +104,10 @@ class FloatComm(QWidget):
         msg : FloatData
             the data from the float
         """
-
-        self.plot.make(msg.time_data, msg.depth_data, plot=self.plot)
+        self.team_number.setText(f"Team #: {msg.team_number}")
+        self.profile_number.setText(f"Profile #: {msg.profile_number}")
+        self.profile_half.setText(f"Profile half: {msg.profile_half}")
+        # self.plot.make(msg.time_data, msg.depth_data, plot=self.plot)
 
     @pyqtSlot(FloatSerial)
     def handle_serial(self, msg: FloatSerial) -> None:
@@ -72,4 +121,4 @@ class FloatComm(QWidget):
         """
 
         self.console.moveCursor(QTextCursor.MoveOperation.End)
-        self.console.insertPlainText(f'{msg.serial}\n')
+        self.console.insertPlainText(msg.serial)
