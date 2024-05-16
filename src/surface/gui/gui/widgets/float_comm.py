@@ -6,8 +6,7 @@ from PyQt6.QtCore import pyqtSignal, pyqtSlot
 from PyQt6.QtGui import QTextCursor
 from PyQt6.QtWidgets import (QHBoxLayout, QLabel, QPushButton, QTextEdit,
                              QVBoxLayout, QWidget)
-from qwt.plot import QwtPlot
-from qwt.plot_curve import QwtPlotCurve
+from pyqtgraph import PlotWidget
 
 from rov_msgs.msg import FloatCommand, FloatData, FloatSerial
 
@@ -84,9 +83,8 @@ class FloatComm(QWidget):
         font.setPointSize(11)
         self.console.setFont(font)
 
-        self.plot = QwtPlot("Meter of Head Versus Seconds")
-        self.plot.setAutoReplot(True)
-        self.plot.show()
+        self.plot = PlotWidget()
+        # self.plot.show()
 
         left_side_layout.addLayout(info_and_buttons)
         left_side_layout.addWidget(self.console)
@@ -108,6 +106,7 @@ class FloatComm(QWidget):
         self.profile_number.setText(f"Profile #: {msg.profile_number}")
         self.profile_half.setText(f"Profile half: {msg.profile_half}")
         # self.plot.make(msg.time_data, msg.depth_data, plot=self.plot)
+        self.plot.plot(msg.time_data, msg.depth_data)
 
     @pyqtSlot(FloatSerial)
     def handle_serial(self, msg: FloatSerial) -> None:
@@ -121,4 +120,4 @@ class FloatComm(QWidget):
         """
 
         self.console.moveCursor(QTextCursor.MoveOperation.End)
-        self.console.insertPlainText(msg.serial)
+        self.console.insertPlainText(f'{msg.serial}\n')

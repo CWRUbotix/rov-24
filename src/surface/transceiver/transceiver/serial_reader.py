@@ -55,7 +55,7 @@ class SerialReader(Node):
 
         try:
             with self.serial:
-                packet = self.serial.readline().decode()
+                packet = self.serial.readline().decode().strip()
         except SerialException as e:
             self.get_logger().error("Serial read failed.")
             self.get_logger().error(str(e))

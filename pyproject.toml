@@ -9,7 +9,7 @@ dependencies = [
     'mypy >= 1.7',
     'pynput',
     'pyqt6',
-    'PythonQwt',
+    'pyqtgraph',
     'pyqtdarktheme',
     'opencv-python>=4.8.1',
     'numpy>=1.26',
