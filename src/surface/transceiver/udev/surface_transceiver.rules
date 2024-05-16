@@ -1,1 +1,0 @@
-SUBSYSTEMS=="usb", ATTRS{idVendor}=="239a", ATTRS{idProduct}=="800c", SYMLINK+="ttyTransceiver", MODE="0666"

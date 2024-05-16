@@ -30,12 +30,6 @@ class FloatComm(QWidget):
 
         command_pub = GUIEventPublisher(FloatCommand, "float_command")
 
-        # TODO add label for team number
-        # and maybe profile number for debugging
-        # self.label = QLabel()
-        # self.label.setText('Waiting for radio...')
-        # layout.addWidget(self.label)
-
         info_layout = QVBoxLayout()
 
         self.team_number = QLabel('Waiting for Team #')
