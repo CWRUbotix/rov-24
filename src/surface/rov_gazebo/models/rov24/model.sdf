@@ -32,7 +32,7 @@
 
       <!-- Collision volume * fluid_density == displaced mass, used by BuoyancyPlugin -->
       <collision name="base_link_collision">
-        <pose>0.01 0.0 0.10 0 0 0</pose>
+        <pose>0.0142 0.0 0.02 0 0 0</pose>
         <geometry>
           <box>
             <size>0.35 0.35 0.147</size>

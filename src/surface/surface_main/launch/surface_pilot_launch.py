@@ -2,7 +2,7 @@ import os
 
 from ament_index_python.packages import get_package_share_directory
 from launch.launch_description import LaunchDescription
-from launch.actions import GroupAction, IncludeLaunchDescription, DeclareLaunchArgument
+from launch.actions import GroupAction, IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import PushRosNamespace, Node
 from launch.conditions import UnlessCondition
@@ -10,11 +10,6 @@ from launch.substitutions import LaunchConfiguration
 
 
 def generate_launch_description() -> LaunchDescription:
-    launch_flir_arg = DeclareLaunchArgument(
-        'launch_flir', default_value='true'
-    )
-
-    launch_flir_conf = LaunchConfiguration('launch_flir')
 
     gui_path: str = get_package_share_directory('gui')
     controller_path: str = get_package_share_directory('ps5_controller')
@@ -69,6 +64,5 @@ def generate_launch_description() -> LaunchDescription:
     )
 
     return LaunchDescription([
-        launch_flir_arg,
-        namespace_launch,
+        namespace_launch
     ])

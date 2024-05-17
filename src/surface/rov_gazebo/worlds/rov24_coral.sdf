@@ -38,7 +38,7 @@
         </density_change>
       </graded_buoyancy>
       <!-- Enable by model name -->
-      <enable>rov24</enable>
+      <enable>rov24_with_brain_coral</enable>
       <enable>brain_coral</enable>
     </plugin>
 
@@ -48,7 +48,7 @@
 
     <include>
       <uri>model://rov24_with_brain_coral</uri>
-      <pose>-2 0 0 0 0 0</pose>
+      <pose>0.43 -0.63 -3.85 0 0 0</pose>
     </include>
 
     <include>
@@ -66,10 +66,10 @@
       <pose>0.75 -0.75 -4 0 0 0</pose>
     </include>
 
-    <include>
+    <!-- <include>
       <uri>model://brain_coral</uri>
       <pose>0.75 -0.75 -3.95 0 0 0</pose>
-    </include>
+    </include> -->
 
   </world>
 </sdf>
