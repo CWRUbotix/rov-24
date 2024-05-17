@@ -12,8 +12,9 @@ def generate_launch_description() -> LaunchDescription:
     gui_path: str = get_package_share_directory('gui')
     flight_control_path: str = get_package_share_directory('flight_control')
     vehicle_manager_path: str = get_package_share_directory('vehicle_manager')
+    transceiver_path: str = get_package_share_directory('transceiver')
 
-    # Launches GUI
+    # Launches Gui
     gui_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([
             os.path.join(
@@ -49,6 +50,16 @@ def generate_launch_description() -> LaunchDescription:
         ]
     )
 
+    # Launches Transceiver
+    transceiver_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([
+            os.path.join(
+                transceiver_path, 'launch', 'serial_reader_launch.py'
+            )
+        ]),
+    )
+
     return LaunchDescription([
-        namespace_launch
+        namespace_launch,
+        transceiver_launch,
     ])
