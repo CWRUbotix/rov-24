@@ -42,7 +42,7 @@ def joystick_map(raw: float) -> float:
 
 class MultiplexerNode(Node):
     def __init__(self) -> None:
-        super().__init__('control_inverter_node',
+        super().__init__('multiplexer',
                          parameter_overrides=[])
 
         self.state = AutonomousFlight.Request.STOP
@@ -100,8 +100,8 @@ class MultiplexerNode(Node):
     def control_callback(self, msg: PixhawkInstruction) -> None:
 
         if msg.author == PixhawkInstruction.MANUAL_CONTROL and \
-            self.state == AutonomousFlight.Request.STOP:
-             # Smooth out adjustments
+                self.state == AutonomousFlight.Request.STOP:
+            # Smooth out adjustments
             MultiplexerNode.apply(msg, joystick_map)
         elif msg.author == PixhawkInstruction.KEYBOARD_CONTROL and \
                 self.state == AutonomousFlight.Request.STOP:
