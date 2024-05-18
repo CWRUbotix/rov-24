@@ -4,5 +4,3 @@ bool STOP = true
 
 bool state
 ---
-# True if automation task is now running, false otherwise
-bool is_running

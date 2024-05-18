@@ -48,11 +48,6 @@ class TaskSelector(QWidget):
         self.scheduler_response_signal.connect(self.handle_scheduler_response)
 
     @pyqtSlot(AutonomousFlight.Response)
-    def handle_scheduler_response(self, response: AutonomousFlight.Response) -> None:
+    def handle_scheduler_response(self, _: AutonomousFlight.Response) -> None:
         """Handle scheduler response to request sent from gui_changed_task."""
-        msg = 'Auto docking is '
-        if response.is_running:
-            msg += 'now running'
-        else:
-            msg += 'no longer running'
-        self.task_controller.get_logger().info(msg)
+        pass
