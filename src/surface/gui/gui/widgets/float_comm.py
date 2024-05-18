@@ -1,5 +1,3 @@
-from functools import partial
-
 from gui.gui_nodes.event_nodes.publisher import GUIEventPublisher
 from gui.gui_nodes.event_nodes.subscriber import GUIEventSubscriber
 from PyQt6.QtCore import pyqtSignal, pyqtSlot
@@ -51,16 +49,21 @@ class FloatComm(QWidget):
         return_button = QPushButton("Return")
         stop_button = QPushButton("Stop")
 
-        submerge_button.clicked.connect(partial(command_pub.publish,
-                                                FloatCommand(command=FloatCommand.SUBMERGE)))
-        pump_button.clicked.connect(partial(command_pub.publish,
-                                            FloatCommand(command=FloatCommand.PUMP)))
-        suck_button.clicked.connect(partial(command_pub.publish,
-                                    FloatCommand(command=FloatCommand.SUCK)))
-        return_button.clicked.connect(partial(command_pub.publish,
-                                              FloatCommand(command=FloatCommand.RETURN)))
-        stop_button.clicked.connect(partial(command_pub.publish,
-                                            FloatCommand(command=FloatCommand.STOP)))
+        submerge_button.clicked.connect(lambda: command_pub.publish(
+            FloatCommand(command=FloatCommand.SUBMERGE)
+        ))
+        pump_button.clicked.connect(lambda: command_pub.publish(
+            FloatCommand(command=FloatCommand.PUMP)
+        ))
+        suck_button.clicked.connect(lambda: command_pub.publish(
+            FloatCommand(command=FloatCommand.SUCK)
+        ))
+        return_button.clicked.connect(lambda: command_pub.publish(
+            FloatCommand(command=FloatCommand.RETURN)
+        ))
+        stop_button.clicked.connect(lambda: command_pub.publish(
+            FloatCommand(command=FloatCommand.STOP)
+        ))
 
         info_and_buttons.addWidget(submerge_button)
         info_and_buttons.addWidget(pump_button)
