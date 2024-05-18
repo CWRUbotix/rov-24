@@ -14,6 +14,13 @@ def generate_launch_description() -> LaunchDescription:
     control_inverter_node = Node(
         package='flight_control',
         executable='control_inverter_node',
+        emulate_tty=True,
+        output='screen'
+    )
+
+    multiplexer_node = Node(
+        package='flight_control',
+        executable='multiplexer',
         remappings=[('/surface/mavros/rc/override', '/tether/mavros/rc/override')],
         emulate_tty=True,
         output='screen'
@@ -23,7 +30,8 @@ def generate_launch_description() -> LaunchDescription:
         actions=[
             PushRosNamespace("surface"),
             keyboard_control_node,
-            control_inverter_node
+            control_inverter_node,
+            multiplexer_node
         ]
     )
 
