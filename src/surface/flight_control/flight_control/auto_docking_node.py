@@ -21,7 +21,7 @@ class AutoDocker(Node):
             QoSPresetProfiles.DEFAULT.value,
         )
 
-        self.running = False
+        self.current_state = AutonomousFlight.Request.STOP
 
         # TODO: Add cam frame subscriber here to act as control loop for auto docking
 
