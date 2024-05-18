@@ -4,3 +4,4 @@ bool STOP = true
 
 bool state
 ---
+bool current_state

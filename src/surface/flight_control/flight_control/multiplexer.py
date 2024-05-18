@@ -96,6 +96,7 @@ class MultiplexerNode(Node):
     def state_control(self, req: AutonomousFlight.Request,
                       res: AutonomousFlight.Response) -> AutonomousFlight.Response:
         self.state = req.state
+        res.current_state = req.state
         return res
 
     def control_callback(self, msg: PixhawkInstruction) -> None:
