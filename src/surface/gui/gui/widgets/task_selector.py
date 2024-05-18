@@ -23,19 +23,21 @@ class TaskSelector(QWidget):
 
         # Create Start button
         self.start_btn = ButtonIndicator("Start Auto")
-        self.start_btn.clicked.connect(lambda: self.task_controller.send_request_async(
-                                       AutonomousFlight.Request(
-                                           state=AutonomousFlight.Request.START
-                                           )))
+        self.start_btn.clicked.connect(
+            lambda: self.task_controller.send_request_async(
+                AutonomousFlight.Request(state=AutonomousFlight.Request.START)
+            )
+        )
         self.start_btn.setFixedHeight(75)
         self.start_btn.setFixedWidth(WIDTH)
 
         # Create Stop button
         stop_btn = QPushButton("Stop Auto")
-        stop_btn.clicked.connect(lambda: self.task_controller.send_request_async(
-                                       AutonomousFlight.Request(
-                                           state=AutonomousFlight.Request.STOP
-                                           )))
+        stop_btn.clicked.connect(
+            lambda: self.task_controller.send_request_async(
+                AutonomousFlight.Request(state=AutonomousFlight.Request.STOP)
+            )
+        )
         stop_btn.setFixedHeight(75)
         stop_btn.setFixedWidth(WIDTH)
 
