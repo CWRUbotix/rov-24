@@ -1,5 +1,3 @@
-from functools import partial
-
 from gui.gui_nodes.event_nodes.client import GUIEventClient
 from PyQt6.QtCore import pyqtSignal, pyqtSlot
 from PyQt6.QtWidgets import QGridLayout, QPushButton, QWidget
@@ -25,7 +23,7 @@ class TaskSelector(QWidget):
 
         # Create Start button
         self.start_btn = QPushButton("Start Auto")
-        self.start_btn.clicked.connect(partial(self.task_controller.send_request_async,
+        self.start_btn.clicked.connect(lambda: self.task_controller.send_request_async(
                                        AutonomousFlight.Request(
                                            state=AutonomousFlight.Request.START
                                            )))
@@ -34,8 +32,8 @@ class TaskSelector(QWidget):
 
         # Create Stop button
         self.stop_btn = QPushButton("Stop Auto")
-        self.stop_btn.clicked.connect(partial(self.task_controller.send_request_async,
-                                      AutonomousFlight.Request(
+        self.stop_btn.clicked.connect(lambda: self.task_controller.send_request_async(
+                                       AutonomousFlight.Request(
                                            state=AutonomousFlight.Request.STOP
                                            )))
         self.stop_btn.setFixedHeight(75)
