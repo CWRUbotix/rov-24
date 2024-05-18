@@ -27,7 +27,7 @@ class AutoDocker(Node):
 
     def task_control_callback(self, request: AutonomousFlight.Request,
                               response: AutonomousFlight.Response) -> AutonomousFlight.Response:
-        self.running = request.state
+        self.current_state = request.state
         response.current_state = request.state
         return response
 
