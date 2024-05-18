@@ -12,12 +12,12 @@ WIDTH = 200
 class TaskSelector(QWidget):
     """QWidget that handles task selection with a dropdown."""
 
-    scheduler_response_signal: pyqtSignal = pyqtSignal(AutonomousFlight.Response)
+    scheduler_response_signal = pyqtSignal(AutonomousFlight.Response)
 
     def __init__(self) -> None:
         super().__init__()
 
-        self.task_controller = GUIEventClient(AutonomousFlight, 'auto_docker_control',
+        self.task_controller = GUIEventClient(AutonomousFlight, 'auto_control_toggle',
                                               self.scheduler_response_signal)
 
         layout = QGridLayout()
@@ -27,20 +27,19 @@ class TaskSelector(QWidget):
         self.start_btn = QPushButton("Start Auto")
         self.start_btn.clicked.connect(partial(self.task_controller.send_request_async,
                                        AutonomousFlight.Request(
-                                           start=AutonomousFlight.Request.START
+                                           state=AutonomousFlight.Request.START
                                            )))
         self.start_btn.setFixedHeight(75)
         self.start_btn.setFixedWidth(WIDTH)
 
         # Create Stop button
         self.stop_btn = QPushButton("Stop Auto")
-        self.start_btn.clicked.connect(partial(self.task_controller.send_request_async,
-                                       AutonomousFlight.Request(
-                                           start=AutonomousFlight.Request.STOP
+        self.stop_btn.clicked.connect(partial(self.task_controller.send_request_async,
+                                      AutonomousFlight.Request(
+                                           state=AutonomousFlight.Request.STOP
                                            )))
         self.stop_btn.setFixedHeight(75)
         self.stop_btn.setFixedWidth(WIDTH)
-
 
         # Setup Grid
         layout.addWidget(self.start_btn, 2, 1)

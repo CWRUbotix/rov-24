@@ -94,8 +94,9 @@ class MultiplexerNode(Node):
         return rc_msg
 
     def state_control(self, req: AutonomousFlight.Request,
-                      _: AutonomousFlight.Response) -> AutonomousFlight.Response:
+                      res: AutonomousFlight.Response) -> AutonomousFlight.Response:
         self.state = req.state
+        return res
 
     def control_callback(self, msg: PixhawkInstruction) -> None:
 
@@ -106,7 +107,7 @@ class MultiplexerNode(Node):
         elif msg.author == PixhawkInstruction.KEYBOARD_CONTROL and \
                 self.state == AutonomousFlight.Request.STOP:
             pass
-        elif msg.author == PixhawkInstruction.author and \
+        elif msg.author == PixhawkInstruction.AUTONOMOUS_CONTROL and \
                 self.state == AutonomousFlight.Request.START:
             pass
         else:
