@@ -21,23 +21,23 @@ def debug_process_image_file(image_path: str, do_collage: bool):
         square_detector.process_image(original_img, do_collage, True)
     print("FINAL CORNERS:", corners)
 
-    # if result_img is not None:
-    #     print(result_img.shape)
-    #     print(type(corners), type(corners[0]), type(result_img), type(result_img.shape))
+    if result_img is not None:
+        print(result_img.shape)
+        print(type(corners), type(corners[0]), type(result_img), type(result_img.shape))
     #     result_img, rotation_vector, translation_vector, intrinsic_matrix, dist_coefs = \
     #         deproject_with_annotation(result_img, corners)
 
-    #     if do_collage:
-    #         plt.figure(figsize=(12, 8))  # fig size is the size of the window.
-    #         plt.imshow(result_img)
-    #         plt.title('Result Image')
-    #         plt.axis('off')
+        if do_collage:
+            plt.figure(figsize=(12, 8))  # fig size is the size of the window.
+            plt.imshow(result_img)
+            plt.title('Result Image')
+            plt.axis('off')
             # plt.show()
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('-i', type=str, default='../Images Used/basic.png', help='Input image path')
+    parser.add_argument('-i', type=str, default='./test_images/basic.png', help='Input image path')
     args = parser.parse_args()
 
     input_image_path = args.i
