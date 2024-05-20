@@ -42,9 +42,13 @@ CLOSING_STREL = (CLOSING_STREL_X ** 2 + CLOSING_STREL_Y ** 2) <= BORDER_CLOSING_
 CORNER_ADJUST_STREL = np.ones((BORDER_ADJ_STRELM_WIDTH, BORDER_ADJ_STRELM_WIDTH), dtype=bool)
 
 
+# Should be row, cow
+Coordinate = tuple[int, int]
+
+
 class Island:
-    def __init__(self):
-        self.pixels_set = set()
+    def __init__(self) -> None:
+        self.pixels_set: set[Coordinate] = set()
         self.bounding_box = None
         # If the shape should even be considered shown at all, or if it is todo / shouldn't be shown
         self.considered = False
@@ -53,22 +57,25 @@ class Island:
         self.is_leak_disqualified = False
         self.is_frame_edge_disqualified = False
         self.center_pos = (0, 0)
-        self.border_extended_pixels = set()
-        self.border_failed_stack = set()
+        self.border_extended_pixels: set[Coordinate] = set()
+        self.border_failed_stack: set[list[Coordinate]] = set()
 
-        self.min_row = None
-        self.max_row = None
-        self.min_col = None
-        self.max_col = None
+        self.min_row: int
+        self.max_row: int
+        self.min_col: int
+        self.max_col: int
 
-        self.val_border_pixels_set = set()
-        self.val_inner_err_pixels_set = set()
-        self.val_outer_err_pixels_set = set()
+        self.val_border_pixels_set: set[Coordinate] = set()
+        self.val_inner_err_pixels_set: set[Coordinate] = set()
 
-        self.corners = []
+        # TODO No one uses this
+        self.val_outer_err_pixels_set: set[Coordinate] = set()
+
+        # TODO if possible refactor to tuple[Coordinate, Coordinate, Coordinate, Coordinate]
+        self.corners: list[Coordinate] = []
         self.error_percent = None
 
-    def update_min_max(self, row, col):
+    def update_min_max(self, row: int, col: int) -> None:
         self.min_row = min(row, self.min_row)
         self.max_row = max(row, self.max_row)
         self.min_col = min(col, self.min_col)
@@ -76,7 +83,7 @@ class Island:
 
 
 class SquareDetector:
-    def __init__(self, ):
+    def __init__(self):
         self.rows = None
         self.cols = None
         self.img_size = None
@@ -184,7 +191,7 @@ class SquareDetector:
             font = ImageFont.load_default()
 
             text = str(island.order_number)
-            # (x, y) coordinates
+            # (x, y) Coordinate
             position = (island.center_pos[1], island.center_pos[0])
 
             _, _, text_width, text_height = draw.textbbox((0, 0), text, font=font)
@@ -206,7 +213,7 @@ class SquareDetector:
 
         return img
 
-    def make_extend_list(self, row, col):
+    def make_extend_list(self, row: int, col: int) -> list[Coordinate]:
         return [
             (row + 1, col),
             (row - 1, col),
@@ -464,7 +471,7 @@ class SquareDetector:
                     # Draw contour for debugging:
                     # cv2.drawContours(self.DEBUG_IMG, [approx], 0, (0, 255, 0), 2)
 
-                    # Get corner coordinates of the square
+                    # Get corner Coordinate of the square
                     corners = [tuple(approx[i][0]) for i in range(4)]
                     print("!!!!!!Corner Points:", corners)
                     for corner in corners:

@@ -2,14 +2,14 @@
 from PIL import Image
 import numpy as np
 import matplotlib.pyplot as plt
-from flight_control.image_processing.square_detector import SquareDetector
+from image_processing.square_detector import SquareDetector
 import argparse
 import cv2
 
 square_detector = SquareDetector()
 
 
-def debug_process_image_file(image_path: str, do_collage: bool):
+def debug_process_image_file(image_path: str, do_collage: bool) -> None:
     # Open the image using Pillow
     img = Image.open(image_path)
     img = img.convert("RGB")
