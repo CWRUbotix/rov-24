@@ -38,7 +38,8 @@
         </density_change>
       </graded_buoyancy>
       <!-- Enable by model name -->
-      <enable>rov24</enable>
+      <enable>rov24_with_brain_coral</enable>
+      <enable>brain_coral</enable>
     </plugin>
 
     <include>
@@ -46,8 +47,8 @@
     </include>
 
     <include>
-      <uri>model://rov24</uri>
-      <pose>-2 0 0 0 0 0</pose>
+      <uri>model://rov24_with_brain_coral</uri>
+      <pose>0.43 -0.63 -3.85 0 0 0</pose>
     </include>
 
     <include>
@@ -56,9 +57,19 @@
     </include>
 
     <include>
-      <uri>model://coral_recovery_area</uri>
-      <pose>0 0 -4 0 0 0</pose>
+      <uri>model://coral_restoration_area</uri>
+      <pose>0 0 -3.98 0 0 0</pose>
     </include>
+
+    <include>
+      <uri>model://coral_nursery_base</uri>
+      <pose>0.75 -0.75 -4 0 0 0</pose>
+    </include>
+
+    <!-- <include>
+      <uri>model://brain_coral</uri>
+      <pose>0.75 -0.75 -3.95 0 0 0</pose>
+    </include> -->
 
   </world>
 </sdf>

@@ -1,3 +1,5 @@
 # normalizes all text based files to use lf line endings
 # done so when people write from Windows they can use it in Linux
 * text=auto
+src/surface/rov_gazebo/models/rov24/meshes/rov24_gripper_closed.dae filter=lfs diff=lfs merge=lfs -text
+src/surface/rov_gazebo/models/rov24/meshes/rov24_gripper_open.dae filter=lfs diff=lfs merge=lfs -text

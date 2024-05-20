@@ -11,6 +11,7 @@ from PyQt6.QtWidgets import QHBoxLayout, QVBoxLayout
 class PilotApp(App):
     def __init__(self) -> None:
         super().__init__('pilot_gui_node')
+        self.sim_param = self.node.declare_parameter('use_simulation', False)
 
         main_layout = QVBoxLayout()
         self.setLayout(main_layout)
