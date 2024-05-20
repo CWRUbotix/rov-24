@@ -92,8 +92,8 @@ byte profileHalf = 0;
 void setup() {
   Serial.begin(115200);
   // Wait until serial console is open; remove if not tethered to computer
-//  while (!Serial) ;
-  
+  // while (!Serial) ;
+
   Serial.println("Float Transceiver");
   Serial.println();
 
@@ -119,7 +119,7 @@ void setup() {
 
   packets[0][PKT_IDX_TEAM_NUM] = TEAM_NUM;
   packets[0][PKT_IDX_PROFILE_HALF] = 0;
-  
+
   packets[1][PKT_IDX_TEAM_NUM] = TEAM_NUM;
   packets[1][PKT_IDX_PROFILE_HALF] = 1;
 
@@ -155,7 +155,7 @@ void loop() {
     stop();
     return;
   }
-  
+
   // Read the pressure if we're profiling
   if (
     !isSurfaced() &&
@@ -232,15 +232,15 @@ void loop() {
 
 bool receiveCommand() {
   Serial.println("Receiving command...");
-  
+
   if (!rf95.waitAvailableTimeout(FLOAT_PKT_RX_TIMEOUT)) {
     return false;
   }
-  
+
   Serial.println("RF has signal");
   byte len = RH_RF95_MAX_MESSAGE_LEN;
   byte byteBuffer[len];
-  
+
   if (!rf95.recv(byteBuffer, &len)) {
     Serial.println("Receive failed");
     return false;
@@ -249,12 +249,12 @@ bool receiveCommand() {
     Serial.println("Received with length 0; dropping");
     return false;
   }
-  
+
   byteBuffer[len] = 0;
   char *charBuf = (char*) byteBuffer;
 
   serialPrintf("Received [%d]: '%s'\n", len, charBuf);
-  
+
   String response;
   bool shouldSubmerge = false;
 
@@ -410,7 +410,7 @@ void initRadio() {
 
 void initPressureSensor() {
   pressureSensor.init();
-  
+
   pressureSensor.setModel(MS5837::MS5837_02BA);
   pressureSensor.setFluidDensity(997);  // kg/m^3
 

@@ -51,7 +51,7 @@ void setup() {
   // The default transmitter power is 13dBm, using PA_BOOST.
   // If you are using RFM95/96/97/98 modules which uses the PA_BOOST transmitter pin, then
   // you can set transmitter powers from 5 to 23 dBm:
-  rf95.setTxPower(23, false);  
+  rf95.setTxPower(23, false);
 
   serialPrintf("RFM95 radio @ %d MHz\n", (int) RF95_FREQ);
 }
@@ -65,7 +65,7 @@ void loop() {
     if (command.charAt(command.length() - 1) == '\n') {
       command.remove(command.length() - 1);
     }
-    
+
     sendCommand(command);
   }
 }
@@ -77,21 +77,21 @@ void loop() {
  */
 bool receivePacket() {
   Serial.println("Attempting to receive");
-  
+
   if (!rf95.waitAvailableTimeout(SURFACE_PKT_RX_TIMEOUT)) {
     Serial.println("RF95 not available");
     return false;
   }
-  
+
   Serial.println("RF95 available");
   byte byteBuffer[RH_RF95_MAX_MESSAGE_LEN];
   byte len = sizeof(byteBuffer);
-  
+
   if (!rf95.recv(byteBuffer, &len)) {
     Serial.println("Receive failed");
     return false;
   }
-  
+
   if (!len) {
     Serial.println("Message length 0, dropping");
     return false;
@@ -150,7 +150,7 @@ bool receivePacket() {
 void sendCommand(String command) {
   byte commandBytes[command.length() + 1];
   command.getBytes(commandBytes, command.length() + 1);
-  
+
   for (int i = 0; i < COMMAND_SPAM_TIMES; i++) {
     rf95.send(commandBytes, command.length() + 1);
     rf95.waitPacketSent();
