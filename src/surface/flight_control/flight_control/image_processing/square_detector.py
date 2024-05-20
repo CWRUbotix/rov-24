@@ -2,7 +2,9 @@ from PIL import Image, ImageDraw, ImageFont
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.signal import convolve2d
-from scipy.ndimage.morphology import binary_dilation, binary_erosion
+# from scipy.ndimage.morphology import binary_dilation, binary_erosion
+# This version has some types :)
+from scipy.ndimage import binary_dilation, binary_erosion
 import cv2
 from cv2.typing import MatLike
 
@@ -49,7 +51,7 @@ Coordinate = tuple[int, int]
 class Island:
     def __init__(self) -> None:
         self.pixels_set: set[Coordinate] = set()
-        self.bounding_box = None
+        self.bounding_box: tuple[Coordinate, Coordinate]
         # If the shape should even be considered shown at all, or if it is todo / shouldn't be shown
         self.considered = False
         self.validated = False
@@ -73,7 +75,9 @@ class Island:
 
         # TODO if possible refactor to tuple[Coordinate, Coordinate, Coordinate, Coordinate]
         self.corners: list[Coordinate] = []
-        self.error_percent = None
+        self.error_percent: float
+
+        self.order_number: int
 
     def update_min_max(self, row: int, col: int) -> None:
         self.min_row = min(row, self.min_row)
@@ -83,20 +87,22 @@ class Island:
 
 
 class SquareDetector:
-    def __init__(self):
-        self.rows = None
-        self.cols = None
-        self.img_size = None
-        self.visited_map = None
+    def __init__(self) -> None:
+        self.rows: int
+        self.cols: int
+        self.img_size: tuple[int, int]
+        self.visited_map: dict[Coordinate, Island]
         self.eroded_border = None
 
-    def is_connected_target_shape_pixel(self, rgb: list[int]):
-        condition_red = rgb[0] > 30
-        condition_other_color = (rgb[1] > 10 or rgb[2] > 10)
-        condition = np.logical_and(condition_red, ~condition_other_color)
-        return condition
+    # TODO to be delete no one calls
+    # def is_connected_target_shape_pixel(self, rgb: list[int]):
+    #     condition_red = rgb[0] > 30
+    #     condition_other_color = (rgb[1] > 10 or rgb[2] > 10)
+    #     condition = np.logical_and(condition_red, ~condition_other_color)
+    #     return condition
 
-    def get_harsh_target_colors(self, high_contrast_img: MatLike) -> MatLike:
+    @staticmethod
+    def get_harsh_target_colors(high_contrast_img: MatLike) -> MatLike:
         """Get a mask with target color thresholding by ((r/g > 3) and (r/b > 3))
 
         Parameters
@@ -115,7 +121,9 @@ class SquareDetector:
         mask = np.logical_and(red_green_ratio > 3.0, red_blue_ratio > 3.0)
         return mask
 
-    def get_target_color_shapes_debug_image(self, size_template, islands, root_pixels_debug_image):
+    @staticmethod
+    def get_target_color_shapes_debug_image(size_template: MatLike, islands: list[Island],
+                                            root_pixels_debug_image: MatLike) -> MatLike:
         connected_shape_img = np.zeros_like(size_template)
         for island in islands:
             for (row, col) in island.pixels_set:
@@ -133,7 +141,7 @@ class SquareDetector:
             connected_shape_img[row][col] = [255, 0, 0]
         return connected_shape_img
 
-    def get_shapes_corners_debug_image(self, islands, root_pixels_debug_image):
+    def get_shapes_corners_debug_image(self, islands: list[Island], root_pixels_debug_image):
         img = np.copy(root_pixels_debug_image)
         for island in islands:
             for corner in island.corners:
@@ -153,7 +161,8 @@ class SquareDetector:
 
         return img
 
-    def get_final_corners_overlay_debug_img(self, islands, base_img):
+    @staticmethod
+    def get_final_corners_overlay_debug_img(islands: list[Island], base_img: MatLike) -> MatLike:
         img = np.copy(base_img)
         for island in islands:
             if not island.considered:
@@ -222,13 +231,13 @@ class SquareDetector:
         ]
 
     def find_islands(self, high_contrast_img: MatLike,
-                     target_color_mask: MatLike, edge_image: MatLike):
-        islands = []
+                     target_color_mask: MatLike, edge_image: MatLike) -> list[Island]:
+        islands: list[Island] = []
         visited_map = {}
         merges: set[list[Island]] = set()
         total_pixels_count = len(target_color_mask) * len(target_color_mask[0])
 
-        def dfs(r, c):
+        def dfs(r: int, c: int) -> Island:
             # First find root intensity islands:
             root_stack = [(r, c)]
             extended_stack = []  # Stack for the non root pixels.
@@ -324,7 +333,7 @@ class SquareDetector:
 
         return islands
 
-    def calc_better_region(self, island):
+    def calc_better_region(self, island: Island) -> None:
         region_plus_eroded_border = np.copy(self.eroded_border)
         for (y, x) in island.pixels_set:
             region_plus_eroded_border[y, x] = True
@@ -359,7 +368,7 @@ class SquareDetector:
                     island.border_extended_pixels.add((row, col))
                     border_expand_stack.extend(self.make_extend_list(row, col))
 
-    def calc_bounding_boxes(self, island):
+    def calc_bounding_boxes(self, island: Island) -> None:
         relevant_pixels = island.pixels_set
         island.min_row = min(row for row, _ in relevant_pixels)
         island.max_row = max(row for row, _ in relevant_pixels)
@@ -371,7 +380,7 @@ class SquareDetector:
             (island.max_row, island.max_col)
         )
 
-    def calc_corners(self, island, border_leak_rollback=False):
+    def calc_corners(self, island: Island, border_leak_rollback: bool = False):
         corner_candidate_min_maxes = [set(), set(), set(), set()]
 
         for (row, col) in island.pixels_set:
@@ -780,7 +789,7 @@ class SquareDetector:
         self.eroded_border = binary_erosion(closed_image, structure=CORNER_ADJUST_STREL)
 
         # Threshold by ratios of the target color
-        target_color_mask = self.get_harsh_target_colors(high_contrast_img)
+        target_color_mask = SquareDetector.get_harsh_target_colors(high_contrast_img)
 
         # DEBUG: convert mask to RGB for display
         target_color_thresholding_dimg = np.zeros_like(high_contrast_img)
@@ -817,6 +826,7 @@ class SquareDetector:
 
         islands = sorted(islands, key=lambda x: x.sort_score, reverse=True)
         i = 0
+        # TODO use enumeration
         for island in islands:
             i += 1
             island.order_number = i
@@ -834,13 +844,13 @@ class SquareDetector:
 
         edge_rgb = np.zeros((*sobel_edges_image.shape, 3), dtype=np.uint8)
         edge_rgb[sobel_edges_image == 1] = [255, 255, 255]
-        edge_annotated_img = self.get_final_corners_overlay_debug_img(islands, edge_rgb)
+        edge_annotated_img = SquareDetector.get_final_corners_overlay_debug_img(islands, edge_rgb)
 
-        target_color_shapes_debug_image = self.get_target_color_shapes_debug_image(
+        target_color_shapes_debug_image = SquareDetector.get_target_color_shapes_debug_image(
             high_contrast_img, islands, target_color_thresholding_dimg)
-        target_color_shapes_annotated_img = self.get_final_corners_overlay_debug_img(
+        target_color_shapes_annotated_img = SquareDetector.get_final_corners_overlay_debug_img(
             islands, target_color_shapes_debug_image)
-        final_annotated_img = self.get_final_corners_overlay_debug_img(
+        final_annotated_img = SquareDetector.get_final_corners_overlay_debug_img(
             islands, debug_shape_image)
 
         if show_debug_imgs:
