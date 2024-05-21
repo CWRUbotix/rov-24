@@ -67,7 +67,7 @@ class Island:
         self.is_frame_edge_disqualified = False
         self.center_pos = (0, 0)
         self.border_extended_pixels: set[Coordinate] = set()
-        self.border_failed_stack: set[list[Coordinate]] = set()
+        self.border_failed_stack: set[Coordinate] = set()
 
         self.min_row: int
         self.max_row: int
@@ -208,7 +208,7 @@ class SquareDetector:
 
             draw = ImageDraw.Draw(image_pil)
 
-            font_color = tuple(color)
+            font_color = (color[0], color[1], color[2])
             font = ImageFont.load_default()
 
             text = str(island.order_number)
@@ -261,8 +261,8 @@ class SquareDetector:
                 is_edge_pixel = edge_image[row][col] is True
 
                 # Adding `not is_edge_pixel` here fixed a leak where
-                #  region filling was rarely blowing past part of the border because
-                #  those edge pixels were also root pixels:
+                # region filling was rarely blowing past part of the border because
+                # those edge pixels were also root pixels:
                 if is_root_pixel and not is_edge_pixel:
                     visited_map[(row, col)] = island
                     island.pixels_set.add((row, col))
