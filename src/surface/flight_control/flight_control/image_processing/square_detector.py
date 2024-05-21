@@ -114,7 +114,7 @@ class SquareDetector:
     #     return condition
 
     @staticmethod
-    def get_harsh_target_colors(high_contrast_img: MatLike) -> NDArray:
+    def get_harsh_target_colors(high_contrast_img: MatLike) -> NDArray[Any]:
         """Get a mask with target color thresholding by ((r/g > 3) and (r/b > 3))
 
         Parameters
@@ -239,7 +239,8 @@ class SquareDetector:
 
         return img
 
-    def make_extend_list(self, row: int, col: int) -> list[Coordinate]:
+    @staticmethod
+    def make_extend_list(row: int, col: int) -> list[Coordinate]:
         return [
             (row + 1, col),
             (row - 1, col),
@@ -271,9 +272,9 @@ class SquareDetector:
                 if is_root_pixel and not is_edge_pixel:
                     visited_map[(row, col)] = island
                     island.pixels_set.add((row, col))
-                    root_stack.extend(self.make_extend_list(row, col))
+                    root_stack.extend(SquareDetector.make_extend_list(row, col))
                 else:
-                    extended_stack.extend(self.make_extend_list(row, col))
+                    extended_stack.extend(SquareDetector.make_extend_list(row, col))
 
         island.min_row = self.img_size[0]
         island.max_row = 0
@@ -314,9 +315,9 @@ class SquareDetector:
                     visited_map[(row, col)] = island
                     island.pixels_set.add((row, col))
                     island.update_min_max(row, col)
-                    extended_stack.extend(self.make_extend_list(row, col))
+                    extended_stack.extend(SquareDetector.make_extend_list(row, col))
                 else:
-                    island.border_failed_stack.update(self.make_extend_list(row, col))
+                    island.border_failed_stack.update(SquareDetector.make_extend_list(row, col))
             elif (row, col) in visited_map and visited_map[(row, col)] != island:
                 merges.add((island, visited_map[(row, col)]))
 
@@ -360,15 +361,15 @@ class SquareDetector:
             region_plus_eroded_border[y, x] = True
 
         radius = BORDER_ADJ_CLOSING_RADIUS
-        y, x = np.ogrid[-radius:radius+1, -radius:radius + 1]
-        dilate_struct_element = x ** 2 + y ** 2 <= radius ** 2
+        y_array, x_array = np.ogrid[-radius:radius+1, -radius:radius + 1]
+        dilate_struct_element = x_array ** 2 + y_array ** 2 <= radius ** 2
         dilated_image = binary_dilation(
             region_plus_eroded_border, structure=dilate_struct_element)
 
         # erode_struct_element = np.ones((5, 5), dtype=bool)
         radius = BORDER_ADJ_CLOSING_RADIUS
-        y, x = np.ogrid[-radius:radius + 1, -radius:radius + 1]
-        erode_struct_element = x ** 2 + y ** 2 <= radius ** 2
+        y_array, x_array = np.ogrid[-radius:radius + 1, -radius:radius + 1]
+        erode_struct_element = x_array ** 2 + y_array ** 2 <= radius ** 2
         closed_image = binary_erosion(
             dilated_image, structure=erode_struct_element)
 
@@ -387,9 +388,10 @@ class SquareDetector:
                     self.visited_map[(row, col)] = island
                     island.pixels_set.add((row, col))
                     island.border_extended_pixels.add((row, col))
-                    border_expand_stack.extend(self.make_extend_list(row, col))
+                    border_expand_stack.extend(SquareDetector.make_extend_list(row, col))
 
-    def calc_bounding_boxes(self, island: Island) -> None:
+    @staticmethod
+    def calc_bounding_boxes(island: Island) -> None:
         relevant_pixels = island.pixels_set
         island.min_row = min(row for row, _ in relevant_pixels)
         island.max_row = max(row for row, _ in relevant_pixels)
@@ -834,7 +836,7 @@ class SquareDetector:
 
         print(len(islands), "islands: ")
         for island in islands:
-            self.calc_bounding_boxes(island)
+            SquareDetector.calc_bounding_boxes(island)
 
             island.region_mask = np.zeros(self.img_size, dtype=bool)
             for pixel in island.pixels_set:
@@ -866,7 +868,7 @@ class SquareDetector:
                     island.is_target = True
                     # Calc better region+corners for the target region:
                     self.calc_better_region(island)
-                    self.calc_bounding_boxes(island)
+                    SquareDetector.calc_bounding_boxes(island)
                     self.calc_corners(island, True)
 
             print("sorted island:", island.order_number, island.sort_score)
