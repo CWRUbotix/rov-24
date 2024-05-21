@@ -782,12 +782,12 @@ class SquareDetector:
         self.cols = len(original_img[0])
 
         # TODO remove defaults
-        default_img = np.zeros((1, 1, 3), dtype=np.uint8)
-        output_img_2 = default_img
-        output_img_3 = default_img
-        output_img_4 = default_img
-        output_img_5 = default_img
-        output_img_6 = default_img
+        # default_img = np.zeros((1, 1, 3), dtype=np.uint8)
+        # output_img_2 = default_img
+        # output_img_3 = default_img
+        # output_img_4 = default_img
+        # output_img_5 = default_img
+        # output_img_6 = default_img
         self.img_size = (original_img.shape[0], original_img.shape[1])
 
         bgr_image = cv2.cvtColor(original_img, cv2.COLOR_RGB2BGR)

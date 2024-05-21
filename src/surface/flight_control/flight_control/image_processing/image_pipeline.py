@@ -23,7 +23,6 @@ def debug_process_image_file(image_path: str, do_collage: bool) -> None:
 
     if result_img is not None:
         print(result_img.shape)
-        print(type(corners), type(corners[0]), type(result_img), type(result_img.shape))
     #     result_img, rotation_vector, translation_vector, intrinsic_matrix, dist_coefs = \
     #         deproject_with_annotation(result_img, corners)
 
