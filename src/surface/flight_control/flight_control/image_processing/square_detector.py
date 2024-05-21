@@ -1,3 +1,4 @@
+from math import sqrt
 from typing import Any, TypeGuard
 
 import cv2
@@ -65,7 +66,7 @@ class Island:
         self.is_target = False
         self.is_leak_disqualified = False
         self.is_frame_edge_disqualified = False
-        self.center_pos = (0, 0)
+        self.center_pos: tuple[float, float] = (0, 0)
         self.border_extended_pixels: set[Coordinate] = set()
         self.border_failed_stack: set[Coordinate] = set()
 
@@ -86,7 +87,9 @@ class Island:
 
         self.order_number: int
         self.is_fallback_case: bool
-        self.region_mask: NDArray[bool]
+        self.region_mask: NDArray[np.bool_]
+        self.target_score: float
+        self.sort_score: float
 
     def update_min_max(self, row: int, col: int) -> None:
         self.min_row = min(row, self.min_row)
@@ -571,7 +574,8 @@ class SquareDetector:
 
         print("corners: ", island.corners)
 
-    def area_of_triangle(self, corner1: Coordinate, corner2: Coordinate,
+    @staticmethod
+    def area_of_triangle(corner1: Coordinate, corner2: Coordinate,
                          corner3: Coordinate) -> float:
         return 0.5 * abs(
             (
@@ -586,7 +590,7 @@ class SquareDetector:
             )
         )
 
-    def draw_box(self, pixels_set: set[Coordinate], color: tuple[int, int,], min_row: int,
+    def draw_box(self, pixels_set: set[Coordinate], color: tuple[int, int, int], min_row: int,
                  max_row: int, min_col: int, max_col: int) -> None:
         for x in range(min_col, max_col + 1):
             for y in range(min_row, max_row + 2):
@@ -594,7 +598,8 @@ class SquareDetector:
                     # img[y][x] = color
                     pixels_set.add((y, x))
 
-    def validate_shape_is_target_square(self, island: Island, debug_shape_image):
+    def validate_shape_is_target_square(self, island: Island,
+                                        debug_shape_image: NDArray[np.generic]) -> None:
         if len(island.corners) == 0:
             print("island had zero corners, skipping... (TODO functionality?)")
             return
@@ -621,8 +626,9 @@ class SquareDetector:
         # island.center_pos = ((min_pos[0] + max_pos[0])/2, (min_pos[1] + max_pos[1])/2)
 
         # Triangle areas via Shoelace formula:
-        left_triangle_area = self.area_of_triangle(top_corner, left_corner, bottom_corner)
-        right_triangle_area = self.area_of_triangle(bottom_corner, right_corner, top_corner)
+        left_triangle_area = SquareDetector.area_of_triangle(top_corner, left_corner, bottom_corner)
+        right_triangle_area = SquareDetector.area_of_triangle(bottom_corner, right_corner,
+                                                              top_corner)
 
         expected_area = left_triangle_area + right_triangle_area
 
@@ -640,7 +646,8 @@ class SquareDetector:
         island.val_inner_err_pixels_set = set()
         island.val_outer_err_pixels_set = set()
 
-        def validate_square_edge(from_point, to_point, is_inside_upwards):
+        def validate_square_edge(from_point: Coordinate, to_point: Coordinate,
+                                 is_inside_upwards: bool) -> None:
             nonlocal expected_area_2
             nonlocal inside_error_pixels
             nonlocal outside_error_pixels
@@ -652,7 +659,7 @@ class SquareDetector:
 
             y_intercept = from_point[0]
 
-            denom = from_point[1] - to_point[1]
+            denom: int | float = from_point[1] - to_point[1]
             if denom == 0:
                 denom = 0.00001
             slope = (from_point[0] - to_point[0]) / denom
@@ -663,7 +670,7 @@ class SquareDetector:
                 # print("row: ", slope_expected_y, ", col: ", x)
                 self.draw_box(
                     island.val_border_pixels_set,
-                    [0, 255, 0],
+                    (0, 255, 0),
                     slope_expected_y - LINE_WIDTH,
                     slope_expected_y + LINE_WIDTH,
                     x - LINE_WIDTH,
@@ -712,11 +719,11 @@ class SquareDetector:
 
         for inside_error_pixel in inside_error_pixels:
             (y, x) = inside_error_pixel
-            self.draw_box(island.val_inner_err_pixels_set, [255, 100, 0], y, y, x, x)
+            self.draw_box(island.val_inner_err_pixels_set, (255, 100, 0), y, y, x, x)
 
         for outside_error_pixel in outside_error_pixels:
             (y, x) = outside_error_pixel
-            self.draw_box(island.val_outer_err_pixels_set, [255, 255, 0], y, y, x, x)
+            self.draw_box(island.val_outer_err_pixels_set, (255, 255, 0), y, y, x, x)
 
         island.error_percent = (
             inside_errors_total_count + outside_errors_total_count) / expected_area
@@ -734,14 +741,14 @@ class SquareDetector:
             # for (y, x) in island.val_outer_err_pixels_set:
             #     debug_shape_image[y][x] = [255, 255, 0]
 
-    def calculate_region_target_score(self, island):
+    def calculate_region_target_score(self, island: Island) -> None:
         # Get the center position of the region in normalized [0,1] space, where 0 and 1 are opposite edges of the image:
         region_pos = (((island.bounding_box[0][0] + island.bounding_box[1][0]) / 2) / self.img_size[0], ((
             island.bounding_box[0][1] + island.bounding_box[1][1]) / 2) / self.img_size[1])
         region_dist_from_center = (region_pos[0] - .5, region_pos[1] - .5)
 
         center_score = - \
-            np.sqrt(
+            sqrt(
                 np.square(region_dist_from_center[0]) + np.square(region_dist_from_center[1]))
         shape_score = (-island.error_percent) * SHAPE_SCORE_WEIGHT
 
@@ -772,6 +779,7 @@ class SquareDetector:
         self.rows = len(original_img)
         self.cols = len(original_img[0])
 
+        # TODO remove defaults
         default_img = np.zeros((1, 1, 3), dtype=np.uint8)
         output_img_2 = default_img
         output_img_3 = default_img
