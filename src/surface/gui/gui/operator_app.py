@@ -1,10 +1,11 @@
 from gui.app import App
-from gui.widgets.logger import Logger
-from gui.widgets.tabs.general_debug_tab import GeneralDebugTab
 from gui.widgets.float_comm import FloatComm
-from gui.widgets.timer import InteractiveTimer
+from gui.widgets.logger import Logger
+from gui.widgets.tabs.auto_transplant_debug import AutoTransplantDebug
+from gui.widgets.tabs.general_debug_tab import GeneralDebugTab
 from gui.widgets.task_selector import TaskSelector
-from PyQt6.QtWidgets import QGridLayout, QTabWidget, QWidget, QVBoxLayout
+from gui.widgets.timer import InteractiveTimer
+from PyQt6.QtWidgets import QGridLayout, QTabWidget, QVBoxLayout, QWidget
 
 
 class OperatorApp(App):
@@ -37,6 +38,7 @@ class OperatorApp(App):
         tabs = QTabWidget()
         tabs.addTab(main_tab, "Main")
         tabs.addTab(GeneralDebugTab(), "General Debug")
+        tabs.addTab(AutoTransplantDebug(), "Transplant Debug")
         root_layout.addWidget(tabs)
 
 

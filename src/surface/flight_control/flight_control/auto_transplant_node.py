@@ -32,11 +32,17 @@ class AutoDocker(Node):
         #     QoSPresetProfiles.DEFAULT.value
         # )
 
-        self.bottom_cam_subscriber = self.create_subscription(
+        self.create_subscription(
             Image,
             'bottom_cam/image_raw',
             self.handle_frame,
             # lambda frame: self.handle_frame(frame, 'front'),
+            QoSPresetProfiles.DEFAULT.value
+        )
+
+        self.annotated_bottom_pub = self.create_publisher(
+            Image,
+            'bottom_cam/annotated',
             QoSPresetProfiles.DEFAULT.value
         )
 
@@ -48,6 +54,7 @@ class AutoDocker(Node):
 
     def handle_frame(self, frame: Image) -> None:
         print('============================= AUTO TRANSPLANT: RECEIVED FRAME =============================')
+        self.annotated_bottom_pub.publish(frame)
 
 
 def main() -> None:

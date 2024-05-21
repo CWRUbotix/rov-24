@@ -15,7 +15,7 @@ def generate_launch_description() -> LaunchDescription:
     auto_transplant_node = Node(
         package='flight_control',
         executable='auto_transplant_node',
-        remappings=[('/surface/manipulator_control', '/tether/manipulator_control')],
+        remappings=[('/surface/gui/bottom_cam/annotated', '/surface/bottom_cam/annotated')],
         emulate_tty=True,
         output='screen'
     )
