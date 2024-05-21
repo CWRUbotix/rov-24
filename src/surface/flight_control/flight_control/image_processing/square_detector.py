@@ -371,12 +371,13 @@ class SquareDetector:
         while border_expand_stack:
             entry = border_expand_stack.pop()
             # print("border extend:", entry)
-            is_border_failed_stack = island.border_failed_stack.discard(entry)
+            # is_border_failed_stack = vvvvvvvvv
+            island.border_failed_stack.discard(entry)
             row, col = entry
             is_not_visited = (row, col) not in self.visited_map
             is_in_bounds = (0 <= row < self.rows and 0 <= col < self.cols)
             # If valid pixel coordinate:
-            if (is_not_visited or is_border_failed_stack) and is_in_bounds:
+            if is_not_visited and is_in_bounds:
                 is_in_border = closed_image[row][col]
                 if is_in_border:
                     self.visited_map[(row, col)] = island
