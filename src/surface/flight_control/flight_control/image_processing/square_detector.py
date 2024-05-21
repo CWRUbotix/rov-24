@@ -85,6 +85,7 @@ class Island:
         self.error_percent: float
 
         self.order_number: int
+        self.is_fallback_case: bool
 
     def update_min_max(self, row: int, col: int) -> None:
         self.min_row = min(row, self.min_row)
@@ -396,8 +397,8 @@ class SquareDetector:
             (island.max_row, island.max_col)
         )
 
-    def calc_corners(self, island: Island, border_leak_rollback: bool = False):
-        corner_candidate_min_maxes = [set(), set(), set(), set()]
+    def calc_corners(self, island: Island, border_leak_rollback: bool = False) -> None:
+        corner_candidate_min_maxes: list[set[Coordinate]] = [set(), set(), set(), set()]
 
         for (row, col) in island.pixels_set:
             if island.min_row == row:  # top corner:
@@ -479,7 +480,7 @@ class SquareDetector:
             #             closest_pixel = (row, col)
             #     new_corners.append(closest_pixel)
 
-        island.is_fallback_case = is_aabb_edge_case or False
+        island.is_fallback_case = is_aabb_edge_case
         if island.is_fallback_case:
             unsorted_corners = []
             region_mask = np.uint8(island.region_mask) * 255
@@ -569,7 +570,7 @@ class SquareDetector:
 
         print("corners: ", island.corners)
 
-    def area_of_triangle(self, corner1, corner2, corner3):
+    def area_of_triangle(self, corner1: Coordinate, corner2: Coordinate, corner3: Coordinate) -> float:
         return 0.5 * abs(
             (
                 corner1[1] * corner2[0] +
