@@ -57,6 +57,38 @@ def is_uint8(numpy_array: NDArray[np.generic]) -> TypeGuard[NDArray[np.uint8]]:
     return numpy_array.dtype.type == np.uint8
 
 
+def area_of_triangle(corner1: Coordinate, corner2: Coordinate,
+                     corner3: Coordinate) -> float:
+    """Get the area of a triangle formed by the provided vertices. Order does not matter.
+
+    Parameters
+    ----------
+    corner1 : Coordinate
+        First vertex
+    corner2 : Coordinate
+        Second vertex
+    corner3 : Coordinate
+        Third vertex
+
+    Returns
+    -------
+    float
+        The area of the triangle
+    """
+    return 0.5 * abs(
+        (
+            corner1[1] * corner2[0] +
+            corner2[1] * corner3[0] +
+            corner3[1] * corner1[0]
+        ) -
+        (
+            corner2[1] * corner1[0] +
+            corner3[1] * corner2[0] +
+            corner1[1] * corner3[0]
+        )
+    )
+
+
 class Island:
     def __init__(self) -> None:
         self.pixels_set: set[Coordinate] = set()
@@ -253,6 +285,143 @@ class Island:
             self.corners = new_corners
 
         print("Corners: ", self.corners)
+
+    def validate_shape_is_target_square(self, img_dims: Dimensions,
+                                        debug_shape_image: NDArray[np.generic]) -> None:
+        if len(self.corners) == 0:
+            print("Island had no corners, skipping")
+            return
+        self.considered = True
+
+        sum_pos = (0, 0)
+        for corner in self.corners:
+            sum_pos = (sum_pos[0] + corner[0], sum_pos[1] + corner[1])
+        self.center_pos = (
+            sum_pos[0] / len(self.corners),
+            sum_pos[1] / len(self.corners)
+        )
+
+        if len(self.corners) != 4:
+            return
+
+        top_corner = self.corners[0]
+        bottom_corner = self.corners[1]
+        left_corner = self.corners[2]
+        right_corner = self.corners[3]
+
+        # Triangle areas via Shoelace formula
+        left_triangle_area = area_of_triangle(top_corner, left_corner, bottom_corner)
+        right_triangle_area = area_of_triangle(top_corner, right_corner, bottom_corner)
+
+        expected_area = left_triangle_area + right_triangle_area
+
+        # island.debug_shape_validation_image = debug_shape_image
+
+        inside_errors_total_count = 0
+        outside_errors_total_count = 0
+
+        expected_area_2 = 0
+
+        inside_error_pixels = set()
+        outside_error_pixels = set()
+
+        self.val_border_pixels_set = set()
+        self.val_inner_err_pixels_set = set()
+        self.val_outer_err_pixels_set = set()
+
+        def validate_square_edge(from_point: Coordinate, to_point: Coordinate,
+                                 is_inside_upwards: bool) -> None:
+            nonlocal expected_area_2
+            nonlocal inside_error_pixels
+            nonlocal outside_error_pixels
+            nonlocal inside_errors_total_count
+            nonlocal outside_errors_total_count
+
+            inside_errors_count = 0
+            outside_errors_count = 0
+
+            y_intercept = from_point[0]
+
+            denom: int | float = from_point[1] - to_point[1]
+            if denom == 0:
+                denom = 0.00001
+            slope = (from_point[0] - to_point[0]) / denom
+            # print("validate edge - from", from_point, "to", to_point, "slope:", slope)
+            for x in range(from_point[1], to_point[1] + 1):
+                x_relative = x - from_point[1]
+                slope_expected_y = int(y_intercept + x_relative * slope)
+                # print("row: ", slope_expected_y, ", col: ", x)
+                self.val_border_pixels_set.update(SquareDetector.get_coords_in_box(
+                    img_dims,
+                    (slope_expected_y - LINE_WIDTH, x - LINE_WIDTH),
+                    (slope_expected_y + LINE_WIDTH, x + LINE_WIDTH)
+                ))
+
+                min_y = min(from_point[0], to_point[0])
+                max_y = max(from_point[0], to_point[0])
+
+                for y in range(min_y, max_y):
+                    is_shape_pixel = (y, x) in self.pixels_set
+                    if (is_inside_upwards and y <= slope_expected_y) or \
+                       (not is_inside_upwards and y >= slope_expected_y):
+                        expected_area_2 += 1
+                        if not is_shape_pixel:
+                            inside_errors_count += 1
+                            inside_error_pixels.add((y, x))
+                    else:
+                        if is_shape_pixel:
+                            outside_errors_count += 1
+                            outside_error_pixels.add((y, x))
+
+            error_percent = (inside_errors_count + outside_errors_count) / expected_area
+            print("error %: ", error_percent, inside_errors_count, outside_errors_count)
+
+            inside_errors_total_count += inside_errors_count
+            outside_errors_total_count += outside_errors_count
+
+        validate_square_edge(left_corner, bottom_corner, True)
+        validate_square_edge(bottom_corner, right_corner, True)
+        validate_square_edge(top_corner, right_corner, False)
+        validate_square_edge(left_corner, top_corner, False)
+
+        # Along with iterating the pixels along the edge boxes,
+        #  there is also an internal box, between all of the edge boxes,
+        #  that needs to be covered:
+        #  (Note that in the AABB edge case, this performs all error checks:)
+        # print("corners:", island.corners)
+        # print("ranges:", bottom_corner[1], top_corner[1], left_corner[0], right_corner[0])
+        for x in range(bottom_corner[1], top_corner[1]):
+            for y in range(left_corner[0], right_corner[0]):
+                is_shape_pixel = (y, x) in self.pixels_set
+                if not is_shape_pixel:
+                    inside_errors_total_count += 1
+                    inside_error_pixels.add((y, x))
+
+        for inside_error_pixel in inside_error_pixels:
+            (y, x) = inside_error_pixel
+            self.val_inner_err_pixels_set.update(
+                SquareDetector.get_coords_in_box(img_dims, (y, x), (y, x)))
+
+        for outside_error_pixel in outside_error_pixels:
+            (y, x) = outside_error_pixel
+            self.val_outer_err_pixels_set.update(
+                SquareDetector.get_coords_in_box(img_dims, (y, x), (y, x)))
+
+        self.error_percent = (
+            inside_errors_total_count + outside_errors_total_count) / expected_area
+        print("total error %: ", self.error_percent,
+              expected_area, expected_area_2)
+
+        if (self.error_percent < 0.30):
+            self.validated = True
+
+            # Draw edges and error pixels:
+            for (y, x) in self.val_border_pixels_set:
+                debug_shape_image[y][x] = [0, 255, 0]
+            # for (y, x) in island.val_inner_err_pixels_set:
+            #     debug_shape_image[y][x] = [255, 100, 0]
+            # for (y, x) in island.val_outer_err_pixels_set:
+            #     debug_shape_image[y][x] = [255, 255, 0]
 
 
 class SquareDetector:
@@ -586,22 +755,6 @@ class SquareDetector:
                     border_expand_stack.extend(SquareDetector.make_extend_list(row, col))
 
     @staticmethod
-    def area_of_triangle(corner1: Coordinate, corner2: Coordinate,
-                         corner3: Coordinate) -> float:
-        return 0.5 * abs(
-            (
-                corner1[1] * corner2[0] +
-                corner2[1] * corner3[0] +
-                corner3[1] * corner1[0]
-            ) -
-            (
-                corner2[1] * corner1[0] +
-                corner3[1] * corner2[0] +
-                corner1[1] * corner3[0]
-            )
-        )
-
-    @staticmethod
     def get_coords_in_box(img_dims: Dimensions, top_left: Coordinate,
                           bottom_right: Coordinate) -> set[Coordinate]:
         """Return the set of coordinates bounded by the given corners and img_dims
@@ -627,148 +780,6 @@ class SquareDetector:
                     # img[y][x] = color
                     pixels_set.add((row, col))
         return pixels_set
-
-    def validate_shape_is_target_square(self, island: Island,
-                                        debug_shape_image: NDArray[np.generic]) -> None:
-        if len(island.corners) == 0:
-            print("Island had no corners, skipping")
-            return
-        island.considered = True
-
-        sum_pos = (0, 0)
-        for corner in island.corners:
-            sum_pos = (sum_pos[0] + corner[0], sum_pos[1] + corner[1])
-        island.center_pos = (
-            sum_pos[0] / len(island.corners),
-            sum_pos[1] / len(island.corners)
-        )
-
-        if len(island.corners) != 4:
-            return
-
-        top_corner = island.corners[0]
-        bottom_corner = island.corners[1]
-        left_corner = island.corners[2]
-        right_corner = island.corners[3]
-
-        # min_pos = (top_corner[0], left_corner[1])
-        # max_pos = (bottom_corner[0], right_corner[1])
-        # island.center_pos = ((min_pos[0] + max_pos[0])/2, (min_pos[1] + max_pos[1])/2)
-
-        # Triangle areas via Shoelace formula:
-        left_triangle_area = SquareDetector.area_of_triangle(top_corner, left_corner, bottom_corner)
-        right_triangle_area = SquareDetector.area_of_triangle(bottom_corner, right_corner,
-                                                              top_corner)
-
-        expected_area = left_triangle_area + right_triangle_area
-
-        # island.debug_shape_validation_image = debug_shape_image
-
-        inside_errors_total_count = 0
-        outside_errors_total_count = 0
-
-        expected_area_2 = 0
-
-        inside_error_pixels = set()
-        outside_error_pixels = set()
-
-        island.val_border_pixels_set = set()
-        island.val_inner_err_pixels_set = set()
-        island.val_outer_err_pixels_set = set()
-
-        def validate_square_edge(from_point: Coordinate, to_point: Coordinate,
-                                 is_inside_upwards: bool) -> None:
-            nonlocal expected_area_2
-            nonlocal inside_error_pixels
-            nonlocal outside_error_pixels
-            nonlocal inside_errors_total_count
-            nonlocal outside_errors_total_count
-
-            inside_errors_count = 0
-            outside_errors_count = 0
-
-            y_intercept = from_point[0]
-
-            denom: int | float = from_point[1] - to_point[1]
-            if denom == 0:
-                denom = 0.00001
-            slope = (from_point[0] - to_point[0]) / denom
-            # print("validate edge - from", from_point, "to", to_point, "slope:", slope)
-            for x in range(from_point[1], to_point[1] + 1):
-                x_relative = x - from_point[1]
-                slope_expected_y = int(y_intercept + x_relative * slope)
-                # print("row: ", slope_expected_y, ", col: ", x)
-                island.val_border_pixels_set.update(SquareDetector.get_coords_in_box(
-                    self.img_dims,
-                    (slope_expected_y - LINE_WIDTH, x - LINE_WIDTH),
-                    (slope_expected_y + LINE_WIDTH, x + LINE_WIDTH)
-                ))
-
-                min_y = min(from_point[0], to_point[0])
-                max_y = max(from_point[0], to_point[0])
-
-                for y in range(min_y, max_y):
-                    is_shape_pixel = (y, x) in island.pixels_set
-                    if (is_inside_upwards and y <= slope_expected_y) or \
-                       (not is_inside_upwards and y >= slope_expected_y):
-                        expected_area_2 += 1
-                        if not is_shape_pixel:
-                            inside_errors_count += 1
-                            inside_error_pixels.add((y, x))
-                    else:
-                        if is_shape_pixel:
-                            outside_errors_count += 1
-                            outside_error_pixels.add((y, x))
-
-            error_percent = (inside_errors_count + outside_errors_count) / expected_area
-            print("error %: ", error_percent, inside_errors_count, outside_errors_count)
-
-            inside_errors_total_count += inside_errors_count
-            outside_errors_total_count += outside_errors_count
-
-        validate_square_edge(left_corner, bottom_corner, True)
-        validate_square_edge(bottom_corner, right_corner, True)
-        validate_square_edge(top_corner, right_corner, False)
-        validate_square_edge(left_corner, top_corner, False)
-
-        # Along with iterating the pixels along the edge boxes,
-        #  there is also an internal box, between all of the edge boxes,
-        #  that needs to be covered:
-        #  (Note that in the AABB edge case, this performs all error checks:)
-        # print("corners:", island.corners)
-        # print("ranges:", bottom_corner[1], top_corner[1], left_corner[0], right_corner[0])
-        for x in range(bottom_corner[1], top_corner[1]):
-            for y in range(left_corner[0], right_corner[0]):
-                is_shape_pixel = (y, x) in island.pixels_set
-                if not is_shape_pixel:
-                    inside_errors_total_count += 1
-                    inside_error_pixels.add((y, x))
-
-        for inside_error_pixel in inside_error_pixels:
-            (y, x) = inside_error_pixel
-            island.val_inner_err_pixels_set.update(
-                SquareDetector.get_coords_in_box(self.img_dims, (y, x), (y, x)))
-
-        for outside_error_pixel in outside_error_pixels:
-            (y, x) = outside_error_pixel
-            island.val_outer_err_pixels_set.update(
-                SquareDetector.get_coords_in_box(self.img_dims, (y, x), (y, x)))
-
-        island.error_percent = (
-            inside_errors_total_count + outside_errors_total_count) / expected_area
-        print("total error %: ", island.error_percent,
-              expected_area, expected_area_2)
-
-        if (island.error_percent < 0.30):
-            island.validated = True
-
-            # Draw edges and error pixels:
-            for (y, x) in island.val_border_pixels_set:
-                debug_shape_image[y][x] = [0, 255, 0]
-            # for (y, x) in island.val_inner_err_pixels_set:
-            #     debug_shape_image[y][x] = [255, 100, 0]
-            # for (y, x) in island.val_outer_err_pixels_set:
-            #     debug_shape_image[y][x] = [255, 255, 0]
 
     def calculate_region_target_score(self, island: Island) -> None:
         # Get the center position of the region in normalized [0,1] space, where 0 and 1 are opposite edges of the image:
@@ -875,7 +886,7 @@ class SquareDetector:
         debug_shape_image = np.copy(original_img)
 
         for island in islands:
-            self.validate_shape_is_target_square(island, debug_shape_image)
+            island.validate_shape_is_target_square(self.img_dims, debug_shape_image)
             if island.validated:
                 self.calculate_region_target_score(island)
                 island.sort_score = island.target_score
