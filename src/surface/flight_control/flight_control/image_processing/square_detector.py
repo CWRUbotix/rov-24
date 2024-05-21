@@ -351,7 +351,8 @@ class Island:
         print("Corners: ", self.corners)
 
     def validate_shape_is_target_square(self, img_dims: Dimensions,
-                                        debug_shape_image: NDArray[np.generic]) -> None:
+                                        debug_shape_image: NDArray[np.generic] | None = None
+                                        ) -> None:
         if len(self.corners) == 0:
             print("Island had no corners, skipping")
             return
@@ -466,16 +467,17 @@ class Island:
         print("total error %: ", self.error_percent,
               expected_area, expected_area_2)
 
-        if (self.error_percent < 0.30):
+        if self.error_percent < 0.30:
             self.validated = True
 
-            # Draw edges and error pixels:
-            for (y, x) in self.val_border_pixels_set:
-                debug_shape_image[y][x] = [0, 255, 0]
-            # for (y, x) in island.val_inner_err_pixels_set:
-            #     debug_shape_image[y][x] = [255, 100, 0]
-            # for (y, x) in island.val_outer_err_pixels_set:
-            #     debug_shape_image[y][x] = [255, 255, 0]
+            # Draw edges and error pixels if debugging
+            if debug_shape_image is not None:
+                for (y, x) in self.val_border_pixels_set:
+                    debug_shape_image[y][x] = [0, 255, 0]
+                # for (y, x) in island.val_inner_err_pixels_set:
+                #     debug_shape_image[y][x] = [255, 100, 0]
+                # for (y, x) in island.val_outer_err_pixels_set:
+                #     debug_shape_image[y][x] = [255, 255, 0]
 
 
 class SquareDetector:
@@ -808,8 +810,9 @@ class SquareDetector:
                     island.border_extended_pixels.add((row, col))
                     border_expand_stack.extend(SquareDetector.make_extend_list(row, col))
 
-    def process_image(self, original_img: MatLike, do_collage: bool,
-                      show_debug_imgs: bool = True) -> tuple[list[Coordinate], MatLike | None]:
+    def process_image(self, original_img: MatLike, make_debug_imgs: bool = False,
+                      final_image_is_collage: bool = False, show_debug_imgs: bool = False
+                      ) -> tuple[list[Coordinate], MatLike | None]:
         """_summary_
 
         Parameters
@@ -826,6 +829,10 @@ class SquareDetector:
         _type_
             _description_
         """
+
+        # TODO: Replace with enum?
+        if (show_debug_imgs or final_image_is_collage) and not make_debug_imgs:
+            raise Exception("Error: can only show debug images or make collage if make_debug_imgs is true")
 
         self.rows = len(original_img)
         self.cols = len(original_img[0])
@@ -872,9 +879,10 @@ class SquareDetector:
         target_color_mask = SquareDetector.get_harsh_target_colors(high_contrast_img)
 
         # DEBUG: convert mask to RGB for display
-        target_color_thresholding_dimg = np.zeros_like(high_contrast_img)
-        target_color_thresholding_dimg[target_color_mask] = [255, 0, 0]
-        target_color_thresholding_dimg[~target_color_mask] = [0, 0, 0]
+        if make_debug_imgs:
+            target_color_thresholding_dimg = np.zeros_like(high_contrast_img)
+            target_color_thresholding_dimg[target_color_mask] = [255, 0, 0]
+            target_color_thresholding_dimg[~target_color_mask] = [0, 0, 0]
 
         # Find islands (region filling)
         print("size:", target_color_mask.shape)
@@ -894,7 +902,7 @@ class SquareDetector:
             print("island bounding box: ", island.bounding_box)
             island.calc_corners(self.img_dims, False)
 
-        debug_shape_image = np.copy(original_img)
+        debug_shape_image = np.copy(original_img) if make_debug_imgs else None
 
         for island in islands:
             island.validate_shape_is_target_square(self.img_dims, debug_shape_image)
@@ -922,91 +930,92 @@ class SquareDetector:
 
             print("sorted island:", island.order_number, island.sort_score)
 
-        edge_rgb = np.zeros((*sobel_edges_image.shape, 3), dtype=np.uint8)
-        edge_rgb[sobel_edges_image == 1] = [255, 255, 255]
-        edge_annotated_img = SquareDetector.get_final_corners_overlay_debug_img(islands, edge_rgb)
-
-        target_color_shapes_debug_image = SquareDetector.get_target_color_shapes_debug_image(
-            high_contrast_img, islands, target_color_thresholding_dimg)
-        target_color_shapes_annotated_img = SquareDetector.get_final_corners_overlay_debug_img(
-            islands, target_color_shapes_debug_image)
-        final_annotated_img = SquareDetector.get_final_corners_overlay_debug_img(
-            islands, debug_shape_image)
-
-        if show_debug_imgs:
-            output_img_1 = original_img
-
+        final_image_output: MatLike | None = None
+        if make_debug_imgs:
             edge_rgb = np.zeros((*sobel_edges_image.shape, 3), dtype=np.uint8)
             edge_rgb[sobel_edges_image == 1] = [255, 255, 255]
+            edge_annotated_img = SquareDetector.get_final_corners_overlay_debug_img(islands, edge_rgb)
 
-            # See edge overlayed in blue on final image to see what's wrong:
-            # mask = edge_image == True
-            # output_img_6[mask] = [0, 0, 255]
-            # output_img_4 = mask
+            target_color_shapes_debug_image = SquareDetector.get_target_color_shapes_debug_image(
+                    high_contrast_img, islands, target_color_thresholding_dimg)
+            target_color_shapes_annotated_img = SquareDetector.get_final_corners_overlay_debug_img(
+                    islands, target_color_shapes_debug_image)
+            
+            if debug_shape_image is not None:
+                final_annotated_img = SquareDetector.get_final_corners_overlay_debug_img(
+                        islands, debug_shape_image)
+            else:
+                raise Exception("Debug shape image was None, but make_debug_imgs is true!")
 
-            # Debug edge images:
-            # output_img_3 = edge_image_input
-            # output_img_4 = edge_image_raw
-            # output_img_5 = edge_image_thresholded
-            # output_img_6 = edge_image
+            if show_debug_imgs:
+                output_img_1 = original_img
 
-            output_img_2 = high_contrast_img
-            # output_img_3 = root_pixels_debug_image
-            output_img_3 = edge_rgb
-            output_img_4 = target_color_shapes_debug_image
-            output_img_5 = target_color_shapes_annotated_img
-            output_img_6 = final_annotated_img
+                # See edge overlayed in blue on final image to see what's wrong:
+                # mask = edge_image == True
+                # output_img_6[mask] = [0, 0, 255]
+                # output_img_4 = mask
 
-            # Display the original and stretched images side by side
-            plt.figure(figsize=(12, 8))  # fig size is the size of the window.
+                # Debug edge images:
+                # output_img_3 = edge_image_input
+                # output_img_4 = edge_image_raw
+                # output_img_5 = edge_image_thresholded
+                # output_img_6 = edge_image
 
-            figure_rows = 2
-            figure_cols = 3
+                output_img_2 = high_contrast_img
+                # output_img_3 = root_pixels_debug_image
+                output_img_3 = edge_rgb
+                output_img_4 = target_color_shapes_debug_image
+                output_img_5 = target_color_shapes_annotated_img
+                output_img_6 = final_annotated_img
 
-            # Plot original image
-            plt.subplot(figure_rows, figure_cols, 1)
-            plt.imshow(output_img_1)
-            plt.title('Original Image')
-            plt.axis('off')
+                # Display the original and stretched images side by side
+                plt.figure(figsize=(12, 8))  # fig size is the size of the window.
 
-            # Plot stretched image
-            plt.subplot(figure_rows, figure_cols, 2)
-            plt.imshow(output_img_2)
-            plt.title('Img 2')
-            plt.axis('off')
+                figure_rows = 2
+                figure_cols = 3
 
-            # Plot stretched image
-            plt.subplot(figure_rows, figure_cols, 3)
-            plt.imshow(output_img_3)
-            plt.title('Img 3')
-            plt.axis('off')
+                # Plot original image
+                plt.subplot(figure_rows, figure_cols, 1)
+                plt.imshow(output_img_1)
+                plt.title('Original Image')
+                plt.axis('off')
 
-            # Plot stretched image
-            plt.subplot(figure_rows, figure_cols, 4)
-            plt.imshow(output_img_4)
-            plt.title('Img 4')
-            plt.axis('off')
+                # Plot stretched image
+                plt.subplot(figure_rows, figure_cols, 2)
+                plt.imshow(output_img_2)
+                plt.title('Img 2')
+                plt.axis('off')
 
-            plt.subplot(figure_rows, figure_cols, 5)
-            plt.imshow(output_img_5)
-            plt.title('Img 5')
-            plt.axis('off')
+                # Plot stretched image
+                plt.subplot(figure_rows, figure_cols, 3)
+                plt.imshow(output_img_3)
+                plt.title('Img 3')
+                plt.axis('off')
 
-            plt.subplot(figure_rows, figure_cols, 6)
-            plt.imshow(output_img_6)
-            plt.title('Img 6')
-            plt.axis('off')
+                # Plot stretched image
+                plt.subplot(figure_rows, figure_cols, 4)
+                plt.imshow(output_img_4)
+                plt.title('Img 4')
+                plt.axis('off')
 
-        final_image_output: MatLike | None = None
-        # Show the plot
-        if do_collage:
-            top_row = np.hstack((original_img, final_annotated_img))
-            bottom_row = np.hstack(
-                (edge_annotated_img, target_color_shapes_annotated_img))
-            collage = np.vstack((top_row, bottom_row))
-            final_image_output = collage
-        else:
-            final_image_output = final_annotated_img
+                plt.subplot(figure_rows, figure_cols, 5)
+                plt.imshow(output_img_5)
+                plt.title('Img 5')
+                plt.axis('off')
+
+                plt.subplot(figure_rows, figure_cols, 6)
+                plt.imshow(output_img_6)
+                plt.title('Img 6')
+                plt.axis('off')
+
+            if final_image_is_collage:
+                top_row = np.hstack((original_img, final_annotated_img))
+                bottom_row = np.hstack(
+                    (edge_annotated_img, target_color_shapes_annotated_img))
+                collage = np.vstack((top_row, bottom_row))
+                final_image_output = collage
+            else:
+                final_image_output = final_annotated_img
 
         final_corners_output: list[Coordinate]
         for island in islands:
