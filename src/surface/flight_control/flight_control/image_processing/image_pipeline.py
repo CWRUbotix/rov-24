@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
+import argparse
+
 from PIL import Image
 import numpy as np
 import matplotlib.pyplot as plt
 from flight_control.image_processing.square_detector import SquareDetector
-import argparse
-import cv2
 
 square_detector = SquareDetector()
 
@@ -18,7 +18,7 @@ def debug_process_image_file(image_path: str) -> None:
     original_img = np.array(img)
 
     corners, result_img = \
-        square_detector.process_image(original_img, True, False, False)
+        square_detector.process_image(original_img, True, False, True)
     print("FINAL CORNERS:", corners)
 
     if result_img is not None:

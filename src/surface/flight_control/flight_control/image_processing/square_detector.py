@@ -38,12 +38,12 @@ SOBEL_Y = np.array([[-1, -2, -1],
                     [0, 0, 0],
                     [1, 2, 1]])
 
-# Structuring elements for morphological operations
-CLOSING_STREL_Y, CLOSING_STREL_X = np.ogrid[
+# Structuring element for morphological operations
+STREL_Y, STREL_X = np.ogrid[
     -BORDER_CLOSING_RADIUS:BORDER_CLOSING_RADIUS + 1,
     -BORDER_CLOSING_RADIUS:BORDER_CLOSING_RADIUS + 1
 ]
-CLOSING_STREL = (CLOSING_STREL_X ** 2 + CLOSING_STREL_Y ** 2) <= BORDER_CLOSING_RADIUS ** 2
+STREL = (STREL_X ** 2 + STREL_Y ** 2) <= BORDER_CLOSING_RADIUS ** 2
 
 CORNER_ADJUST_STREL = np.ones((BORDER_ADJ_STRELM_WIDTH, BORDER_ADJ_STRELM_WIDTH), dtype=bool)
 
@@ -150,11 +150,36 @@ def get_coords_in_box(img_dims: Dimensions, top_left: Coordinate,
     return pixels_set
 
 
+def get_threshold_mask(high_contrast_img: MatLike) -> NDArray[Any]:
+    """Get a mask with target color thresholding by ((r/g > 3) and (r/b > 3))
+
+    Parameters
+    ----------
+    high_contrast_img : MatLike
+        A contrast enhanced image to threshold
+
+    Returns
+    -------
+    Matlike
+        The resulting mask
+    """
+    # TODO might break things
+    if is_uint8(high_contrast_img):
+        # reveal_type(np.dtype(np.uint8))
+        red_green_ratio = high_contrast_img[:, :, 0] / (high_contrast_img[:, :, 1] + 1e-8)
+        red_blue_ratio = high_contrast_img[:, :, 0] / (high_contrast_img[:, :, 2] + 1e-8)
+    else:
+        raise ValueError("Somehow your image is not uint8")
+
+    mask = np.logical_and(red_green_ratio > 3.0, red_blue_ratio > 3.0)
+    return mask
+
+
 class Island:
     def __init__(self) -> None:
         self.pixels_set: set[Coordinate] = set()
         self.bounding_box: tuple[Coordinate, Coordinate]
-        # If the shape should even be considered shown at all, or if it is todo / shouldn't be shown
+
         self.considered = False
         self.validated = False
         self.is_target = False
@@ -237,6 +262,15 @@ class Island:
 
     def calc_corners(self, img_dims: Dimensions,
                      border_leak_rollback: bool = False) -> None:
+        """Find this corners of this island.
+
+        Parameters
+        ----------
+        img_dims : Dimensions
+            The dimensions of the image this island is in
+        border_leak_rollback : bool, optional
+            Whether to be more aggressive in preventing border leaks, by default False
+        """
         corner_candidates: list[set[Coordinate]] = [set(), set(), set(), set()]
 
         for (row, col) in self.pixels_set:
@@ -382,6 +416,15 @@ class Island:
     def validate_shape_is_target_square(self, img_dims: Dimensions,
                                         debug_shape_image: NDArray[np.generic] | None = None
                                         ) -> None:
+        """Check that this island looks like a target square.
+
+        Parameters
+        ----------
+        img_dims : Dimensions
+            The dimensions of the image containing this island
+        debug_shape_image : NDArray[np.generic] | None, optional
+            If you're making debug images, pass one here to highlight borders, by default None
+        """
         if len(self.corners) == 0:
             print("Island had no corners, skipping")
             return
@@ -509,145 +552,104 @@ class Island:
                 #     debug_shape_image[y][x] = [255, 255, 0]
 
 
+def get_target_color_shapes_debug_image(size_template: MatLike, islands: list[Island],
+                                        root_pixels_debug_image: MatLike) -> MatLike:
+    """Generate a debugging image that highlights the anatomy of islands.
+
+    Parameters
+    ----------
+    size_template : MatLike
+        An image with the desired debug image size
+    islands : list[Island]
+        The islands to highlight
+    root_pixels_debug_image : MatLike
+        A mask converted to RGB by setting True pixels to red and False pixels to black
+
+    Returns
+    -------
+    MatLike
+        An image highlighting islands for debugging
+    """
+    connected_shape_img = np.zeros_like(size_template)
+    for island in islands:
+        for (row, col) in island.pixels_set:
+            if root_pixels_debug_image[row][col][0] == 255:
+                connected_shape_img[row][col] = [150, 0, 0]
+            elif (row, col) in island.border_extended_pixels:
+                connected_shape_img[row][col] = [255, 150, 150]
+            else:
+                connected_shape_img[row][col] = [255, 0, 0]
+    return connected_shape_img
+
+
+def get_final_corners_overlay_debug_img(islands: list[Island], base_img: MatLike) -> MatLike:
+    """Generate a debugging image that circles the corners of islands
+
+    Parameters
+    ----------
+    islands : list[Island]
+        The islands found for this image
+    base_img : MatLike
+        The image to annotate
+
+    Returns
+    -------
+    MatLike
+        The resulting annotated image
+    """
+
+    img = np.copy(base_img)
+    for island in islands:
+        if not island.considered:
+            continue
+
+        color = [255, 0, 0]
+        if island.validated:
+            color = [0, 255, 0 if island.is_target else 255]
+        elif island.is_frame_edge_disqualified:
+            color = [255, 255, 0]
+        else:
+            color = [255, 0, 0]
+
+        for corner in island.corners:
+            y, x = np.ogrid[
+                -corner[0]:img.shape[0] - corner[0],
+                -corner[1]:img.shape[1] - corner[1]
+            ]
+            mask = np.logical_and(
+                x * x + y * y >= CIRCLE_INNER_RADIUS ** 2,
+                x * x + y * y <= CIRCLE_OUTER_RADIUS ** 2
+            )
+
+            img[mask] = color
+
+        image_pil = Image.fromarray(img)
+
+        draw = ImageDraw.Draw(image_pil)
+
+        font = ImageFont.load_default()
+
+        text = str(island.order_number)
+        # (x, y) Coordinate
+        position = (island.center_pos[1], island.center_pos[0])
+
+        _, _, text_width, text_height = draw.textbbox((0, 0), text, font=font)
+        position = (position[0] - text_width // 2,
+                    position[1] - text_height // 2)
+
+        draw.text(position, text, font=font, fill=(color[0], color[1], color[2]))
+
+        img = np.array(image_pil)
+
+    return img
+
+
 class SquareDetector:
     def __init__(self) -> None:
         self.rows: int
         self.cols: int
         self.img_dims: Dimensions
         self.eroded_border: NDArray[np.float64] | NDArray[Any] | Any
-
-    # TODO to be delete no one calls
-    # def is_connected_target_shape_pixel(self, rgb: list[int]):
-    #     condition_red = rgb[0] > 30
-    #     condition_other_color = (rgb[1] > 10 or rgb[2] > 10)
-    #     condition = np.logical_and(condition_red, ~condition_other_color)
-    #     return condition
-
-    @staticmethod
-    def get_harsh_target_colors(high_contrast_img: MatLike) -> NDArray[Any]:
-        """Get a mask with target color thresholding by ((r/g > 3) and (r/b > 3))
-
-        Parameters
-        ----------
-        high_contrast_img : MatLike
-            A contrast enhanced image to threshold
-
-        Returns
-        -------
-        Matlike
-            The resulting mask
-        """
-        # TODO might break things
-        if is_uint8(high_contrast_img):
-            # reveal_type(np.dtype(np.uint8))
-            red_green_ratio = high_contrast_img[:, :, 0] / (high_contrast_img[:, :, 1] + 1e-8)
-            red_blue_ratio = high_contrast_img[:, :, 0] / (high_contrast_img[:, :, 2] + 1e-8)
-        else:
-            raise ValueError("Somehow your image is not uint8.")
-
-        mask = np.logical_and(red_green_ratio > 3.0, red_blue_ratio > 3.0)
-        return mask
-
-    @staticmethod
-    def get_target_color_shapes_debug_image(size_template: MatLike, islands: list[Island],
-                                            root_pixels_debug_image: MatLike) -> MatLike:
-        connected_shape_img = np.zeros_like(size_template)
-        for island in islands:
-            for (row, col) in island.pixels_set:
-                if root_pixels_debug_image[row][col][0] == 255:
-                    connected_shape_img[row][col] = [150, 0, 0]
-                elif (row, col) in island.border_extended_pixels:
-                    connected_shape_img[row][col] = [255, 150, 150]
-                else:
-                    connected_shape_img[row][col] = [255, 0, 0]
-        return connected_shape_img
-
-    # def get_island_debug_image(self, size_template, island):
-    #     connected_shape_img = np.zeros_like(size_template)
-    #     for (row, col) in island.pixels_set:
-    #         connected_shape_img[row][col] = [255, 0, 0]
-    #     return connected_shape_img
-
-    # def get_shapes_corners_debug_image(self, islands: list[Island], root_pixels_debug_image):
-    #     img = np.copy(root_pixels_debug_image)
-    #     for island in islands:
-    #         for corner in island.corners:
-    #             inner_radius = CIRCLE_INNER_RADIUS
-    #             outer_radius = CIRCLE_OUTER_RADIUS
-    #             center_x = corner[1]
-    #             center_y = corner[0]
-    #             y, x = np.ogrid[
-    #                 -center_y:img.shape[0] - center_y,
-    #                 -center_x:img.shape[1] - center_x
-    #             ]
-    #             mask = np.logical_and(
-    #                 x * x + y * y >= inner_radius * inner_radius,
-    #                 x * x + y * y <= outer_radius * outer_radius
-    #             )
-    #             img[mask] = [255, 255, 0]  # Set color to green (RGB)
-
-    #     return img
-
-    @staticmethod
-    def get_final_corners_overlay_debug_img(islands: list[Island], base_img: MatLike) -> MatLike:
-        img = np.copy(base_img)
-        for island in islands:
-            if not island.considered:
-                continue
-
-            color = [255, 0, 0]
-            if island.validated:
-                color = [0, 255, 0 if island.is_target else 255]
-            elif island.is_frame_edge_disqualified:
-                color = [255, 255, 0]
-            else:
-                color = [255, 0, 0]
-
-            for corner in island.corners:
-                inner_radius = CIRCLE_INNER_RADIUS
-                outer_radius = CIRCLE_OUTER_RADIUS
-                center_x = corner[1]
-                center_y = corner[0]
-                y, x = np.ogrid[
-                    -center_y:img.shape[0] - center_y,
-                    -center_x:img.shape[1] - center_x
-                ]
-                mask = np.logical_and(
-                    x * x + y * y >= inner_radius * inner_radius,
-                    x*x + y * y <= outer_radius * outer_radius
-                )
-
-                img[mask] = color
-
-            image_pil = Image.fromarray(img)
-
-            draw = ImageDraw.Draw(image_pil)
-
-            font_color = (color[0], color[1], color[2])
-            font = ImageFont.load_default()
-
-            text = str(island.order_number)
-            # (x, y) Coordinate
-            position = (island.center_pos[1], island.center_pos[0])
-
-            _, _, text_width, text_height = draw.textbbox((0, 0), text, font=font)
-            position = (position[0] - text_width // 2,
-                        position[1] - text_height // 2)
-
-            draw.text(position, text, font=font, fill=font_color)
-
-            img = np.array(image_pil)
-
-        # for (row, col) in island.pixels_set:
-        #     if (root_pixels_debug_image[row][col][0] == 255):
-        #         connected_shape_img[row][col] = [150, 0, 0]
-        #     else:
-        #         connected_shape_img[row][col] = [255, 0, 0]
-        # mask = edge_img == 1
-        # img[mask] = [0, 0, 255]
-        # img = edge_img
-
-        return img
 
     def dfs(self, coord: Coordinate, visited_map: dict[Coordinate, Island],
             merges: set[tuple[Island, Island]], high_contrast_img: MatLike,
@@ -809,16 +811,8 @@ class SquareDetector:
         for (row, col) in island.pixels_set:
             region_plus_eroded_border[row, col] = True
 
-        radius = BORDER_ADJ_CLOSING_RADIUS
-        y_array, x_array = np.ogrid[-radius:radius + 1, -radius:radius + 1]
-        dilate_struct_element = x_array ** 2 + y_array ** 2 <= radius ** 2
-        dilated_image = binary_dilation(region_plus_eroded_border, structure=dilate_struct_element)
-
-        # erode_struct_element = np.ones((5, 5), dtype=bool)
-        radius = BORDER_ADJ_CLOSING_RADIUS
-        y_array, x_array = np.ogrid[-radius:radius + 1, -radius:radius + 1]
-        erode_struct_element = x_array ** 2 + y_array ** 2 <= radius ** 2
-        closed_image = binary_erosion(dilated_image, structure=erode_struct_element)
+        dilated_image = binary_dilation(region_plus_eroded_border, structure=STREL)
+        closed_image = binary_erosion(dilated_image, structure=STREL)
 
         border_expand_stack = list(island.border_failed_stack)
         while border_expand_stack:
@@ -887,21 +881,21 @@ class SquareDetector:
         edge_image_thresholded = edge_image_raw > EDGE_VALUES_THRESHOLD
 
         # Morphological closing
-        dilated_image = binary_dilation(edge_image_thresholded, structure=CLOSING_STREL)
-        closed_image = binary_erosion(dilated_image, structure=CLOSING_STREL)
+        dilated_image = binary_dilation(edge_image_thresholded, structure=STREL)
+        closed_image = binary_erosion(dilated_image, structure=STREL)
         sobel_edges_image = closed_image
 
         # Compute the eroded border for later use in the corner adjustment step
         self.eroded_border = binary_erosion(closed_image, structure=CORNER_ADJUST_STREL)
 
         # Threshold by ratios of the target color
-        target_color_mask = SquareDetector.get_harsh_target_colors(high_contrast_img)
+        target_color_mask = get_threshold_mask(high_contrast_img)
 
         # DEBUG: convert mask to RGB for display
         if make_debug_imgs:
-            target_color_thresholding_dimg = np.zeros_like(high_contrast_img)
-            target_color_thresholding_dimg[target_color_mask] = [255, 0, 0]
-            target_color_thresholding_dimg[~target_color_mask] = [0, 0, 0]
+            target_color_mask_rgb_dimg = np.zeros_like(high_contrast_img)
+            target_color_mask_rgb_dimg[target_color_mask] = [255, 0, 0]
+            target_color_mask_rgb_dimg[~target_color_mask] = [0, 0, 0]
 
         # Find islands (region filling)
         print("size:", target_color_mask.shape)
@@ -948,15 +942,15 @@ class SquareDetector:
         if make_debug_imgs:
             edge_rgb = np.zeros((*sobel_edges_image.shape, 3), dtype=np.uint8)
             edge_rgb[sobel_edges_image == 1] = [255, 255, 255]
-            edge_annotated_img = SquareDetector.get_final_corners_overlay_debug_img(islands, edge_rgb)
+            edge_annotated_img = get_final_corners_overlay_debug_img(islands, edge_rgb)
 
-            target_color_shapes_debug_image = SquareDetector.get_target_color_shapes_debug_image(
-                    high_contrast_img, islands, target_color_thresholding_dimg)
-            target_color_shapes_annotated_img = SquareDetector.get_final_corners_overlay_debug_img(
+            target_color_shapes_debug_image = get_target_color_shapes_debug_image(
+                    high_contrast_img, islands, target_color_mask_rgb_dimg)
+            target_color_shapes_annotated_img = get_final_corners_overlay_debug_img(
                     islands, target_color_shapes_debug_image)
             
             if debug_shape_image is not None:
-                final_annotated_img = SquareDetector.get_final_corners_overlay_debug_img(
+                final_annotated_img = get_final_corners_overlay_debug_img(
                         islands, debug_shape_image)
             else:
                 raise Exception("Debug shape image was None, but make_debug_imgs is true!")
