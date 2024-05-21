@@ -176,9 +176,10 @@ def get_threshold_mask(high_contrast_img: MatLike) -> NDArray[Any]:
 
 
 class Island:
-    def __init__(self) -> None:
+    def __init__(self, do_debug_logs: bool = False) -> None:
         self.pixels_set: set[Coordinate] = set()
         self.bounding_box: tuple[Coordinate, Coordinate]
+        self.do_debug_logs = do_debug_logs
 
         self.considered = False
         self.validated = False
@@ -209,6 +210,10 @@ class Island:
         self.region_mask: NDArray[np.bool_]
         self.target_score: float
         self.sort_score: float
+
+    def debug_log(self, msg):
+        if self.do_debug_logs:
+            print(msg)
 
     def update_min_max(self, coord: Coordinate) -> None:
         """Update this island's min/max row/col given the provided coords are in the island.
@@ -257,8 +262,7 @@ class Island:
 
         self.target_score = center_score + shape_score
 
-        print("region target score:", region_dist_from_center, center_score,
-              "vs", self.error_percent, shape_score, "=", self.target_score)
+        self.debug_log(f"region target score: {region_dist_from_center} {center_score} vs {self.error_percent} {shape_score} = {self.target_score}")
 
     def calc_corners(self, img_dims: Dimensions,
                      border_leak_rollback: bool = False) -> None:
@@ -311,7 +315,7 @@ class Island:
                 # This is a straight/axis-aligned square edge case
                 if row_min == 0 or col_min == 0 or \
                    row_max == img_dims[0] - 1 or col_max == img_dims[1] - 1:
-                    print("At edge of frame - not counting as target.")
+                    self.debug_log("At edge of frame - not counting as target.")
                     self.is_frame_edge_disqualified = True
                 else:
                     self.is_fallback_case = True
@@ -343,7 +347,7 @@ class Island:
                 if len(approx) == 4:
                     # Get corner Coordinate of the square
                     corners = [tuple(approx[i][0]) for i in range(4)]
-                    print("Corner Points:", corners)
+                    self.debug_log(f"Corner Points: {corners}")
                     for corner in corners:
                         unsorted_corners.append((corner[1], corner[0]))
 
@@ -402,16 +406,15 @@ class Island:
                 dist_from_old_corner = np.sqrt(
                     np.square(corner[0] - old_corner[0]) + np.square(corner[1] - old_corner[1]))
                 should_reset = dist_from_old_corner > BORDER_ADJ_MAX_DIST
-                print("CORNER COMPARE:", corner, old_corner,
-                      dist_from_old_corner, should_reset)
+                self.debug_log(f"CORNER COMPARE: {corner} {old_corner} {dist_from_old_corner} {should_reset}")
                 if should_reset:
                     apply_corner_adjustment = False
-                    print("! adjusted corner dist too far, rolling back.")
+                    self.debug_log("! adjusted corner dist too far, rolling back.")
 
         if apply_corner_adjustment:
             self.corners = new_corners
 
-        print("Corners: ", self.corners)
+        self.debug_log(f"Corners: {self.corners}")
 
     def validate_shape_is_target_square(self, img_dims: Dimensions,
                                         debug_shape_image: NDArray[np.generic] | None = None
@@ -426,7 +429,7 @@ class Island:
             If you're making debug images, pass one here to highlight borders, by default None
         """
         if len(self.corners) == 0:
-            print("Island had no corners, skipping")
+            self.debug_log("Island had no corners, skipping")
             return
         self.considered = True
 
@@ -475,11 +478,11 @@ class Island:
             if denom == 0:
                 denom = 0.00001
             slope = (from_point[0] - to_point[0]) / denom
-            # print("validate edge - from", from_point, "to", to_point, "slope:", slope)
+            # self.debug_log("validate edge - from", from_point, "to", to_point, "slope:", slope)
             for x in range(from_point[1], to_point[1] + 1):
                 x_relative = x - from_point[1]
                 slope_expected_y = int(y_intercept + x_relative * slope)
-                # print("row: ", slope_expected_y, ", col: ", x)
+                # self.debug_log("row: ", slope_expected_y, ", col: ", x)
                 self.val_border_pixels_set.update(get_coords_in_box(
                     img_dims,
                     (slope_expected_y - LINE_WIDTH, x - LINE_WIDTH),
@@ -504,8 +507,7 @@ class Island:
 
             error_percent = (debug_inside_errors_count +
                              debug_outside_errors_count) / expected_area
-            print("error %: ", error_percent, debug_inside_errors_count,
-                  debug_outside_errors_count)
+            self.debug_log(f"error %: {error_percent} {debug_inside_errors_count} {debug_outside_errors_count}")
 
         validate_square_edge(left_corner, bottom_corner, True)
         validate_square_edge(bottom_corner, right_corner, True)
@@ -516,8 +518,8 @@ class Island:
         #  there is also an internal box, between all of the edge boxes,
         #  that needs to be covered:
         #  (Note that in the AABB edge case, this performs all error checks:)
-        # print("corners:", island.corners)
-        # print("ranges:", bottom_corner[1], top_corner[1], left_corner[0], right_corner[0])
+        # self.debug_log("corners:", island.corners)
+        # self.debug_log("ranges:", bottom_corner[1], top_corner[1], left_corner[0], right_corner[0])
         for x in range(bottom_corner[1], top_corner[1]):
             for y in range(left_corner[0], right_corner[0]):
                 is_shape_pixel = (y, x) in self.pixels_set
@@ -536,8 +538,7 @@ class Island:
 
         self.error_percent = (
             len(inside_error_pixels) + len(outside_error_pixels)) / expected_area
-        print("total error %: ", self.error_percent,
-              expected_area, expected_area_2)
+        self.debug_log(f"total error %: {self.error_percent} {expected_area} {expected_area_2}")
 
         if self.error_percent < 0.30:
             self.validated = True
@@ -645,11 +646,17 @@ def get_final_corners_overlay_debug_img(islands: list[Island], base_img: MatLike
 
 
 class SquareDetector:
-    def __init__(self) -> None:
+    def __init__(self, do_debug_logs: bool = False) -> None:
+        self.do_debug_logs = do_debug_logs
+
         self.rows: int
         self.cols: int
         self.img_dims: Dimensions
         self.eroded_border: NDArray[np.float64] | NDArray[Any] | Any
+
+    def debug_log(self, msg):
+        if self.do_debug_logs:
+            print(msg)
 
     def dfs(self, coord: Coordinate, visited_map: dict[Coordinate, Island],
             merges: set[tuple[Island, Island]], high_contrast_img: MatLike,
@@ -684,7 +691,7 @@ class SquareDetector:
         # First find root intensity islands:
         root_stack = [coord]
         extended_stack = []  # Stack for the non root pixels.
-        island = Island()
+        island = Island(self.do_debug_logs)
 
         while root_stack:
             row, col = root_stack.pop()
@@ -722,7 +729,7 @@ class SquareDetector:
                 if region_width > BREAK_REGION_WIDTH or \
                    region_height > BREAK_REGION_HEIGHT or \
                    len(island.pixels_set) > total_pixels_count * BREAK_REGION_AREA_PERCENT:
-                    print("\nStopped spreading artificially - leak detected, so" +
+                    self.debug_log("\nStopped spreading artificially - leak detected, so" +
                           "stopped spreading connected pixels.")
                     island.is_leak_disqualified = True
                     break
@@ -790,7 +797,7 @@ class SquareDetector:
         #  (merges is a set, so there's no duplicate items.)
         for (island_a, island_b) in merges:
             if island_a in islands and island_b in islands:
-                print("merged: ", len(island_a.pixels_set), len(island_b.pixels_set))
+                self.debug_log(f"merged: {len(island_a.pixels_set)} {len(island_b.pixels_set)}")
                 island_a.pixels_set.update(island_b.pixels_set)
                 island_a.border_failed_stack.update(island_b.border_failed_stack)
                 islands.remove(island_b)
@@ -898,13 +905,13 @@ class SquareDetector:
             target_color_mask_rgb_dimg[~target_color_mask] = [0, 0, 0]
 
         # Find islands (region filling)
-        print("size:", target_color_mask.shape)
+        self.debug_log(f"size: {target_color_mask.shape}")
         islands, visited_map = self.find_islands(
             high_contrast_img, target_color_mask,
             sobel_edges_image
         )
 
-        print(len(islands), "islands: ")
+        self.debug_log(f"{len(islands)} islands:")
         for island in islands:
             island.calc_bounding_box()
 
@@ -912,7 +919,7 @@ class SquareDetector:
             for pixel in island.pixels_set:
                 island.region_mask[pixel] = True
 
-            print("island bounding box: ", island.bounding_box)
+            self.debug_log(f"island bounding box: {island.bounding_box}")
             island.calc_corners(self.img_dims, False)
 
         debug_shape_image = np.copy(original_img) if make_debug_imgs else None
@@ -936,7 +943,7 @@ class SquareDetector:
                 island.calc_bounding_box()
                 island.calc_corners(self.img_dims, True)
 
-            print("sorted island:", island.order_number, island.sort_score)
+            self.debug_log(f"sorted island: {island.order_number} {island.sort_score}")
 
         final_image_output: MatLike | None = None
         if make_debug_imgs:

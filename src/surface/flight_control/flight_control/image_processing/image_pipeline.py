@@ -6,7 +6,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from flight_control.image_processing.square_detector import SquareDetector
 
-square_detector = SquareDetector()
+square_detector = SquareDetector(True)
 
 
 def debug_process_image_file(image_path: str) -> None:

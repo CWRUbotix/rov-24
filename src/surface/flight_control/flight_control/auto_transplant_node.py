@@ -67,7 +67,7 @@ class AutoDocker(Node):
 
         # cv_image[:, :, 0] = 255
 
-        square_detector = SquareDetector()
+        square_detector = SquareDetector(False)
 
         corners, result_img = \
             square_detector.process_image(cv_image, True, False, False)
