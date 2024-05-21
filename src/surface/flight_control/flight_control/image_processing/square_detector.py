@@ -50,6 +50,7 @@ CORNER_ADJUST_STREL = np.ones((BORDER_ADJ_STRELM_WIDTH, BORDER_ADJ_STRELM_WIDTH)
 
 # Should be row, col
 Coordinate = tuple[int, int]
+Dimensions = tuple[int, int]
 
 
 def is_uint8(numpy_array: NDArray[np.generic]) -> TypeGuard[NDArray[np.uint8]]:
@@ -97,13 +98,168 @@ class Island:
         self.min_col = min(col, self.min_col)
         self.max_col = max(col, self.max_col)
 
+    def set_bounding_box(self) -> None:
+        """Set the min/max row/col & bounding_box of this island based on its pixels_set."""
+        self.min_row = min(row for row, _ in self.pixels_set)
+        self.max_row = max(row for row, _ in self.pixels_set)
+        self.min_col = min(col for _, col in self.pixels_set)
+        self.max_col = max(col for _, col in self.pixels_set)
+
+        self.bounding_box = (
+            (self.min_row, self.min_col),
+            (self.max_row, self.max_col)
+        )
+
+    def calc_corners(self, img_dims: Dimensions,
+                     border_leak_rollback: bool = False) -> None:
+        corner_candidates: list[set[Coordinate]] = [set(), set(), set(), set()]
+
+        for (row, col) in self.pixels_set:
+            if self.min_row == row:  # top corner
+                corner_candidates[0].add((row, col))
+            if self.max_row == row:  # bottom corner
+                corner_candidates[1].add((row, col))
+            if self.min_col == col:  # left corner
+                corner_candidates[2].add((row, col))
+            if self.max_col == col:  # right corner
+                corner_candidates[3].add((row, col))
+
+        flat_corner_max_len = min(
+            (self.max_row - self.min_row) / 3,
+            (self.max_col - self.min_col) / 3
+        )
+
+        # each index corresponds to a known side for shape validation.
+        new_corners: list[Coordinate] = []
+
+        self.is_fallback_case = False
+        for i in range(0, 4):
+            corner_candidates_for_edge = corner_candidates[i]
+            row_min = min(row for row, _ in corner_candidates_for_edge)
+            col_min = min(col for _, col in corner_candidates_for_edge)
+            row_max = max(row for row, _ in corner_candidates_for_edge)
+            col_max = max(col for _, col in corner_candidates_for_edge)
+
+            # The min/max for one of the dimensions (row or col) should be the same
+            candidate_diff = (row_max - row_min) + (col_max - col_min)
+            if candidate_diff <= flat_corner_max_len:
+                # This is a real corner; set it to average of candidate positions
+                new_corners.append((
+                    int((row_max + row_min) / 2),
+                    int((col_max + col_min) / 2)
+                ))
+            else:
+                # This is a straight/axis-aligned square edge case
+                if row_min == 0 or col_min == 0 or \
+                   row_max == img_dims[0] - 1 or col_max == img_dims[1] - 1:
+                    print("At edge of frame - not counting as target.")
+                    self.is_frame_edge_disqualified = True
+                else:
+                    self.is_fallback_case = True
+                    break
+
+        # If corners are too close together do fallback corner detection
+        min_corner_interdistance = min(
+            (self.max_row-self.min_row) / 3,
+            (self.max_col-self.min_col) / 3
+        )
+        for (row_i, col_i) in new_corners:
+            for (row_j, col_j) in new_corners:
+                dist = np.sqrt(np.square(row_i - row_j) + np.square(col_i - col_j))
+                if dist < min_corner_interdistance:
+                    self.is_fallback_case = True
+
+        # Fallback corner detection: use OpenCV
+        if self.is_fallback_case:
+            unsorted_corners = []
+            region_mask = np.uint8(self.region_mask) * 255
+            contours, _ = cv2.findContours(region_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+            for contour in contours:
+                # Get corners through approximated contour:
+                epsilon = 0.05 * cv2.arcLength(contour, True)
+                approx = cv2.approxPolyDP(contour, epsilon, True)
+
+                # Check if the contour has 4 corners:
+                if len(approx) == 4:
+                    # Get corner Coordinate of the square
+                    corners = [tuple(approx[i][0]) for i in range(4)]
+                    print("Corner Points:", corners)
+                    for corner in corners:
+                        unsorted_corners.append((corner[1], corner[0]))
+
+            # Re-order corners for region validation
+            if len(unsorted_corners) == 4:
+                new_corners = []
+
+                closest_pixel = list(unsorted_corners)[0]
+                closest_dist = float('inf')
+                for (row, col) in unsorted_corners:
+                    dist = np.abs(row - self.min_row)
+                    if dist < closest_dist or (dist == closest_dist and col > closest_pixel[1]):
+                        closest_dist = dist
+                        closest_pixel = (row, col)
+                new_corners.append(closest_pixel)
+                unsorted_corners.remove(closest_pixel)
+
+                closest_pixel = list(unsorted_corners)[0]
+                closest_dist = float('inf')
+                for (row, col) in unsorted_corners:
+                    dist = np.abs(row - self.max_row)
+                    if dist < closest_dist or (dist == closest_dist and col < closest_pixel[1]):
+                        closest_dist = dist
+                        closest_pixel = (row, col)
+                new_corners.append(closest_pixel)
+                unsorted_corners.remove(closest_pixel)
+
+                closest_pixel = list(unsorted_corners)[0]
+                closest_dist = float('inf')
+                for (row, col) in unsorted_corners:
+                    dist = np.abs(col - self.min_col)
+                    if dist < closest_dist or (dist == closest_dist and row < closest_pixel[0]):
+                        closest_dist = dist
+                        closest_pixel = (row, col)
+                new_corners.append(closest_pixel)
+                unsorted_corners.remove(closest_pixel)
+
+                closest_pixel = list(unsorted_corners)[0]
+                closest_dist = float('inf')
+                for (row, col) in unsorted_corners:
+                    dist = np.abs(col - self.max_col)
+                    if dist < closest_dist or (dist == closest_dist and row > closest_pixel[0]):
+                        closest_dist = dist
+                        closest_pixel = (row, col)
+                new_corners.append(closest_pixel)
+                unsorted_corners.remove(closest_pixel)
+
+        apply_corner_adjustment = True
+        if border_leak_rollback:
+            for i in range(0, 4):
+                if len(new_corners) != 4 or len(self.corners) != 4:
+                    apply_corner_adjustment = False
+                    break
+                corner = new_corners[i]
+                old_corner = self.corners[i]
+                dist_from_old_corner = np.sqrt(
+                    np.square(corner[0] - old_corner[0]) + np.square(corner[1] - old_corner[1]))
+                should_reset = dist_from_old_corner > BORDER_ADJ_MAX_DIST
+                print("CORNER COMPARE:", corner, old_corner,
+                      dist_from_old_corner, should_reset)
+                if should_reset:
+                    apply_corner_adjustment = False
+                    print("! adjusted corner dist too far, rolling back.")
+
+        if apply_corner_adjustment:
+            self.corners = new_corners
+
+        print("Corners: ", self.corners)
+
 
 class SquareDetector:
     def __init__(self) -> None:
         self.rows: int
         self.cols: int
-        self.img_size: tuple[int, int]
-        self.visited_map: dict[Coordinate, Island]
+        self.img_dims: Dimensions
         self.eroded_border: NDArray[np.float64] | NDArray[Any] | Any
 
     # TODO to be delete no one calls
@@ -248,13 +404,38 @@ class SquareDetector:
             (row, col - 1)
         ]
 
-    def dfs(self, r: int, c: int, visited_map: dict[Coordinate, Island],
+    def dfs(self, coord: Coordinate, visited_map: dict[Coordinate, Island],
             merges: set[tuple[Island, Island]], high_contrast_img: MatLike,
             target_color_mask: MatLike, edge_image: MatLike) -> Island:
+        """Perform a depth-first search starting at the provided (r, c) to fill island borders.
+
+        Parameters
+        ----------
+        r : int
+            _description_
+        c : int
+            _description_
+        visited_map : dict[Coordinate, Island]
+            A map of which island covers the given coordinate (should start out empty)
+        merges : set[tuple[Island, Island]]
+            _description_
+        high_contrast_img : MatLike
+            _description_
+        target_color_mask : MatLike
+            _description_
+        edge_image : MatLike
+            _description_
+
+        Returns
+        -------
+        Island
+            The island created by filling the edges around the provided coords
+        """
+
         total_pixels_count = self.rows * self.cols
 
         # First find root intensity islands:
-        root_stack = [(r, c)]
+        root_stack = [coord]
         extended_stack = []  # Stack for the non root pixels.
         island = Island()
 
@@ -276,9 +457,9 @@ class SquareDetector:
                 else:
                     extended_stack.extend(SquareDetector.make_extend_list(row, col))
 
-        island.min_row = self.img_size[0]
+        island.min_row = self.img_dims[0]
         island.max_row = 0
-        island.min_col = self.img_size[1]
+        island.min_col = self.img_dims[1]
         island.max_col = 0
 
         island.border_failed_stack = set()
@@ -295,7 +476,7 @@ class SquareDetector:
                    region_height > BREAK_REGION_HEIGHT or \
                    len(island.pixels_set) > total_pixels_count * BREAK_REGION_AREA_PERCENT:
                     print("\nStopped spreading artificially - leak detected, so" +
-                            "stopped spreading connected pixels.")
+                          "stopped spreading connected pixels.")
                     island.is_leak_disqualified = True
                     break
 
@@ -305,10 +486,10 @@ class SquareDetector:
                 is_edge_pixel = edge_image[row][col] is True
 
                 anti_leak_check = (
-                    (raw_pixel[1] < raw_pixel[0] or raw_pixel[1] < raw_pixel[2]) and \
+                    (raw_pixel[1] < raw_pixel[0] or raw_pixel[1] < raw_pixel[2]) and
                     not (raw_pixel[1] > 200 and raw_pixel[2] > 200)
                 )
-                is_connected_pixel = (not is_edge_pixel) and anti_leak_check
+                is_connected_pixel = not is_edge_pixel and anti_leak_check
 
                 # If this pixel belongs to  the island, then add it:
                 if is_connected_pixel:
@@ -323,8 +504,24 @@ class SquareDetector:
 
         return island
 
-    def find_islands(self, high_contrast_img: MatLike,
-                     target_color_mask: MatLike, edge_image: MatLike) -> list[Island]:
+    def find_islands(self, high_contrast_img: MatLike, target_color_mask: MatLike,
+                     edge_image: MatLike) -> tuple[list[Island], dict[Coordinate, Island]]:
+        """Get the islands and visited_map (which island is at this coord?) for an image.
+
+        Parameters
+        ----------
+        high_contrast_img : MatLike
+            _description_
+        target_color_mask : MatLike
+            _description_
+        edge_image : MatLike
+            _description_
+
+        Returns
+        -------
+        tuple[list[Island], dict[Coordinate, Island]]
+            The list of islands and the visited_map from coordinates to their islands
+        """
         islands: list[Island] = []
         visited_map: dict[Coordinate, Island] = {}
         merges: set[tuple[Island, Island]] = set()
@@ -337,7 +534,7 @@ class SquareDetector:
             for c in range(self.cols):
                 # If correct color and not on an edge and not visited
                 if target_color_mask[r][c] and not edge_image[r][c] and (r, c) not in visited_map:
-                    new_island = self.dfs(r, c, visited_map, merges,
+                    new_island = self.dfs((r, c), visited_map, merges,
                                           high_contrast_img, target_color_mask, edge_image)
                     if len(new_island.pixels_set) >= island_min_pixels_count:
                         islands.append(new_island)
@@ -351,11 +548,9 @@ class SquareDetector:
                 island_a.border_failed_stack.update(island_b.border_failed_stack)
                 islands.remove(island_b)
 
-        self.visited_map = visited_map
+        return (islands, visited_map)
 
-        return islands
-
-    def calc_better_region(self, island: Island) -> None:
+    def calc_better_region(self, island: Island, visited_map: dict[Coordinate, Island]) -> None:
         region_plus_eroded_border = np.copy(self.eroded_border)
         for (y, x) in island.pixels_set:
             region_plus_eroded_border[y, x] = True
@@ -379,202 +574,16 @@ class SquareDetector:
             # print("border extend:", entry)
             island.border_failed_stack.discard(entry)
             row, col = entry
-            is_not_visited = (row, col) not in self.visited_map
+            is_not_visited = (row, col) not in visited_map
             is_in_bounds = (0 <= row < self.rows and 0 <= col < self.cols)
             # If valid pixel coordinate:
             if is_not_visited and is_in_bounds:
                 is_in_border = closed_image[row][col]
                 if is_in_border:
-                    self.visited_map[(row, col)] = island
+                    visited_map[(row, col)] = island
                     island.pixels_set.add((row, col))
                     island.border_extended_pixels.add((row, col))
                     border_expand_stack.extend(SquareDetector.make_extend_list(row, col))
-
-    @staticmethod
-    def calc_bounding_boxes(island: Island) -> None:
-        relevant_pixels = island.pixels_set
-        island.min_row = min(row for row, _ in relevant_pixels)
-        island.max_row = max(row for row, _ in relevant_pixels)
-        island.min_col = min(col for _, col in relevant_pixels)
-        island.max_col = max(col for _, col in relevant_pixels)
-
-        island.bounding_box = (
-            (island.min_row, island.min_col),
-            (island.max_row, island.max_col)
-        )
-
-    def calc_corners(self, island: Island, border_leak_rollback: bool = False) -> None:
-        corner_candidate_min_maxes: list[set[Coordinate]] = [set(), set(), set(), set()]
-
-        for (row, col) in island.pixels_set:
-            if island.min_row == row:  # top corner:
-                corner_candidate_min_maxes[0].add((row, col))
-
-            if island.max_row == row:  # bottom corner:
-                corner_candidate_min_maxes[1].add((row, col))
-
-            if island.min_col == col:  # left corner:
-                corner_candidate_min_maxes[2].add((row, col))
-
-            if island.max_col == col:  # right corner:
-                corner_candidate_min_maxes[3].add((row, col))
-
-        flat_corner_max_len = min(
-            (island.max_row - island.min_row) / 3,
-            (island.max_col - island.min_col) / 3
-        )
-
-        # Is an array where each index corresponds to a known side for shape validation.
-        new_corners = []
-
-        is_aabb_edge_case = False
-        for i in range(0, 4):
-            corner_candidates_for_edge = corner_candidate_min_maxes[i]
-            row_min = min(row for row, _ in corner_candidates_for_edge)
-            col_min = min(col for _, col in corner_candidates_for_edge)
-            row_max = max(row for row, _ in corner_candidates_for_edge)
-            col_max = max(col for _, col in corner_candidates_for_edge)
-
-            # Keep in mind the min and max for one of the dimensions (row or col) should be the same.
-            candidate_diff = (row_max - row_min) + (col_max - col_min)
-            if candidate_diff <= flat_corner_max_len:
-                # If this is a real corner, then set it to the average of the candidate positions:
-                new_corners.append((
-                    (int)((row_max + row_min) / 2),
-                    (int)((col_max + col_min) / 2)
-                ))
-            else:
-                # If this is a straight/axis-aligned square edge case:
-                if row_min == 0 or col_min == 0 or row_max == self.img_size[0]-1 or \
-                   col_max == self.img_size[1]-1:
-                    print("At edge of frame - not counting as target.")
-                    island.is_frame_edge_disqualified = True
-                else:
-                    is_aabb_edge_case = True
-                    break
-
-        # If corners are too close together, then do fallback corner detection:
-        min_corner_interdistance = min(
-            (island.max_row-island.min_row) / 3,
-            (island.max_col-island.min_col) / 3
-        )
-        for (row_i, col_i) in new_corners:
-            for (row_j, col_j) in new_corners:
-                dist = np.sqrt(np.square(row_i - row_j) + np.square(col_i - col_j))
-                if dist < min_corner_interdistance:
-                    is_aabb_edge_case = True
-
-        # Failed attempt at handling the AABB case - was trying to match pixels to the closest AABB corners.
-        # if (is_aabb_edge_case):
-            # new_corners = []
-            # print("AABB edge case!")
-            # # Get pixels closest to bounding box corners:
-            # bounding_box_corners = [ # order of corners is important for later.
-            #     (island.min_row, island.max_col), # top corner
-            #     (island.max_row, island.min_col), # bottom corner
-            #     (island.min_row, island.min_col), # left corner
-            #     (island.max_row, island.max_col)] # right corner
-
-            # for i in range(0,4):
-            #     (corner_row, corner_col) = bounding_box_corners[i]
-            #     closest_pixel = list(island.pixels_set)[0]
-            #     closest_dist = float('inf')
-            #     for (row, col) in island.pixels_set:
-            #         dist = np.sqrt(np.square(row - corner_row) + np.square(col - corner_col))
-            #         if (dist < closest_dist):
-            #             closest_dist = dist
-            #             closest_pixel = (row, col)
-            #     new_corners.append(closest_pixel)
-
-        island.is_fallback_case = is_aabb_edge_case
-        if island.is_fallback_case:
-            unsorted_corners = []
-            region_mask = np.uint8(island.region_mask) * 255
-            contours, _ = cv2.findContours(
-                region_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-
-            for contour in contours:
-                # Get corners through approximated contour:
-                epsilon = 0.05 * cv2.arcLength(contour, True)
-                approx = cv2.approxPolyDP(contour, epsilon, True)
-
-                # Check if the contour has 4 corners:
-                if len(approx) == 4:
-                    # Draw contour for debugging:
-                    # cv2.drawContours(self.DEBUG_IMG, [approx], 0, (0, 255, 0), 2)
-
-                    # Get corner Coordinate of the square
-                    corners = [tuple(approx[i][0]) for i in range(4)]
-                    print("!!!!!!Corner Points:", corners)
-                    for corner in corners:
-                        unsorted_corners.append((corner[1], corner[0]))
-                        # cv2.circle(self.DEBUG_IMG, corner, 5, (0, 255, 0), -1)
-
-            # If we have our corners, we now need to re-order them properly so that region validation happens correctly:
-            if len(unsorted_corners) == 4:
-                new_corners = []
-
-                closest_pixel = list(unsorted_corners)[0]
-                closest_dist = float('inf')
-                for (row, col) in unsorted_corners:
-                    dist = np.abs(row - island.min_row)
-                    if dist < closest_dist or (dist == closest_dist and col > closest_pixel[1]):
-                        closest_dist = dist
-                        closest_pixel = (row, col)
-                new_corners.append(closest_pixel)
-                unsorted_corners.remove(closest_pixel)
-
-                closest_pixel = list(unsorted_corners)[0]
-                closest_dist = float('inf')
-                for (row, col) in unsorted_corners:
-                    dist = np.abs(row - island.max_row)
-                    if dist < closest_dist or (dist == closest_dist and col < closest_pixel[1]):
-                        closest_dist = dist
-                        closest_pixel = (row, col)
-                new_corners.append(closest_pixel)
-                unsorted_corners.remove(closest_pixel)
-
-                closest_pixel = list(unsorted_corners)[0]
-                closest_dist = float('inf')
-                for (row, col) in unsorted_corners:
-                    dist = np.abs(col - island.min_col)
-                    if dist < closest_dist or (dist == closest_dist and row < closest_pixel[0]):
-                        closest_dist = dist
-                        closest_pixel = (row, col)
-                new_corners.append(closest_pixel)
-                unsorted_corners.remove(closest_pixel)
-
-                closest_pixel = list(unsorted_corners)[0]
-                closest_dist = float('inf')
-                for (row, col) in unsorted_corners:
-                    dist = np.abs(col - island.max_col)
-                    if dist < closest_dist or (dist == closest_dist and row > closest_pixel[0]):
-                        closest_dist = dist
-                        closest_pixel = (row, col)
-                new_corners.append(closest_pixel)
-                unsorted_corners.remove(closest_pixel)
-
-        apply_corner_adjustment = True
-        if border_leak_rollback:
-            for i in range(0, 4):
-                if len(new_corners) != 4 or len(island.corners) != 4:
-                    apply_corner_adjustment = False
-                    break
-                corner = new_corners[i]
-                old_corner = island.corners[i]
-                dist_from_old_corner = np.sqrt(
-                    np.square(corner[0] - old_corner[0]) + np.square(corner[1] - old_corner[1]))
-                should_reset = dist_from_old_corner > BORDER_ADJ_MAX_DIST
-                print("CORNER COMPARE:", corner, old_corner,
-                      dist_from_old_corner, should_reset)
-                if should_reset:
-                    apply_corner_adjustment = False
-                    print("! adjusted corner dist too far, rolling back.")
-
-        if apply_corner_adjustment:
-            island.corners = new_corners
-
-        print("corners: ", island.corners)
 
     @staticmethod
     def area_of_triangle(corner1: Coordinate, corner2: Coordinate,
@@ -596,7 +605,7 @@ class SquareDetector:
                  max_row: int, min_col: int, max_col: int) -> None:
         for x in range(min_col, max_col + 1):
             for y in range(min_row, max_row + 2):
-                if 0 <= y and y < self.img_size[0] and 0 <= x and x < self.img_size[1]:
+                if 0 <= y and y < self.img_dims[0] and 0 <= x and x < self.img_dims[1]:
                     # img[y][x] = color
                     pixels_set.add((y, x))
 
@@ -745,8 +754,8 @@ class SquareDetector:
 
     def calculate_region_target_score(self, island: Island) -> None:
         # Get the center position of the region in normalized [0,1] space, where 0 and 1 are opposite edges of the image:
-        region_pos = (((island.bounding_box[0][0] + island.bounding_box[1][0]) / 2) / self.img_size[0], ((
-            island.bounding_box[0][1] + island.bounding_box[1][1]) / 2) / self.img_size[1])
+        region_pos = (((island.bounding_box[0][0] + island.bounding_box[1][0]) / 2) / self.img_dims[0], ((
+            island.bounding_box[0][1] + island.bounding_box[1][1]) / 2) / self.img_dims[1])
         region_dist_from_center = (region_pos[0] - .5, region_pos[1] - .5)
 
         center_score = - \
@@ -788,7 +797,7 @@ class SquareDetector:
         # output_img_4 = default_img
         # output_img_5 = default_img
         # output_img_6 = default_img
-        self.img_size = (original_img.shape[0], original_img.shape[1])
+        self.img_dims = (original_img.shape[0], original_img.shape[1])
 
         bgr_image = cv2.cvtColor(original_img, cv2.COLOR_RGB2BGR)
 
@@ -829,21 +838,21 @@ class SquareDetector:
 
         # Find islands (region filling)
         print("size:", target_color_mask.shape)
-        islands = self.find_islands(
+        islands, visited_map = self.find_islands(
             high_contrast_img, target_color_mask,
             sobel_edges_image
         )
 
         print(len(islands), "islands: ")
         for island in islands:
-            SquareDetector.calc_bounding_boxes(island)
+            island.set_bounding_box()
 
-            island.region_mask = np.zeros(self.img_size, dtype=bool)
+            island.region_mask = np.zeros(self.img_dims, dtype=bool)
             for pixel in island.pixels_set:
                 island.region_mask[pixel] = True
 
             print("island bounding box: ", island.bounding_box)
-            self.calc_corners(island, False)
+            island.calc_corners(self.img_dims, False)
 
         debug_shape_image = np.copy(original_img)
 
@@ -867,9 +876,9 @@ class SquareDetector:
                 if island.validated:
                     island.is_target = True
                     # Calc better region+corners for the target region:
-                    self.calc_better_region(island)
-                    SquareDetector.calc_bounding_boxes(island)
-                    self.calc_corners(island, True)
+                    self.calc_better_region(island, visited_map)
+                    island.set_bounding_box()
+                    island.calc_corners(self.img_dims, True)
 
             print("sorted island:", island.order_number, island.sort_score)
 
@@ -905,7 +914,6 @@ class SquareDetector:
             # output_img_3 = root_pixels_debug_image
             output_img_3 = edge_rgb
             output_img_4 = target_color_shapes_debug_image
-            # output_img_4 = self.DEBUG_IMG
             output_img_5 = target_color_shapes_annotated_img
             output_img_6 = final_annotated_img
 
