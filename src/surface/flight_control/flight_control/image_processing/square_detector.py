@@ -371,7 +371,6 @@ class SquareDetector:
         while border_expand_stack:
             entry = border_expand_stack.pop()
             # print("border extend:", entry)
-            # is_border_failed_stack = vvvvvvvvv
             island.border_failed_stack.discard(entry)
             row, col = entry
             is_not_visited = (row, col) not in self.visited_map
