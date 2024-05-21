@@ -101,7 +101,29 @@ def area_of_triangle(corner1: Coordinate, corner2: Coordinate,
     )
 
 
+def get_four_neighborhood(coord: Coordinate) -> list[Coordinate]:
+    """Get the four neighborhood (orthogonal adjacencies) of the provided point.
+
+    Parameters
+    ----------
+    coord : Coordinate
+        The coordinates of the point to get the neighborhood around
+
+    Returns
+    -------
+    list[Coordinate]
+        A list of a the neighbors
+    """
+    return [
+        (coord[0] + 1, coord[1]),
+        (coord[0] - 1, coord[1]),
+        (coord[0], coord[1] + 1),
+        (coord[0], coord[1] - 1)
+    ]
+
+
 def get_coords_in_box(img_dims: Dimensions, top_left: Coordinate,
+
                       bottom_right: Coordinate) -> set[Coordinate]:
     """Return the set of coordinates bounded by the given corners and img_dims
 
@@ -163,11 +185,18 @@ class Island:
         self.target_score: float
         self.sort_score: float
 
-    def update_min_max(self, row: int, col: int) -> None:
-        self.min_row = min(row, self.min_row)
-        self.max_row = max(row, self.max_row)
-        self.min_col = min(col, self.min_col)
-        self.max_col = max(col, self.max_col)
+    def update_min_max(self, coord: Coordinate) -> None:
+        """Update this island's min/max row/col given the provided coords are in the island.
+
+        Parameters
+        ----------
+        coord : Coordinate
+            The coordinate point to incorporate into the island
+        """
+        self.min_row = min(coord[0], self.min_row)
+        self.max_row = max(coord[0], self.max_row)
+        self.min_col = min(coord[1], self.min_col)
+        self.max_col = max(coord[1], self.max_col)
 
     def calc_bounding_box(self) -> None:
         """Set the min/max row/col & bounding_box of this island based on its pixels_set."""
@@ -620,15 +649,6 @@ class SquareDetector:
 
         return img
 
-    @staticmethod
-    def make_extend_list(row: int, col: int) -> list[Coordinate]:
-        return [
-            (row + 1, col),
-            (row - 1, col),
-            (row, col + 1),
-            (row, col - 1)
-        ]
-
     def dfs(self, coord: Coordinate, visited_map: dict[Coordinate, Island],
             merges: set[tuple[Island, Island]], high_contrast_img: MatLike,
             target_color_mask: MatLike, edge_image: MatLike) -> Island:
@@ -678,9 +698,9 @@ class SquareDetector:
                 if is_root_pixel and not is_edge_pixel:
                     visited_map[(row, col)] = island
                     island.pixels_set.add((row, col))
-                    root_stack.extend(SquareDetector.make_extend_list(row, col))
+                    root_stack.extend(get_four_neighborhood((row, col)))
                 else:
-                    extended_stack.extend(SquareDetector.make_extend_list(row, col))
+                    extended_stack.extend(get_four_neighborhood((row, col)))
 
         island.min_row = self.img_dims[0]
         island.max_row = 0
@@ -720,10 +740,10 @@ class SquareDetector:
                 if is_connected_pixel:
                     visited_map[(row, col)] = island
                     island.pixels_set.add((row, col))
-                    island.update_min_max(row, col)
-                    extended_stack.extend(SquareDetector.make_extend_list(row, col))
+                    island.update_min_max((row, col))
+                    extended_stack.extend(get_four_neighborhood((row, col)))
                 else:
-                    island.border_failed_stack.update(SquareDetector.make_extend_list(row, col))
+                    island.border_failed_stack.update(get_four_neighborhood((row, col)))
             elif (row, col) in visited_map and visited_map[(row, col)] != island:
                 merges.add((island, visited_map[(row, col)]))
 
@@ -776,30 +796,36 @@ class SquareDetector:
         return (islands, visited_map)
 
     def calc_better_region(self, island: Island, visited_map: dict[Coordinate, Island]) -> None:
+        """Expand this island's region to get a better estimate of corners.
+
+        Parameters
+        ----------
+        island : Island
+            The island to expand
+        visited_map : dict[Coordinate, Island]
+            This image's visited_map
+        """
         region_plus_eroded_border = np.copy(self.eroded_border)
-        for (y, x) in island.pixels_set:
-            region_plus_eroded_border[y, x] = True
+        for (row, col) in island.pixels_set:
+            region_plus_eroded_border[row, col] = True
 
         radius = BORDER_ADJ_CLOSING_RADIUS
-        y_array, x_array = np.ogrid[-radius:radius+1, -radius:radius + 1]
+        y_array, x_array = np.ogrid[-radius:radius + 1, -radius:radius + 1]
         dilate_struct_element = x_array ** 2 + y_array ** 2 <= radius ** 2
-        dilated_image = binary_dilation(
-            region_plus_eroded_border, structure=dilate_struct_element)
+        dilated_image = binary_dilation(region_plus_eroded_border, structure=dilate_struct_element)
 
         # erode_struct_element = np.ones((5, 5), dtype=bool)
         radius = BORDER_ADJ_CLOSING_RADIUS
         y_array, x_array = np.ogrid[-radius:radius + 1, -radius:radius + 1]
         erode_struct_element = x_array ** 2 + y_array ** 2 <= radius ** 2
-        closed_image = binary_erosion(
-            dilated_image, structure=erode_struct_element)
+        closed_image = binary_erosion(dilated_image, structure=erode_struct_element)
 
         border_expand_stack = list(island.border_failed_stack)
         while border_expand_stack:
             entry = border_expand_stack.pop()
-            # print("border extend:", entry)
             island.border_failed_stack.discard(entry)
+            is_not_visited = entry not in visited_map
             row, col = entry
-            is_not_visited = (row, col) not in visited_map
             is_in_bounds = (0 <= row < self.rows and 0 <= col < self.cols)
             # If valid pixel coordinate:
             if is_not_visited and is_in_bounds:
@@ -808,7 +834,7 @@ class SquareDetector:
                     visited_map[(row, col)] = island
                     island.pixels_set.add((row, col))
                     island.border_extended_pixels.add((row, col))
-                    border_expand_stack.extend(SquareDetector.make_extend_list(row, col))
+                    border_expand_stack.extend(get_four_neighborhood((row, col)))
 
     def process_image(self, original_img: MatLike, make_debug_imgs: bool = False,
                       final_image_is_collage: bool = False, show_debug_imgs: bool = False
@@ -837,13 +863,6 @@ class SquareDetector:
         self.rows = len(original_img)
         self.cols = len(original_img[0])
 
-        # TODO remove defaults
-        # default_img = np.zeros((1, 1, 3), dtype=np.uint8)
-        # output_img_2 = default_img
-        # output_img_3 = default_img
-        # output_img_4 = default_img
-        # output_img_5 = default_img
-        # output_img_6 = default_img
         self.img_dims = (original_img.shape[0], original_img.shape[1])
 
         bgr_image = cv2.cvtColor(original_img, cv2.COLOR_RGB2BGR)
@@ -913,20 +932,15 @@ class SquareDetector:
                 island.sort_score = float('-inf')
 
         islands = sorted(islands, key=lambda x: x.sort_score, reverse=True)
-        i = 0
-        # TODO use enumeration
-        for island in islands:
-            i += 1
-            island.order_number = i
+        for i, island in enumerate(islands):
+            island.order_number = i + 1
 
-            is_top_score = island.order_number == 1
-            if is_top_score:
-                if island.validated:
-                    island.is_target = True
-                    # Calc better region+corners for the target region:
-                    self.calc_better_region(island, visited_map)
-                    island.calc_bounding_box()
-                    island.calc_corners(self.img_dims, True)
+            if i == 0 and island.validated:  # Best scoring island
+                island.is_target = True
+                # Calc better region+corners for the target region:
+                self.calc_better_region(island, visited_map)
+                island.calc_bounding_box()
+                island.calc_corners(self.img_dims, True)
 
             print("sorted island:", island.order_number, island.sort_score)
 
