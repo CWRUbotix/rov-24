@@ -67,7 +67,7 @@ class Island:
         self.is_frame_edge_disqualified = False
         self.center_pos = (0, 0)
         self.border_extended_pixels: set[Coordinate] = set()
-        self.border_failed_stack: set[list[Coordinate]] = set()
+        self.border_failed_stack: set[Coordinate] = set()
 
         self.min_row: int
         self.max_row: int
@@ -85,6 +85,7 @@ class Island:
         self.error_percent: float
 
         self.order_number: int
+        self.is_fallback_case: bool
 
     def update_min_max(self, row: int, col: int) -> None:
         self.min_row = min(row, self.min_row)
@@ -208,7 +209,7 @@ class SquareDetector:
 
             draw = ImageDraw.Draw(image_pil)
 
-            font_color = tuple(color)
+            font_color = (color[0], color[1], color[2])
             font = ImageFont.load_default()
 
             text = str(island.order_number)
@@ -261,8 +262,8 @@ class SquareDetector:
                 is_edge_pixel = edge_image[row][col] is True
 
                 # Adding `not is_edge_pixel` here fixed a leak where
-                #  region filling was rarely blowing past part of the border because
-                #  those edge pixels were also root pixels:
+                # region filling was rarely blowing past part of the border because
+                # those edge pixels were also root pixels:
                 if is_root_pixel and not is_edge_pixel:
                     visited_map[(row, col)] = island
                     island.pixels_set.add((row, col))
@@ -396,8 +397,8 @@ class SquareDetector:
             (island.max_row, island.max_col)
         )
 
-    def calc_corners(self, island: Island, border_leak_rollback: bool = False):
-        corner_candidate_min_maxes = [set(), set(), set(), set()]
+    def calc_corners(self, island: Island, border_leak_rollback: bool = False) -> None:
+        corner_candidate_min_maxes: list[set[Coordinate]] = [set(), set(), set(), set()]
 
         for (row, col) in island.pixels_set:
             if island.min_row == row:  # top corner:
@@ -479,7 +480,7 @@ class SquareDetector:
             #             closest_pixel = (row, col)
             #     new_corners.append(closest_pixel)
 
-        island.is_fallback_case = is_aabb_edge_case or False
+        island.is_fallback_case = is_aabb_edge_case
         if island.is_fallback_case:
             unsorted_corners = []
             region_mask = np.uint8(island.region_mask) * 255
@@ -569,7 +570,7 @@ class SquareDetector:
 
         print("corners: ", island.corners)
 
-    def area_of_triangle(self, corner1, corner2, corner3):
+    def area_of_triangle(self, corner1: Coordinate, corner2: Coordinate, corner3: Coordinate) -> float:
         return 0.5 * abs(
             (
                 corner1[1] * corner2[0] +
