@@ -54,6 +54,18 @@ Dimensions = tuple[int, int]
 
 
 def is_uint8(numpy_array: NDArray[np.generic]) -> TypeGuard[NDArray[np.uint8]]:
+    """Typeguard the provided Numpy array to make sure it contains uint8s.
+
+    Parameters
+    ----------
+    numpy_array : NDArray[np.generic]
+        The array to guard
+
+    Returns
+    -------
+    TypeGuard[NDArray[np.uint8]]
+        A guarantee that the provided array contains uint8s
+    """
     return numpy_array.dtype.type == np.uint8
 
 
@@ -87,6 +99,33 @@ def area_of_triangle(corner1: Coordinate, corner2: Coordinate,
             corner1[1] * corner3[0]
         )
     )
+
+
+def get_coords_in_box(img_dims: Dimensions, top_left: Coordinate,
+                      bottom_right: Coordinate) -> set[Coordinate]:
+    """Return the set of coordinates bounded by the given corners and img_dims
+
+    Parameters
+    ----------
+    img_dims : Dimensions
+        Dimensions of the image, coords outside these are discarded
+    top_left : Coordinate
+        Top left corner of the bounding box
+    bottom_right : Coordinate
+        Bottom right corner of the bounding box
+
+    Returns
+    -------
+    set[Coordinate]
+        The set of coordinates in the bounding box
+    """
+    pixels_set: set[Coordinate] = set()
+    for col in range(top_left[1], bottom_right[1] + 1):
+        for row in range(top_left[0], bottom_right[0] + 2):
+            if 0 <= row < img_dims[0] and 0 <= col < img_dims[1]:
+                # img[y][x] = color
+                pixels_set.add((row, col))
+    return pixels_set
 
 
 class Island:
@@ -130,7 +169,7 @@ class Island:
         self.min_col = min(col, self.min_col)
         self.max_col = max(col, self.max_col)
 
-    def set_bounding_box(self) -> None:
+    def calc_bounding_box(self) -> None:
         """Set the min/max row/col & bounding_box of this island based on its pixels_set."""
         self.min_row = min(row for row, _ in self.pixels_set)
         self.max_row = max(row for row, _ in self.pixels_set)
@@ -141,6 +180,31 @@ class Island:
             (self.min_row, self.min_col),
             (self.max_row, self.max_col)
         )
+
+    def calc_target_score(self, img_dims: Dimensions) -> None:
+        """Calculate the target score for this island.
+
+        Parameters
+        ----------
+        img_dims : Dimensions
+            The dimensions of the image this island is in
+        """
+        # Get center of this island in normalized [0,1] space
+        # (where 0 and 1 are opposite edges of the image)
+        region_pos = (
+            (self.bounding_box[0][0] + self.bounding_box[1][0]) / 2 / img_dims[0],
+            (self.bounding_box[0][1] + self.bounding_box[1][1]) / 2 / img_dims[1]
+        )
+        region_dist_from_center = (region_pos[0] - 0.5, region_pos[1] - 0.5)
+
+        center_score = -1 * sqrt(
+            np.square(region_dist_from_center[0]) + np.square(region_dist_from_center[1]))
+        shape_score = -1 * self.error_percent * SHAPE_SCORE_WEIGHT
+
+        self.target_score = center_score + shape_score
+
+        print("region target score:", region_dist_from_center, center_score,
+              "vs", self.error_percent, shape_score, "=", self.target_score)
 
     def calc_corners(self, img_dims: Dimensions,
                      border_leak_rollback: bool = False) -> None:
@@ -315,13 +379,7 @@ class Island:
 
         expected_area = left_triangle_area + right_triangle_area
 
-        # island.debug_shape_validation_image = debug_shape_image
-
-        inside_errors_total_count = 0
-        outside_errors_total_count = 0
-
         expected_area_2 = 0
-
         inside_error_pixels = set()
         outside_error_pixels = set()
 
@@ -334,11 +392,9 @@ class Island:
             nonlocal expected_area_2
             nonlocal inside_error_pixels
             nonlocal outside_error_pixels
-            nonlocal inside_errors_total_count
-            nonlocal outside_errors_total_count
 
-            inside_errors_count = 0
-            outside_errors_count = 0
+            debug_inside_errors_count = 0
+            debug_outside_errors_count = 0
 
             y_intercept = from_point[0]
 
@@ -351,7 +407,7 @@ class Island:
                 x_relative = x - from_point[1]
                 slope_expected_y = int(y_intercept + x_relative * slope)
                 # print("row: ", slope_expected_y, ", col: ", x)
-                self.val_border_pixels_set.update(SquareDetector.get_coords_in_box(
+                self.val_border_pixels_set.update(get_coords_in_box(
                     img_dims,
                     (slope_expected_y - LINE_WIDTH, x - LINE_WIDTH),
                     (slope_expected_y + LINE_WIDTH, x + LINE_WIDTH)
@@ -366,18 +422,17 @@ class Island:
                        (not is_inside_upwards and y >= slope_expected_y):
                         expected_area_2 += 1
                         if not is_shape_pixel:
-                            inside_errors_count += 1
+                            debug_inside_errors_count += 1
                             inside_error_pixels.add((y, x))
                     else:
                         if is_shape_pixel:
-                            outside_errors_count += 1
+                            debug_outside_errors_count += 1
                             outside_error_pixels.add((y, x))
 
-            error_percent = (inside_errors_count + outside_errors_count) / expected_area
-            print("error %: ", error_percent, inside_errors_count, outside_errors_count)
-
-            inside_errors_total_count += inside_errors_count
-            outside_errors_total_count += outside_errors_count
+            error_percent = (debug_inside_errors_count +
+                             debug_outside_errors_count) / expected_area
+            print("error %: ", error_percent, debug_inside_errors_count,
+                  debug_outside_errors_count)
 
         validate_square_edge(left_corner, bottom_corner, True)
         validate_square_edge(bottom_corner, right_corner, True)
@@ -394,21 +449,20 @@ class Island:
             for y in range(left_corner[0], right_corner[0]):
                 is_shape_pixel = (y, x) in self.pixels_set
                 if not is_shape_pixel:
-                    inside_errors_total_count += 1
                     inside_error_pixels.add((y, x))
 
         for inside_error_pixel in inside_error_pixels:
             (y, x) = inside_error_pixel
             self.val_inner_err_pixels_set.update(
-                SquareDetector.get_coords_in_box(img_dims, (y, x), (y, x)))
+                get_coords_in_box(img_dims, (y, x), (y, x)))
 
         for outside_error_pixel in outside_error_pixels:
             (y, x) = outside_error_pixel
             self.val_outer_err_pixels_set.update(
-                SquareDetector.get_coords_in_box(img_dims, (y, x), (y, x)))
+                get_coords_in_box(img_dims, (y, x), (y, x)))
 
         self.error_percent = (
-            inside_errors_total_count + outside_errors_total_count) / expected_area
+            len(inside_error_pixels) + len(outside_error_pixels)) / expected_area
         print("total error %: ", self.error_percent,
               expected_area, expected_area_2)
 
@@ -754,49 +808,6 @@ class SquareDetector:
                     island.border_extended_pixels.add((row, col))
                     border_expand_stack.extend(SquareDetector.make_extend_list(row, col))
 
-    @staticmethod
-    def get_coords_in_box(img_dims: Dimensions, top_left: Coordinate,
-                          bottom_right: Coordinate) -> set[Coordinate]:
-        """Return the set of coordinates bounded by the given corners and img_dims
-
-        Parameters
-        ----------
-        img_dims : Dimensions
-            Dimensions of the image, coords outside these are discarded
-        top_left : Coordinate
-            Top left corner of the bounding box
-        bottom_right : Coordinate
-            Bottom right corner of the bounding box
-
-        Returns
-        -------
-        set[Coordinate]
-            The set of coordinates in the bounding box
-        """
-        pixels_set: set[Coordinate] = set()
-        for col in range(top_left[1], bottom_right[1] + 1):
-            for row in range(top_left[0], bottom_right[0] + 2):
-                if 0 <= row < img_dims[0] and 0 <= col < img_dims[1]:
-                    # img[y][x] = color
-                    pixels_set.add((row, col))
-        return pixels_set
-
-    def calculate_region_target_score(self, island: Island) -> None:
-        # Get the center position of the region in normalized [0,1] space, where 0 and 1 are opposite edges of the image:
-        region_pos = (((island.bounding_box[0][0] + island.bounding_box[1][0]) / 2) / self.img_dims[0], ((
-            island.bounding_box[0][1] + island.bounding_box[1][1]) / 2) / self.img_dims[1])
-        region_dist_from_center = (region_pos[0] - .5, region_pos[1] - .5)
-
-        center_score = - \
-            sqrt(
-                np.square(region_dist_from_center[0]) + np.square(region_dist_from_center[1]))
-        shape_score = (-island.error_percent) * SHAPE_SCORE_WEIGHT
-
-        island.target_score = center_score + shape_score
-
-        print("region target score:", region_dist_from_center, center_score,
-              "vs", island.error_percent, shape_score, "=", island.target_score)
-
     def process_image(self, original_img: MatLike, do_collage: bool,
                       show_debug_imgs: bool = True) -> tuple[list[Coordinate], MatLike | None]:
         """_summary_
@@ -874,7 +885,7 @@ class SquareDetector:
 
         print(len(islands), "islands: ")
         for island in islands:
-            island.set_bounding_box()
+            island.calc_bounding_box()
 
             island.region_mask = np.zeros(self.img_dims, dtype=bool)
             for pixel in island.pixels_set:
@@ -888,7 +899,7 @@ class SquareDetector:
         for island in islands:
             island.validate_shape_is_target_square(self.img_dims, debug_shape_image)
             if island.validated:
-                self.calculate_region_target_score(island)
+                island.calc_target_score(self.img_dims)
                 island.sort_score = island.target_score
             else:
                 island.sort_score = float('-inf')
@@ -906,7 +917,7 @@ class SquareDetector:
                     island.is_target = True
                     # Calc better region+corners for the target region:
                     self.calc_better_region(island, visited_map)
-                    island.set_bounding_box()
+                    island.calc_bounding_box()
                     island.calc_corners(self.img_dims, True)
 
             print("sorted island:", island.order_number, island.sort_score)
