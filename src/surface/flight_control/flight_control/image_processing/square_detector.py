@@ -747,7 +747,8 @@ class SquareDetector:
         print("region target score:", region_dist_from_center, center_score,
               "vs", island.error_percent, shape_score, "=", island.target_score)
 
-    def process_image(self, original_img: MatLike, do_collage: bool, show_debug_imgs: bool = True):
+    def process_image(self, original_img: MatLike, do_collage: bool,
+                      show_debug_imgs: bool = True) -> tuple[list[Coordinate], MatLike | None]:
         """_summary_
 
         Parameters
@@ -935,7 +936,7 @@ class SquareDetector:
             plt.title('Img 6')
             plt.axis('off')
 
-        final_image_output = None
+        final_image_output: MatLike | None = None
         # Show the plot
         if do_collage:
             top_row = np.hstack((original_img, final_annotated_img))
@@ -946,7 +947,7 @@ class SquareDetector:
         else:
             final_image_output = final_annotated_img
 
-        final_corners_output = None
+        final_corners_output: list[Coordinate]
         for island in islands:
             if island.is_target:
                 final_corners_output = island.corners
