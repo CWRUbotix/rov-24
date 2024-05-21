@@ -28,10 +28,10 @@ setup(
         'console_scripts': [
             'manual_control_node = flight_control.manual_control_node:main',
             'keyboard_control_node = flight_control.keyboard_control_node:main',
-            'auto_docking_node = flight_control.auto_docking_node:main',
             'control_inverter_node = flight_control.control_inverter_node:main',
             'multiplexer_node = flight_control.multiplexer:main',
             'auto_transplant_node = flight_control.auto_transplant_node:main',
+            'noah_auto_transplant_node = flight_control.noah_auto_transplant_node:main',
         ],
     },
 )

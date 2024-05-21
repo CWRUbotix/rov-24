@@ -6,7 +6,7 @@ from launch_ros.actions import Node, PushRosNamespace
 def generate_launch_description() -> LaunchDescription:
     transplant_node = Node(
         package='flight_control',
-        executable='auto_transplant_node',
+        executable='noah_auto_transplant_node',
         remappings=[('/surface/mavros/rc/override', '/tether/mavros/rc/override')],
         emulate_tty=True,
         output='screen'

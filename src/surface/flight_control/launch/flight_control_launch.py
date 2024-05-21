@@ -12,9 +12,9 @@ def generate_launch_description() -> LaunchDescription:
         output='screen'
     )
 
-    auto_docking_node = Node(
+    auto_transplant_node = Node(
         package='flight_control',
-        executable='auto_docking_node',
+        executable='auto_transplant_node',
         remappings=[('/surface/manipulator_control', '/tether/manipulator_control')],
         emulate_tty=True,
         output='screen'
@@ -37,7 +37,7 @@ def generate_launch_description() -> LaunchDescription:
 
     return LaunchDescription([
         manual_control_node,
-        auto_docking_node,
+        auto_transplant_node,
         control_inverter_node,
         multiplexer_node
     ])

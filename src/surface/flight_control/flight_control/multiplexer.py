@@ -100,7 +100,6 @@ class MultiplexerNode(Node):
         return res
 
     def control_callback(self, msg: PixhawkInstruction) -> None:
-
         if msg.author == PixhawkInstruction.MANUAL_CONTROL and \
                 self.state == AutonomousFlight.Request.STOP:
             # Smooth out adjustments
