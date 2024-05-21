@@ -1,14 +1,15 @@
-from PIL import Image, ImageDraw, ImageFont
-import numpy as np
-from typing import TypeGuard
-from numpy.typing import NDArray, DTypeLike
+from typing import Any, TypeGuard
+
+import cv2
 import matplotlib.pyplot as plt
-from scipy.signal import convolve2d
+import numpy as np
+from cv2.typing import MatLike
+from numpy.typing import NDArray
+from PIL import Image, ImageDraw, ImageFont
 # from scipy.ndimage.morphology import binary_dilation, binary_erosion
 # This version has some types :)
 from scipy.ndimage import binary_dilation, binary_erosion
-import cv2
-from cv2.typing import MatLike
+from scipy.signal import convolve2d
 
 EDGE_VALUES_THRESHOLD = 500
 BORDER_CLOSING_RADIUS = 3
@@ -98,7 +99,7 @@ class SquareDetector:
         self.cols: int
         self.img_size: tuple[int, int]
         self.visited_map: dict[Coordinate, Island]
-        self.eroded_border = None
+        self.eroded_border: NDArray[np.float64] | NDArray[Any] | Any
 
     # TODO to be delete no one calls
     # def is_connected_target_shape_pixel(self, rgb: list[int]):
