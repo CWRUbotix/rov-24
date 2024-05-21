@@ -601,18 +601,37 @@ class SquareDetector:
             )
         )
 
-    def draw_box(self, pixels_set: set[Coordinate], color: tuple[int, int, int], min_row: int,
-                 max_row: int, min_col: int, max_col: int) -> None:
-        for x in range(min_col, max_col + 1):
-            for y in range(min_row, max_row + 2):
-                if 0 <= y and y < self.img_dims[0] and 0 <= x and x < self.img_dims[1]:
+    @staticmethod
+    def get_coords_in_box(img_dims: Dimensions, top_left: Coordinate,
+                          bottom_right: Coordinate) -> set[Coordinate]:
+        """Return the set of coordinates bounded by the given corners and img_dims
+
+        Parameters
+        ----------
+        img_dims : Dimensions
+            Dimensions of the image, coords outside these are discarded
+        top_left : Coordinate
+            Top left corner of the bounding box
+        bottom_right : Coordinate
+            Bottom right corner of the bounding box
+
+        Returns
+        -------
+        set[Coordinate]
+            The set of coordinates in the bounding box
+        """
+        pixels_set: set[Coordinate] = set()
+        for col in range(top_left[1], bottom_right[1] + 1):
+            for row in range(top_left[0], bottom_right[0] + 2):
+                if 0 <= row < img_dims[0] and 0 <= col < img_dims[1]:
                     # img[y][x] = color
-                    pixels_set.add((y, x))
+                    pixels_set.add((row, col))
+        return pixels_set
 
     def validate_shape_is_target_square(self, island: Island,
                                         debug_shape_image: NDArray[np.generic]) -> None:
         if len(island.corners) == 0:
-            print("island had zero corners, skipping... (TODO functionality?)")
+            print("Island had no corners, skipping")
             return
         island.considered = True
 
@@ -677,16 +696,13 @@ class SquareDetector:
             # print("validate edge - from", from_point, "to", to_point, "slope:", slope)
             for x in range(from_point[1], to_point[1] + 1):
                 x_relative = x - from_point[1]
-                slope_expected_y = (int)(y_intercept + x_relative * slope)
+                slope_expected_y = int(y_intercept + x_relative * slope)
                 # print("row: ", slope_expected_y, ", col: ", x)
-                self.draw_box(
-                    island.val_border_pixels_set,
-                    (0, 255, 0),
-                    slope_expected_y - LINE_WIDTH,
-                    slope_expected_y + LINE_WIDTH,
-                    x - LINE_WIDTH,
-                    x + LINE_WIDTH
-                )
+                island.val_border_pixels_set.update(SquareDetector.get_coords_in_box(
+                    self.img_dims,
+                    (slope_expected_y - LINE_WIDTH, x - LINE_WIDTH),
+                    (slope_expected_y + LINE_WIDTH, x + LINE_WIDTH)
+                ))
 
                 min_y = min(from_point[0], to_point[0])
                 max_y = max(from_point[0], to_point[0])
@@ -730,11 +746,13 @@ class SquareDetector:
 
         for inside_error_pixel in inside_error_pixels:
             (y, x) = inside_error_pixel
-            self.draw_box(island.val_inner_err_pixels_set, (255, 100, 0), y, y, x, x)
+            island.val_inner_err_pixels_set.update(
+                SquareDetector.get_coords_in_box(self.img_dims, (y, x), (y, x)))
 
         for outside_error_pixel in outside_error_pixels:
             (y, x) = outside_error_pixel
-            self.draw_box(island.val_outer_err_pixels_set, (255, 255, 0), y, y, x, x)
+            island.val_outer_err_pixels_set.update(
+                SquareDetector.get_coords_in_box(self.img_dims, (y, x), (y, x)))
 
         island.error_percent = (
             inside_errors_total_count + outside_errors_total_count) / expected_area
