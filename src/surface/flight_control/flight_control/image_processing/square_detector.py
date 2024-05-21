@@ -832,7 +832,7 @@ class SquareDetector:
 
     def process_image(self, original_img: MatLike, make_debug_imgs: bool = False,
                       final_image_is_collage: bool = False, show_debug_imgs: bool = False
-                      ) -> tuple[list[Coordinate], MatLike | None]:
+                      ) -> tuple[list[Coordinate] | None, MatLike | None]:
         """_summary_
 
         Parameters
@@ -1025,7 +1025,7 @@ class SquareDetector:
             else:
                 final_image_output = final_annotated_img
 
-        final_corners_output: list[Coordinate]
+        final_corners_output: list[Coordinate] | None = None
         for island in islands:
             if island.is_target:
                 final_corners_output = island.corners
