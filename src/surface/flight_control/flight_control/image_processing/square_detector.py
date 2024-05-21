@@ -44,7 +44,7 @@ CLOSING_STREL = (CLOSING_STREL_X ** 2 + CLOSING_STREL_Y ** 2) <= BORDER_CLOSING_
 CORNER_ADJUST_STREL = np.ones((BORDER_ADJ_STRELM_WIDTH, BORDER_ADJ_STRELM_WIDTH), dtype=bool)
 
 
-# Should be row, cow
+# Should be row, col
 Coordinate = tuple[int, int]
 
 
@@ -230,84 +230,87 @@ class SquareDetector:
             (row, col - 1)
         ]
 
+    def dfs(self, r: int, c: int, visited_map: dict[Coordinate, Island],
+            merges: set[tuple[Island, Island]], high_contrast_img: MatLike,
+            target_color_mask: MatLike, edge_image: MatLike) -> Island:
+        total_pixels_count = self.rows * self.cols
+
+        # First find root intensity islands:
+        root_stack = [(r, c)]
+        extended_stack = []  # Stack for the non root pixels.
+        island = Island()
+
+        while root_stack:
+            row, col = root_stack.pop()
+            is_not_visited = (row, col) not in visited_map
+            is_in_bounds = (0 <= row < self.rows and 0 <= col < self.cols)
+            if is_not_visited and is_in_bounds:
+                is_root_pixel = target_color_mask[row][col]
+                is_edge_pixel = edge_image[row][col] is True
+
+                # Adding `not is_edge_pixel` here fixed a leak where
+                #  region filling was rarely blowing past part of the border because
+                #  those edge pixels were also root pixels:
+                if is_root_pixel and not is_edge_pixel:
+                    visited_map[(row, col)] = island
+                    island.pixels_set.add((row, col))
+                    root_stack.extend(self.make_extend_list(row, col))
+                else:
+                    extended_stack.extend(self.make_extend_list(row, col))
+
+        island.min_row = self.img_size[0]
+        island.max_row = 0
+        island.min_col = self.img_size[1]
+        island.max_col = 0
+
+        island.border_failed_stack = set()
+        # Then extend the root intensities to the full islands based on connected pixels:
+        while extended_stack:
+            row, col = extended_stack.pop()
+            is_not_visited = (row, col) not in visited_map
+            is_in_bounds = (0 <= row < self.rows and 0 <= col < self.cols)
+            if is_not_visited and is_in_bounds:  # If valid pixel coordinate:
+                # If a leak is detected, then just stop the search to save performance.
+                region_height = island.max_row - island.min_row
+                region_width = island.max_col - island.min_col
+                if region_width > BREAK_REGION_WIDTH or \
+                   region_height > BREAK_REGION_HEIGHT or \
+                   len(island.pixels_set) > total_pixels_count * BREAK_REGION_AREA_PERCENT:
+                    print("\nStopped spreading artificially - leak detected, so" +
+                            "stopped spreading connected pixels.")
+                    island.is_leak_disqualified = True
+                    break
+
+                is_root_pixel = target_color_mask[row][col]
+
+                raw_pixel = high_contrast_img[row][col]
+                is_edge_pixel = edge_image[row][col] is True
+
+                anti_leak_check = (
+                    (raw_pixel[1] < raw_pixel[0] or raw_pixel[1] < raw_pixel[2]) and \
+                    not (raw_pixel[1] > 200 and raw_pixel[2] > 200)
+                )
+                is_connected_pixel = (not is_edge_pixel) and anti_leak_check
+
+                # If this pixel belongs to  the island, then add it:
+                if is_connected_pixel:
+                    visited_map[(row, col)] = island
+                    island.pixels_set.add((row, col))
+                    island.update_min_max(row, col)
+                    extended_stack.extend(self.make_extend_list(row, col))
+                else:
+                    island.border_failed_stack.update(self.make_extend_list(row, col))
+            elif (row, col) in visited_map and visited_map[(row, col)] != island:
+                merges.add((island, visited_map[(row, col)]))
+
+        return island
+
     def find_islands(self, high_contrast_img: MatLike,
                      target_color_mask: MatLike, edge_image: MatLike) -> list[Island]:
         islands: list[Island] = []
-        visited_map = {}
-        merges: set[list[Island]] = set()
-        total_pixels_count = len(target_color_mask) * len(target_color_mask[0])
-
-        def dfs(r: int, c: int) -> Island:
-            # First find root intensity islands:
-            root_stack = [(r, c)]
-            extended_stack = []  # Stack for the non root pixels.
-            island = Island()
-
-            while root_stack:
-                row, col = root_stack.pop()
-                is_not_visited = (row, col) not in visited_map
-                is_in_bounds = (0 <= row < self.rows and 0 <= col < self.cols)
-                if is_not_visited and is_in_bounds:
-                    is_root_pixel = target_color_mask[row][col]
-
-                    is_edge_pixel = edge_image[row][col] is True
-
-                    # Adding `not is_edge_pixel` here fixed a leak where
-                    #  region filling was rarely blowing past part of the border because
-                    #  those edge pixels were also root pixels:
-                    if is_root_pixel and not is_edge_pixel:
-                        visited_map[(row, col)] = island
-                        island.pixels_set.add((row, col))
-                        root_stack.extend(self.make_extend_list(row, col))
-                    else:
-                        extended_stack.extend(self.make_extend_list(row, col))
-
-            island.min_row = self.img_size[0]
-            island.max_row = 0
-            island.min_col = self.img_size[1]
-            island.max_col = 0
-
-            island.border_failed_stack = set()
-            # Then extend the root intensities to the full islands based on connected pixels:
-            while extended_stack:
-                row, col = extended_stack.pop()
-                is_not_visited = (row, col) not in visited_map
-                is_in_bounds = (0 <= row < self.rows and 0 <= col < self.cols)
-                if is_not_visited and is_in_bounds:  # If valid pixel coordinate:
-                    # If a leak is detected, then just stop the search to save performance.
-                    region_height = island.max_row - island.min_row
-                    region_width = island.max_col - island.min_col
-                    if region_width > BREAK_REGION_WIDTH or \
-                       region_height > BREAK_REGION_HEIGHT or \
-                       len(island.pixels_set) > total_pixels_count * BREAK_REGION_AREA_PERCENT:
-                        print("\nStopped spreading artificially - leak detected, so" +
-                              "stopped spreading connected pixels.")
-                        island.is_leak_disqualified = True
-                        break
-
-                    is_root_pixel = target_color_mask[row][col]
-
-                    raw_pixel = high_contrast_img[row][col]
-                    is_edge_pixel = edge_image[row][col] is True
-
-                    anti_leak_check = (
-                        (raw_pixel[1] < raw_pixel[0] or raw_pixel[1] < raw_pixel[2]) and \
-                        not (raw_pixel[1] > 200 and raw_pixel[2] > 200)
-                    )
-                    is_connected_pixel = (not is_edge_pixel) and anti_leak_check
-
-                    # If this pixel belongs to  the island, then add it:
-                    if is_connected_pixel:
-                        visited_map[(row, col)] = island
-                        island.pixels_set.add((row, col))
-                        island.update_min_max(row, col)
-                        extended_stack.extend(self.make_extend_list(row, col))
-                    else:
-                        island.border_failed_stack.update(self.make_extend_list(row, col))
-                elif (row, col) in visited_map and visited_map[(row, col)] != island:
-                    merges.add((island, visited_map[(row, col)]))
-
-            return island
+        visited_map: dict[Coordinate, Island] = {}
+        merges: set[tuple[Island, Island]] = set()
+        total_pixels_count = self.rows * self.cols
 
         island_min_pixels_count = total_pixels_count * 0.0025
 
@@ -316,7 +319,8 @@ class SquareDetector:
             for c in range(self.cols):
                 # If correct color and not on an edge and not visited
                 if target_color_mask[r][c] and not edge_image[r][c] and (r, c) not in visited_map:
-                    new_island = dfs(r, c)
+                    new_island = self.dfs(r, c, visited_map, merges,
+                                          high_contrast_img, target_color_mask, edge_image)
                     if len(new_island.pixels_set) >= island_min_pixels_count:
                         islands.append(new_island)
 

@@ -2,7 +2,7 @@
 from PIL import Image
 import numpy as np
 import matplotlib.pyplot as plt
-from image_processing.square_detector import SquareDetector
+from flight_control.image_processing.square_detector import SquareDetector
 import argparse
 import cv2
 
