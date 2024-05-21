@@ -86,6 +86,7 @@ class Island:
 
         self.order_number: int
         self.is_fallback_case: bool
+        self.region_mask: NDArray[bool]
 
     def update_min_max(self, row: int, col: int) -> None:
         self.min_row = min(row, self.min_row)
@@ -570,7 +571,8 @@ class SquareDetector:
 
         print("corners: ", island.corners)
 
-    def area_of_triangle(self, corner1: Coordinate, corner2: Coordinate, corner3: Coordinate) -> float:
+    def area_of_triangle(self, corner1: Coordinate, corner2: Coordinate,
+                         corner3: Coordinate) -> float:
         return 0.5 * abs(
             (
                 corner1[1] * corner2[0] +
@@ -584,7 +586,8 @@ class SquareDetector:
             )
         )
 
-    def draw_box(self, pixels_set, color, min_row, max_row, min_col, max_col):
+    def draw_box(self, pixels_set: set[Coordinate], color: tuple[int, int,], min_row: int,
+                 max_row: int, min_col: int, max_col: int) -> None:
         for x in range(min_col, max_col + 1):
             for y in range(min_row, max_row + 2):
                 if 0 <= y and y < self.img_size[0] and 0 <= x and x < self.img_size[1]:
