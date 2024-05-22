@@ -899,7 +899,7 @@ class SquareDetector:
         target_color_mask = get_threshold_mask(high_contrast_img)
 
         # DEBUG: convert mask to RGB for display
-        if make_debug_imgs:
+        if make_debug_imgs and (final_image_is_collage or show_debug_imgs):
             target_color_mask_rgb_dimg = np.zeros_like(high_contrast_img)
             target_color_mask_rgb_dimg[target_color_mask] = [255, 0, 0]
             target_color_mask_rgb_dimg[~target_color_mask] = [0, 0, 0]
@@ -911,6 +911,7 @@ class SquareDetector:
             sobel_edges_image
         )
 
+        # Find island corners
         self.debug_log(f"{len(islands)} islands:")
         for island in islands:
             island.calc_bounding_box()
@@ -924,6 +925,7 @@ class SquareDetector:
 
         debug_shape_image = np.copy(original_img) if make_debug_imgs else None
 
+        # Validate islands are squares
         for island in islands:
             island.validate_shape_is_target_square(self.img_dims, debug_shape_image)
             if island.validated:
@@ -938,24 +940,25 @@ class SquareDetector:
 
             if i == 0 and island.validated:  # Best scoring island
                 island.is_target = True
-                # Calc better region+corners for the target region:
-                self.calc_better_region(island, visited_map)
-                island.calc_bounding_box()
-                island.calc_corners(self.img_dims, True)
+                # Calc better region+corners for the target region: DISABLED FOR PERFORMANCE
+                # self.calc_better_region(island, visited_map)
+                # island.calc_bounding_box()
+                # island.calc_corners(self.img_dims, True)
 
             self.debug_log(f"sorted island: {island.order_number} {island.sort_score}")
 
         final_image_output: MatLike | None = None
         if make_debug_imgs:
-            edge_rgb = np.zeros((*sobel_edges_image.shape, 3), dtype=np.uint8)
-            edge_rgb[sobel_edges_image == 1] = [255, 255, 255]
-            edge_annotated_img = get_final_corners_overlay_debug_img(islands, edge_rgb)
+            if final_image_is_collage or show_debug_imgs:
+                edge_rgb = np.zeros((*sobel_edges_image.shape, 3), dtype=np.uint8)
+                edge_rgb[sobel_edges_image == 1] = [255, 255, 255]
+                edge_annotated_img = get_final_corners_overlay_debug_img(islands, edge_rgb)
 
-            target_color_shapes_debug_image = get_target_color_shapes_debug_image(
-                    high_contrast_img, islands, target_color_mask_rgb_dimg)
-            target_color_shapes_annotated_img = get_final_corners_overlay_debug_img(
-                    islands, target_color_shapes_debug_image)
-            
+                target_color_shapes_debug_image = get_target_color_shapes_debug_image(
+                        high_contrast_img, islands, target_color_mask_rgb_dimg)
+                target_color_shapes_annotated_img = get_final_corners_overlay_debug_img(
+                        islands, target_color_shapes_debug_image)
+
             if debug_shape_image is not None:
                 final_annotated_img = get_final_corners_overlay_debug_img(
                         islands, debug_shape_image)

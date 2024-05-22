@@ -13,7 +13,22 @@ from rov_msgs.srv import AutonomousFlight
 
 from flight_control.image_processing.square_detector import SquareDetector
 
-NORMAL_DELAY = 20
+from enum import IntEnum
+from collections import deque
+
+DROP_FRAMES = 2
+QUEUE_DECAY_RATE_FRAMES = 5
+QUEUE_MINIMUM_HITS = 1
+SCANNING_SPEED = 0.05
+APPROACHING_SPEED = 0.05
+
+IntCoordinate = tuple[int, int]
+FloatCoordinate = tuple[float, float]
+
+
+class Stage(IntEnum):
+    SCANNING = 0
+    APPROACHING = 1
 
 
 class AutoDocker(Node):
@@ -56,6 +71,10 @@ class AutoDocker(Node):
         self.cv_bridge: CvBridge = CvBridge()
 
         self.frame_index = 0
+        self.last_processed_frame = 0
+        self.last_decay = 0
+        self.hit_queue: deque[list[IntCoordinate]] = deque()
+        self.stage = Stage.SCANNING
 
     def task_control_callback(self, request: AutonomousFlight.Request,
                               response: AutonomousFlight.Response) -> AutonomousFlight.Response:
@@ -63,14 +82,105 @@ class AutoDocker(Node):
         response.current_state = request.state
         return response
 
+    def is_target_visible(self) -> bool:
+        result = len(self.hit_queue) >= QUEUE_MINIMUM_HITS
+        print(f'Target is {"NOT" if not result else ""} visible ({len(self.hit_queue)} >= {QUEUE_MINIMUM_HITS})')
+        return result
+
+    def last_target_corners_pos(self) -> list[IntCoordinate]:
+        position: list[IntCoordinate] = []
+
+        # Get the average of the points in position
+        for points in self.hit_queue:
+            if len(position) == 0:
+                position = points
+            else:
+                # Ignore everything except the best guess (first 4 points)
+                for i, point in enumerate(points[:4]):
+                    position[i] = (
+                        position[i][0] + point[0],
+                        position[i][1] + point[1]
+                    )
+
+        for i, point in enumerate(position):
+            position[i] = (
+                int(point[0] / len(self.hit_queue)),
+                int(point[1] / len(self.hit_queue))
+            )
+
+        return position
+
+    def last_target_center_pos(self) -> IntCoordinate:
+        position: IntCoordinate = (0, 0)
+
+        corners = self.last_target_corners_pos()
+
+        # Average the corners
+        for corner in corners:
+            position = (
+                position[0] + corner[0],
+                position[1] + corner[1]
+            )
+
+        position = (
+            int(position[0] / len(corners)),
+            int(position[1] / len(corners))
+        )
+
+        return position
+
     def handle_frame(self, frame: Image) -> None:
+        if self.current_state != AutonomousFlight.Request.START:
+            return
+
+        print('Height:', frame.height, 'Width:', frame.width)
+
         self.frame_index += 1
 
+        if self.is_target_visible():
+            relative_corners_pos: list[FloatCoordinate] = []
+            for point in self.last_target_corners_pos():
+                relative_corners_pos.append((point[0] / frame.height, point[1] / frame.width))
+
+            center_pos = self.last_target_center_pos()
+            relative_center_pos: FloatCoordinate = (
+                center_pos[0] / frame.height,
+                center_pos[1] / frame.width
+            )
+
+            print(f'Target is at: {relative_center_pos} with corners: {relative_corners_pos}')
+
+        if self.stage == Stage.SCANNING:
+            if self.is_target_visible():
+                print('Found target, APPROACHING')
+                self.stage = Stage.APPROACHING
+            else:
+                command = PixhawkInstruction(
+                    vertical=SCANNING_SPEED,
+                    author=PixhawkInstruction.AUTONOMOUS_CONTROL
+                )
+                self.pixhawk_control.publish(command)
+
+        elif self.stage == Stage.APPROACHING:
+            if self.is_target_visible():
+                print(f'Right: {0.5 - relative_center_pos[1]} | Left: {0.5 - relative_center_pos[0]}')
+
+                command = PixhawkInstruction(
+                    vertical=-1 * APPROACHING_SPEED,
+                    roll=(0.5 - relative_center_pos[1]) * 0.2,
+                    pitch=(0.5 - relative_center_pos[0]) * 0.2,
+                    author=PixhawkInstruction.AUTONOMOUS_CONTROL
+                )
+                self.pixhawk_control.publish(command)
+            else:
+                print('Lost target, SCANNING')
+                self.stage = Stage.SCANNING
+
         print('AUTO TRANSPLANT RECEIVED FRAME: ', end='')
-        if self.frame_index > NORMAL_DELAY:
+        if self.frame_index > self.last_processed_frame + DROP_FRAMES:
             print('PROCESSING')
 
-            self.frame_index = 0
+            self.last_processed_frame = self.frame_index
 
             cv_image: MatLike = self.cv_bridge.imgmsg_to_cv2(
                 frame, desired_encoding='passthrough')
@@ -81,7 +191,18 @@ class AutoDocker(Node):
 
             corners, result_img = \
                 square_detector.process_image(cv_image, True, False, False)
-            print("FINAL CORNERS:", corners)
+            print('Corners: ', corners)
+
+            print(f'Appending? {corners is not None} and {corners is not None and len(corners) > 4}')
+
+            if corners is not None and len(corners) >= 4:
+                self.hit_queue.append(corners)
+                print(f'Appended! {len(self.hit_queue)} {self.hit_queue}')
+
+            if self.frame_index > self.last_decay + QUEUE_DECAY_RATE_FRAMES:
+                self.last_decay = self.frame_index
+                if len(self.hit_queue) > 0:
+                    self.hit_queue.pop()
 
             if result_img is not None:
                 print(result_img.shape)
@@ -94,7 +215,7 @@ class AutoDocker(Node):
 
                 self.annotated_bottom_pub.publish(annotated_frame)
         else:
-            print(f'DISCARDING ({self.frame_index} / {NORMAL_DELAY})')
+            print(f'DISCARDING ({self.frame_index - self.last_processed_frame} / {DROP_FRAMES})')
 
 
 def main() -> None:
