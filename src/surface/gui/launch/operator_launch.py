@@ -11,6 +11,7 @@ def generate_launch_description() -> LaunchDescription:
         executable='run_operator',
         parameters=[{'theme': LaunchConfiguration('theme', default='dark')}],
         remappings=[("/surface/gui/bottom_cam/image_raw", "/surface/bottom_cam/image_raw"),
+                    ("/surface/gui/auto_control_toggle", "/surface/auto_control_toggle"),
                     ("/surface/gui/mavros/cmd/command", "/tether/mavros/cmd/command"),
                     ("/surface/gui/mavros/param/set", "/tether/mavros/param/set"),
                     ("/surface/gui/mavros/param/pull", "/tether/mavros/param/pull"),

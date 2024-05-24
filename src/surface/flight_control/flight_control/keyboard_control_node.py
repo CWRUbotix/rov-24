@@ -57,7 +57,7 @@ class KeyboardListenerNode(Node):
 
         self.rc_pub: Publisher = self.create_publisher(
             PixhawkInstruction,
-            'pixhawk_control',
+            'uninverted_pixhawk_control',
             qos_profile_system_default
         )
 
@@ -130,7 +130,8 @@ class KeyboardListenerNode(Node):
             vertical=float(self.status[UP] - self.status[DOWN]),
             forward=float(self.status[FORWARD] - self.status[BACKWARD]),
             lateral=float(self.status[LEFT] - self.status[RIGHT]),
-            yaw=float(self.status[YAW_LEFT] - self.status[YAW_RIGHT])
+            yaw=float(self.status[YAW_LEFT] - self.status[YAW_RIGHT]),
+            author=PixhawkInstruction.KEYBOARD_CONTROL
         )
 
         self.rc_pub.publish(instruction)
