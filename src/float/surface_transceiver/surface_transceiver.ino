@@ -112,7 +112,7 @@ bool receivePacket() {
   }
   else {
     // This packet is probably a data packet
-    int numDatapoints = (int) ((len - (PKT_HEADER_LEN) >> 2));
+    uint8_t numDatapoints = (uint8_t) (len - (PKT_HEADER_LEN >> 2));
     
     serialPrintf(
       "Received packet for team %d on profile %d half %d with length %d (%d datapoints): ",
@@ -135,11 +135,17 @@ bool receivePacket() {
       byteBuffer[PKT_IDX_PROFILE_HALF]
     );
     for (int i = PKT_HEADER_LEN; i < len; ) {
+      // Wonky pointer casting to convert four bytes into a long (time)
       serialPrintf("%l,", * (unsigned long*) (byteBuffer + i));
       i += sizeof(long);
 
-      serialPrintf("%f;", * (float*) (byteBuffer + i));
+      // Same thing for a float (pressure)
+      Serial.print(* (float*) (byteBuffer + i));
       i += sizeof(float);
+
+      if (i < PKT_HEADER_LEN - 1) {
+        Serial.print(";");
+      }
     }
     Serial.println();
   }
