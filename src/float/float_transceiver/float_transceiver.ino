@@ -84,7 +84,7 @@ byte packets[2][PKT_LEN];
 int packetIndex = PKT_HEADER_LEN;
 
 uint8_t profileNum = 0;
-byte profileHalf = 0;
+uint8_t profileHalf = 0;
 
 void setup() {
   Serial.begin(115200);
