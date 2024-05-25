@@ -83,7 +83,7 @@ MS5837 pressureSensor;
 byte packets[2][PKT_LEN];
 int packetIndex = PKT_HEADER_LEN;
 
-byte profileNum = 0;
+uint8_t profileNum = 0;
 byte profileHalf = 0;
 
 void setup() {
