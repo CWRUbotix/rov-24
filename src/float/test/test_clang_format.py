@@ -18,8 +18,8 @@ INCLUDE = "include"
 
 
 @pytest.mark.linter
-def test_cpplint() -> None:
-    """Tests cpplint on this module."""
+def test_clang_format() -> None:
+    """Tests clang-format on this module."""
 
     try:
         for folder in SKETCHES:
