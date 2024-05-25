@@ -47,7 +47,7 @@ struct Stage {
 };
 
 OverrideState overrideState = OverrideState::NoOverride;
-byte currentStage = 0;
+uint8_t currentStage = 0;
 
 Stage SCHEDULE[SCHEDULE_LENGTH] = {
   // Wait for max <time> or until surface signal
