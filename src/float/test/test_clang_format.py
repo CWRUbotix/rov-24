@@ -23,10 +23,12 @@ def test_clang_format() -> None:
         *[os.path.join(os.getcwd(), folder, folder + INO_EXTENSION) for folder in SKETCHES]
     ]
 
+    config_file = os.path.join(os.getcwd(), '.clang-format.yaml')
+
     error_codes: list[Literal[0, 1]] = []
 
     for file in regular_cpp:
-        error_code = main(argv=["paths", file])
+        error_code = main(argv=['paths', file, '--config', config_file])
         error_codes.append(error_code)
 
     # Done so code fails "slow"
