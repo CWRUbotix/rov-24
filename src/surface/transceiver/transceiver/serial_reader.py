@@ -81,14 +81,14 @@ class SerialReader(Node):
         packet_sections = packet.split(SECTION_SEPARATOR)
 
         if len(packet_sections) != PACKET_SECTIONS:
-            raise ValueError(f"Packet expected {PACKET_SECTIONS} sections,"
+            raise ValueError(f"Packet expected {PACKET_SECTIONS} sections, "
                              f"found {len(packet_sections)} sections")
 
         header = packet_sections[1].split(COMMA_SEPARATOR)
         data = packet_sections[2]
 
         if len(header) != HEADER_LENGTH:
-            raise ValueError(f"Packet header length of {HEADER_LENGTH} expected"
+            raise ValueError(f"Packet header length of {HEADER_LENGTH} expected "
                              f"found {len(header)} instead")
 
         msg.team_number = int(header[0])
