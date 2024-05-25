@@ -1,16 +1,20 @@
 #include <stdarg.h>
 #include <Arduino.h>
 
-void serialPrintf(const char *input...) {
+void serialPrintf(const char* input...)
+{
   va_list args;
   va_start(args, input);
-  for (const char *c = input; *c != 0; c++) {
-    if (*c != '%') {
-        Serial.print(*c);
-        continue;
+  for (const char* c = input; *c != 0; c++)
+  {
+    if (*c != '%')
+    {
+      Serial.print(*c);
+      continue;
     }
     c++;
-    switch (*c) {
+    switch (*c)
+    {
       case '%': Serial.print('%'); break;
       case 's': Serial.print(va_arg(args, char*)); break;
       case 'l': Serial.print(va_arg(args, uint32_t)); break;
