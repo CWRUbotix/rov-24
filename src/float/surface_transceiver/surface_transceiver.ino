@@ -11,20 +11,18 @@
 
 #include "rov_common.hpp"
 
-#define COMMAND_SPAM_TIMES 5
-#define COMMAND_SPAM_DELAY 500
+#define COMMAND_SPAM_TIMES     5
+#define COMMAND_SPAM_DELAY     500
 #define SURFACE_PKT_RX_TIMEOUT 1000
-#define MAX_RESPONSE_LEN RH_RF95_MAX_MESSAGE_LEN >> 1  // Max length for ACKs/NACKs
+#define MAX_RESPONSE_LEN       RH_RF95_MAX_MESSAGE_LEN >> 1  // Max length for ACKs/NACKs
 
 // Singleton instance of the radio driver
 RH_RF95 rf95(RFM95_CS, RFM95_INT);
 
-void setup()
-{
+void setup() {
   Serial.begin(115200);
   // Wait until serial console is open; remove if not tethered to computer
-  while (!Serial) {
-  }
+  while (!Serial) {}
 
   Serial.println("Surface Transceiver");
   pinMode(RFM95_RST, OUTPUT);
@@ -39,8 +37,7 @@ void setup()
 
   if (!rf95.init()) {
     Serial.println("RFM95 radio init failed");
-    while (1) {
-    }
+    while (1) {}
   }
   Serial.println("RFM95 radio init OK!");
 
@@ -49,8 +46,7 @@ void setup()
   // But we override frequency
   if (!rf95.setFrequency(RF95_FREQ)) {
     Serial.println("setFrequency failed");
-    while (1) {
-    }
+    while (1) {}
   }
 
   // The default transmitter power is 13dBm, using PA_BOOST.
@@ -61,8 +57,7 @@ void setup()
   serialPrintf("RFM95 radio @ %d MHz\n", static_cast<int>(RF95_FREQ));
 }
 
-void loop()
-{
+void loop() {
   receivePacket();
 
   if (Serial.available() >= 1) {
@@ -81,8 +76,7 @@ void loop()
  * Return true if a packet was received and it was an ACK/NACK packet; else return false.
  * Print data from data packets (note we return false if data packets are successfully received).
  */
-bool receivePacket()
-{
+bool receivePacket() {
   Serial.println("Attempting to receive");
 
   if (!rf95.waitAvailableTimeout(SURFACE_PKT_RX_TIMEOUT)) {
@@ -108,14 +102,15 @@ bool receivePacket()
     // This packet is probably an ACK/NACK
     serialPrintf(
       "Received response packet with length %d, string '%s', and values: ", len,
-      reinterpret_cast<char *>(byteBuffer));
+      reinterpret_cast<char*>(byteBuffer));
     for (int i = 0; i < len; i++) {
       serialPrintf("%d, ", byteBuffer[i]);
     }
     Serial.println();
 
     return true;
-  } else {
+  }
+  else {
     // This packet is probably a data packet
     uint8_t numDatapoints = (uint8_t)(len - (PKT_HEADER_LEN >> 2));
 
@@ -134,11 +129,11 @@ bool receivePacket()
       byteBuffer[PKT_IDX_PROFILE_HALF]);
     for (int i = PKT_HEADER_LEN; i < len;) {
       // Wonky pointer casting to convert four bytes into a long (time)
-      serialPrintf("%l,", *reinterpret_cast<uint32_t *>(byteBuffer + i));
+      serialPrintf("%l,", *reinterpret_cast<uint32_t*>(byteBuffer + i));
       i += sizeof(uint32_t);
 
       // Same thing for a float (pressure)
-      Serial.print(*reinterpret_cast<float *>(byteBuffer + i));
+      Serial.print(*reinterpret_cast<float*>(byteBuffer + i));
       i += sizeof(float);
 
       if (i < len - 1) {
@@ -151,8 +146,7 @@ bool receivePacket()
   return false;
 }
 
-void sendCommand(String command)
-{
+void sendCommand(String command) {
   byte commandBytes[command.length() + 1];
   command.getBytes(commandBytes, command.length() + 1);
 

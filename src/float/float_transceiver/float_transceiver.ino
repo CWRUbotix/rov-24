@@ -13,54 +13,35 @@
 #include "rov_common.hpp"
 
 // H-bridge direction control pins
-#define MOTOR_PWM 6  // Leave 100% cycle for top speed
-#define PUMP_PIN 9   // Set high for pump (CW when facing down)
-#define SUCK_PIN 10  // Set high for suck (CCW when facing down)
+#define MOTOR_PWM 6   // Leave 100% cycle for top speed
+#define PUMP_PIN  9   // Set high for pump (CW when facing down)
+#define SUCK_PIN  10  // Set high for suck (CCW when facing down)
 
 // Limit switch pins
-#define LIMIT_FULL 12   // Low when syringe is full
+#define LIMIT_FULL  12  // Low when syringe is full
 #define LIMIT_EMPTY 11  // Low when syringe is empty
 
-#define TEAM_NUM 11
+#define TEAM_NUM               11
 #define PRESSURE_READ_INTERVAL 200
-#define PACKET_SEND_INTERVAL 1000
-#define FLOAT_PKT_RX_TIMEOUT 900
+#define PACKET_SEND_INTERVAL   1000
+#define FLOAT_PKT_RX_TIMEOUT   900
 
 // Schedule (all delays in ms)
-#define RELEASE_MAX 300000
-#define SUCK_MAX 10000
+#define RELEASE_MAX  300000
+#define SUCK_MAX     10000
 #define DESCEND_TIME 10000
-#define PUMP_MAX 10000
-#define ASCEND_TIME 10000
-#define TX_MAX 60000
-#define ONE_HOUR 360000
+#define PUMP_MAX     10000
+#define ASCEND_TIME  10000
+#define TX_MAX       60000
+#define ONE_HOUR     360000
 
 #define SCHEDULE_LENGTH 11
 
-enum class StageType
-{
-  WaitDeploying,
-  WaitTransmitting,
-  WaitProfiling,
-  Suck,
-  Pump
-};
-enum class OverrideState
-{
-  NoOverride,
-  Stop,
-  Suck,
-  Pump
-};
-enum class MotorState
-{
-  Stop,
-  Suck,
-  Pump
-};
+enum class StageType { WaitDeploying, WaitTransmitting, WaitProfiling, Suck, Pump };
+enum class OverrideState { NoOverride, Stop, Suck, Pump };
+enum class MotorState { Stop, Suck, Pump };
 
-struct Stage
-{
+struct Stage {
   StageType type;
   uint32_t timeoutMillis;
 };
@@ -70,23 +51,23 @@ byte currentStage = 0;
 
 Stage SCHEDULE[SCHEDULE_LENGTH] = {
   // Wait for max <time> or until surface signal
-  {StageType::WaitDeploying, RELEASE_MAX},
+  {StageType::WaitDeploying,    RELEASE_MAX },
 
-  // Profile 1
-  {StageType::Suck, SUCK_MAX},
-  {StageType::WaitProfiling, DESCEND_TIME},
-  {StageType::Pump, PUMP_MAX},
-  {StageType::WaitProfiling, ASCEND_TIME},
+ // Profile 1
+  {StageType::Suck,             SUCK_MAX    },
+  {StageType::WaitProfiling,    DESCEND_TIME},
+  {StageType::Pump,             PUMP_MAX    },
+  {StageType::WaitProfiling,    ASCEND_TIME },
 
-  {StageType::WaitTransmitting, TX_MAX},
+  {StageType::WaitTransmitting, TX_MAX      },
 
-  // Profile 2
-  {StageType::Suck, SUCK_MAX},
-  {StageType::WaitProfiling, DESCEND_TIME},
-  {StageType::Pump, PUMP_MAX},
-  {StageType::WaitProfiling, ASCEND_TIME},
+ // Profile 2
+  {StageType::Suck,             SUCK_MAX    },
+  {StageType::WaitProfiling,    DESCEND_TIME},
+  {StageType::Pump,             PUMP_MAX    },
+  {StageType::WaitProfiling,    ASCEND_TIME },
 
-  {StageType::WaitTransmitting, ONE_HOUR},
+  {StageType::WaitTransmitting, ONE_HOUR    },
 };
 
 uint32_t stageStartTime;
@@ -105,8 +86,7 @@ int packetIndex = PKT_HEADER_LEN;
 byte profileNum = 0;
 byte profileHalf = 0;
 
-void setup()
-{
+void setup() {
   Serial.begin(115200);
   // Wait until serial console is open; remove if not tethered to computer
   // while (!Serial) {}
@@ -144,27 +124,30 @@ void setup()
   initPressureSensor();
 }
 
-void loop()
-{
+void loop() {
   bool submergeReceived = receiveCommand();
 
   if (overrideState == OverrideState::Suck) {
     if (digitalRead(LIMIT_FULL) == HIGH) {
       suck();
-    } else {
+    }
+    else {
       stop();
       overrideState = OverrideState::Stop;
     }
     return;
-  } else if (overrideState == OverrideState::Pump) {
+  }
+  else if (overrideState == OverrideState::Pump) {
     if (digitalRead(LIMIT_EMPTY) == HIGH) {
       pump();
-    } else {
+    }
+    else {
       stop();
       overrideState = OverrideState::Stop;
     }
     return;
-  } else if (overrideState == OverrideState::Stop) {
+  }
+  else if (overrideState == OverrideState::Stop) {
     stop();
     return;
   }
@@ -197,12 +180,14 @@ void loop()
   }
 
   // Go to next stage if we've timed out or reached another stage end condition
-  if (
-    millis() >= stageStartTime + SCHEDULE[currentStage].timeoutMillis ||
-    (isSurfaced() && submergeReceived) ||
-    (SCHEDULE[currentStage].type == StageType::Suck && !digitalRead(LIMIT_FULL)) ||
-    (SCHEDULE[currentStage].type == StageType::Pump && !digitalRead(LIMIT_EMPTY))
-  ) {
+  bool stageTimedOut = millis() >= stageStartTime + SCHEDULE[currentStage].timeoutMillis;
+  bool suckingHitLimitSwitch =
+    SCHEDULE[currentStage].type == StageType::Suck && !digitalRead(LIMIT_FULL);
+  bool pumpingHitLimitSwitch =
+    SCHEDULE[currentStage].type == StageType::Pump && !digitalRead(LIMIT_EMPTY);
+  bool shouldSubmerge = isSurfaced() && submergeReceived;
+
+  if (shouldSubmerge || stageTimedOut || suckingHitLimitSwitch || pumpingHitLimitSwitch) {
     serialPrintf(
       "Ending stage #%d, type: %d, start time: %l, max wait time: %l, current time: %l\n",
       currentStage, SCHEDULE[currentStage].type, stageStartTime,
@@ -228,14 +213,14 @@ void loop()
     // Switch to sucking/pumping depending on the stage we're entering
     if (SCHEDULE[currentStage].type == StageType::Suck) {
       suck();
-    } else if (SCHEDULE[currentStage].type == StageType::Pump) {
+    }
+    else if (SCHEDULE[currentStage].type == StageType::Pump) {
       pump();
     }
   }
 }
 
-bool receiveCommand()
-{
+bool receiveCommand() {
   Serial.println("Receiving command...");
 
   if (!rf95.waitAvailableTimeout(FLOAT_PKT_RX_TIMEOUT)) {
@@ -256,7 +241,7 @@ bool receiveCommand()
   }
 
   byteBuffer[len] = 0;
-  char * charBuf = reinterpret_cast<char *>(byteBuffer);
+  char* charBuf = reinterpret_cast<char*>(byteBuffer);
 
   serialPrintf("Received [%d]: '%s'\n", len, charBuf);
 
@@ -266,28 +251,35 @@ bool receiveCommand()
   if (strcmp(charBuf, "submerge") == 0) {
     response = "ACK SUBMERGING";
     shouldSubmerge = true;
-  } else if (strcmp(charBuf, "pump") == 0) {
+  }
+  else if (strcmp(charBuf, "pump") == 0) {
     if (getMotorState() != MotorState::Suck) {
       response = "ACK PUMPING";
       overrideState = OverrideState::Pump;
-    } else {
+    }
+    else {
       response = "NACK RETURN FIRST";
     }
-  } else if (strcmp(charBuf, "suck") == 0) {
+  }
+  else if (strcmp(charBuf, "suck") == 0) {
     if (getMotorState() != MotorState::Pump) {
       response = "ACK SUCKING";
       overrideState = OverrideState::Suck;
-    } else {
+    }
+    else {
       response = "NACK RETURN FIRST";
     }
-  } else if (strcmp(charBuf, "stop") == 0) {
+  }
+  else if (strcmp(charBuf, "stop") == 0) {
     response = "ACK STOPPING";
     overrideState = OverrideState::Stop;
-  } else if (strcmp(charBuf, "return") == 0) {
+  }
+  else if (strcmp(charBuf, "return") == 0) {
     response = "ACK RETURNING TO SCHEDULE";
     stop();
     overrideState = OverrideState::NoOverride;
-  } else {
+  }
+  else {
     response = "NACK INVALID COMMAND";
   }
 
@@ -298,8 +290,7 @@ bool receiveCommand()
   return shouldSubmerge;
 }
 
-void transmitPressurePacket()
-{
+void transmitPressurePacket() {
   for (int half = 0; half < 2; half++) {
     serialPrintf("Sending packet #%d half %d with content {", profileNum, half);
     for (int p = 0; p < PKT_LEN; p++) {
@@ -314,63 +305,51 @@ void transmitPressurePacket()
   }
 }
 
-void pump()
-{
+void pump() {
   Serial.println("PUMPING");
   digitalWrite(MOTOR_PWM, HIGH);
   digitalWrite(PUMP_PIN, HIGH);
   digitalWrite(SUCK_PIN, LOW);
 }
 
-void suck()
-{
+void suck() {
   Serial.println("SUCKING");
   digitalWrite(MOTOR_PWM, HIGH);
   digitalWrite(PUMP_PIN, LOW);
   digitalWrite(SUCK_PIN, HIGH);
 }
 
-void stop()
-{
+void stop() {
   Serial.println("STOPPING");
   digitalWrite(MOTOR_PWM, LOW);
   digitalWrite(PUMP_PIN, LOW);
   digitalWrite(SUCK_PIN, LOW);
 }
 
-MotorState getMotorState()
-{
+MotorState getMotorState() {
   if (overrideState != OverrideState::NoOverride) {
     switch (overrideState) {
-      case OverrideState::Stop:
-        return MotorState::Stop;
-      case OverrideState::Suck:
-        return MotorState::Suck;
-      case OverrideState::Pump:
-        return MotorState::Pump;
+      case OverrideState::Stop: return MotorState::Stop;
+      case OverrideState::Suck: return MotorState::Suck;
+      case OverrideState::Pump: return MotorState::Pump;
     }
   }
 
   switch (SCHEDULE[currentStage].type) {
     case StageType::WaitDeploying:
     case StageType::WaitTransmitting:
-    case StageType::WaitProfiling:
-      return MotorState::Stop;
-    case StageType::Suck:
-      return MotorState::Suck;
-    case StageType::Pump:
-      return MotorState::Pump;
+    case StageType::WaitProfiling: return MotorState::Stop;
+    case StageType::Suck: return MotorState::Suck;
+    case StageType::Pump: return MotorState::Pump;
   }
 }
 
-bool isSurfaced()
-{
+bool isSurfaced() {
   return SCHEDULE[currentStage].type == StageType::WaitDeploying ||
          SCHEDULE[currentStage].type == StageType::WaitTransmitting;
 }
 
-void clearPacketPayloads()
-{
+void clearPacketPayloads() {
   for (int half = 0; half < 2; half++) {
     for (int i = PKT_HEADER_LEN; i < PKT_LEN; i++) {
       packets[half][i] = 0;
@@ -380,8 +359,7 @@ void clearPacketPayloads()
 
 /******* Setup Methods (down here cause they're lorge) *******/
 
-void initRadio()
-{
+void initRadio() {
   pinMode(RFM95_RST, OUTPUT);
   digitalWrite(RFM95_RST, HIGH);
 
@@ -396,8 +374,7 @@ void initRadio()
 
   if (!rf95.init()) {
     Serial.println("RFM95 radio init failed");
-    while (1) {
-    }
+    while (1) {}
   }
   Serial.println("RFM95 radio init OK!");
 
@@ -416,8 +393,7 @@ void initRadio()
   serialPrintf("RFM95 radio @%d MHz\n", static_cast<int>(RF95_FREQ));
 }
 
-void initPressureSensor()
-{
+void initPressureSensor() {
   pressureSensor.init();
 
   pressureSensor.setModel(MS5837::MS5837_02BA);

@@ -5,6 +5,7 @@ BasedOnStyle: Google
 
 IndentPPDirectives: BeforeHash
 
+AlignConsecutiveMacros: true
 AlignArrayOfStructures: Left
 AllowShortBlocksOnASingleLine: Empty
 AllowShortCaseLabelsOnASingleLine: true
