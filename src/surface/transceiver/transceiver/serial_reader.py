@@ -65,10 +65,15 @@ class SerialReader(Node):
         if ROS_PACKET not in packet:
             return
 
+        msg = SerialReader._message_parser(packet)
+        self.data_publisher.publish(msg)
+
+    @staticmethod
+    def _message_parser(packet: str) -> FloatData:
         msg = FloatData()
 
         packet_sections = packet.split(SECTION_SEPARATOR)
-        header = packet_sections[1]
+        header = packet_sections[1].split(COMMA_SEPARATOR)
         data = packet_sections[2]
 
         msg.team_number = int(header[0])
@@ -77,17 +82,18 @@ class SerialReader(Node):
 
         time_data_list: list[float] = []
         depth_data_list: list[float] = []
+
         for time_data, depth_data in [data.split(COMMA_SEPARATOR) for data in
                                       data.split(DATA_SEPARATOR)]:
-            # Starts out as float32
-            time_data_list.append(float(time_data) * MILLISECONDS_TO_SECONDS * SECONDS_TO_MINUTES)
+            # Starts out as uint32
+            time_data_list.append(int(time_data) * MILLISECONDS_TO_SECONDS * SECONDS_TO_MINUTES)
 
-            # Starts out as unsigned long
-            depth_data_list.append(int(depth_data) * MBAR_TO_METER_OF_HEAD)
-
+            # Starts out as float
+            depth_data_list.append(float(depth_data) * MBAR_TO_METER_OF_HEAD)
         msg.time_data = time_data_list
         msg.depth_data = depth_data_list
-        self.data_publisher.publish(msg)
+
+        return msg
 
 
 def main() -> None:
