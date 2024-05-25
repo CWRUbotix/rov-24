@@ -1,21 +1,20 @@
-"""Test cpplint on this module."""
+"""Test clang-format on this module."""
 
 import os
 import shutil
 from typing import Literal
 
 import pytest
-from ament_cpplint.main import main
+from ament_clang_format.main import main
 
+
+# TODO might not need .ino -> .cpp
 INO_EXTENSION = ".ino"
 CPP_EXTENSION = ".cpp"
 SKETCHES = ["float_transceiver", "surface_transceiver"]
 TMP = "/tmp"
 SRC = "src"
 INCLUDE = "include"
-
-# List of errors from cpplint.py
-LEGAL_ERROR = "-legal/copyright"
 
 
 @pytest.mark.linter
@@ -43,7 +42,7 @@ def test_cpplint() -> None:
     error_codes: list[Literal[0, 1]] = []
 
     for file in regular_cpp:
-        error_code = main(argv=["paths", file, f'--filters={LEGAL_ERROR}'])
+        error_code = main(argv=["paths", file])
         error_codes.append(error_code)
 
     # Done so code fails "slow"
