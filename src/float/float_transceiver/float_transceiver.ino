@@ -357,7 +357,7 @@ void clearPacketPayloads() {
   }
 }
 
-/******* Setup Methods (down here cause they're lorge) *******/
+/******* Setup Methods (down here cause they're large) *******/
 
 void initRadio() {
   pinMode(RFM95_RST, OUTPUT);
