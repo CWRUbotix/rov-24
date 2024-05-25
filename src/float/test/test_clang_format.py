@@ -8,11 +8,8 @@ import pytest
 from ament_clang_format.main import main
 
 
-# TODO might not need .ino -> .cpp
 INO_EXTENSION = ".ino"
-CPP_EXTENSION = ".cpp"
 SKETCHES = ["float_transceiver", "surface_transceiver"]
-TMP = "/tmp"
 SRC = "src"
 INCLUDE = "include"
 
@@ -21,22 +18,9 @@ INCLUDE = "include"
 def test_clang_format() -> None:
     """Tests clang-format on this module."""
 
-    try:
-        for folder in SKETCHES:
-            shutil.rmtree(os.path.join(TMP, folder))
-    except FileNotFoundError:
-        pass
-
-    for folder in SKETCHES:
-        # Copies folders
-        shutil.copytree(os.path.join(os.getcwd(), folder), os.path.join(TMP, folder))
-        # Renames files
-        os.rename(os.path.join(TMP, folder, folder + INO_EXTENSION),
-                  os.path.join(TMP, folder, folder + CPP_EXTENSION))
-
     regular_cpp = [
         *[os.path.join(os.getcwd(), folder) for folder in [SRC, INCLUDE]],
-        *[os.path.join(TMP, folder, folder + CPP_EXTENSION) for folder in SKETCHES]
+        *[os.path.join(os.getcwd(), folder, folder + INO_EXTENSION) for folder in SKETCHES]
     ]
 
     error_codes: list[Literal[0, 1]] = []
