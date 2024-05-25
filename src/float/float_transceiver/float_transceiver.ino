@@ -45,7 +45,7 @@ enum class MotorState { Stop, Suck, Pump };
 
 struct Stage {
   StageType type;
-  unsigned long timeoutMillis;
+  uint32_t timeoutMillis;
 };
 
 OverrideState overrideState = OverrideState::NoOverride;
@@ -72,9 +72,9 @@ Stage SCHEDULE[SCHEDULE_LENGTH] = {
   {StageType::WaitTransmitting,  ONE_HOUR    },
 };
 
-unsigned long stageStartTime;
-unsigned long previousPressureReadTime;
-unsigned long previousPacketSendTime;
+uint32_t stageStartTime;
+uint32_t previousPressureReadTime;
+uint32_t previousPacketSendTime;
 
 
 // Singleton instance of the radio driver
@@ -163,8 +163,8 @@ void loop() {
     packetIndex < PKT_LEN  // Stop recording if we overflow buffer
   ) {
     previousPressureReadTime = millis();
-    memcpy(packets[profileHalf] + packetIndex, &previousPressureReadTime, sizeof(long));
-    packetIndex += sizeof(long);
+    memcpy(packets[profileHalf] + packetIndex, &previousPressureReadTime, sizeof(uint32_t));
+    packetIndex += sizeof(uint32_t);
 
     pressureSensor.read();
     float pressure = pressureSensor.pressure();
