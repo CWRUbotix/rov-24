@@ -6,8 +6,9 @@
 // RadioHead v1.122.1 by Mike McCauley
 // Blue Robotics MS5837 Library v1.1.1 by BlueRobotics
 
-#include <SPI.h>
 #include <RH_RF95.h>
+#include <SPI.h>
+
 #include "rov_common.hpp"
 
 #define COMMAND_SPAM_TIMES 5
@@ -22,7 +23,8 @@ void setup()
 {
   Serial.begin(115200);
   // Wait until serial console is open; remove if not tethered to computer
-  while (!Serial) {}
+  while (!Serial) {
+  }
 
   Serial.println("Surface Transceiver");
   pinMode(RFM95_RST, OUTPUT);
@@ -35,20 +37,20 @@ void setup()
   digitalWrite(RFM95_RST, HIGH);
   delay(10);
 
-  if (!rf95.init())
-  {
+  if (!rf95.init()) {
     Serial.println("RFM95 radio init failed");
-    while (1) {}
+    while (1) {
+    }
   }
   Serial.println("RFM95 radio init OK!");
 
   // Defaults after init are: 434.0MHz, modulation GFSK_Rb250Fd250
   // +13dbM (for low power module), no encryption
   // But we override frequency
-  if (!rf95.setFrequency(RF95_FREQ))
-  {
+  if (!rf95.setFrequency(RF95_FREQ)) {
     Serial.println("setFrequency failed");
-    while (1) {}
+    while (1) {
+    }
   }
 
   // The default transmitter power is 13dBm, using PA_BOOST.
@@ -63,12 +65,10 @@ void loop()
 {
   receivePacket();
 
-  if (Serial.available() >= 1)
-  {
+  if (Serial.available() >= 1) {
     Serial.println("Getting serial command...");
     String command = Serial.readString();
-    if (command.charAt(command.length() - 1) == '\n')
-    {
+    if (command.charAt(command.length() - 1) == '\n') {
       command.remove(command.length() - 1);
     }
 
@@ -85,8 +85,7 @@ bool receivePacket()
 {
   Serial.println("Attempting to receive");
 
-  if (!rf95.waitAvailableTimeout(SURFACE_PKT_RX_TIMEOUT))
-  {
+  if (!rf95.waitAvailableTimeout(SURFACE_PKT_RX_TIMEOUT)) {
     Serial.println("RF95 not available");
     return false;
   }
@@ -95,71 +94,54 @@ bool receivePacket()
   byte byteBuffer[RH_RF95_MAX_MESSAGE_LEN];
   byte len = sizeof(byteBuffer);
 
-  if (!rf95.recv(byteBuffer, &len))
-  {
+  if (!rf95.recv(byteBuffer, &len)) {
     Serial.println("Receive failed");
     return false;
   }
 
-  if (!len)
-  {
+  if (!len) {
     Serial.println("Message length 0, dropping");
     return false;
   }
 
-  if (len < MAX_RESPONSE_LEN)
-  {
+  if (len < MAX_RESPONSE_LEN) {
     // This packet is probably an ACK/NACK
     serialPrintf(
-      "Received response packet with length %d, string '%s', and values: ",
-      len, reinterpret_cast<char*>(byteBuffer)
-    );
-    for (int i = 0; i < len; i++)
-    {
+      "Received response packet with length %d, string '%s', and values: ", len,
+      reinterpret_cast<char *>(byteBuffer));
+    for (int i = 0; i < len; i++) {
       serialPrintf("%d, ", byteBuffer[i]);
     }
     Serial.println();
 
     return true;
-  }
-  else
-  {
+  } else {
     // This packet is probably a data packet
-    uint8_t numDatapoints = (uint8_t) (len - (PKT_HEADER_LEN >> 2));
+    uint8_t numDatapoints = (uint8_t)(len - (PKT_HEADER_LEN >> 2));
 
     serialPrintf(
       "Received packet for team %d on profile %d half %d with length %d (%d datapoints): ",
-      byteBuffer[PKT_IDX_TEAM_NUM],
-      byteBuffer[PKT_IDX_PROFILE_NUM],
-      byteBuffer[PKT_IDX_PROFILE_HALF],
-      len,
-      numDatapoints
-    );
+      byteBuffer[PKT_IDX_TEAM_NUM], byteBuffer[PKT_IDX_PROFILE_NUM],
+      byteBuffer[PKT_IDX_PROFILE_HALF], len, numDatapoints);
 
-    for (int i = 0; i < len; i++)
-    {
+    for (int i = 0; i < len; i++) {
       serialPrintf("%d, ", byteBuffer[i]);
     }
     Serial.println();
 
     serialPrintf(
-      "ROS:%d,%d,%d:",
-      byteBuffer[PKT_IDX_TEAM_NUM],
-      byteBuffer[PKT_IDX_PROFILE_NUM],
-      byteBuffer[PKT_IDX_PROFILE_HALF]
-    );
-    for (int i = PKT_HEADER_LEN; i < len;)
-    {
+      "ROS:%d,%d,%d:", byteBuffer[PKT_IDX_TEAM_NUM], byteBuffer[PKT_IDX_PROFILE_NUM],
+      byteBuffer[PKT_IDX_PROFILE_HALF]);
+    for (int i = PKT_HEADER_LEN; i < len;) {
       // Wonky pointer casting to convert four bytes into a long (time)
-      serialPrintf("%l,", * reinterpret_cast<uint32_t*>(byteBuffer + i));
+      serialPrintf("%l,", *reinterpret_cast<uint32_t *>(byteBuffer + i));
       i += sizeof(uint32_t);
 
       // Same thing for a float (pressure)
-      Serial.print(* reinterpret_cast<float*>(byteBuffer + i));
+      Serial.print(*reinterpret_cast<float *>(byteBuffer + i));
       i += sizeof(float);
 
-      if (i < len - 1)
-      {
+      if (i < len - 1) {
         Serial.print(";");
       }
     }
@@ -174,19 +156,15 @@ void sendCommand(String command)
   byte commandBytes[command.length() + 1];
   command.getBytes(commandBytes, command.length() + 1);
 
-  for (int i = 0; i < COMMAND_SPAM_TIMES; i++)
-  {
+  for (int i = 0; i < COMMAND_SPAM_TIMES; i++) {
     rf95.send(commandBytes, command.length() + 1);
     rf95.waitPacketSent();
     bool receivedACK = receivePacket();
 
     serialPrintf(
-      "'%s' (len=%d) command sent! Iteration: %d\n",
-      commandBytes, command.length() + 1, i
-    );
+      "'%s' (len=%d) command sent! Iteration: %d\n", commandBytes, command.length() + 1, i);
 
-    if (receivedACK)
-    {
+    if (receivedACK) {
       break;
     }
 
