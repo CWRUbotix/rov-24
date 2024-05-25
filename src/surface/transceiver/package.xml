@@ -9,6 +9,7 @@
 
   <depend>rclpy</depend>
   <depend>sensor_msgs</depend>
+  <depend>rov_msgs</depend>
 
 
   <exec_depend>ros2launch</exec_depend>
