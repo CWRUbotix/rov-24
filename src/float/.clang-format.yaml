@@ -3,19 +3,28 @@
 Language: Cpp
 BasedOnStyle: Google
 
+IndentPPDirectives: BeforeHash
+
+AlignArrayOfStructures: Left
+AllowShortBlocksOnASingleLine: Empty
+AllowShortCaseLabelsOnASingleLine: true
+
 AccessModifierOffset: -2
 AlignAfterOpenBracket: AlwaysBreak
 BraceWrapping:
-  AfterClass: true
-  AfterFunction: true
-  AfterNamespace: true
-  AfterStruct: true
-  AfterEnum: true
+  AfterClass: false
+  AfterFunction: false
+  AfterNamespace: false
+  AfterStruct: false
+  AfterEnum: false
+  BeforeElse: true
+  BeforeCatch: true
+  BeforeWhile: true
 BreakBeforeBraces: Custom
 ColumnLimit: 100
 ConstructorInitializerIndentWidth: 0
 ContinuationIndentWidth: 2
 DerivePointerAlignment: false
-PointerAlignment: Middle
+PointerAlignment: Left
 ReflowComments: false
 ...
