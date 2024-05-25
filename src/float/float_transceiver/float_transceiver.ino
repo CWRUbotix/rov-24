@@ -253,8 +253,8 @@ bool receiveCommand()
   }
 
   Serial.println("RF has signal");
-  byte len = RH_RF95_MAX_MESSAGE_LEN;
-  byte byteBuffer[len];
+  byte byteBuffer[RH_RF95_MAX_MESSAGE_LEN];
+  byte len;
 
   if (!rf95.recv(byteBuffer, &len))
   {
@@ -268,7 +268,7 @@ bool receiveCommand()
   }
 
   byteBuffer[len] = 0;
-  char* charBuf = (char*) byteBuffer;
+  char* charBuf = reinterpret_cast<char*>(byteBuffer);
 
   serialPrintf("Received [%d]: '%s'\n", len, charBuf);
 
@@ -375,12 +375,9 @@ MotorState getMotorState()
   {
     switch (overrideState)
     {
-      case OverrideState::Stop:
-        return MotorState::Stop;
-      case OverrideState::Suck:
-        return MotorState::Suck;
-      case OverrideState::Pump:
-        return MotorState::Pump;
+      case OverrideState::Stop: return MotorState::Stop;
+      case OverrideState::Suck: return MotorState::Suck;
+      case OverrideState::Pump: return MotorState::Pump;
     }
   }
 
@@ -388,12 +385,9 @@ MotorState getMotorState()
   {
     case StageType::WaitDeploying:
     case StageType::WaitTransmitting:
-    case StageType::WaitProfiling:
-      return MotorState::Stop;
-    case StageType::Suck:
-      return MotorState::Suck;
-    case StageType::Pump:
-      return MotorState::Pump;
+    case StageType::WaitProfiling: return MotorState::Stop;
+    case StageType::Suck: return MotorState::Suck;
+    case StageType::Pump: return MotorState::Pump;
   }
 }
 
@@ -450,7 +444,7 @@ void initRadio()
   // you can set transmitter powers from 5 to 23 dBm:
   rf95.setTxPower(23, false);
 
-  serialPrintf("RFM95 radio @%d MHz\n", (int) RF95_FREQ);
+  serialPrintf("RFM95 radio @%d MHz\n", static_cast<int>(RF95_FREQ));
 }
 
 void initPressureSensor()

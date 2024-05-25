@@ -56,7 +56,7 @@ void setup()
   // you can set transmitter powers from 5 to 23 dBm:
   rf95.setTxPower(23, false);
 
-  serialPrintf("RFM95 radio @ %d MHz\n", (int) RF95_FREQ);
+  serialPrintf("RFM95 radio @ %d MHz\n", static_cast<int>(RF95_FREQ));
 }
 
 void loop()
@@ -112,7 +112,7 @@ bool receivePacket()
     // This packet is probably an ACK/NACK
     serialPrintf(
       "Received response packet with length %d, string '%s', and values: ",
-      len, (char*) byteBuffer
+      len, reinterpret_cast<char*>(byteBuffer)
     );
     for (int i = 0; i < len; i++)
     {
@@ -151,11 +151,11 @@ bool receivePacket()
     for (int i = PKT_HEADER_LEN; i < len;)
     {
       // Wonky pointer casting to convert four bytes into a long (time)
-      serialPrintf("%l,", * (unsigned long*) (byteBuffer + i));
-      i += sizeof(long);
+      serialPrintf("%l,", * reinterpret_cast<uint32_t*>(byteBuffer + i));
+      i += sizeof(uint32_t);
 
       // Same thing for a float (pressure)
-      Serial.print(* (float*) (byteBuffer + i));
+      Serial.print(* reinterpret_cast<float*>(byteBuffer + i));
       i += sizeof(float);
 
       if (i < len - 1)
@@ -180,7 +180,10 @@ void sendCommand(String command)
     rf95.waitPacketSent();
     bool receivedACK = receivePacket();
 
-    serialPrintf("'%s' (len=%d) command sent! Iteration: %d\n", commandBytes, command.length() + 1, i);
+    serialPrintf(
+      "'%s' (len=%d) command sent! Iteration: %d\n",
+      commandBytes, command.length() + 1, i
+    );
 
     if (receivedACK)
     {
