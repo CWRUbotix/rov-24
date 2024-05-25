@@ -64,7 +64,7 @@ class SerialReader(Node):
 
         self.serial_publisher.publish(FloatSerial(serial=packet))
 
-        if ROS_PACKET not in packet:
+        if packet[:len(ROS_PACKET)] != ROS_PACKET:
             return
 
         try:
