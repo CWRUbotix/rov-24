@@ -15,6 +15,8 @@ ROS_PACKET = "ROS:"
 SECTION_SEPARATOR = ":"
 DATA_SEPARATOR = ";"
 COMMA_SEPARATOR = ","
+HEADER_LENGTH = 3
+PACKET_SECTIONS = 3
 
 
 class SerialReader(Node):
@@ -65,7 +67,11 @@ class SerialReader(Node):
         if ROS_PACKET not in packet:
             return
 
-        msg = SerialReader._message_parser(packet)
+        try:
+            msg = SerialReader._message_parser(packet)
+        except Exception as e:
+            self.get_logger().error(f"Error {e} caught dropping packet")
+            return
         self.data_publisher.publish(msg)
 
     @staticmethod
@@ -73,8 +79,17 @@ class SerialReader(Node):
         msg = FloatData()
 
         packet_sections = packet.split(SECTION_SEPARATOR)
+
+        if len(packet_sections) != PACKET_SECTIONS:
+            raise ValueError(f"Packet expected {PACKET_SECTIONS} sections,"
+                             f"found {len(packet_sections)} sections")
+
         header = packet_sections[1].split(COMMA_SEPARATOR)
         data = packet_sections[2]
+
+        if len(header) != HEADER_LENGTH:
+            raise ValueError(f"Packet header length of {HEADER_LENGTH} expected"
+                             f"found {len(header)} instead")
 
         msg.team_number = int(header[0])
         msg.profile_number = int(header[1])
@@ -83,13 +98,13 @@ class SerialReader(Node):
         time_data_list: list[float] = []
         depth_data_list: list[float] = []
 
-        for time_data, depth_data in [data.split(COMMA_SEPARATOR) for data in
-                                      data.split(DATA_SEPARATOR)]:
+        for time_reading, depth_reading in [data.split(COMMA_SEPARATOR) for data in
+                                            data.split(DATA_SEPARATOR)]:
             # Starts out as uint32
-            time_data_list.append(int(time_data) * MILLISECONDS_TO_SECONDS * SECONDS_TO_MINUTES)
+            time_data_list.append(int(time_reading) * MILLISECONDS_TO_SECONDS * SECONDS_TO_MINUTES)
 
             # Starts out as float
-            depth_data_list.append(float(depth_data) * MBAR_TO_METER_OF_HEAD)
+            depth_data_list.append(float(depth_reading) * MBAR_TO_METER_OF_HEAD)
         msg.time_data = time_data_list
         msg.depth_data = depth_data_list
 
