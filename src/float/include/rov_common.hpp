@@ -1,5 +1,5 @@
-#ifndef ROV_COMMON_H
-#define ROV_COMMON_H
+#ifndef ROV_COMMON_HPP_
+#define ROV_COMMON_HPP_
 
 #include <RH_RF95.h>
 
@@ -83,4 +83,4 @@
 */
 void serialPrintf(const char* input...);
 
-#endif
+#endif  // ROV_COMMON_HPP_
