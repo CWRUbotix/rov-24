@@ -37,8 +37,6 @@ class SerialReader(Node):
         self.serial_publisher = self.create_publisher(FloatSerial, 'float_serial',
                                                       QoSPresetProfiles.SENSOR_DATA.value)
 
-        self.first_attempt = True
-
         self.serial = Serial("/dev/serial/by-id/usb-Adafruit_Feather_32u4-if00", 115200)
 
         Thread(target=self.read_serial, daemon=True,
