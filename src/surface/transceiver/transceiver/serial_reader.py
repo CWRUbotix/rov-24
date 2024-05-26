@@ -1,3 +1,5 @@
+import time
+
 import rclpy
 from rclpy.node import Node
 from rclpy.qos import QoSPresetProfiles
@@ -31,18 +33,21 @@ class SerialReader(Node):
 
         self.serial_publisher = self.create_publisher(FloatSerial, 'float_serial',
                                                       QoSPresetProfiles.SENSOR_DATA.value)
-        timer_period = .5
+        # timer_period = .5
 
         self.first_attempt = True
-        self.create_timer(timer_period, self.timer_callback)
+        # self.create_timer(timer_period, self.timer_callback)
         try:
-            with Serial("/dev/serial/by-id/usb-Adafruit_Feather_32u4-if00", 115200) as ser:
+            with Serial("/dev/serial/by-id/usb-Adafruit_Feather_32u4-if00", 115200, timeout=None) as ser:
                 self.serial = ser
                 self.get_logger().info("Serial device connected.")
         except SerialException as e:
             self.get_logger().error("Error no transceiver connected.")
             self.get_logger().error(str(e))
             exit(1)
+
+        with self.serial:
+            self.read_serial()
 
     def send_command(self, msg: FloatCommand) -> None:
         try:
@@ -52,15 +57,20 @@ class SerialReader(Node):
             self.get_logger().error("Command send failed.")
             self.get_logger().error(str(e))
 
-    def timer_callback(self) -> None:
+    def read_serial(self) -> None:
+        buffer = b''
+        while True:
+            buffer += self.serial.read(self.serial.in_waiting)
+
+            while b'\n' in buffer:
+                packet, buffer = buffer.split(b'\n', 1)
+                self.ros_publish(packet.decode())
+            # time.sleep(0.01)
+
+    def ros_publish(self, packet: str) -> None:
         """Publish a message from the transceiver."""
-        try:
-            with self.serial:
-                packet = self.serial.readline().decode().strip()
-        except SerialException as e:
-            self.get_logger().error("Serial read failed.")
-            self.get_logger().error(str(e))
-            return
+
+        self.get_logger().error(packet)
 
         self.serial_publisher.publish(FloatSerial(serial=packet))
 
