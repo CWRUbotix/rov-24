@@ -45,7 +45,7 @@ class ManualControlNode(Node):
 
         self.rc_pub = self.create_publisher(
             PixhawkInstruction,
-            'pixhawk_control',
+            'uninverted_pixhawk_control',
             qos_profile_system_default
         )
 
@@ -102,7 +102,8 @@ class ManualControlNode(Node):
             vertical=float(axes[L2PRESS_PERCENT] - axes[R2PRESS_PERCENT]) / 2,  # L2/R2 triggers
             roll=float(buttons[L1] - buttons[R1]),  # L1/R1 buttons
             pitch=float(axes[RJOYY]),  # Right Joystick Y
-            yaw=-float(axes[RJOYX])  # Right Joystick X
+            yaw=-float(axes[RJOYX]),  # Right Joystick X
+            author=PixhawkInstruction.MANUAL_CONTROL
         )
 
         self.rc_pub.publish(instruction)

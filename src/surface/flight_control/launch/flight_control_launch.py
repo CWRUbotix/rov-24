@@ -7,8 +7,7 @@ def generate_launch_description() -> LaunchDescription:
         package='flight_control',
         executable='manual_control_node',
         remappings=[('/surface/manipulator_control', '/tether/manipulator_control'),
-                    ('/surface/valve_manipulator', '/tether/valve_manipulator'),
-                    ('/surface/mavros/rc/override', '/tether/mavros/rc/override')],
+                    ('/surface/valve_manipulator', '/tether/valve_manipulator')],
         emulate_tty=True,
         output='screen'
     )
@@ -16,8 +15,7 @@ def generate_launch_description() -> LaunchDescription:
     auto_docking_node = Node(
         package='flight_control',
         executable='auto_docking_node',
-        remappings=[('/surface/manipulator_control', '/tether/manipulator_control'),
-                    ('/surface/mavros/rc/override', '/tether/mavros/rc/override')],
+        remappings=[('/surface/manipulator_control', '/tether/manipulator_control')],
         emulate_tty=True,
         output='screen'
     )
@@ -25,6 +23,13 @@ def generate_launch_description() -> LaunchDescription:
     control_inverter_node = Node(
         package='flight_control',
         executable='control_inverter_node',
+        emulate_tty=True,
+        output='screen'
+    )
+
+    multiplexer_node = Node(
+        package='flight_control',
+        executable='multiplexer_node',
         remappings=[('/surface/mavros/rc/override', '/tether/mavros/rc/override')],
         emulate_tty=True,
         output='screen'
@@ -33,5 +38,6 @@ def generate_launch_description() -> LaunchDescription:
     return LaunchDescription([
         manual_control_node,
         auto_docking_node,
-        control_inverter_node
+        control_inverter_node,
+        multiplexer_node
     ])
