@@ -2,7 +2,6 @@ from gui.app import App
 from gui.widgets.arm import Arm
 from gui.widgets.timer import TimerDisplay
 from gui.widgets.flood_warning import FloodWarning
-from gui.widgets.heartbeat import HeartbeatWidget
 from gui.widgets.video_widget import (CameraDescription, CameraType,
                                       SwitchableVideoWidget, VideoWidget)
 from gui.widgets.livestream_header import LivestreamHeader
@@ -92,7 +91,6 @@ class PilotApp(App):
             top_bar.addWidget(arm_widget, 2)
 
             main_layout.addLayout(top_bar)
-
 
             self.setWindowTitle('Livestream GUI - CWRUbotix ROV 2024')
 
