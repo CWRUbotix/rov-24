@@ -4,8 +4,33 @@ from gui.widgets.timer import TimerDisplay
 from gui.widgets.flood_warning import FloodWarning
 from gui.widgets.video_widget import (CameraDescription, CameraType,
                                       SwitchableVideoWidget, VideoWidget)
+from gui.widgets.livestream_header import LivestreamHeader
+
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QHBoxLayout, QVBoxLayout
+from PyQt6.QtGui import QScreen
+
+
+FRONT_CAM_TOPIC = 'front_cam/image_raw'
+BOTTOM_CAM_TOPIC = 'bottom_cam/image_raw'
+DEPTH_CAM_TOPIC = 'depth_cam/image_raw'
+
+
+def make_bottom_bar():
+    bottom_screen_layout = QHBoxLayout()
+
+    timer = TimerDisplay()
+    bottom_screen_layout.addWidget(timer)
+
+    flood_widget = FloodWarning()
+    bottom_screen_layout.addWidget(flood_widget, alignment=Qt.AlignmentFlag.AlignHCenter |
+                                   Qt.AlignmentFlag.AlignBottom)
+
+    arm = Arm()
+    bottom_screen_layout.addWidget(arm, alignment=Qt.AlignmentFlag.AlignRight |
+                                   Qt.AlignmentFlag.AlignBottom)
+
+    return bottom_screen_layout
 
 
 class PilotApp(App):
@@ -28,55 +53,112 @@ class PilotApp(App):
             depth_cam_type = CameraType.DEPTH
 
         if gui_param.value == 'pilot':
-            title = 'Pilot GUI - CWRUbotix ROV 2024'
+            self.setWindowTitle('Pilot GUI - CWRUbotix ROV 2024')
 
-            video_layout: QHBoxLayout | QVBoxLayout = main_layout
-            front_cam_size = [1280, 720]
-            bottom_cam_size = front_cam_size
-            depth_cam_size = [640, 360]
-        else:
-            title = 'Debug GUI - CWRUbotix ROV 2024'
+            front_cam_description = CameraDescription(
+                front_cam_type,
+                FRONT_CAM_TOPIC,
+                "Front Camera",
+                1280, 720
+            )
+            bottom_cam_description = CameraDescription(
+                bottom_cam_type,
+                BOTTOM_CAM_TOPIC,
+                "Bottom Camera",
+                1280, 720
+            )
+            # depth_cam_description = CameraDescription(
+            #     depth_cam_type,
+            #     DEPTH_CAM_TOPIC,
+            #     "Depth Cam",
+            #     640, 360
+            # )
+
+            main_layout.addWidget(VideoWidget(front_cam_description),
+                                  alignment=Qt.AlignmentFlag.AlignHCenter)
+            main_layout.addWidget(VideoWidget(bottom_cam_description),
+                                  alignment=Qt.AlignmentFlag.AlignHCenter)
+            main_layout.addLayout(make_bottom_bar())
+
+            self.show_on_monitor(1)
+
+        elif gui_param.value == 'livestream':
+            top_bar = QHBoxLayout()
+            top_bar.addWidget(LivestreamHeader())
+            top_bar.addWidget(TimerDisplay(), 2)
+            arm_widget = Arm()
+            arm_widget.setMaximumWidth(300)
+            top_bar.addWidget(arm_widget, 2)
+
+            main_layout.addLayout(top_bar)
+
+            self.setWindowTitle('Livestream GUI - CWRUbotix ROV 2024')
+
+            front_cam_description = CameraDescription(
+                front_cam_type,
+                FRONT_CAM_TOPIC,
+                "Front Camera",
+                1280, 720
+            )
+            bottom_cam_description = CameraDescription(
+                bottom_cam_type,
+                BOTTOM_CAM_TOPIC,
+                "Bottom Camera",
+                1280, 720
+            )
 
             video_layout = QHBoxLayout()
+
+            video_layout.addWidget(VideoWidget(front_cam_description),
+                                   alignment=Qt.AlignmentFlag.AlignHCenter)
+            video_layout.addWidget(VideoWidget(bottom_cam_description),
+                                   alignment=Qt.AlignmentFlag.AlignHCenter)
+
             main_layout.addLayout(video_layout)
-            front_cam_size = [721, 541]
-            bottom_cam_size = front_cam_size
-            depth_cam_size = [640, 360]
+            main_layout.addStretch()
 
-        # 1 big camera feed and 2 smaller ones
-        front_cam_description = CameraDescription(front_cam_type,
-                                                  'front_cam/image_raw',
-                                                  'Front Camera', *front_cam_size)
+            self.show_on_monitor(2)
 
-        bottom_cam_description = CameraDescription(bottom_cam_type,
-                                                   'bottom_cam/image_raw',
-                                                   'Bottom Camera', *bottom_cam_size)
-        depth_cam_description = CameraDescription(depth_cam_type,
-                                                  'depth_cam/image_raw',
-                                                  'Depth Camera', *depth_cam_size)
+        else:
+            self.setWindowTitle('Debug GUI - CWRUbotix ROV 2024')
 
-        main_video = VideoWidget(front_cam_description)
-        video_area = SwitchableVideoWidget([bottom_cam_description, depth_cam_description],
-                                           "camera_switch")
+            front_cam_description = CameraDescription(
+                front_cam_type,
+                FRONT_CAM_TOPIC,
+                "Front Camera",
+                721, 541
+            )
+            bottom_cam_description = CameraDescription(
+                bottom_cam_type,
+                BOTTOM_CAM_TOPIC,
+                "Bottom Camera",
+                721, 541
+            )
+            depth_cam_description = CameraDescription(
+                depth_cam_type,
+                DEPTH_CAM_TOPIC,
+                "Depth Cam",
+                640, 360
+            )
 
-        self.setWindowTitle(title)
-        video_layout.addWidget(main_video, alignment=Qt.AlignmentFlag.AlignHCenter)
-        video_layout.addWidget(video_area, alignment=Qt.AlignmentFlag.AlignHCenter)
+            video_layout = QHBoxLayout()
 
-        bottom_screen_layout = QHBoxLayout()
+            video_layout.addWidget(VideoWidget(front_cam_description),
+                                   alignment=Qt.AlignmentFlag.AlignHCenter)
+            video_layout.addWidget(
+                SwitchableVideoWidget([bottom_cam_description, depth_cam_description]),
+                alignment=Qt.AlignmentFlag.AlignHCenter
+            )
 
-        timer = TimerDisplay()
-        bottom_screen_layout.addWidget(timer)
+            main_layout.addLayout(video_layout)
+            main_layout.addLayout(make_bottom_bar())
 
-        flood_widget = FloodWarning()
-        bottom_screen_layout.addWidget(flood_widget, alignment=Qt.AlignmentFlag.AlignHCenter |
-                                       Qt.AlignmentFlag.AlignBottom)
-
-        arm = Arm()
-        bottom_screen_layout.addWidget(arm, alignment=Qt.AlignmentFlag.AlignRight |
-                                       Qt.AlignmentFlag.AlignBottom)
-
-        main_layout.addLayout(bottom_screen_layout)
+    def show_on_monitor(self, monitor_id):
+        monitors = QScreen.virtualSiblings(self.screen())
+        if len(monitors) > monitor_id:
+            monitor = monitors[monitor_id].availableGeometry()
+            self.move(monitor.left(), monitor.top())
+            self.showFullScreen()
 
 
 def run_gui_pilot() -> None:
