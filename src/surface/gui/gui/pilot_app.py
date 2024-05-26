@@ -16,7 +16,7 @@ BOTTOM_CAM_TOPIC = 'bottom_cam/image_raw'
 DEPTH_CAM_TOPIC = 'depth_cam/image_raw'
 
 
-def make_bottom_bar():
+def make_bottom_bar() -> QHBoxLayout:
     bottom_screen_layout = QHBoxLayout()
 
     timer = TimerDisplay()
@@ -153,8 +153,12 @@ class PilotApp(App):
             main_layout.addLayout(video_layout)
             main_layout.addLayout(make_bottom_bar())
 
-    def show_on_monitor(self, monitor_id):
-        monitors = QScreen.virtualSiblings(self.screen())
+    def show_on_monitor(self, monitor_id: int) -> None:
+        screen = self.screen()
+        if screen is None:
+            return
+
+        monitors = QScreen.virtualSiblings(screen)
         if len(monitors) > monitor_id:
             monitor = monitors[monitor_id].availableGeometry()
             self.move(monitor.left(), monitor.top())
