@@ -5,17 +5,15 @@ from gui.widgets.flood_warning import FloodWarning
 from gui.widgets.video_widget import (CameraDescription, CameraType,
                                       SwitchableVideoWidget, VideoWidget)
 from gui.widgets.livestream_header import LivestreamHeader
+
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QHBoxLayout, QVBoxLayout
+from PyQt6.QtGui import QScreen
 
 
 FRONT_CAM_TOPIC = 'front_cam/image_raw'
 BOTTOM_CAM_TOPIC = 'bottom_cam/image_raw'
 DEPTH_CAM_TOPIC = 'depth_cam/image_raw'
-
-
-def make_switchable_video_widget(descriptions: list[CameraDescription]):
-    SwitchableVideoWidget(descriptions, "camera_switch")
 
 
 def make_bottom_bar():
@@ -82,6 +80,8 @@ class PilotApp(App):
                                   alignment=Qt.AlignmentFlag.AlignHCenter)
             main_layout.addLayout(make_bottom_bar())
 
+            self.show_on_monitor(1)
+
         elif gui_param.value == 'livestream':
             top_bar = QHBoxLayout()
             top_bar.addWidget(LivestreamHeader())
@@ -117,6 +117,8 @@ class PilotApp(App):
             main_layout.addLayout(video_layout)
             main_layout.addStretch()
 
+            self.show_on_monitor(2)
+
         else:
             self.setWindowTitle('Debug GUI - CWRUbotix ROV 2024')
 
@@ -149,8 +151,14 @@ class PilotApp(App):
             )
 
             main_layout.addLayout(video_layout)
-
             main_layout.addLayout(make_bottom_bar())
+
+    def show_on_monitor(self, monitor_id):
+        monitors = QScreen.virtualSiblings(self.screen())
+        if len(monitors) > monitor_id:
+            monitor = monitors[monitor_id].availableGeometry()
+            self.move(monitor.left(), monitor.top())
+            self.showFullScreen()
 
 
 def run_gui_pilot() -> None:
