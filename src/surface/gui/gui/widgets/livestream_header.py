@@ -6,14 +6,17 @@ from ament_index_python.packages import get_package_share_directory
 import os
 
 
-class LivestreamHeader(QWidget): 
+class LivestreamHeader(QWidget):
     def __init__(self) -> None:
         super().__init__()
 
         root_layout = QHBoxLayout()
         self.setLayout(root_layout)
 
-        logo_path = os.path.join(get_package_share_directory("gui"), "images", "CWRUbotix Logo.png")
+        logo_path = os.path.join(
+            get_package_share_directory("gui"), "images", "CWRUbotix Logo.png"
+        )
+
         logo_pixmap = QPixmap(logo_path)
 
         logo_label = QLabel()
@@ -37,4 +40,3 @@ class LivestreamHeader(QWidget):
         text_vbox.addWidget(subtitle_label)
 
         root_layout.addLayout(text_vbox)
-
