@@ -97,6 +97,9 @@ class SerialReader(Node):
 
         for time_reading, depth_reading in [data.split(COMMA_SEPARATOR) for data in
                                             data.split(DATA_SEPARATOR)]:
+
+            if int(time_reading) == 0:
+                continue
             # Starts out as uint32
             time_data_list.append(int(time_reading) * MILLISECONDS_TO_SECONDS * SECONDS_TO_MINUTES)
 
