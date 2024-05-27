@@ -80,13 +80,21 @@ class FloatComm(QWidget):
         font.setPointSize(11)
         self.console.setFont(font)
 
-        self.plot = PlotWidget()
+        self.plot1 = PlotWidget()
+        self.plot2 = PlotWidget()
 
         left_side_layout.addLayout(info_and_buttons)
         left_side_layout.addWidget(self.console)
 
         layout.addLayout(left_side_layout)
-        layout.addWidget(self.plot)
+        layout.addWidget(self.plot1)
+        layout.addWidget(self.plot2)
+
+        self.time_data: list[float] = []
+        self.depth_data: list[float] = []
+        self.received_first = False
+        self.received_second = False
+        self.plot_number = 0
 
     @pyqtSlot(FloatData)
     def handle_data(self, msg: FloatData) -> None:
@@ -101,7 +109,33 @@ class FloatComm(QWidget):
         self.team_number.setText(f"Team #: {msg.team_number}")
         self.profile_number.setText(f"Profile #: {msg.profile_number}")
         self.profile_half.setText(f"Profile half: {msg.profile_half}")
-        self.plot.plot(msg.time_data, msg.depth_data)
+
+        time_data = list(msg.time_data)
+        depth_data = list(msg.depth_data)
+
+        if msg.profile_number == self.plot_number:
+            plot = self.plot1
+        elif msg.profile_number == self.plot_number:
+            self.time_data = []
+            self.depth_data = []
+            self.received_first = False
+            self.received_second = False
+            plot = self.plot2
+        else:
+            return
+
+        if msg.profile_half == 0 and not self.received_first:
+            self.time_data = time_data + self.time_data
+            self.depth_data = depth_data + self.depth_data
+            self.received_first = True
+        elif msg.profile_half == 1 and not self.received_second:
+            self.time_data = self.time_data + time_data
+            self.depth_data = self.depth_data + depth_data
+            self.received_second = True
+
+        if self.received_first and self.received_second:
+            plot.plot(self.time_data, self.depth_data)
+            self.plot_number += 1
 
     @pyqtSlot(FloatSerial)
     def handle_serial(self, msg: FloatSerial) -> None:
