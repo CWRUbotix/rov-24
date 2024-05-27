@@ -1,10 +1,14 @@
 from collections.abc import MutableSequence
+from enum import IntEnum
+from threading import Thread
 
 import rclpy
 from rclpy.executors import MultiThreadedExecutor
 from rclpy.node import Node
+from rclpy.parameter import Parameter
 from rclpy.qos import qos_profile_sensor_data, qos_profile_system_default
 from sensor_msgs.msg import Joy
+from mavros_msgs.srv import CommandBool
 
 from rov_msgs.msg import (CameraControllerSwitch, Manip, PixhawkInstruction,
                           ValveManip)
@@ -38,10 +42,27 @@ R2PRESS_PERCENT = 5
 DPADHOR = 6
 DPADVERT = 7
 
+ARMING_SERVICE_TIMEOUT = 3.0
+ARM_MESSAGE = CommandBool.Request(value=True)
+DISARM_MESSAGE = CommandBool.Request(value=False)
+
+CONTROLLER_MODE_PARAM = "controller_mode"
+
+
+class ControllerMode(IntEnum):
+    ARM = 0
+    TOGGLE_CAMERAS = 1
+
 
 class ManualControlNode(Node):
     def __init__(self) -> None:
         super().__init__('manual_control_node')
+
+        self.declare_parameters(
+            namespace="",
+            parameters=[
+                ("controller_mode", Parameter.Type.INTEGER)
+            ])
 
         self.rc_pub = self.create_publisher(
             PixhawkInstruction,
@@ -70,12 +91,23 @@ class ManualControlNode(Node):
             qos_profile_system_default
         )
 
-        # Cameras
-        self.camera_toggle_publisher = self.create_publisher(
-            CameraControllerSwitch,
-            "camera_switch",
-            qos_profile_system_default
-        )
+        controller_mode = ControllerMode(self.get_parameter(CONTROLLER_MODE_PARAM)
+                                         .get_parameter_value().integer_value)
+
+        if controller_mode == ControllerMode.TOGGLE_CAMERAS:
+            # Control camera switching
+            self.misc_controls_callback = self.toggle_cameras
+            self.camera_toggle_publisher = self.create_publisher(
+                CameraControllerSwitch,
+                "camera_switch",
+                qos_profile_system_default
+            )
+        else:
+            self.misc_controls_callback = self.set_arming
+            # Control arming
+            self.arm_client = self.create_client(CommandBool, "mavros/cmd/arming")
+            Thread(target=self.connect_to_arming_service, daemon=True,
+                   name='connect_to_arming_service').start()
 
         self.manip_buttons: dict[int, ManipButton] = {
             X_BUTTON: ManipButton("left"),
@@ -90,7 +122,7 @@ class ManualControlNode(Node):
         self.joystick_to_pixhawk(msg)
         self.valve_manip_callback(msg)
         self.manip_callback(msg)
-        self.camera_toggle(msg)
+        self.misc_controls_callback(msg)
 
     def joystick_to_pixhawk(self, msg: Joy) -> None:
         axes: MutableSequence[float] = msg.axes
@@ -136,7 +168,7 @@ class ManualControlNode(Node):
             self.valve_manip.publish(ValveManip(active=False))
             self.valve_manip_state = False
 
-    def camera_toggle(self, msg: Joy) -> None:
+    def toggle_cameras(self, msg: Joy) -> None:
         """Cycles through connected cameras on pilot GUI using menu and pairing buttons."""
         buttons: MutableSequence[int] = msg.buttons
 
@@ -150,6 +182,20 @@ class ManualControlNode(Node):
         elif buttons[PAIRING_BUTTON] == UNPRESSED and self.seen_left_cam:
             self.seen_left_cam = False
             self.camera_toggle_publisher.publish(CameraControllerSwitch(toggle_right=False))
+
+    def set_arming(self, msg: Joy) -> None:
+        """Set the arming state using the menu and pairing buttons."""
+        buttons: MutableSequence[int] = msg.buttons
+
+        if buttons[MENU] == PRESSED:
+            self.arm_client.call_async(ARM_MESSAGE)
+        elif buttons[PAIRING_BUTTON] == PRESSED:
+            self.arm_client.call_async(DISARM_MESSAGE)
+
+    def connect_to_arming_service(self) -> None:
+        """Connect the arming client to a server in a separate thread."""
+        while not self.arm_client.wait_for_service(timeout_sec=ARMING_SERVICE_TIMEOUT):
+            self.get_logger().info('Service for controller arming unavailable, waiting again...')
 
 
 class ManipButton:
