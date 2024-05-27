@@ -22,9 +22,16 @@
 #define LIMIT_EMPTY 11  // Low when syringe is empty
 
 #define TEAM_NUM               25
-#define PRESSURE_READ_INTERVAL 200
 #define PACKET_SEND_INTERVAL   1000
 #define FLOAT_PKT_RX_TIMEOUT   900
+
+#ifdef DO_DEBUGGING
+#define PRESSURE_READ_INTERVAL 200
+#define PROFILE_SEGMENT        10000
+#else
+#define PRESSURE_READ_INTERVAL 5000
+#define PROFILE_SEGMENT        60000
+#endif
 
 // Schedule (all delays in ms)
 #define RELEASE_MAX  300000

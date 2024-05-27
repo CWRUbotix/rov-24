@@ -65,8 +65,8 @@
 
 #define RF95_FREQ 877.0
 
-// Define DO_DEBUGGING to enable some extra Serial.prints on the surface
-//  and some debug transmissions from the float
+// Define DO_DEBUGGING to enable some extra Serial.prints on the surface,
+//  some debug transmissions from the float, and faster profiling/measurement
 // #define DO_DEBUGGING
 
 /**
