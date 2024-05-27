@@ -65,6 +65,10 @@
 
 #define RF95_FREQ 877.0
 
+// Define DO_DEBUGGING to enable some extra Serial.prints on the surface
+//  and some debug transmissions from the float
+// #define DO_DEBUGGING
+
 /**
  * printf the arguments with a line break at the end to the provided serial port.
  *  i.e. printfln(&Serial, "Here's a float: %f", 123.45);

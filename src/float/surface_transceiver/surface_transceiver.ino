@@ -94,7 +94,9 @@ void loop() {
  * Print data from data packets (note we return false if data packets are successfully received).
  */
 bool receivePacket() {
-  // Serial.println("Attempting to receive");
+  #ifdef DO_DEBUGGING
+  Serial.println("Attempting to receive");
+  #endif  // DO_DEBUGGING
 
   if (!rf95.waitAvailableTimeout(SURFACE_PKT_RX_TIMEOUT)) {
     if (printRFStatus) {
@@ -139,15 +141,17 @@ bool receivePacket() {
     // This packet is probably a data packet
     uint8_t numDatapoints = static_cast<uint8_t>(len - (PKT_HEADER_LEN >> 2));
 
-    // serialPrintf(
-    //   "Received packet for team %d on profile %d half %d with length %d (%d datapoints): ",
-    //   byteBuffer[PKT_IDX_TEAM_NUM], byteBuffer[PKT_IDX_PROFILE_NUM],
-    //   byteBuffer[PKT_IDX_PROFILE_HALF], len, numDatapoints);
+    #ifdef DO_DEBUGGING
+    serialPrintf(
+      "Received packet for team %d on profile %d half %d with length %d (%d datapoints): ",
+      byteBuffer[PKT_IDX_TEAM_NUM], byteBuffer[PKT_IDX_PROFILE_NUM],
+      byteBuffer[PKT_IDX_PROFILE_HALF], len, numDatapoints);
 
-    // for (int i = 0; i < len; i++) {
-    //   serialPrintf("%d, ", byteBuffer[i]);
-    // }
-    // Serial.println();
+    for (int i = 0; i < len; i++) {
+      serialPrintf("%d, ", byteBuffer[i]);
+    }
+    Serial.println();
+    #endif  // DO_DEBUGGING
 
     serialPrintf(
       "ROS:%d,%d,%d:", byteBuffer[PKT_IDX_TEAM_NUM], byteBuffer[PKT_IDX_PROFILE_NUM],

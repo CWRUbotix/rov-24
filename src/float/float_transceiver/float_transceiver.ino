@@ -192,8 +192,14 @@ void loop() {
     }
   }
 
-  // Transmit the pressure buffer if we've come up from a profile
-  bool isSurfacedToTransmit = stageIs(StageType::WaitTransmitting) || (SEND_DEBUG_PACKETS && stageIs(StageType::WaitDeploying));
+  #ifdef DO_DEBUGGING
+  // Transmit the pressure buffer whenever we're surfaced
+  bool isSurfacedToTransmit = isSurfaced();
+  #else
+  // Transmit the pressure buffer if we're surfaced after completing a profile
+  bool isSurfacedToTransmit = stageIs(StageType::WaitTransmitting);
+  #endif  // DO_DEBUGGING
+
   if (isSurfacedToTransmit && millis() >= previousPacketSendTime + PACKET_SEND_INTERVAL) {
     transmitPressurePacket();
     previousPacketSendTime = millis();
