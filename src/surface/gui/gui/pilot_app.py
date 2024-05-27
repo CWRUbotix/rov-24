@@ -67,17 +67,20 @@ class PilotApp(App):
                 "Bottom Camera",
                 1280, 720
             )
-            # depth_cam_description = CameraDescription(
-            #     depth_cam_type,
-            #     DEPTH_CAM_TOPIC,
-            #     "Depth Cam",
-            #     640, 360
-            # )
+            depth_cam_description = CameraDescription(
+                depth_cam_type,
+                DEPTH_CAM_TOPIC,
+                "Depth Cam",
+                640, 360
+            )
 
             main_layout.addWidget(VideoWidget(front_cam_description),
                                   alignment=Qt.AlignmentFlag.AlignHCenter)
-            main_layout.addWidget(VideoWidget(bottom_cam_description),
-                                  alignment=Qt.AlignmentFlag.AlignHCenter)
+            main_layout.addWidget(
+                SwitchableVideoWidget([bottom_cam_description, depth_cam_description]),
+                alignment=Qt.AlignmentFlag.AlignHCenter
+            )
+
             main_layout.addLayout(make_bottom_bar())
 
             self.show_on_monitor(1)
@@ -97,13 +100,13 @@ class PilotApp(App):
             front_cam_description = CameraDescription(
                 front_cam_type,
                 FRONT_CAM_TOPIC,
-                "Front Camera",
+                "Forward Camera",
                 1280, 720
             )
             bottom_cam_description = CameraDescription(
                 bottom_cam_type,
                 BOTTOM_CAM_TOPIC,
-                "Bottom Camera",
+                "Down Camera",
                 1280, 720
             )
 
