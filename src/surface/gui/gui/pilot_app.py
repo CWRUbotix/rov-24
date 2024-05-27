@@ -13,7 +13,6 @@ from PyQt6.QtGui import QScreen
 
 FRONT_CAM_TOPIC = 'front_cam/image_raw'
 BOTTOM_CAM_TOPIC = 'bottom_cam/image_raw'
-DEPTH_CAM_TOPIC = 'depth_cam/image_raw'
 
 
 def make_bottom_bar() -> QHBoxLayout:
@@ -67,17 +66,11 @@ class PilotApp(App):
                 "Bottom Camera",
                 1280, 720
             )
-            depth_cam_description = CameraDescription(
-                depth_cam_type,
-                DEPTH_CAM_TOPIC,
-                "Depth Cam",
-                640, 360
-            )
 
             main_layout.addWidget(VideoWidget(front_cam_description),
                                   alignment=Qt.AlignmentFlag.AlignHCenter)
             main_layout.addWidget(
-                SwitchableVideoWidget([bottom_cam_description, depth_cam_description]),
+                VideoWidget(bottom_cam_description),
                 alignment=Qt.AlignmentFlag.AlignHCenter
             )
 
@@ -137,19 +130,13 @@ class PilotApp(App):
                 "Bottom Camera",
                 721, 541
             )
-            depth_cam_description = CameraDescription(
-                depth_cam_type,
-                DEPTH_CAM_TOPIC,
-                "Depth Cam",
-                640, 360
-            )
 
             video_layout = QHBoxLayout()
 
             video_layout.addWidget(VideoWidget(front_cam_description),
                                    alignment=Qt.AlignmentFlag.AlignHCenter)
             video_layout.addWidget(
-                SwitchableVideoWidget([bottom_cam_description, depth_cam_description]),
+                VideoWidget(bottom_cam_description),
                 alignment=Qt.AlignmentFlag.AlignHCenter
             )
 
