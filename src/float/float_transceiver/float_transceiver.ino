@@ -155,7 +155,7 @@ void loop() {
   }
 
   // Send tiny packet for judges while deploying
-  if (SCHEDULE[currentStage].type == StageType::WaitDeploying && millis() >= previousPressureReadTime + PRESSURE_READ_INTERVAL) {
+  if (stageIs(StageType::WaitDeploying) && millis() >= previousPressureReadTime + PRESSURE_READ_INTERVAL) {
     previousPressureReadTime = millis();
     pressureSensor.read();
     float pressure = pressureSensor.pressure();
@@ -192,9 +192,8 @@ void loop() {
     }
   }
 
-  // Transmit the pressure buffer if we're surfaced
   // Transmit the pressure buffer if we've come up from a profile
-  bool isSurfacedToTransmit = SCHEDULE[currentStage].type == StageType::WaitTransmitting || (SEND_DEBUG_PACKETS && SCHEDULE[currentStage].type == StageType::WaitDeploying);
+  bool isSurfacedToTransmit = stageIs(StageType::WaitTransmitting) || (SEND_DEBUG_PACKETS && stageIs(StageType::WaitDeploying));
   if (isSurfacedToTransmit && millis() >= previousPacketSendTime + PACKET_SEND_INTERVAL) {
     transmitPressurePacket();
     previousPacketSendTime = millis();
@@ -202,10 +201,8 @@ void loop() {
 
   // Go to next stage if we've timed out or reached another stage end condition
   bool stageTimedOut = millis() >= stageStartTime + SCHEDULE[currentStage].timeoutMillis;
-  bool suckingHitLimitSwitch =
-    SCHEDULE[currentStage].type == StageType::Suck && !digitalRead(LIMIT_FULL);
-  bool pumpingHitLimitSwitch =
-    SCHEDULE[currentStage].type == StageType::Pump && !digitalRead(LIMIT_EMPTY);
+  bool suckingHitLimitSwitch = stageIs(StageType::Suck) && !digitalRead(LIMIT_FULL);
+  bool pumpingHitLimitSwitch = stageIs(StageType::Pump) && !digitalRead(LIMIT_EMPTY);
   bool shouldSubmerge = isSurfaced() && submergeReceived;
 
   if (shouldSubmerge || stageTimedOut || suckingHitLimitSwitch || pumpingHitLimitSwitch) {
@@ -215,16 +212,18 @@ void loop() {
       SCHEDULE[currentStage].timeoutMillis, millis());
 
     // If we just finished transmitting on the surface, go to the next profile
-    if (SCHEDULE[currentStage].type == StageType::WaitTransmitting) {
+    if (stageIs(StageType::WaitTransmitting)) {
       packetIndex = PKT_HEADER_LEN;
       profileNum++;
       profileHalf = 0;
       clearPacketPayloads();
     }
 
+    // === MOVE TO NEXT STAGE ===
     stageStartTime = millis();
     currentStage++;
     stop();
+    // ==========================
 
     // If we signal a third profile, restart the schedule
     if (currentStage >= SCHEDULE_LENGTH) {
@@ -232,10 +231,10 @@ void loop() {
     }
 
     // Switch to sucking/pumping depending on the stage we're entering
-    if (SCHEDULE[currentStage].type == StageType::Suck) {
+    if (stageIs(StageType::Suck)) {
       suck();
     }
-    else if (SCHEDULE[currentStage].type == StageType::Pump) {
+    else if (stageIs(StageType::Pump)) {
       pump();
     }
   }
@@ -365,9 +364,13 @@ MotorState getMotorState() {
   }
 }
 
+bool stageIs(StageType type) {
+  return SCHEDULE[currentStage].type == type;
+}
+
 bool isSurfaced() {
-  return SCHEDULE[currentStage].type == StageType::WaitDeploying ||
-         SCHEDULE[currentStage].type == StageType::WaitTransmitting;
+  return stageIs(StageType::WaitDeploying) ||
+         stageIs(StageType::WaitTransmitting);
 }
 
 void clearPacketPayloads() {
