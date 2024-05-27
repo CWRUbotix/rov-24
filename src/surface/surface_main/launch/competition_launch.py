@@ -8,8 +8,8 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 
 def generate_launch_description() -> LaunchDescription:
 
-    surface_path: str = get_package_share_directory('surface_main')
-    gui_path: str = get_package_share_directory('gui')
+    surface_path = get_package_share_directory('surface_main')
+    gui_path = get_package_share_directory('gui')
 
     all_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([
