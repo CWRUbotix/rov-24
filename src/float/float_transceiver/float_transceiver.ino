@@ -13,38 +13,36 @@
 #include "rov_common.hpp"
 
 // H-bridge direction control pins
-#define MOTOR_PWM 6   // Leave 100% cycle for top speed
-#define PUMP_PIN  9   // Set high for pump (CW when facing down)
-#define SUCK_PIN  10  // Set high for suck (CCW when facing down)
+const uint8_t MOTOR_PWM = 6;  // Leave 100% cycle for top speed
+const uint8_t PUMP_PIN = 9;   // Set high for pump (CW when facing down)
+const uint8_t SUCK_PIN = 10;  // Set high for suck (CCW when facing down)
 
 // Limit switch pins
-#define LIMIT_FULL  12  // Low when syringe is full
-#define LIMIT_EMPTY 11  // Low when syringe is empty
+conts uint8_t LIMIT_FULL = 12;   // Low when syringe is full
+conts uint8_t LIMIT_EMPTY = 11;  // Low when syringe is empty
 
-#define TEAM_NUM               25
-#define PACKET_SEND_INTERVAL   1000
-#define FLOAT_PKT_RX_TIMEOUT   900
+const uint8_t TEAM_NUM = 25;
+const uint32_t PACKET_SEND_INTERVAL = 1000;
+const uint32_t FLOAT_PKT_RX_TIMEOUT = 900;
 
 #ifdef DO_DEBUGGING
-#define PRESSURE_READ_INTERVAL 200
-#define PROFILE_SEGMENT        10000
+const uint32_t PRESSURE_READ_INTERVAL = 200;
+const uint32_t PROFILE_SEGMENT = 10000;
 #else
-#define PRESSURE_READ_INTERVAL 5000
-#define PROFILE_SEGMENT        60000
+const uint32_t PRESSURE_READ_INTERVAL = 5000;
+const uint32_t PROFILE_SEGMENT = 60000;
 #endif
 
 // Schedule (all delays in ms)
-#define RELEASE_MAX  300000
-#define SUCK_MAX     10000
-#define DESCEND_TIME 10000
-#define PUMP_MAX     10000
-#define ASCEND_TIME  10000
-#define TX_MAX       60000
-#define ONE_HOUR     360000
+const uint32_t RELEASE_MAX = 300000;
+const uint32_t SUCK_MAX = PRESSURE_READ_INTERVAL;
+const uint32_t DESCEND_TIME = PRESSURE_READ_INTERVAL;
+const uint32_t PUMP_MAX = PRESSURE_READ_INTERVAL;
+const uint32_t ASCEND_TIME = PRESSURE_READ_INTERVAL;
+const uint32_t TX_MAX = 60000;
+const uint32_t ONE_HOUR = 360000;
 
-#define SCHEDULE_LENGTH 11
-
-#define SEND_DEBUG_PACKETS false
+const uint8_t SCHEDULE_LENGTH = 11;
 
 enum class StageType { WaitDeploying, WaitTransmitting, WaitProfiling, Suck, Pump };
 enum class OverrideState { NoOverride, Stop, Suck, Pump };

@@ -11,10 +11,10 @@
 
 #include "rov_common.hpp"
 
-#define COMMAND_SPAM_TIMES     5
-#define COMMAND_SPAM_DELAY     500
-#define SURFACE_PKT_RX_TIMEOUT 1000
-#define MAX_RESPONSE_LEN       RH_RF95_MAX_MESSAGE_LEN >> 1  // Max length for ACKs/NACKs
+const uint8_t COMMAND_SPAM_TIMES = 5;
+const uint32_t COMMAND_SPAM_DELAY = 500;
+const uint32_t SURFACE_PKT_RX_TIMEOUT = 1000;
+const uint8_t MAX_RESPONSE_LEN = RH_RF95_MAX_MESSAGE_LEN >> 1;  // Max length for ACKs/NACKs
 
 bool printRFStatus = true;
 
