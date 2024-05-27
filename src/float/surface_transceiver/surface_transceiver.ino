@@ -16,6 +16,8 @@
 #define SURFACE_PKT_RX_TIMEOUT 1000
 #define MAX_RESPONSE_LEN       RH_RF95_MAX_MESSAGE_LEN >> 1  // Max length for ACKs/NACKs
 
+bool printRFStatus = true;
+
 // Singleton instance of the radio driver
 RH_RF95 rf95(RFM95_CS, RFM95_INT);
 
@@ -63,11 +65,26 @@ void loop() {
   if (Serial.available() >= 1) {
     Serial.println("Getting serial command...");
     String command = Serial.readString();
-    if (command.charAt(command.length() - 1) == '\n') {
-      command.remove(command.length() - 1);
-    }
 
-    sendCommand(command);
+    if (command.startsWith("submerge")) {
+      printRFStatus = false;
+      sendCommand("submerge");
+    }
+    else if (command.startsWith("suck")) {
+      sendCommand("suck");
+    }
+    else if (command.startsWith("pump")) {
+      sendCommand("pump");
+    }
+    else if (command.startsWith("stop")) {
+      sendCommand("stop");
+    }
+    else if (command.startsWith("return")) {
+      sendCommand("return");
+    }
+    else {
+      Serial.println("Invalid command; not sending");
+    }
   }
 }
 
@@ -77,14 +94,18 @@ void loop() {
  * Print data from data packets (note we return false if data packets are successfully received).
  */
 bool receivePacket() {
-  Serial.println("Attempting to receive");
+  // Serial.println("Attempting to receive");
 
   if (!rf95.waitAvailableTimeout(SURFACE_PKT_RX_TIMEOUT)) {
-    Serial.println("RF95 not available");
+    if (printRFStatus) {
+      Serial.println("RF95 not available");
+    }
     return false;
   }
 
-  Serial.println("RF95 available");
+  if (printRFStatus) {
+    Serial.println("RF95 available");
+  }
   byte byteBuffer[RH_RF95_MAX_MESSAGE_LEN];
   byte len = sizeof(byteBuffer);
 
@@ -99,30 +120,34 @@ bool receivePacket() {
   }
 
   if (len < MAX_RESPONSE_LEN) {
-    // This packet is probably an ACK/NACK
+    // This packet is probably an ACK/NACK, but could be a simple packet for judges
+    byteBuffer[len] = '\0';
     serialPrintf(
-      "Received response packet with length %d, string '%s', and values: ", len,
+      "Got pkt w/len %d, str '%s' & vals: ", len,
       reinterpret_cast<char*>(byteBuffer));
     for (int i = 0; i < len; i++) {
       serialPrintf("%d, ", byteBuffer[i]);
     }
     Serial.println();
 
-    return true;
+    bool isACK = (strncmp(byteBuffer, "ACK", 3) == 0);
+    bool isNACK = (strncmp(byteBuffer, "NACK", 4) == 0);
+
+    return isACK || isNACK;
   }
   else {
     // This packet is probably a data packet
-    uint8_t numDatapoints = (uint8_t)(len - (PKT_HEADER_LEN >> 2));
+    uint8_t numDatapoints = static_cast<uint8_t>(len - (PKT_HEADER_LEN >> 2));
 
-    serialPrintf(
-      "Received packet for team %d on profile %d half %d with length %d (%d datapoints): ",
-      byteBuffer[PKT_IDX_TEAM_NUM], byteBuffer[PKT_IDX_PROFILE_NUM],
-      byteBuffer[PKT_IDX_PROFILE_HALF], len, numDatapoints);
+    // serialPrintf(
+    //   "Received packet for team %d on profile %d half %d with length %d (%d datapoints): ",
+    //   byteBuffer[PKT_IDX_TEAM_NUM], byteBuffer[PKT_IDX_PROFILE_NUM],
+    //   byteBuffer[PKT_IDX_PROFILE_HALF], len, numDatapoints);
 
-    for (int i = 0; i < len; i++) {
-      serialPrintf("%d, ", byteBuffer[i]);
-    }
-    Serial.println();
+    // for (int i = 0; i < len; i++) {
+    //   serialPrintf("%d, ", byteBuffer[i]);
+    // }
+    // Serial.println();
 
     serialPrintf(
       "ROS:%d,%d,%d:", byteBuffer[PKT_IDX_TEAM_NUM], byteBuffer[PKT_IDX_PROFILE_NUM],
@@ -153,11 +178,11 @@ void sendCommand(String command) {
   for (int i = 0; i < COMMAND_SPAM_TIMES; i++) {
     rf95.send(commandBytes, command.length() + 1);
     rf95.waitPacketSent();
-    bool receivedACK = receivePacket();
-
+    
     serialPrintf(
       "'%s' (len=%d) command sent! Iteration: %d\n", commandBytes, command.length() + 1, i);
-
+    
+    bool receivedACK = receivePacket();
     if (receivedACK) {
       break;
     }
