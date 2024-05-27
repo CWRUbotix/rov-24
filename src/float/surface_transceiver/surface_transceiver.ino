@@ -94,9 +94,9 @@ void loop() {
  * Print data from data packets (note we return false if data packets are successfully received).
  */
 bool receivePacket() {
-  #ifdef DO_DEBUGGING
+#ifdef DO_DEBUGGING
   Serial.println("Attempting to receive");
-  #endif  // DO_DEBUGGING
+#endif  // DO_DEBUGGING
 
   if (!rf95.waitAvailableTimeout(SURFACE_PKT_RX_TIMEOUT)) {
     if (printRFStatus) {
@@ -124,9 +124,7 @@ bool receivePacket() {
   if (len < MAX_RESPONSE_LEN) {
     // This packet is probably an ACK/NACK, but could be a simple packet for judges
     byteBuffer[len] = '\0';
-    serialPrintf(
-      "Got pkt w/len %d, str '%s' & vals: ", len,
-      reinterpret_cast<char*>(byteBuffer));
+    serialPrintf("Got pkt w/len %d, str '%s' & vals: ", len, reinterpret_cast<char*>(byteBuffer));
     for (int i = 0; i < len; i++) {
       serialPrintf("%d, ", byteBuffer[i]);
     }
@@ -141,7 +139,7 @@ bool receivePacket() {
     // This packet is probably a data packet
     uint8_t numDatapoints = static_cast<uint8_t>(len - (PKT_HEADER_LEN >> 2));
 
-    #ifdef DO_DEBUGGING
+#ifdef DO_DEBUGGING
     serialPrintf(
       "Received packet for team %d on profile %d half %d with length %d (%d datapoints): ",
       byteBuffer[PKT_IDX_TEAM_NUM], byteBuffer[PKT_IDX_PROFILE_NUM],
@@ -151,7 +149,7 @@ bool receivePacket() {
       serialPrintf("%d, ", byteBuffer[i]);
     }
     Serial.println();
-    #endif  // DO_DEBUGGING
+#endif  // DO_DEBUGGING
 
     serialPrintf(
       "ROS:%d,%d,%d:", byteBuffer[PKT_IDX_TEAM_NUM], byteBuffer[PKT_IDX_PROFILE_NUM],
@@ -182,10 +180,10 @@ void sendCommand(String command) {
   for (int i = 0; i < COMMAND_SPAM_TIMES; i++) {
     rf95.send(commandBytes, command.length() + 1);
     rf95.waitPacketSent();
-    
+
     serialPrintf(
       "'%s' (len=%d) command sent! Iteration: %d\n", commandBytes, command.length() + 1, i);
-    
+
     bool receivedACK = receivePacket();
     if (receivedACK) {
       break;

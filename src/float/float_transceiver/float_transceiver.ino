@@ -55,7 +55,7 @@ Stage SCHEDULE[SCHEDULE_LENGTH] = {
   // Wait for max <time> or until surface signal
   {StageType::WaitDeploying,    RELEASE_MAX },
 
-  // Profile 1
+ // Profile 1
   {StageType::Suck,             SUCK_MAX    },
   {StageType::WaitProfiling,    DESCEND_TIME},
   {StageType::Pump,             PUMP_MAX    },
@@ -63,7 +63,7 @@ Stage SCHEDULE[SCHEDULE_LENGTH] = {
 
   {StageType::WaitTransmitting, TX_MAX      },
 
-  // Profile 2
+ // Profile 2
   {StageType::Suck,             SUCK_MAX    },
   {StageType::WaitProfiling,    DESCEND_TIME},
   {StageType::Pump,             PUMP_MAX    },
@@ -155,7 +155,9 @@ void loop() {
   }
 
   // Send tiny packet for judges while deploying
-  if (stageIs(StageType::WaitDeploying) && millis() >= previousPressureReadTime + PRESSURE_READ_INTERVAL) {
+  if (
+    stageIs(StageType::WaitDeploying) &&
+    millis() >= previousPressureReadTime + PRESSURE_READ_INTERVAL) {
     previousPressureReadTime = millis();
     pressureSensor.read();
     float pressure = pressureSensor.pressure();
@@ -164,7 +166,9 @@ void loop() {
     int intComponent = pressure;
     int fracComponent = trunc((pressure - intComponent) * 10000);
     char judgePacketBuffer[25];
-    snprintf(judgePacketBuffer, 25, "%d,%lu,%d.%04d\0", TEAM_NUM, previousPressureReadTime, intComponent, fracComponent);
+    snprintf(
+      judgePacketBuffer, 25, "%d,%lu,%d.%04d\0", TEAM_NUM, previousPressureReadTime, intComponent,
+      fracComponent);
     Serial.println(judgePacketBuffer);
 
     rf95.send(judgePacketBuffer, strlen(judgePacketBuffer));
@@ -192,13 +196,13 @@ void loop() {
     }
   }
 
-  #ifdef DO_DEBUGGING
+#ifdef DO_DEBUGGING
   // Transmit the pressure buffer whenever we're surfaced
   bool isSurfacedToTransmit = isSurfaced();
-  #else
+#else
   // Transmit the pressure buffer if we're surfaced after completing a profile
   bool isSurfacedToTransmit = stageIs(StageType::WaitTransmitting);
-  #endif  // DO_DEBUGGING
+#endif  // DO_DEBUGGING
 
   if (isSurfacedToTransmit && millis() >= previousPacketSendTime + PACKET_SEND_INTERVAL) {
     transmitPressurePacket();
@@ -370,13 +374,10 @@ MotorState getMotorState() {
   }
 }
 
-bool stageIs(StageType type) {
-  return SCHEDULE[currentStage].type == type;
-}
+bool stageIs(StageType type) { return SCHEDULE[currentStage].type == type; }
 
 bool isSurfaced() {
-  return stageIs(StageType::WaitDeploying) ||
-         stageIs(StageType::WaitTransmitting);
+  return stageIs(StageType::WaitDeploying) || stageIs(StageType::WaitTransmitting);
 }
 
 void clearPacketPayloads() {
