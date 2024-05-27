@@ -116,10 +116,6 @@ class FloatComm(QWidget):
         if msg.profile_number == self.plot_number:
             plot = self.plot1
         elif msg.profile_number == self.plot_number:
-            self.time_data = []
-            self.depth_data = []
-            self.received_first = False
-            self.received_second = False
             plot = self.plot2
         else:
             return
@@ -135,6 +131,10 @@ class FloatComm(QWidget):
 
         if self.received_first and self.received_second:
             plot.plot(self.time_data, self.depth_data)
+            self.time_data = []
+            self.depth_data = []
+            self.received_first = False
+            self.received_second = False
             self.plot_number += 1
 
     @pyqtSlot(FloatSerial)
