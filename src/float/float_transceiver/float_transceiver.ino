@@ -154,6 +154,23 @@ void loop() {
     return;
   }
 
+  // Send tiny packet for judges while deploying
+  if (SCHEDULE[currentStage].type == StageType::WaitDeploying && millis() >= previousPressureReadTime + PRESSURE_READ_INTERVAL) {
+    previousPressureReadTime = millis();
+    pressureSensor.read();
+    float pressure = pressureSensor.pressure();
+    serialPrintf("Reading pressure at surface: %f\n", pressure);
+
+    int intComponent = pressure;
+    int fracComponent = trunc((pressure - intComponent) * 10000);
+    char judgePacketBuffer[25];
+    snprintf(judgePacketBuffer, 25, "%d,%lu,%d.%04d\0", TEAM_NUM, previousPressureReadTime, intComponent, fracComponent);
+    Serial.println(judgePacketBuffer);
+
+    rf95.send(judgePacketBuffer, strlen(judgePacketBuffer));
+    rf95.waitPacketSent();
+  }
+
   // Read the pressure if we're profiling
   if (
     !isSurfaced() && millis() >= previousPressureReadTime + PRESSURE_READ_INTERVAL &&
