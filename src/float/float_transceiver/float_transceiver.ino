@@ -21,7 +21,7 @@
 #define LIMIT_FULL  12  // Low when syringe is full
 #define LIMIT_EMPTY 11  // Low when syringe is empty
 
-#define TEAM_NUM               11
+#define TEAM_NUM               25
 #define PRESSURE_READ_INTERVAL 200
 #define PACKET_SEND_INTERVAL   1000
 #define FLOAT_PKT_RX_TIMEOUT   900
@@ -36,6 +36,8 @@
 #define ONE_HOUR     360000
 
 #define SCHEDULE_LENGTH 11
+
+#define SEND_DEBUG_PACKETS false
 
 enum class StageType { WaitDeploying, WaitTransmitting, WaitProfiling, Suck, Pump };
 enum class OverrideState { NoOverride, Stop, Suck, Pump };
@@ -53,7 +55,7 @@ Stage SCHEDULE[SCHEDULE_LENGTH] = {
   // Wait for max <time> or until surface signal
   {StageType::WaitDeploying,    RELEASE_MAX },
 
- // Profile 1
+  // Profile 1
   {StageType::Suck,             SUCK_MAX    },
   {StageType::WaitProfiling,    DESCEND_TIME},
   {StageType::Pump,             PUMP_MAX    },
@@ -61,7 +63,7 @@ Stage SCHEDULE[SCHEDULE_LENGTH] = {
 
   {StageType::WaitTransmitting, TX_MAX      },
 
- // Profile 2
+  // Profile 2
   {StageType::Suck,             SUCK_MAX    },
   {StageType::WaitProfiling,    DESCEND_TIME},
   {StageType::Pump,             PUMP_MAX    },
@@ -174,7 +176,9 @@ void loop() {
   }
 
   // Transmit the pressure buffer if we're surfaced
-  if (isSurfaced() && millis() >= previousPacketSendTime + PACKET_SEND_INTERVAL) {
+  // Transmit the pressure buffer if we've come up from a profile
+  bool isSurfacedToTransmit = SCHEDULE[currentStage].type == StageType::WaitTransmitting || (SEND_DEBUG_PACKETS && SCHEDULE[currentStage].type == StageType::WaitDeploying);
+  if (isSurfacedToTransmit && millis() >= previousPacketSendTime + PACKET_SEND_INTERVAL) {
     transmitPressurePacket();
     previousPacketSendTime = millis();
   }
