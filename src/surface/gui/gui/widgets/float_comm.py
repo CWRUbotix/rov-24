@@ -117,16 +117,16 @@ class FloatComm(QWidget):
         elif msg.profile_number not in (0, 1):
             return
 
-        if msg.profile_half == 0 and not self.received_first:
+        if msg.profile_half == 0 and not self.received_first_half:
             self.time_data = time_data + self.time_data
             self.depth_data = depth_data + self.depth_data
-            self.received_first = True
-        elif msg.profile_half == 1 and not self.received_second:
+            self.received_first_half = True
+        elif msg.profile_half == 1 and not self.received_second_half:
             self.time_data = self.time_data + time_data
             self.depth_data = self.depth_data + depth_data
-            self.received_second = True
+            self.received_second_half = True
 
-        if self.received_first and self.received_second:
+        if self.received_first_half and self.received_second_half:
             self.plots[msg.profile_number].plot(self.time_data, self.depth_data)
             self.time_data = []
             self.depth_data = []
