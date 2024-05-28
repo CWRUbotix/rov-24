@@ -86,8 +86,8 @@ class FloatComm(QWidget):
         left_side_layout.addWidget(self.console)
 
         layout.addLayout(left_side_layout)
-        layout.addWidget(self.plot1)
-        layout.addWidget(self.plot2)
+        for plot in self.plots:
+            layout.addWidget(plot)
 
         self.time_data: list[float] = []
         self.depth_data: list[float] = []
