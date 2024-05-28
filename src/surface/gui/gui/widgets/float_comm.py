@@ -94,7 +94,7 @@ class FloatComm(QWidget):
         self.depth_data: list[float] = []
         self.received_first = False
         self.received_second = False
-        self.plot_number = 0
+        self.completed_profile_one = False
 
     @pyqtSlot(FloatData)
     def handle_data(self, msg: FloatData) -> None:
@@ -113,9 +113,11 @@ class FloatComm(QWidget):
         time_data = list(msg.time_data)
         depth_data = list(msg.depth_data)
 
-        if msg.profile_number == self.plot_number:
+        if msg.profile_number == 0:
             plot = self.plot1
-        elif msg.profile_number == self.plot_number:
+        elif msg.profile_number == 0 and self.completed_profile_one:
+            return
+        elif msg.profile_number == 1:
             plot = self.plot2
         else:
             return
@@ -135,7 +137,7 @@ class FloatComm(QWidget):
             self.depth_data = []
             self.received_first = False
             self.received_second = False
-            self.plot_number += 1
+            self.completed_profile_one = True
 
     @pyqtSlot(FloatSerial)
     def handle_serial(self, msg: FloatSerial) -> None:
