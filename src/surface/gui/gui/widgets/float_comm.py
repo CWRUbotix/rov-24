@@ -80,8 +80,7 @@ class FloatComm(QWidget):
         font.setPointSize(11)
         self.console.setFont(font)
 
-        self.plot1 = PlotWidget()
-        self.plot2 = PlotWidget()
+        self.plots = [PlotWidget(), PlotWidget()]
 
         left_side_layout.addLayout(info_and_buttons)
         left_side_layout.addWidget(self.console)
