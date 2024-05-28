@@ -3,7 +3,7 @@ from gui.widgets.arm import Arm
 from gui.widgets.timer import TimerDisplay
 from gui.widgets.flood_warning import FloodWarning
 from gui.widgets.video_widget import (CameraDescription, CameraType,
-                                      SwitchableVideoWidget, VideoWidget)
+                                      VideoWidget)
 from gui.widgets.livestream_header import LivestreamHeader
 
 from PyQt6.QtCore import Qt
@@ -45,11 +45,9 @@ class PilotApp(App):
         if simulation_param.value:
             front_cam_type = CameraType.SIMULATION
             bottom_cam_type = CameraType.SIMULATION
-            depth_cam_type = CameraType.SIMULATION
         else:
             front_cam_type = CameraType.ETHERNET
             bottom_cam_type = CameraType.ETHERNET
-            depth_cam_type = CameraType.DEPTH
 
         if gui_param.value == 'pilot':
             self.setWindowTitle('Pilot GUI - CWRUbotix ROV 2024')
