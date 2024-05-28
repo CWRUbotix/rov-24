@@ -128,7 +128,7 @@ class FloatComm(QWidget):
             self.received_second = True
 
         if self.received_first and self.received_second:
-            plot.plot(self.time_data, self.depth_data)
+            self.plots[msg.profile_number].plot(self.time_data, self.depth_data)
             self.time_data = []
             self.depth_data = []
             self.received_first_half = False
