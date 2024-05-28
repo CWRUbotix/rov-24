@@ -91,8 +91,8 @@ class FloatComm(QWidget):
 
         self.time_data: list[float] = []
         self.depth_data: list[float] = []
-        self.received_first = False
-        self.received_second = False
+        self.received_first_half = False
+        self.received_second_half = False
         self.completed_profile_one = False
 
     @pyqtSlot(FloatData)
