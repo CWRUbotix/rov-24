@@ -58,11 +58,7 @@ class ManualControlNode(Node):
     def __init__(self) -> None:
         super().__init__('manual_control_node')
 
-        self.declare_parameters(
-            namespace="",
-            parameters=[
-                ("controller_mode", Parameter.Type.INTEGER)
-            ])
+        mode_param = self.declare_parameter(CONTROLLER_MODE_PARAM, Parameter.Type.INTEGER)
 
         self.rc_pub = self.create_publisher(
             PixhawkInstruction,
@@ -91,8 +87,7 @@ class ManualControlNode(Node):
             qos_profile_system_default
         )
 
-        controller_mode = ControllerMode(self.get_parameter(CONTROLLER_MODE_PARAM)
-                                         .get_parameter_value().integer_value)
+        controller_mode = ControllerMode(mode_param.get_parameter_value().integer_value)
 
         if controller_mode == ControllerMode.TOGGLE_CAMERAS:
             # Control camera switching
@@ -106,8 +101,6 @@ class ManualControlNode(Node):
             self.misc_controls_callback = self.set_arming
             # Control arming
             self.arm_client = self.create_client(CommandBool, "mavros/cmd/arming")
-            Thread(target=self.connect_to_arming_service, daemon=True,
-                   name='connect_to_arming_service').start()
 
         self.manip_buttons: dict[int, ManipButton] = {
             X_BUTTON: ManipButton("left"),
@@ -191,11 +184,6 @@ class ManualControlNode(Node):
             self.arm_client.call_async(ARM_MESSAGE)
         elif buttons[PAIRING_BUTTON] == PRESSED:
             self.arm_client.call_async(DISARM_MESSAGE)
-
-    def connect_to_arming_service(self) -> None:
-        """Connect the arming client to a server in a separate thread."""
-        while not self.arm_client.wait_for_service(timeout_sec=ARMING_SERVICE_TIMEOUT):
-            self.get_logger().info('Service for controller arming unavailable, waiting again...')
 
 
 class ManipButton:
