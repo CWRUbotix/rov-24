@@ -1,6 +1,5 @@
 from collections.abc import MutableSequence
 from enum import IntEnum
-from threading import Thread
 
 import rclpy
 from rclpy.executors import MultiThreadedExecutor
