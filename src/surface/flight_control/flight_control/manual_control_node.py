@@ -86,7 +86,7 @@ class ManualControlNode(Node):
             qos_profile_system_default
         )
 
-        controller_mode = ControllerMode(mode_param.get_parameter_value().integer_value)
+        controller_mode = ControllerMode(mode_param.value)
 
         if controller_mode == ControllerMode.TOGGLE_CAMERAS:
             # Control camera switching
