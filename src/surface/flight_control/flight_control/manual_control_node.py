@@ -57,7 +57,7 @@ class ManualControlNode(Node):
     def __init__(self) -> None:
         super().__init__('manual_control_node')
 
-        mode_param = self.declare_parameter(CONTROLLER_MODE_PARAM, Parameter.Type.INTEGER)
+        mode_param = self.declare_parameter(CONTROLLER_MODE_PARAM, value=ControllerMode.ARM)
 
         self.rc_pub = self.create_publisher(
             PixhawkInstruction,
