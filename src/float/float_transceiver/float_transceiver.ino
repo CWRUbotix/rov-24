@@ -13,29 +13,36 @@
 #include "rov_common.hpp"
 
 // H-bridge direction control pins
-#define MOTOR_PWM 6   // Leave 100% cycle for top speed
-#define PUMP_PIN  9   // Set high for pump (CW when facing down)
-#define SUCK_PIN  10  // Set high for suck (CCW when facing down)
+const uint8_t MOTOR_PWM = 6;  // Leave 100% cycle for top speed
+const uint8_t PUMP_PIN = 9;   // Set high for pump (CW when facing down)
+const uint8_t SUCK_PIN = 10;  // Set high for suck (CCW when facing down)
 
 // Limit switch pins
-#define LIMIT_FULL  12  // Low when syringe is full
-#define LIMIT_EMPTY 11  // Low when syringe is empty
+const uint8_t LIMIT_FULL = 12;   // Low when syringe is full
+const uint8_t LIMIT_EMPTY = 11;  // Low when syringe is empty
 
-#define TEAM_NUM               11
-#define PRESSURE_READ_INTERVAL 200
-#define PACKET_SEND_INTERVAL   1000
-#define FLOAT_PKT_RX_TIMEOUT   900
+const uint8_t TEAM_NUM = 25;
+const uint32_t PACKET_SEND_INTERVAL = 1000;
+const uint32_t FLOAT_PKT_RX_TIMEOUT = 900;
+
+#ifdef DO_DEBUGGING
+const uint32_t PRESSURE_READ_INTERVAL = 200;
+const uint32_t PROFILE_SEGMENT = 10000;
+#else
+const uint32_t PRESSURE_READ_INTERVAL = 5000;
+const uint32_t PROFILE_SEGMENT = 60000;
+#endif
 
 // Schedule (all delays in ms)
-#define RELEASE_MAX  300000
-#define SUCK_MAX     10000
-#define DESCEND_TIME 10000
-#define PUMP_MAX     10000
-#define ASCEND_TIME  10000
-#define TX_MAX       60000
-#define ONE_HOUR     360000
+const uint32_t RELEASE_MAX = 300000;
+const uint32_t SUCK_MAX = PRESSURE_READ_INTERVAL;
+const uint32_t DESCEND_TIME = PRESSURE_READ_INTERVAL;
+const uint32_t PUMP_MAX = PRESSURE_READ_INTERVAL;
+const uint32_t ASCEND_TIME = PRESSURE_READ_INTERVAL;
+const uint32_t TX_MAX = 60000;
+const uint32_t ONE_HOUR = 360000;
 
-#define SCHEDULE_LENGTH 11
+const uint8_t SCHEDULE_LENGTH = 11;
 
 enum class StageType { WaitDeploying, WaitTransmitting, WaitProfiling, Suck, Pump };
 enum class OverrideState { NoOverride, Stop, Suck, Pump };
@@ -152,6 +159,27 @@ void loop() {
     return;
   }
 
+  // Send tiny packet for judges while deploying
+  if (
+    stageIs(StageType::WaitDeploying) &&
+    millis() >= previousPressureReadTime + PRESSURE_READ_INTERVAL) {
+    previousPressureReadTime = millis();
+    pressureSensor.read();
+    float pressure = pressureSensor.pressure();
+    serialPrintf("Reading pressure at surface: %f\n", pressure);
+
+    int intComponent = pressure;
+    int fracComponent = trunc((pressure - intComponent) * 10000);
+    char judgePacketBuffer[25];
+    snprintf(
+      judgePacketBuffer, 25, "%d,%lu,%d.%04d\0", TEAM_NUM, previousPressureReadTime, intComponent,
+      fracComponent);
+    Serial.println(judgePacketBuffer);
+
+    rf95.send(judgePacketBuffer, strlen(judgePacketBuffer));
+    rf95.waitPacketSent();
+  }
+
   // Read the pressure if we're profiling
   if (
     !isSurfaced() && millis() >= previousPressureReadTime + PRESSURE_READ_INTERVAL &&
@@ -173,18 +201,23 @@ void loop() {
     }
   }
 
-  // Transmit the pressure buffer if we're surfaced
-  if (isSurfaced() && millis() >= previousPacketSendTime + PACKET_SEND_INTERVAL) {
+#ifdef DO_DEBUGGING
+  // Transmit the pressure buffer whenever we're surfaced
+  bool isSurfacedToTransmit = isSurfaced();
+#else
+  // Transmit the pressure buffer if we're surfaced after completing a profile
+  bool isSurfacedToTransmit = stageIs(StageType::WaitTransmitting);
+#endif  // DO_DEBUGGING
+
+  if (isSurfacedToTransmit && millis() >= previousPacketSendTime + PACKET_SEND_INTERVAL) {
     transmitPressurePacket();
     previousPacketSendTime = millis();
   }
 
   // Go to next stage if we've timed out or reached another stage end condition
   bool stageTimedOut = millis() >= stageStartTime + SCHEDULE[currentStage].timeoutMillis;
-  bool suckingHitLimitSwitch =
-    SCHEDULE[currentStage].type == StageType::Suck && !digitalRead(LIMIT_FULL);
-  bool pumpingHitLimitSwitch =
-    SCHEDULE[currentStage].type == StageType::Pump && !digitalRead(LIMIT_EMPTY);
+  bool suckingHitLimitSwitch = stageIs(StageType::Suck) && !digitalRead(LIMIT_FULL);
+  bool pumpingHitLimitSwitch = stageIs(StageType::Pump) && !digitalRead(LIMIT_EMPTY);
   bool shouldSubmerge = isSurfaced() && submergeReceived;
 
   if (shouldSubmerge || stageTimedOut || suckingHitLimitSwitch || pumpingHitLimitSwitch) {
@@ -194,16 +227,18 @@ void loop() {
       SCHEDULE[currentStage].timeoutMillis, millis());
 
     // If we just finished transmitting on the surface, go to the next profile
-    if (SCHEDULE[currentStage].type == StageType::WaitTransmitting) {
+    if (stageIs(StageType::WaitTransmitting)) {
       packetIndex = PKT_HEADER_LEN;
       profileNum++;
       profileHalf = 0;
       clearPacketPayloads();
     }
 
+    // === MOVE TO NEXT STAGE ===
     stageStartTime = millis();
     currentStage++;
     stop();
+    // ==========================
 
     // If we signal a third profile, restart the schedule
     if (currentStage >= SCHEDULE_LENGTH) {
@@ -211,10 +246,10 @@ void loop() {
     }
 
     // Switch to sucking/pumping depending on the stage we're entering
-    if (SCHEDULE[currentStage].type == StageType::Suck) {
+    if (stageIs(StageType::Suck)) {
       suck();
     }
-    else if (SCHEDULE[currentStage].type == StageType::Pump) {
+    else if (stageIs(StageType::Pump)) {
       pump();
     }
   }
@@ -344,9 +379,10 @@ MotorState getMotorState() {
   }
 }
 
+bool stageIs(StageType type) { return SCHEDULE[currentStage].type == type; }
+
 bool isSurfaced() {
-  return SCHEDULE[currentStage].type == StageType::WaitDeploying ||
-         SCHEDULE[currentStage].type == StageType::WaitTransmitting;
+  return stageIs(StageType::WaitDeploying) || stageIs(StageType::WaitTransmitting);
 }
 
 void clearPacketPayloads() {
