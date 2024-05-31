@@ -61,7 +61,7 @@ const uint8_t PKT_IDX_TEAM_NUM = 0;
 const uint8_t PKT_IDX_PROFILE_NUM = 1;
 const uint8_t PKT_IDX_PROFILE_HALF = 2;
 const uint8_t PKT_HEADER_LEN = 3;
-const uint8_t PKT_PAYLOAD_LEN = PACKET_LEN - PACKET_PREAMBLE_LEN;
+const uint8_t PKT_PAYLOAD_LEN = PKT_LEN - PKT_HEADER_LEN;
 
 const float RF95_FREQ = 877.0;
 

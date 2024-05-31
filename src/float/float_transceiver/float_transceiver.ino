@@ -18,8 +18,8 @@ const uint8_t PUMP_PIN = 9;   // Set high for pump (CW when facing down)
 const uint8_t SUCK_PIN = 10;  // Set high for suck (CCW when facing down)
 
 // Limit switch pins
-conts uint8_t LIMIT_FULL = 12;   // Low when syringe is full
-conts uint8_t LIMIT_EMPTY = 11;  // Low when syringe is empty
+const uint8_t LIMIT_FULL = 12;   // Low when syringe is full
+const uint8_t LIMIT_EMPTY = 11;  // Low when syringe is empty
 
 const uint8_t TEAM_NUM = 25;
 const uint32_t PACKET_SEND_INTERVAL = 1000;
