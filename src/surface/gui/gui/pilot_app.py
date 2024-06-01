@@ -3,7 +3,7 @@ from gui.widgets.arm import Arm
 from gui.widgets.timer import TimerDisplay
 from gui.widgets.flood_warning import FloodWarning
 from gui.widgets.video_widget import (CameraDescription, CameraType,
-                                      SwitchableVideoWidget, VideoWidget)
+                                      VideoWidget)
 from gui.widgets.livestream_header import LivestreamHeader
 
 from PyQt6.QtCore import Qt
@@ -13,7 +13,6 @@ from PyQt6.QtGui import QScreen
 
 FRONT_CAM_TOPIC = 'front_cam/image_raw'
 BOTTOM_CAM_TOPIC = 'bottom_cam/image_raw'
-DEPTH_CAM_TOPIC = 'depth_cam/image_raw'
 
 
 def make_bottom_bar() -> QHBoxLayout:
@@ -46,11 +45,9 @@ class PilotApp(App):
         if simulation_param.value:
             front_cam_type = CameraType.SIMULATION
             bottom_cam_type = CameraType.SIMULATION
-            depth_cam_type = CameraType.SIMULATION
         else:
             front_cam_type = CameraType.ETHERNET
             bottom_cam_type = CameraType.ETHERNET
-            depth_cam_type = CameraType.DEPTH
 
         if gui_param.value == 'pilot':
             self.setWindowTitle('Pilot GUI - CWRUbotix ROV 2024')
@@ -67,17 +64,11 @@ class PilotApp(App):
                 "Bottom Camera",
                 1280, 720
             )
-            depth_cam_description = CameraDescription(
-                depth_cam_type,
-                DEPTH_CAM_TOPIC,
-                "Depth Cam",
-                640, 360
-            )
 
             main_layout.addWidget(VideoWidget(front_cam_description),
                                   alignment=Qt.AlignmentFlag.AlignHCenter)
             main_layout.addWidget(
-                SwitchableVideoWidget([bottom_cam_description, depth_cam_description]),
+                VideoWidget(bottom_cam_description),
                 alignment=Qt.AlignmentFlag.AlignHCenter
             )
 
@@ -137,19 +128,13 @@ class PilotApp(App):
                 "Bottom Camera",
                 721, 541
             )
-            depth_cam_description = CameraDescription(
-                depth_cam_type,
-                DEPTH_CAM_TOPIC,
-                "Depth Cam",
-                640, 360
-            )
 
             video_layout = QHBoxLayout()
 
             video_layout.addWidget(VideoWidget(front_cam_description),
                                    alignment=Qt.AlignmentFlag.AlignHCenter)
             video_layout.addWidget(
-                SwitchableVideoWidget([bottom_cam_description, depth_cam_description]),
+                VideoWidget(bottom_cam_description),
                 alignment=Qt.AlignmentFlag.AlignHCenter
             )
 
