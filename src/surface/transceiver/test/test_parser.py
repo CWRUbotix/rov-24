@@ -2,8 +2,7 @@ from queue import Queue
 from typing import Generator
 
 import pytest
-import rclpy
-from transceiver.serial_reader import SerialReader
+from transceiver.serial_reader import SerialReaderPacketHandler
 
 from rov_msgs.msg import FloatData
 
@@ -22,17 +21,11 @@ ROS_SINGLE_FIVE = "ROS:SINGLE:25:27631,993.2600"
 
 
 @pytest.fixture
-def node() -> Generator[SerialReader, None, None]:
-    rclpy.init()
-
-    try:
-        node = SerialReader()
-    except SystemExit:
-        pass
-    yield node
+def node() -> Generator[SerialReaderPacketHandler, None, None]:
+    yield SerialReaderPacketHandler()
 
 
-def test_message_parser(node: SerialReader) -> None:
+def test_message_parser(node: SerialReaderPacketHandler) -> None:
     msg = node._message_parser(PACKET)
 
     assert msg == FloatData(
@@ -50,38 +43,38 @@ def test_message_parser(node: SerialReader) -> None:
         node._message_parser(HEADER_TWO_ELEMENTS)
 
 
-def test_handle_ros_single(node: SerialReader) -> None:
-    node._handle_ros_single(ROS_SINGLE_ONE)
+def test_handle_ros_single(node: SerialReaderPacketHandler) -> None:
+    node.handle_ros_single(ROS_SINGLE_ONE)
     test_queue: Queue[float] = Queue(5)
     test_queue.put(992.4500)
 
     assert node.surface_pressures == test_queue
     assert node.surface_pressure == 992.4500
 
-    node._handle_ros_single(ROS_SINGLE_TWO)
+    node.handle_ros_single(ROS_SINGLE_TWO)
     test_queue.put(994.4299)
 
     assert node.surface_pressures == test_queue
     assert node.surface_pressure == 992.43995
 
-    node._handle_ros_single(ROS_SINGLE_THREE)
+    node.handle_ros_single(ROS_SINGLE_THREE)
     test_queue.put(992.9600)
 
     assert node.surface_pressures == test_queue
     assert node.surface_pressure == 992.6133
 
-    node._handle_ros_single(ROS_SINGLE_FOUR)
+    node.handle_ros_single(ROS_SINGLE_FOUR)
     test_queue.put(993.3699)
 
     assert node.surface_pressures == test_queue
     assert node.surface_pressure == 992.80245
 
-    node._handle_ros_single(ROS_SINGLE_FIVE)
+    node.handle_ros_single(ROS_SINGLE_FIVE)
     test_queue.put(993.26)
 
     assert node.surface_pressures == test_queue
     assert node.surface_pressure == 992.89396
 
     # Test no more get added
-    node._handle_ros_single(ROS_SINGLE_FIVE)
+    node.handle_ros_single(ROS_SINGLE_FIVE)
     assert node.surface_pressures == test_queue

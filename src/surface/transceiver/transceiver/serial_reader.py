@@ -42,8 +42,7 @@ class SerialReader(Node):
         self.serial_publisher = self.create_publisher(FloatSerial, 'float_serial',
                                                       QoSPresetProfiles.SENSOR_DATA.value)
 
-        self.surface_pressure = AMBIENT_PRESSURE_DEFAULT
-        self.surface_pressures: Queue[float] = Queue(5)
+        self.serial_packet_handler = SerialReaderPacketHandler()
 
         try:
             self.serial = Serial("/dev/serial/by-id/usb-Adafruit_Feather_32u4-if00", 115200)
@@ -51,8 +50,6 @@ class SerialReader(Node):
             self.get_logger().error("Could not get serial device")
             exit(1)
 
-    # Extracted out to here so can be unit tested without serial device
-    def start(self) -> None:
         Thread(target=self.read_serial, daemon=True,
                name="Serial Reader").start()
 
@@ -77,20 +74,27 @@ class SerialReader(Node):
             return
 
         try:
-            if SerialReader.is_ros_single_message(packet):
-                self._handle_ros_single(packet)
+            if SerialReaderPacketHandler.is_ros_single_message(packet):
+                self.serial_packet_handler.handle_ros_single(packet)
             else:
-                msg = self._message_parser(packet)
+                msg = self.serial_packet_handler.message_parser(packet)
                 self.data_publisher.publish(msg)
         except Exception as e:
             self.get_logger().error(f"Error {e} caught dropping packet")
+
+
+class SerialReaderPacketHandler:
+
+    def __init__(self, queue_size: int = 5) -> None:
+        self.surface_pressure = AMBIENT_PRESSURE_DEFAULT
+        self.surface_pressures: Queue[float] = Queue(queue_size)
 
     @staticmethod
     def is_ros_single_message(packet: str) -> bool:
         ros_single = ROS_PACKET + "SINGLE"
         return packet[:len(ros_single)] != ros_single
 
-    def _handle_ros_single(self, packet: str) -> None:
+    def handle_ros_single(self, packet: str) -> None:
         if self.surface_pressures.full():
             return
 
@@ -104,7 +108,7 @@ class SerialReader(Node):
         avg_pressure = sum(q) / len(q)
         self.surface_pressure = avg_pressure
 
-    def _message_parser(self, packet: str) -> FloatData:
+    def message_parser(self, packet: str) -> FloatData:
         msg = FloatData()
 
         packet_sections = packet.split(SECTION_SEPARATOR)
@@ -149,7 +153,6 @@ def main() -> None:
     rclpy.init()
 
     serial_reader = SerialReader()
-    serial_reader.start()
     rclpy.spin(serial_reader)
 
 
