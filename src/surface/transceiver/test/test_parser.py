@@ -21,12 +21,12 @@ ROS_SINGLE_FIVE = "ROS:SINGLE:25:27631,993.2600"
 
 
 @pytest.fixture
-def node() -> Generator[SerialReaderPacketHandler, None, None]:
+def packet_handler() -> Generator[SerialReaderPacketHandler, None, None]:
     yield SerialReaderPacketHandler()
 
 
-def test_message_parser(node: SerialReaderPacketHandler) -> None:
-    msg = node._message_parser(PACKET)
+def test_message_parser(packet_handler: SerialReaderPacketHandler) -> None:
+    msg = packet_handler.message_parser(PACKET)
 
     assert msg == FloatData(
         team_number=11,
@@ -37,44 +37,44 @@ def test_message_parser(node: SerialReaderPacketHandler) -> None:
     )
 
     with pytest.raises(ValueError, match="Packet expected 3 sections, found 2 sections"):
-        node._message_parser(NOT_THREE_SECTIONS)
+        packet_handler.message_parser(NOT_THREE_SECTIONS)
 
     with pytest.raises(ValueError, match="Packet header length of 3 expected found 2 instead"):
-        node._message_parser(HEADER_TWO_ELEMENTS)
+        packet_handler.message_parser(HEADER_TWO_ELEMENTS)
 
 
-def test_handle_ros_single(node: SerialReaderPacketHandler) -> None:
-    node.handle_ros_single(ROS_SINGLE_ONE)
+def test_handle_ros_single(packet_handler: SerialReaderPacketHandler) -> None:
+    packet_handler.handle_ros_single(ROS_SINGLE_ONE)
     test_queue: Queue[float] = Queue(5)
     test_queue.put(992.4500)
 
-    assert node.surface_pressures == test_queue
-    assert node.surface_pressure == 992.4500
+    assert packet_handler.surface_pressures == test_queue
+    assert packet_handler.surface_pressure == 992.4500
 
-    node.handle_ros_single(ROS_SINGLE_TWO)
+    packet_handler.handle_ros_single(ROS_SINGLE_TWO)
     test_queue.put(994.4299)
 
-    assert node.surface_pressures == test_queue
-    assert node.surface_pressure == 992.43995
+    assert packet_handler.surface_pressures == test_queue
+    assert packet_handler.surface_pressure == 992.43995
 
-    node.handle_ros_single(ROS_SINGLE_THREE)
+    packet_handler.handle_ros_single(ROS_SINGLE_THREE)
     test_queue.put(992.9600)
 
-    assert node.surface_pressures == test_queue
-    assert node.surface_pressure == 992.6133
+    assert packet_handler.surface_pressures == test_queue
+    assert packet_handler.surface_pressure == 992.6133
 
-    node.handle_ros_single(ROS_SINGLE_FOUR)
+    packet_handler.handle_ros_single(ROS_SINGLE_FOUR)
     test_queue.put(993.3699)
 
-    assert node.surface_pressures == test_queue
-    assert node.surface_pressure == 992.80245
+    assert packet_handler.surface_pressures == test_queue
+    assert packet_handler.surface_pressure == 992.80245
 
-    node.handle_ros_single(ROS_SINGLE_FIVE)
+    packet_handler.handle_ros_single(ROS_SINGLE_FIVE)
     test_queue.put(993.26)
 
-    assert node.surface_pressures == test_queue
-    assert node.surface_pressure == 992.89396
+    assert packet_handler.surface_pressures == test_queue
+    assert packet_handler.surface_pressure == 992.89396
 
     # Test no more get added
-    node.handle_ros_single(ROS_SINGLE_FIVE)
-    assert node.surface_pressures == test_queue
+    packet_handler.handle_ros_single(ROS_SINGLE_FIVE)
+    assert packet_handler.surface_pressures == test_queue
