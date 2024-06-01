@@ -24,7 +24,12 @@ ROS_SINGLE_FIVE = "ROS:SINGLE:25:27631,993.2600"
 @pytest.fixture
 def node() -> Generator[SerialReader, None, None]:
     rclpy.init()
-    yield SerialReader()
+
+    try:
+        node = SerialReader()
+    except SystemExit:
+        pass
+    yield node
 
 
 def test_message_parser(node: SerialReader) -> None:
