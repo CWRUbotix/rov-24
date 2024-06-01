@@ -120,11 +120,18 @@ bool receivePacket() {
   if (len < MAX_RESPONSE_LEN) {
     // This packet is probably an ACK/NACK, but could be a simple packet for judges
     byteBuffer[len] = '\0';
-    serialPrintf("Got pkt w/len %d, str '%s' & vals: ", len, reinterpret_cast<char*>(byteBuffer));
-    for (int i = 0; i < len; i++) {
-      serialPrintf("%d, ", byteBuffer[i]);
+    char *charBuffer = reinterpret_cast<char*>(byteBuffer);
+    // If this is a "single" judge/calibration packet
+    if (strncmp(byteBuffer, "ROS:SINGLE:", 11) == 0) {
+      Serial.println(charBuffer);
     }
-    Serial.println();
+    else {
+      serialPrintf("Got pkt w/len %d, str '%s' & vals: ", len, charBuffer);
+      for (int i = 0; i < len; i++) {
+        serialPrintf("%d, ", byteBuffer[i]);
+      }
+      Serial.println();
+    }
 
     bool isACK = (strncmp(byteBuffer, "ACK", 3) == 0);
     bool isNACK = (strncmp(byteBuffer, "NACK", 4) == 0);
