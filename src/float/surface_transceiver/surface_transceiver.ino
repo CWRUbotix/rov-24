@@ -120,7 +120,7 @@ bool receivePacket() {
   if (len < MAX_RESPONSE_LEN) {
     // This packet is probably an ACK/NACK, but could be a simple packet for judges
     byteBuffer[len] = '\0';
-    char *charBuffer = reinterpret_cast<char*>(byteBuffer);
+    char* charBuffer = reinterpret_cast<char*>(byteBuffer);
     // If this is a "single" judge/calibration packet
     if (strncmp(byteBuffer, "ROS:SINGLE:", 11) == 0) {
       Serial.println(charBuffer);
