@@ -1,3 +1,5 @@
+from queue import Queue
+
 import pytest
 from transceiver.serial_reader import SerialReader
 
@@ -10,8 +12,15 @@ NOT_THREE_SECTIONS = "ROS:11,1,1313901,988.53;314843,988.57;315785,988.99;316727
 HEADER_TWO_ELEMENTS = "ROS:11,1:313901,988.53;314843,988.57;315785,988.99;316727,991.56;317669,996.21;318611,1002.36;319553,1010.36;320495,1021.11;321437,1034.42;322379,1050.23;323321,1051.86;324263,1053.20;325206,1053.32;326146,1053.46;327088,1053.52;328030,1053.58;328972,1053.61;329914,1053.64;330856,1053.61;331798,1053.60;332740,1053.65;333682,1053.58;334624,1053.53;335566,1053.52;336508,1053.39;337453,1053.41;338395,1053.46;339337,1053.37;340279,1053.42;341221,1053.49;342163,1053.54"  # noqa: E501
 
 
-def test_parser() -> None:
-    msg = SerialReader._message_parser(PACKET)
+ROS_SINGLE_ONE = "ROS:SINGLE:25:5552,992.4500"
+ROS_SINGLE_TWO = "ROS:SINGLE:25:11071,994.4299"
+ROS_SINGLE_THREE = "ROS:SINGLE:25:16592,992.9600"
+ROS_SINGLE_FOUR = "ROS:SINGLE:25:22112,993.3699"
+ROS_SINGLE_FIVE = "ROS:SINGLE:25:27631,993.2600"
+
+
+def test_message_parser() -> None:
+    msg = SerialReader()._message_parser(PACKET)
 
     assert msg == FloatData(
         team_number=11,
@@ -22,7 +31,46 @@ def test_parser() -> None:
     )
 
     with pytest.raises(ValueError, match="Packet expected 3 sections, found 2 sections"):
-        SerialReader._message_parser(NOT_THREE_SECTIONS)
+        SerialReader()._message_parser(NOT_THREE_SECTIONS)
 
     with pytest.raises(ValueError, match="Packet header length of 3 expected found 2 instead"):
-        SerialReader._message_parser(HEADER_TWO_ELEMENTS)
+        SerialReader()._message_parser(HEADER_TWO_ELEMENTS)
+
+
+def test_handle_ros_single() -> None:
+    s = SerialReader()
+    s._handle_ros_single(ROS_SINGLE_ONE)
+    test_queue: Queue[float] = Queue(5)
+    test_queue.put(992.4500)
+
+    assert s.surface_pressures == test_queue
+    assert s.surface_pressure == 992.4500
+
+    s._handle_ros_single(ROS_SINGLE_TWO)
+    test_queue.put(994.4299)
+
+    assert s.surface_pressures == test_queue
+    assert s.surface_pressures == 992.43995
+
+    s._handle_ros_single(ROS_SINGLE_THREE)
+    test_queue.put(992.9600)
+
+    assert s.surface_pressures == test_queue
+    assert s.surface_pressures == 992.6133
+
+    s._handle_ros_single(ROS_SINGLE_FOUR)
+    test_queue.put(993.3699)
+
+    assert s.surface_pressures == test_queue
+    assert s.surface_pressures == 992.80245
+
+    s._handle_ros_single(ROS_SINGLE_FIVE)
+    test_queue.put(993.26)
+
+    assert s.surface_pressures == test_queue
+    assert s.surface_pressures == 992.89396
+
+    # Test no more get added
+    s._handle_ros_single(ROS_SINGLE_FIVE)
+    assert s.surface_pressures == test_queue
+

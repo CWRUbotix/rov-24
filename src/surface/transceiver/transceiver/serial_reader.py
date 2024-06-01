@@ -1,6 +1,6 @@
 import time
 from threading import Thread
-
+from queue import Queue
 import rclpy
 from rclpy.node import Node
 from rclpy.qos import QoSPresetProfiles
@@ -12,7 +12,8 @@ MILLISECONDS_TO_SECONDS = 1/1000
 SECONDS_TO_MINUTES = 1/60
 MBAR_TO_METER_OF_HEAD = 0.010199773339984
 
-AMBIENT_PRESSURE = 1013.25  # in (mbar)
+
+AMBIENT_PRESSURE_DEFAULT = 1013.25  # in (mbar)
 
 # AKA the length of the float in (m)
 FLOAT_CONVERSION_FACTOR = 0.635
@@ -41,6 +42,10 @@ class SerialReader(Node):
 
         self.serial = Serial("/dev/serial/by-id/usb-Adafruit_Feather_32u4-if00", 115200)
 
+        self.surface_pressure = AMBIENT_PRESSURE_DEFAULT
+
+        self.surface_pressures: Queue[float] = Queue(5)
+
         Thread(target=self.read_serial, daemon=True,
                name="Serial Reader").start()
 
@@ -65,14 +70,34 @@ class SerialReader(Node):
             return
 
         try:
-            msg = SerialReader._message_parser(packet)
+            if SerialReader.is_ros_single_message(packet):
+                self._handle_ros_single(packet)
+            else:
+                msg = self._message_parser(packet)
+                self.data_publisher.publish(msg)
         except Exception as e:
             self.get_logger().error(f"Error {e} caught dropping packet")
-            return
-        self.data_publisher.publish(msg)
 
     @staticmethod
-    def _message_parser(packet: str) -> FloatData:
+    def is_ros_single_message(packet: str) -> bool:
+        ros_single = ROS_PACKET + "SINGLE"
+        return packet[:len(ros_single)] != ros_single
+
+    def _handle_ros_single(self, packet: str) -> None:
+        if self.surface_pressures.full():
+            return
+
+        packet_sections = packet.split(SECTION_SEPARATOR)
+        data = packet_sections[3]
+        pressure = float(data.split(COMMA_SEPARATOR)[1])
+
+        self.surface_pressures.put(pressure)
+
+        q = self.surface_pressures.queue
+        avg_pressure = sum(q) / len(q)
+        self.surface_pressure = avg_pressure
+
+    def _message_parser(self, packet: str) -> FloatData:
         msg = FloatData()
 
         packet_sections = packet.split(SECTION_SEPARATOR)
@@ -104,7 +129,7 @@ class SerialReader(Node):
             time_data_list.append(int(time_reading) * MILLISECONDS_TO_SECONDS * SECONDS_TO_MINUTES)
 
             # Starts out as float
-            depth_data_list.append((float(depth_reading) - AMBIENT_PRESSURE) * MBAR_TO_METER_OF_HEAD)
+            depth_data_list.append((float(depth_reading) - self.surface_pressure) * MBAR_TO_METER_OF_HEAD)
         msg.time_data = time_data_list
         msg.depth_data = depth_data_list
 
