@@ -43,9 +43,9 @@ class SerialReader(Node):
         self.serial = Serial("/dev/serial/by-id/usb-Adafruit_Feather_32u4-if00", 115200)
 
         self.surface_pressure = AMBIENT_PRESSURE_DEFAULT
-
         self.surface_pressures: Queue[float] = Queue(5)
 
+    def start(self) -> None:
         Thread(target=self.read_serial, daemon=True,
                name="Serial Reader").start()
 
@@ -129,7 +129,8 @@ class SerialReader(Node):
             time_data_list.append(int(time_reading) * MILLISECONDS_TO_SECONDS * SECONDS_TO_MINUTES)
 
             # Starts out as float
-            depth_data_list.append((float(depth_reading) - self.surface_pressure) * MBAR_TO_METER_OF_HEAD)
+            depth_data_list.append(
+                (float(depth_reading) - self.surface_pressure) * MBAR_TO_METER_OF_HEAD)
         msg.time_data = time_data_list
         msg.depth_data = depth_data_list
 
@@ -141,7 +142,7 @@ def main() -> None:
     rclpy.init()
 
     serial_reader = SerialReader()
-
+    serial_reader.start()
     rclpy.spin(serial_reader)
 
 
