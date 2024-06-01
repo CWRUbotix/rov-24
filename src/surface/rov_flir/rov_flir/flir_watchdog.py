@@ -11,6 +11,7 @@ from rclpy.node import Node
 
 WATCHDOG_RATE = 10
 NAMESPACE = "surface"
+MIN_FPS = 1.0
 
 
 class Watchdog():
@@ -44,14 +45,14 @@ class Watchdog():
 
         line = self.read_stdout()
         while line:
-            m = re.search(r"rate \[Hz] in +([\d\.]+) out", line.decode().strip())
-            if m:
+            match = re.search(r"rate \[Hz] in +([\d\.]+) out", line.decode().strip())
+            if match:
                 try:
-                    rate = float(m.group(1))
+                    rate = float(match.group(1))
                 except ValueError:
                     continue
 
-                if rate < 1.0:
+                if rate < MIN_FPS:
                     # If we're receiving less than 1 fps, assume the camera has disconnected
                     self.node.get_logger().warning(f"{self.name} frozen, killing...")
                     self.process.send_signal(SIGINT)
