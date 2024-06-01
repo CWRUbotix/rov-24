@@ -51,7 +51,7 @@ class Watchdog():
                 except ValueError:
                     continue
 
-                if rate < 60.0:
+                if rate < 1.0:
                     # If we're receiving less than 1 fps, assume the camera has disconnected
                     self.node.get_logger().warning(f"{self.name} frozen, killing...")
                     self.process.send_signal(SIGINT)
