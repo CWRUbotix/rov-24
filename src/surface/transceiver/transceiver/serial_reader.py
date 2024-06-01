@@ -1,10 +1,12 @@
 import time
-from threading import Thread
 from queue import Queue
+from threading import Thread
+
 import rclpy
 from rclpy.node import Node
 from rclpy.qos import QoSPresetProfiles
 from serial import Serial
+from serial.serialutil import SerialException
 
 from rov_msgs.msg import FloatCommand, FloatData, FloatSerial
 
@@ -40,11 +42,16 @@ class SerialReader(Node):
         self.serial_publisher = self.create_publisher(FloatSerial, 'float_serial',
                                                       QoSPresetProfiles.SENSOR_DATA.value)
 
-        self.serial = Serial("/dev/serial/by-id/usb-Adafruit_Feather_32u4-if00", 115200)
-
         self.surface_pressure = AMBIENT_PRESSURE_DEFAULT
         self.surface_pressures: Queue[float] = Queue(5)
 
+        try:
+            self.serial = Serial("/dev/serial/by-id/usb-Adafruit_Feather_32u4-if00", 115200)
+        except SerialException:
+            self.get_logger().error("Could not get serial device")
+            exit(1)
+
+    # Extracted out to here so can be unit tested without serial device
     def start(self) -> None:
         Thread(target=self.read_serial, daemon=True,
                name="Serial Reader").start()
