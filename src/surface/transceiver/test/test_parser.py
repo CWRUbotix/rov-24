@@ -1,6 +1,6 @@
 from queue import Queue
 from typing import Generator, TypeVar
-
+from collections import deque
 import pytest
 from transceiver.serial_reader import SerialReaderPacketHandler
 
@@ -83,4 +83,7 @@ def test_handle_ros_single(packet_handler: SerialReaderPacketHandler) -> None:
 
 
 def equal(q1: Queue[T], q2: Queue[T]) -> bool:
-    return q1.queue == q2.queue
+
+    if isinstance(q1.queue, deque) and isinstance(q2.queue, deque):
+        return q1.queue == q2.queue
+    return False
