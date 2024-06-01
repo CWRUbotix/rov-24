@@ -2,7 +2,7 @@ from setuptools import setup
 from glob import glob
 import os
 
-package_name = 'flood_detection'
+package_name = 'temp_sensor'
 
 setup(
     name=package_name,
@@ -18,15 +18,15 @@ setup(
     ],
     install_requires=['setuptools'],
     zip_safe=True,
-    maintainer='Michael Carlstrom',
-    maintainer_email='rmc@carlstrom.com',
-    description='Flood detection',
+    maintainer='Benjamin Poulin',
+    maintainer_email='bwp18@case.edu',
+    description='Temperature sensor',
     license='Apache License 2.0',
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'flood_detector = flood_detection.flood_detector:main',
-            'dry_run = flood_detection.gpio_reader_dry_run:main'
+            # 'flood_detector = flood_detection.flood_detector:main',
+            # 'dry_run = flood_detection.gpio_reader_dry_run:main'
         ],
     },
 )

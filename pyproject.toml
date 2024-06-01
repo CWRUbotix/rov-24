@@ -17,6 +17,7 @@ dependencies = [
     'pytest-xvfb',
     'Pyside2',  # can be removed when ament_pep257 is gone
     'TCA9555@git+https://github.com/InvincibleRMC/TCA9555',
+    'bluerobotics-tsys01@git+https://github.com/bluerobotics/tsys01-python',
     'pymavlink',
     'mavproxy'
 ]
