@@ -1,10 +1,12 @@
 from queue import Queue
-from typing import Generator
+from typing import Generator, TypeVar
 
 import pytest
 from transceiver.serial_reader import SerialReaderPacketHandler
 
 from rov_msgs.msg import FloatData
+
+T = TypeVar('T')
 
 PACKET = "ROS:11,1,1:313901,988.53;314843,988.57;315785,988.99;316727,991.56;317669,996.21;318611,1002.36;319553,1010.36;320495,1021.11;321437,1034.42;322379,1050.23;323321,1051.86;324263,1053.20;325206,1053.32;326146,1053.46;327088,1053.52;328030,1053.58;328972,1053.61;329914,1053.64;330856,1053.61;331798,1053.60;332740,1053.65;333682,1053.58;334624,1053.53;335566,1053.52;336508,1053.39;337453,1053.41;338395,1053.46;339337,1053.37;340279,1053.42;341221,1053.49;342163,1053.54"  # noqa: E501
 
@@ -48,33 +50,37 @@ def test_handle_ros_single(packet_handler: SerialReaderPacketHandler) -> None:
     test_queue: Queue[float] = Queue(5)
     test_queue.put(992.4500)
 
-    assert packet_handler.surface_pressures == test_queue
+    assert equal(packet_handler.surface_pressures, test_queue)
     assert packet_handler.surface_pressure == 992.4500
 
     packet_handler.handle_ros_single(ROS_SINGLE_TWO)
     test_queue.put(994.4299)
 
-    assert packet_handler.surface_pressures == test_queue
+    assert equal(packet_handler.surface_pressures, test_queue)
     assert packet_handler.surface_pressure == 992.43995
 
     packet_handler.handle_ros_single(ROS_SINGLE_THREE)
     test_queue.put(992.9600)
 
-    assert packet_handler.surface_pressures == test_queue
+    assert equal(packet_handler.surface_pressures, test_queue)
     assert packet_handler.surface_pressure == 992.6133
 
     packet_handler.handle_ros_single(ROS_SINGLE_FOUR)
     test_queue.put(993.3699)
 
-    assert packet_handler.surface_pressures == test_queue
+    assert equal(packet_handler.surface_pressures, test_queue)
     assert packet_handler.surface_pressure == 992.80245
 
     packet_handler.handle_ros_single(ROS_SINGLE_FIVE)
     test_queue.put(993.26)
 
-    assert packet_handler.surface_pressures == test_queue
+    assert equal(packet_handler.surface_pressures, test_queue)
     assert packet_handler.surface_pressure == 992.89396
 
     # Test no more get added
     packet_handler.handle_ros_single(ROS_SINGLE_FIVE)
-    assert packet_handler.surface_pressures == test_queue
+    assert equal(packet_handler.surface_pressures, test_queue)
+
+
+def equal(q1: Queue[T], q2: Queue[T]) -> bool:
+    return q1.queue == q2.queue
