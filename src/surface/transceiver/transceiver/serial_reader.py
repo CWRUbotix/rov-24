@@ -12,6 +12,8 @@ MILLISECONDS_TO_SECONDS = 1/1000
 SECONDS_TO_MINUTES = 1/60
 MBAR_TO_METER_OF_HEAD = 0.010199773339984
 
+AMBIENT_PRESSURE = 1013.25  # in (mbar)
+
 # AKA the length of the float in (m)
 FLOAT_CONVERSION_FACTOR = 0.635
 
@@ -102,7 +104,7 @@ class SerialReader(Node):
             time_data_list.append(int(time_reading) * MILLISECONDS_TO_SECONDS * SECONDS_TO_MINUTES)
 
             # Starts out as float
-            depth_data_list.append(float(depth_reading) * MBAR_TO_METER_OF_HEAD)
+            depth_data_list.append((float(depth_reading) - AMBIENT_PRESSURE) * MBAR_TO_METER_OF_HEAD)
         msg.time_data = time_data_list
         msg.depth_data = depth_data_list
 
