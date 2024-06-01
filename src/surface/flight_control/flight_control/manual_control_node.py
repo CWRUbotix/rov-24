@@ -87,7 +87,7 @@ class ManualControlNode(Node):
 
         controller_mode = ControllerMode(mode_param.value)
 
-        if controller_mode == ControllerMode.TOGGLE_CAMERAS:
+        if controller_mode is ControllerMode.TOGGLE_CAMERAS:
             # Control camera switching
             self.misc_controls_callback = self.toggle_cameras
             self.camera_toggle_publisher = self.create_publisher(
