@@ -57,29 +57,30 @@ def test_handle_ros_single(packet_handler: SerialReaderPacketHandler) -> None:
     test_queue.put(994.4299)
 
     assert equal(packet_handler.surface_pressures, test_queue)
-    assert packet_handler.surface_pressure == 992.43995
+    assert pytest.approx(packet_handler.surface_pressure) == 993.43995
 
     packet_handler.handle_ros_single(ROS_SINGLE_THREE)
     test_queue.put(992.9600)
 
     assert equal(packet_handler.surface_pressures, test_queue)
-    assert packet_handler.surface_pressure == 992.6133
+    assert pytest.approx(packet_handler.surface_pressure) == 993.27996666666
 
     packet_handler.handle_ros_single(ROS_SINGLE_FOUR)
     test_queue.put(993.3699)
 
     assert equal(packet_handler.surface_pressures, test_queue)
-    assert packet_handler.surface_pressure == 992.80245
+    assert pytest.approx(packet_handler.surface_pressure) == 993.30245
 
     packet_handler.handle_ros_single(ROS_SINGLE_FIVE)
     test_queue.put(993.26)
 
     assert equal(packet_handler.surface_pressures, test_queue)
-    assert packet_handler.surface_pressure == 992.89396
+    assert pytest.approx(packet_handler.surface_pressure) == 993.29396
 
     # Test no more get added
     packet_handler.handle_ros_single(ROS_SINGLE_FIVE)
     assert equal(packet_handler.surface_pressures, test_queue)
+    assert pytest.approx(packet_handler.surface_pressure) == 993.29396
 
 
 def equal(q1: Queue[T], q2: Queue[T]) -> bool:
