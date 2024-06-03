@@ -24,6 +24,7 @@ const uint8_t LIMIT_EMPTY = 11;  // Low when syringe is empty
 const uint8_t TEAM_NUM = 25;
 const uint32_t PACKET_SEND_INTERVAL = 1000;
 const uint32_t FLOAT_PKT_RX_TIMEOUT = 900;
+const uint8_t JUDGE_PKT_SIZE = 30;
 
 #ifdef DO_DEBUGGING
 const uint32_t PRESSURE_READ_INTERVAL = 200;
@@ -170,9 +171,9 @@ void loop() {
 
     int intComponent = pressure;
     int fracComponent = trunc((pressure - intComponent) * 10000);
-    char judgePacketBuffer[30];
+    char judgePacketBuffer[JUDGE_PKT_SIZE];
     snprintf(
-      judgePacketBuffer, 30, "ROS:SINGLE:%d:%lu,%d.%04d\0", TEAM_NUM, previousPressureReadTime,
+      judgePacketBuffer, JUDGE_PKT_SIZE, "ROS:SINGLE:%d:%lu,%d.%04d\0", TEAM_NUM, previousPressureReadTime,
       intComponent, fracComponent);
     Serial.println(judgePacketBuffer);
 
