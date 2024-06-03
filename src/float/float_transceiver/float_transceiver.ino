@@ -173,8 +173,8 @@ void loop() {
     int fracComponent = trunc((pressure - intComponent) * 10000);
     char judgePacketBuffer[JUDGE_PKT_SIZE];
     snprintf(
-      judgePacketBuffer, JUDGE_PKT_SIZE, "ROS:SINGLE:%d:%lu,%d.%04d\0", TEAM_NUM, previousPressureReadTime,
-      intComponent, fracComponent);
+      judgePacketBuffer, JUDGE_PKT_SIZE, "ROS:SINGLE:%d:%lu,%d.%04d\0", TEAM_NUM,
+      previousPressureReadTime, intComponent, fracComponent);
     Serial.println(judgePacketBuffer);
 
     rf95.send(judgePacketBuffer, strlen(judgePacketBuffer));
