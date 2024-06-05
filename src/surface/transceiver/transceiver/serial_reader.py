@@ -92,7 +92,7 @@ class SerialReaderPacketHandler:
     @staticmethod
     def is_ros_single_message(packet: str) -> bool:
         ros_single = ROS_PACKET + "SINGLE"
-        return packet[:len(ros_single)] != ros_single
+        return packet[:len(ros_single)] == ros_single
 
     def handle_ros_single(self, packet: str) -> None:
         if self.surface_pressures.full():

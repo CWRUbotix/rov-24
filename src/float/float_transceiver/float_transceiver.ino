@@ -36,10 +36,10 @@ const uint32_t PROFILE_SEGMENT = 60000;
 
 // Schedule (all delays in ms)
 const uint32_t RELEASE_MAX = 300000;
-const uint32_t SUCK_MAX = PRESSURE_READ_INTERVAL;
-const uint32_t DESCEND_TIME = PRESSURE_READ_INTERVAL;
-const uint32_t PUMP_MAX = PRESSURE_READ_INTERVAL;
-const uint32_t ASCEND_TIME = PRESSURE_READ_INTERVAL;
+const uint32_t SUCK_MAX = PROFILE_SEGMENT;
+const uint32_t DESCEND_TIME = PROFILE_SEGMENT;
+const uint32_t PUMP_MAX = PROFILE_SEGMENT;
+const uint32_t ASCEND_TIME = PROFILE_SEGMENT;
 const uint32_t TX_MAX = 60000;
 const uint32_t ONE_HOUR = 360000;
 
