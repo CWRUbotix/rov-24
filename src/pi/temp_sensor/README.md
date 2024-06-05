@@ -7,28 +7,28 @@ This package launches flood detection.
 ## Installation
 
 ```bash
-sudo apt-get install python3-lgpio
+sudo apt-get install python3-smbus
 ```
 
 ## Usage
 
 ```bash
-ros2 launch flood_detection flood_detection_launch.py
+ros2 launch 
 ```
 
 ## Launch files
 
-* **flood_detection_launch.py:**  Primary launch file for flood detection.
+* **.py:**  Primary launch file for temp sensor.
 
 ## Nodes
 
-### flood_detector
+### temp_sensor
 
-Detects flooding.
+Reads temperature.
 
 #### Published Topics
 
-* **`/flooding`** ([rov_msgs/flooding])
+* **`/`** ([rov_msgs/flooding])
 
     Whether rov is flooding.
 
