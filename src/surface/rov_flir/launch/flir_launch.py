@@ -62,7 +62,7 @@ def generate_launch_description() -> LaunchDescription:
         exec_name='front_cam',
         emulate_tty=True,
         output='screen',
-        parameters=[Parameter('serial_number', '23473577'),
+        parameters=[Parameter('serial_number', '23473566'),
                     Parameter('parameter_file', parameter_file),
                     parameters],
         condition=IfCondition(front_arg)
@@ -76,7 +76,7 @@ def generate_launch_description() -> LaunchDescription:
         exec_name='bottom_cam',
         emulate_tty=True,
         output='screen',
-        parameters=[Parameter('serial_number', '23473566'),
+        parameters=[Parameter('serial_number', '23473577'),
                     Parameter('parameter_file', parameter_file),
                     parameters],
         condition=IfCondition(bottom_arg)

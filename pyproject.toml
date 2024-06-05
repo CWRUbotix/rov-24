@@ -15,7 +15,6 @@ dependencies = [
     'numpy>=1.26',
     'pytest-qt',
     'pytest-xvfb',
-    'Pyside2',  # can be removed when ament_pep257 is gone
     'TCA9555@git+https://github.com/InvincibleRMC/TCA9555',
     'pymavlink',
     'mavproxy'
