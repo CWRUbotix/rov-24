@@ -4,6 +4,8 @@ from rov_msgs.msg import Temperature
 
 import tsys01
 
+READING_TIMER_PERIOD = 0.5  # Seconds
+
 
 class TempSensor(Node):
 
@@ -13,8 +15,7 @@ class TempSensor(Node):
         self.sensor = tsys01.TSYS01()
         self.sensor.init()
 
-        timer_period = 0.1  # seconds
-        self.timer = self.create_timer(timer_period, self.timer_callback)
+        self.timer = self.create_timer(READING_TIMER_PERIOD, self.timer_callback)
 
     def timer_callback(self) -> None:
         try:
