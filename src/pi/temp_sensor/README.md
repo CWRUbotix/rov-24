@@ -6,9 +6,6 @@ This package reads from the temperature sensor.
 
 ## Installation
 
-```bash
-sudo apt-get install python3-smbus
-```
 
 ## Usage
 
