@@ -1,8 +1,9 @@
 import rclpy
 from rclpy.node import Node
-from rov_msgs.msg import Temperature
-
+from rclpy.qos import QoSPresetProfiles
 import tsys01
+
+from rov_msgs.msg import Temperature
 
 READING_TIMER_PERIOD = 0.5  # Seconds
 
@@ -11,7 +12,8 @@ class TempSensor(Node):
 
     def __init__(self) -> None:
         super().__init__('temp_sensor', parameter_overrides=[])
-        self.publisher = self.create_publisher(Temperature, 'temperature', 10)
+        self.publisher = self.create_publisher(Temperature, 'temperature',
+                                               QoSPresetProfiles.DEFAULT.value)
         self.sensor = tsys01.TSYS01()
         self.sensor.init()
 
