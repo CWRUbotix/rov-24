@@ -1,5 +1,6 @@
-import tsys01
-# https://github.com/bluerobotics/tsys01-python
+from time import sleep
+
+import tsys01  # https://github.com/bluerobotics/tsys01-python
 
 
 def debug_log() -> None:
@@ -7,9 +8,14 @@ def debug_log() -> None:
 
     sensor.init()
 
-    sensor.read()
-
-    sensor.temperature()  # Get temperature in default units (Centigrade)
+    while True:
+        sensor.read()
+        print(
+            sensor.temperature(),  # Get temperature in default units (Centigrade)
+            '\t',
+            sensor.temperature(tsys01.UNITS_Farenheit)
+        )
+        sleep(1)
 
 
 if __name__ == "__main__":
