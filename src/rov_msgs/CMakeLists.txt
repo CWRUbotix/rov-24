@@ -29,6 +29,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/Manip.msg"
   "msg/CameraControllerSwitch.msg"
   "msg/Flooding.msg"
+  "msg/Temperature.msg"
   "msg/IPAddress.msg"
   "msg/VehicleState.msg"
   "msg/ValveManip.msg"
