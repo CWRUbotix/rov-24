@@ -32,11 +32,17 @@ class FloatComm(QWidget):
 
         self.team_number = QLabel('Waiting for Team #')
         self.profile_number = QLabel("Waiting for profile #")
-        self.profile_half = QLabel("Waitng for profile half")
+        self.profile_half = QLabel("Waiting for profile half")
+
+        single_layout = QHBoxLayout()
+
+        self.single_time = QLabel('Waiting for Time')
+        self.single_pressure = QLabel('Waiting for Pressure')
+        single_layout.addWidget(self.team_number)
 
         left_side_layout = QVBoxLayout()
 
-        info_layout.addWidget(self.team_number)
+        left_side_layout.addLayout(single_layout)
         info_layout.addWidget(self.profile_number)
         info_layout.addWidget(self.profile_half)
 
