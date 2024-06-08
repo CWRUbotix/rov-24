@@ -63,6 +63,6 @@ class TemperatureSensor(QWidget):
 
             ave = sum(self.temps) / QUEUE_LEN
             offset_ave = ave + self.offset
-            self.ave_temp_label.setText(f'{round(offset_ave, 4)}\tC')
+            self.ave_temp_label.setText(f'{round(offset_ave, 4)}\t°C')
 
             self.offset_button.setText('Set offset')
