@@ -20,7 +20,7 @@ class TemperatureSensor(QWidget):
         self.temperature_reading_signal.connect(self.temperature_received)
         self.temp_subscriber: GUIEventSubscriber = GUIEventSubscriber(
             Temperature,
-            "/tether/temperature",
+            "temperature",
             self.temperature_reading_signal
         )
 
