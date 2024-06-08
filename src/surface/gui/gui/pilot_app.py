@@ -14,6 +14,9 @@ from PyQt6.QtGui import QScreen
 FRONT_CAM_TOPIC = 'front_cam/image_raw'
 BOTTOM_CAM_TOPIC = 'bottom_cam/image_raw'
 
+TWO_MONITOR_CONFIG = {"pilot": None, "livestream": 1}
+THREE_MONITOR_CONFIG = {"pilot": 2, "livestream": 1}
+
 
 def make_bottom_bar() -> QHBoxLayout:
     bottom_screen_layout = QHBoxLayout()
@@ -74,7 +77,7 @@ class PilotApp(App):
 
             main_layout.addLayout(make_bottom_bar())
 
-            self.show_on_monitor(1)
+            self.apply_monitor_config("pilot")
 
         elif gui_param.value == 'livestream':
             top_bar = QHBoxLayout()
@@ -92,13 +95,13 @@ class PilotApp(App):
                 front_cam_type,
                 FRONT_CAM_TOPIC,
                 "Forward Camera",
-                1280, 720
+                920, 690
             )
             bottom_cam_description = CameraDescription(
                 bottom_cam_type,
                 BOTTOM_CAM_TOPIC,
                 "Down Camera",
-                1280, 720
+                920, 690
             )
 
             video_layout = QHBoxLayout()
@@ -107,11 +110,12 @@ class PilotApp(App):
                                    alignment=Qt.AlignmentFlag.AlignHCenter)
             video_layout.addWidget(VideoWidget(bottom_cam_description),
                                    alignment=Qt.AlignmentFlag.AlignHCenter)
+            video_layout.setSpacing(0)
 
             main_layout.addLayout(video_layout)
             main_layout.addStretch()
 
-            self.show_on_monitor(2)
+            self.apply_monitor_config("livestream")
 
         else:
             self.setWindowTitle('Debug GUI - CWRUbotix ROV 2024')
@@ -141,16 +145,27 @@ class PilotApp(App):
             main_layout.addLayout(video_layout)
             main_layout.addLayout(make_bottom_bar())
 
-    def show_on_monitor(self, monitor_id: int) -> None:
+    def apply_monitor_config(self, gui_id: str) -> None:
         screen = self.screen()
         if screen is None:
             return
 
         monitors = QScreen.virtualSiblings(screen)
-        if len(monitors) > monitor_id:
-            monitor = monitors[monitor_id].availableGeometry()
-            self.move(monitor.left(), monitor.top())
-            self.showFullScreen()
+
+        monitor_id: int | None
+        if len(monitors) == 2:
+            monitor_id = TWO_MONITOR_CONFIG[gui_id]
+        elif len(monitors) >= 3:
+            monitor_id = THREE_MONITOR_CONFIG[gui_id]
+        else:
+            return
+
+        if monitor_id is None:
+            return
+
+        monitor = monitors[monitor_id].availableGeometry()
+        self.move(monitor.left(), monitor.top())
+        self.showFullScreen()
 
 
 def run_gui_pilot() -> None:

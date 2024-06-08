@@ -4,7 +4,8 @@ from gui.widgets.tabs.general_debug_tab import GeneralDebugTab
 from gui.widgets.float_comm import FloatComm
 from gui.widgets.timer import InteractiveTimer
 from gui.widgets.task_selector import TaskSelector
-from PyQt6.QtWidgets import QGridLayout, QTabWidget, QWidget, QVBoxLayout
+from gui.widgets.flood_warning import FloodWarning
+from PyQt6.QtWidgets import QTabWidget, QWidget, QVBoxLayout, QHBoxLayout
 
 
 class OperatorApp(App):
@@ -15,20 +16,31 @@ class OperatorApp(App):
 
         # Main tab
         main_tab = QWidget()
-        main_layout = QGridLayout()
+        main_layout = QHBoxLayout()
         main_tab.setLayout(main_layout)
 
-        timer = InteractiveTimer()
-        main_layout.addWidget(timer, 0, 1)
+        left_pane = QVBoxLayout()
+        right_pane = QVBoxLayout()
 
-        task_selector = TaskSelector()
-        main_layout.addWidget(task_selector, 1, 1)
+        main_layout.addLayout(left_pane)
+        main_layout.addLayout(right_pane)
 
         self.float_comm: FloatComm = FloatComm()
-        main_layout.addWidget(self.float_comm, 0, 0)
+        left_pane.addWidget(self.float_comm)
 
         logger = Logger()
-        main_layout.addWidget(logger, 1, 0)
+        left_pane.addWidget(logger)
+
+        timer = InteractiveTimer()
+        right_pane.addWidget(timer)
+
+        flood_warning = FloodWarning()
+        right_pane.addWidget(flood_warning)
+
+        right_pane.addStretch()
+
+        task_selector = TaskSelector()
+        right_pane.addWidget(task_selector)
 
         # Add tabs to root
         root_layout = QVBoxLayout()

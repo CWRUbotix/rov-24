@@ -9,7 +9,6 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 def generate_launch_description() -> LaunchDescription:
 
     surface_path = get_package_share_directory('surface_main')
-    gui_path = get_package_share_directory('gui')
 
     all_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([
@@ -17,19 +16,9 @@ def generate_launch_description() -> LaunchDescription:
                 surface_path, 'launch', 'surface_all_nodes_launch.py'
             )
         ]),
-    )
-
-    # Launches livestream gui
-    gui_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource([
-            os.path.join(
-                gui_path, 'launch', 'pilot_launch.py'
-            )
-        ]),
         launch_arguments=[('gui', 'livestream')]
     )
 
     return LaunchDescription([
         all_launch,
-        gui_launch
     ])

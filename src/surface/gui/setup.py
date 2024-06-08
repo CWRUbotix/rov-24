@@ -26,6 +26,9 @@ setup(
         # Include all images.
         (os.path.join('share', PACKAGE_NAME, 'images'),
          glob('gui/images/*')),
+        # Include all sounds.
+        (os.path.join('share', PACKAGE_NAME, 'sounds'),
+         glob('gui/sounds/*')),
     ],
     install_requires=['setuptools'],
     zip_safe=True,
