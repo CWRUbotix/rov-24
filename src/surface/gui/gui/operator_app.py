@@ -5,6 +5,10 @@ from gui.widgets.float_comm import FloatComm
 from gui.widgets.timer import InteractiveTimer
 from gui.widgets.task_selector import TaskSelector
 from gui.widgets.flood_warning import FloodWarning
+from gui.widgets.temperature import TemperatureSensor
+from gui.widgets.heartbeat import HeartbeatWidget
+from gui.widgets.ip_widget import IPWidget
+from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QTabWidget, QWidget, QVBoxLayout, QHBoxLayout
 
 
@@ -36,6 +40,9 @@ class OperatorApp(App):
 
         flood_warning = FloodWarning()
         right_pane.addWidget(flood_warning)
+
+        temp_sensor = TemperatureSensor()
+        right_pane.addWidget(temp_sensor)
 
         right_pane.addStretch()
 

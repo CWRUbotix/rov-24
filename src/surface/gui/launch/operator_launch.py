@@ -15,6 +15,7 @@ def generate_launch_description() -> LaunchDescription:
                     ("/surface/gui/mavros/cmd/command", "/tether/mavros/cmd/command"),
                     ("/surface/gui/mavros/param/set", "/tether/mavros/param/set"),
                     ("/surface/gui/mavros/param/pull", "/tether/mavros/param/pull"),
+                    ("/surface/gui/temperature", "/tether/temperature"),
                     ("/surface/gui/vehicle_state_event", "/surface/vehicle_state_event"),
                     ("/surface/gui/mavros/cmd/arming", "/tether/mavros/cmd/arming"),
                     ("/surface/gui/ip_address", "/tether/ip_address"),
