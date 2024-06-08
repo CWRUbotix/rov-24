@@ -12,14 +12,14 @@ def generate_launch_description() -> LaunchDescription:
         Launches temperature sensor node
 
     """
-    # flood_detection = Node(
-    #     package='flood_detection',
-    #     executable='flood_detector',
-    #     emulate_tty=True,
-    #     output='screen',
-    #     remappings=[('/pi/flooding', '/tether/flooding')]
-    # )
+    temp_sensor = Node(
+        package='temp_sensor',
+        executable='temp_sensor',
+        emulate_tty=True,
+        output='screen',
+        remappings=[('/pi/temperature', '/tether/temperature')]
+    )
 
     return LaunchDescription([
-        # flood_detection
+        temp_sensor
     ])

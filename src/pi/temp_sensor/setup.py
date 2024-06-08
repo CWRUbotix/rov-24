@@ -25,7 +25,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            # 'flood_detector = flood_detection.flood_detector:main',
+            'temp_sensor = temp_sensor.temp_sensor:main',
             # 'dry_run = flood_detection.gpio_reader_dry_run:main'
         ],
     },
