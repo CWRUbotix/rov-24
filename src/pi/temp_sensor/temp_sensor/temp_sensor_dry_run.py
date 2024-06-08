@@ -9,12 +9,16 @@ def debug_log() -> None:
     sensor.init()
 
     while True:
-        sensor.read()
-        print(
-            sensor.temperature(),  # Get temperature in default units (Centigrade)
-            '\t',
-            sensor.temperature(tsys01.UNITS_Farenheit)
-        )
+        try:
+            sensor.read()  # Sometimes throws OSError: [Errno 121] Remote I/O error
+            print(
+                sensor.temperature(),  # Get temperature in default units (Centigrade)
+                '\t',
+                sensor.temperature(tsys01.UNITS_Farenheit)
+            )
+        except OSError:
+            print('Failed to read temperature, trying again')
+
         sleep(1)
 
 

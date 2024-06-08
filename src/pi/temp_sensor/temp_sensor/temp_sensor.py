@@ -17,13 +17,16 @@ class TempSensor(Node):
         self.timer = self.create_timer(timer_period, self.timer_callback)
 
     def timer_callback(self) -> None:
-        self.sensor.read()
-        temp_reading = self.sensor.temperature()
+        try:
+            self.sensor.read()
+            temp_reading = self.sensor.temperature()
 
-        # If any of the sensors detect water, send true to /tether/flooding
-        msg = Temperature()
-        msg.reading = temp_reading
-        self.publisher.publish(msg)
+            # If any of the sensors detect water, send true to /tether/flooding
+            msg = Temperature()
+            msg.reading = temp_reading
+            self.publisher.publish(msg)
+        except OSError:
+            print('Failed to read temperature, skipping this read')
 
 
 def main(args: None = None) -> None:
