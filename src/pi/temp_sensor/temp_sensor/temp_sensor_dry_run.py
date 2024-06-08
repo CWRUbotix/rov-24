@@ -3,7 +3,7 @@ from time import sleep
 import tsys01  # https://github.com/bluerobotics/tsys01-python
 
 
-def debug_log() -> None:
+def main() -> None:
     sensor = tsys01.TSYS01()  # Use default I2C bus 1
 
     sensor.init()
@@ -23,4 +23,4 @@ def debug_log() -> None:
 
 
 if __name__ == "__main__":
-    debug_log()
+    main()

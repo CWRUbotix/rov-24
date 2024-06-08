@@ -3,7 +3,7 @@ from collections import deque
 from gui.gui_nodes.event_nodes.subscriber import GUIEventSubscriber
 from rov_msgs.msg import Temperature
 from PyQt6.QtCore import pyqtSignal, pyqtSlot
-from PyQt6.QtWidgets import (QGridLayout, QLabel, QLineEdit, QPushButton,
+from PyQt6.QtWidgets import (QLabel, QLineEdit, QPushButton,
                              QVBoxLayout, QWidget)
 
 MIN_TEMP_C = 10

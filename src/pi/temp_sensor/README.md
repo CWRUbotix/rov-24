@@ -2,7 +2,7 @@
 
 ## Overview
 
-This package launches flood detection.
+This package reads from the temperature sensor.
 
 ## Installation
 
@@ -13,28 +13,28 @@ sudo apt-get install python3-smbus
 ## Usage
 
 ```bash
-ros2 launch 
+ros2 launch temp_sensor temp_sensor_launch.py
 ```
 
 ## Launch files
 
-* **.py:**  Primary launch file for temp sensor.
+* **temp_sensor_launch.py:**  Primary launch file for temp sensor.
 
 ## Nodes
 
 ### temp_sensor
 
-Reads temperature.
+Reads and publishes temperature.
 
 #### Published Topics
 
-* **`/`** ([rov_msgs/flooding])
+* **`/temperature`** ([rov_msgs/temperature])
 
-    Whether rov is flooding.
+    Temperature readings as floats
 
 
 ### test
 
 Tests flooding.
 
-[rov_msgs/flooding]: ../../rov_msgs/msg/Flooding.msg
+[rov_msgs/temperature]: ../../rov_msgs/msg/Temperature.msg

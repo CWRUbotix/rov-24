@@ -26,7 +26,7 @@ setup(
     entry_points={
         'console_scripts': [
             'temp_sensor = temp_sensor.temp_sensor:main',
-            # 'dry_run = flood_detection.gpio_reader_dry_run:main'
+            'dry_run = temp_sensor.temp_sensor_dry_run:main'
         ],
     },
 )
