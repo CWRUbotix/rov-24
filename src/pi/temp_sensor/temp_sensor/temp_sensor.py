@@ -25,9 +25,7 @@ class TempSensor(Node):
             temp_reading = self.sensor.temperature()
 
             # If any of the sensors detect water, send true to /tether/flooding
-            msg = Temperature()
-            msg.reading = temp_reading
-            self.publisher.publish(msg)
+            self.publisher.publish(Temperature(reading=temp_reading))
         except OSError:
             print('Failed to read temperature, skipping this read')
 
