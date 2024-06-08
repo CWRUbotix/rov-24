@@ -4,6 +4,7 @@ from gui.widgets.tabs.general_debug_tab import GeneralDebugTab
 from gui.widgets.float_comm import FloatComm
 from gui.widgets.timer import InteractiveTimer
 from gui.widgets.task_selector import TaskSelector
+from gui.widgets.temperature import TemperatureSensor
 from PyQt6.QtWidgets import QGridLayout, QTabWidget, QWidget, QVBoxLayout
 
 
@@ -21,8 +22,11 @@ class OperatorApp(App):
         timer = InteractiveTimer()
         main_layout.addWidget(timer, 0, 1)
 
-        task_selector = TaskSelector()
-        main_layout.addWidget(task_selector, 1, 1)
+        # task_selector = TaskSelector()
+        # main_layout.addWidget(task_selector, 1, 1)
+
+        temp_sensor = TemperatureSensor()
+        main_layout.addWidget(temp_sensor, 1, 1)
 
         self.float_comm: FloatComm = FloatComm()
         main_layout.addWidget(self.float_comm, 0, 0)
