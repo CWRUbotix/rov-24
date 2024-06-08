@@ -6,8 +6,8 @@ from PyQt6.QtCore import pyqtSignal, pyqtSlot
 from PyQt6.QtWidgets import (QLabel, QLineEdit, QPushButton,
                              QVBoxLayout, QWidget)
 
-MIN_TEMP_C = 10
-MAX_TEMP_C = 30
+MIN_TEMP_C = 0
+MAX_TEMP_C = 200
 QUEUE_LEN = 5
 
 
