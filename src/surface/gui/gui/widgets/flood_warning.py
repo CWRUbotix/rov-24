@@ -12,7 +12,7 @@ import os
 
 
 # The 'Loop' enum has int values, not 'Loop', unbeknownst to mypy
-Q_SOUND_EFFECT_LOOP_FOREVER = QSoundEffect.Loop.Infinite.value  # type: ignore
+Q_SOUND_EFFECT_LOOP_FOREVER: int = QSoundEffect.Loop.Infinite.value  # type: ignore
 
 
 class FloodWarning(QWidget):
