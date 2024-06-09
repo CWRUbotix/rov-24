@@ -10,12 +10,21 @@ from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QHBoxLayout, QVBoxLayout
 from PyQt6.QtGui import QScreen
 
+import enum
+
 
 FRONT_CAM_TOPIC = 'front_cam/image_raw'
 BOTTOM_CAM_TOPIC = 'bottom_cam/image_raw'
 
-TWO_MONITOR_CONFIG = {"pilot": None, "livestream": 1}
-THREE_MONITOR_CONFIG = {"pilot": 2, "livestream": 1}
+
+class GuiType(enum.Enum):
+    PILOT = "pilot"
+    LIVESTREAM = "livestream"
+    DEBUG = "debug"
+
+
+TWO_MONITOR_CONFIG = {GuiType.PILOT: None, GuiType.LIVESTREAM: 1}
+THREE_MONITOR_CONFIG = {GuiType.PILOT: 2, GuiType.LIVESTREAM: 1}
 
 
 def make_bottom_bar() -> QHBoxLayout:
@@ -52,7 +61,9 @@ class PilotApp(App):
             front_cam_type = CameraType.ETHERNET
             bottom_cam_type = CameraType.ETHERNET
 
-        if gui_param.value == 'pilot':
+        gui_type = GuiType(gui_param.value)
+
+        if gui_type == GuiType.PILOT:
             self.setWindowTitle('Pilot GUI - CWRUbotix ROV 2024')
 
             front_cam_description = CameraDescription(
@@ -77,9 +88,7 @@ class PilotApp(App):
 
             main_layout.addLayout(make_bottom_bar())
 
-            self.apply_monitor_config("pilot")
-
-        elif gui_param.value == 'livestream':
+        elif gui_type == GuiType.LIVESTREAM:
             top_bar = QHBoxLayout()
             top_bar.addWidget(LivestreamHeader())
             top_bar.addWidget(TimerDisplay(), 2)
@@ -115,8 +124,6 @@ class PilotApp(App):
             main_layout.addLayout(video_layout)
             main_layout.addStretch()
 
-            self.apply_monitor_config("livestream")
-
         else:
             self.setWindowTitle('Debug GUI - CWRUbotix ROV 2024')
 
@@ -145,7 +152,9 @@ class PilotApp(App):
             main_layout.addLayout(video_layout)
             main_layout.addLayout(make_bottom_bar())
 
-    def apply_monitor_config(self, gui_id: str) -> None:
+        self.apply_monitor_config(gui_type)
+
+    def apply_monitor_config(self, gui_type: GuiType) -> None:
         screen = self.screen()
         if screen is None:
             return
@@ -154,9 +163,9 @@ class PilotApp(App):
 
         monitor_id: int | None
         if len(monitors) == 2:
-            monitor_id = TWO_MONITOR_CONFIG[gui_id]
+            monitor_id = TWO_MONITOR_CONFIG[gui_type]
         elif len(monitors) >= 3:
-            monitor_id = THREE_MONITOR_CONFIG[gui_id]
+            monitor_id = THREE_MONITOR_CONFIG[gui_type]
         else:
             return
 
