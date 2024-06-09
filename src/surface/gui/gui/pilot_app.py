@@ -23,8 +23,8 @@ class GuiType(enum.Enum):
     DEBUG = "debug"
 
 
-TWO_MONITOR_CONFIG = {GuiType.PILOT: None, GuiType.LIVESTREAM: 1}
-THREE_MONITOR_CONFIG = {GuiType.PILOT: 2, GuiType.LIVESTREAM: 1}
+TWO_MONITOR_CONFIG: dict[GuiType, int | None] = {GuiType.PILOT: None, GuiType.LIVESTREAM: 1}
+THREE_MONITOR_CONFIG: dict[GuiType, int | None] = {GuiType.PILOT: 2, GuiType.LIVESTREAM: 1}
 
 
 def make_bottom_bar() -> QHBoxLayout:
