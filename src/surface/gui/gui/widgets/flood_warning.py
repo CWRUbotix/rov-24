@@ -11,6 +11,10 @@ from ament_index_python.packages import get_package_share_directory
 import os
 
 
+Q_SOUND_EFFECT_LOOP_FOREVER = QSoundEffect.Loop.Infinite.value
+assert isinstance(Q_SOUND_EFFECT_LOOP_FOREVER, int)
+
+
 class FloodWarning(QWidget):
 
     signal = pyqtSignal(Flooding)
@@ -46,7 +50,7 @@ class FloodWarning(QWidget):
         )
         self.alarm_sound = QSoundEffect()
         self.alarm_sound.setSource(QUrl.fromLocalFile(alarm_sound_path))
-        self.alarm_sound.setLoopCount(int(QSoundEffect.Loop.Infinite.value))
+        self.alarm_sound.setLoopCount(Q_SOUND_EFFECT_LOOP_FOREVER)
 
     @pyqtSlot(Flooding)
     def refresh(self, msg: Flooding) -> None:
@@ -57,7 +61,7 @@ class FloodWarning(QWidget):
             self.indicator_circle.set_off()
 
             if not self.alarm_sound.isPlaying():
-                self.alarm_sound.setLoopCount(int(QSoundEffect.Loop.Infinite.value))
+                self.alarm_sound.setLoopCount(Q_SOUND_EFFECT_LOOP_FOREVER)
                 self.alarm_sound.play()
         else:
             self.indicator.setText('No Water present')
