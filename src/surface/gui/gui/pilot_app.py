@@ -137,7 +137,7 @@ class PilotApp(App):
 
         self.apply_monitor_config(gui_type)
 
-    def make_bottom_bar() -> QHBoxLayout:
+    def make_bottom_bar(self) -> QHBoxLayout:
         """Generate a bottom pane used by multiple gui types
 
         Returns
