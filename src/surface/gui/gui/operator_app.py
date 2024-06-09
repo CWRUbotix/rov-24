@@ -36,9 +36,9 @@ class OperatorApp(App):
 
         right_pane.addWidget(InteractiveTimer())
         right_pane.addWidget(HeartbeatWidget())
-        right_pane.addWidget(IPWidget())
         right_pane.addWidget(FloodWarning())
         right_pane.addWidget(TemperatureSensor())
+        right_pane.addWidget(IPWidget())
         right_pane.addStretch()
         right_pane.addWidget(TaskSelector())
 
