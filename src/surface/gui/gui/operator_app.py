@@ -35,19 +35,13 @@ class OperatorApp(App):
         logger = Logger()
         left_pane.addWidget(logger)
 
-        timer = InteractiveTimer()
-        right_pane.addWidget(timer)
-
-        flood_warning = FloodWarning()
-        right_pane.addWidget(flood_warning)
-
-        temp_sensor = TemperatureSensor()
-        right_pane.addWidget(temp_sensor)
-
+        right_pane.addWidget(InteractiveTimer())
+        right_pane.addWidget(HeartbeatWidget())
+        right_pane.addWidget(IPWidget())
+        right_pane.addWidget(FloodWarning())
+        right_pane.addWidget(TemperatureSensor())
         right_pane.addStretch()
-
-        task_selector = TaskSelector()
-        right_pane.addWidget(task_selector)
+        right_pane.addWidget(TaskSelector())
 
         # Add tabs to root
         root_layout = QVBoxLayout()
