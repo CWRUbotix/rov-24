@@ -138,7 +138,7 @@ class PilotApp(App):
         self.apply_monitor_config(gui_type)
 
     def make_bottom_bar(self) -> QHBoxLayout:
-        """Generate a bottom pane used by multiple gui types
+        """Generate a bottom pane used by multiple gui types.
 
         Returns
         -------
@@ -161,7 +161,8 @@ class PilotApp(App):
         return bottom_screen_layout
 
     def apply_monitor_config(self, gui_type: GuiType) -> None:
-        """Fullscreen the app to a specific monitor, depending on gui_type and the monitor config
+        """Fullscreen the app to a specific monitor, depending on gui_type and the monitor config.
+
         Either fullscreens the app to a monitor specified by TWO_MONITOR_CONFIG or
         THREE_MONITOR_CONFIG (depending on the number of monitors present), or does nothing if no
         config exists for the number of monitors and gui type
@@ -171,7 +172,6 @@ class PilotApp(App):
         gui_type : GuiType
             The type of gui that is being initialized
         """
-
         screen = self.screen()
         if screen is None:
             return
