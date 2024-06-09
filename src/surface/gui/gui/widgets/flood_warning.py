@@ -11,8 +11,8 @@ from ament_index_python.packages import get_package_share_directory
 import os
 
 
-Q_SOUND_EFFECT_LOOP_FOREVER = QSoundEffect.Loop.Infinite.value
-assert isinstance(Q_SOUND_EFFECT_LOOP_FOREVER, int)
+# The 'Loop' enum has int values, not 'Loop', unbeknownst to mypy
+Q_SOUND_EFFECT_LOOP_FOREVER = QSoundEffect.Loop.Infinite.value  # type: ignore
 
 
 class FloodWarning(QWidget):
