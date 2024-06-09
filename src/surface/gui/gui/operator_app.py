@@ -8,7 +8,6 @@ from gui.widgets.flood_warning import FloodWarning
 from gui.widgets.temperature import TemperatureSensor
 from gui.widgets.heartbeat import HeartbeatWidget
 from gui.widgets.ip_widget import IPWidget
-from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QTabWidget, QWidget, QVBoxLayout, QHBoxLayout
 
 
