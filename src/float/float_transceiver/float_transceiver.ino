@@ -35,10 +35,10 @@ const uint32_t PROFILE_SEGMENT = 60000;
 
 // Schedule (all delays in ms)
 const uint32_t RELEASE_MAX = 300000;
-const uint32_t SUCK_MAX = PRESSURE_READ_INTERVAL;
-const uint32_t DESCEND_TIME = PRESSURE_READ_INTERVAL;
-const uint32_t PUMP_MAX = PRESSURE_READ_INTERVAL;
-const uint32_t ASCEND_TIME = PRESSURE_READ_INTERVAL;
+const uint32_t SUCK_MAX = PROFILE_SEGMENT;
+const uint32_t DESCEND_TIME = PROFILE_SEGMENT;
+const uint32_t PUMP_MAX = PROFILE_SEGMENT;
+const uint32_t ASCEND_TIME = 0;  // Disable ascend times now that we're properly ballasted
 const uint32_t TX_MAX = 60000;
 const uint32_t ONE_HOUR = 360000;
 
@@ -57,7 +57,10 @@ OverrideState overrideState = OverrideState::NoOverride;
 uint8_t currentStage = 0;
 
 Stage SCHEDULE[SCHEDULE_LENGTH] = {
-  // Wait for max <time> or until surface signal
+  // Pump immediately in case we just rebooted at the bottom of the pool
+  {StageType::Pump,             PUMP_MAX    },
+
+ // Wait for max <time> or until surface signal
   {StageType::WaitDeploying,    RELEASE_MAX },
 
  // Profile 1
