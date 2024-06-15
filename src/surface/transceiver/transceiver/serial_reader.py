@@ -99,25 +99,27 @@ class SerialReaderPacketHandler:
         ros_single = ROS_PACKET + "SINGLE"
         return packet[:len(ros_single)] == ros_single
 
-    def handle_ros_single(self, packet: str) -> FloatSingle | None:
+    def handle_ros_single(self, packet: str) -> FloatSingle:
         packet_sections = packet.split(SECTION_SEPARATOR)
-        team_number = packet_sections[2]
+        team_number = int(packet_sections[2])
         data = packet_sections[3]
         time_ms = int(data.split(COMMA_SEPARATOR)[0])
         pressure = float(data.split(COMMA_SEPARATOR)[1])
 
+        float_msg = FloatSingle(team_number=team_number,
+                                time_ms=time_ms,
+                                pressure=pressure)
+
         if self.surface_pressures.full():
-            return FloatSingle(team_number=team_number,
-                               time_ms=time_ms,
-                               pressure=pressure,
-                               average_pressure=self.surface_pressure)
+            float_msg.average_pressure = self.surface_pressure
+            return float_msg
 
         self.surface_pressures.put(pressure)
 
         q = self.surface_pressures.queue
         avg_pressure = sum(q) / len(q)
         self.surface_pressure = avg_pressure
-        return None
+        return float_msg
 
     def message_parser(self, packet: str) -> FloatData:
         msg = FloatData()

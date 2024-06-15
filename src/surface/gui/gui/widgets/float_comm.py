@@ -166,5 +166,7 @@ class FloatComm(QWidget):
     def handle_single(self, msg: FloatSingle) -> None:
         self.team_number.setText(f"Team #: {msg.team_number}")
         self.time.setText(f"Time: {msg.time_ms} (ms)")
-        self.pressure.setText(f"Pressure: {msg.pressure}")
-        self.average_pressure.setText(f"Avg Pressure: {msg.average_pressure}")
+        # Magic mbar -> Kpa
+        self.pressure.setText(f"Pressure: {msg.pressure / 10} (kPa)")
+        if msg.average_pressure != float():
+            self.average_pressure.setText(f"Avg Pressure: {msg.average_pressure / 10} (kPa)")
