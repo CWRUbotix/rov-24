@@ -145,8 +145,8 @@ class SerialReaderPacketHandler:
         time_data_list: list[float] = []
         depth_data_list: list[float] = []
 
-        for time_reading, depth_reading in [data.split(COMMA_SEPARATOR) for data in
-                                            data.split(DATA_SEPARATOR)]:
+        for time_reading, pressure_reading in [data.split(COMMA_SEPARATOR) for data in
+                                               data.split(DATA_SEPARATOR)]:
 
             if int(time_reading) == 0:
                 continue
@@ -155,7 +155,7 @@ class SerialReaderPacketHandler:
 
             # Starts out as float
             depth_data_list.append(
-                (float(depth_reading) - self.surface_pressure) * MBAR_TO_METER_OF_HEAD)
+                (float(pressure_reading) - self.surface_pressure) * MBAR_TO_METER_OF_HEAD)
         msg.time_data = time_data_list
         msg.depth_data = depth_data_list
 
