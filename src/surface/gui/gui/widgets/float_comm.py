@@ -38,7 +38,7 @@ class FloatComm(QWidget):
         self.team_number = QLabel('Waiting for Team #')
         self.time = QLabel("Waiting for Time")
         self.pressure = QLabel("Waiting for Pressure")
-        self.average_pressure = QLabel("Waiting for Avg Pressure")
+        self.average_pressure = QLabel("Avg Pressure: 0/5")
 
         single_layout.addWidget(self.team_number)
         single_layout.addWidget(self.time)
@@ -110,6 +110,8 @@ class FloatComm(QWidget):
         self.received_second_half = False
         self.completed_profile_one = False
 
+        self.counter = 0
+
     @pyqtSlot(FloatData)
     def handle_data(self, msg: FloatData) -> None:
         """
@@ -164,9 +166,16 @@ class FloatComm(QWidget):
 
     @pyqtSlot(FloatSingle)
     def handle_single(self, msg: FloatSingle) -> None:
+        self.counter += 1
+
         self.team_number.setText(f"Team #: {msg.team_number}")
         self.time.setText(f"Time: {msg.time_ms} (ms)")
         # Magic mbar -> Kpa
-        self.pressure.setText(f"Pressure: {msg.pressure / 10} (kPa)")
+        pressure = round(msg.pressure / 10, 4)
+        avg_pressure = round(msg.average_pressure / 10, 4)
+
+        self.pressure.setText(f"Pressure: {pressure} (kPa)")
         if msg.average_pressure != float():
-            self.average_pressure.setText(f"Avg Pressure: {msg.average_pressure / 10} (kPa)")
+            self.average_pressure.setText(f"Avg Pressure: {avg_pressure} (kPa)")
+        else:
+            self.average_pressure.setText(f"Avg Pressure: {self.counter}/5")

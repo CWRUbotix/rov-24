@@ -20,8 +20,10 @@ AMBIENT_PRESSURE_DEFAULT = 1013.25  # in (mbar)
 # AKA the length of the float in (m)
 FLOAT_CONVERSION_FACTOR = 0.635
 
+AVERAGE_QUEUE_LEN = 5
 
 ROS_PACKET = "ROS:"
+ROS_SINGLE = ROS_PACKET + "SINGLE"
 SECTION_SEPARATOR = ":"
 DATA_SEPARATOR = ";"
 COMMA_SEPARATOR = ","
@@ -90,14 +92,13 @@ class SerialReader(Node):
 
 class SerialReaderPacketHandler:
 
-    def __init__(self, queue_size: int = 5) -> None:
+    def __init__(self, queue_size: int = AVERAGE_QUEUE_LEN) -> None:
         self.surface_pressure = AMBIENT_PRESSURE_DEFAULT
         self.surface_pressures: Queue[float] = Queue(queue_size)
 
     @staticmethod
     def is_ros_single_message(packet: str) -> bool:
-        ros_single = ROS_PACKET + "SINGLE"
-        return packet[:len(ros_single)] == ros_single
+        return packet[:len(ROS_SINGLE)] == ROS_SINGLE
 
     def handle_ros_single(self, packet: str) -> FloatSingle:
         packet_sections = packet.split(SECTION_SEPARATOR)
@@ -110,15 +111,16 @@ class SerialReaderPacketHandler:
                                 time_ms=time_ms,
                                 pressure=pressure)
 
+        if not self.surface_pressures.full():
+            self.surface_pressures.put(pressure)
+
+            iterable_queue = self.surface_pressures.queue
+            avg_pressure = sum(iterable_queue) / len(iterable_queue)
+            self.surface_pressure = avg_pressure
+
         if self.surface_pressures.full():
             float_msg.average_pressure = self.surface_pressure
-            return float_msg
 
-        self.surface_pressures.put(pressure)
-
-        q = self.surface_pressures.queue
-        avg_pressure = sum(q) / len(q)
-        self.surface_pressure = avg_pressure
         return float_msg
 
     def message_parser(self, packet: str) -> FloatData:
@@ -144,8 +146,8 @@ class SerialReaderPacketHandler:
         time_data_list: list[float] = []
         depth_data_list: list[float] = []
 
-        for time_reading, depth_reading in [data.split(COMMA_SEPARATOR) for data in
-                                            data.split(DATA_SEPARATOR)]:
+        for time_reading, pressure_reading in [data.split(COMMA_SEPARATOR) for data in
+                                               data.split(DATA_SEPARATOR)]:
 
             if int(time_reading) == 0:
                 continue
@@ -154,7 +156,7 @@ class SerialReaderPacketHandler:
 
             # Starts out as float
             depth_data_list.append(
-                (float(depth_reading) - self.surface_pressure) * MBAR_TO_METER_OF_HEAD
+                (float(pressure_reading) - self.surface_pressure) * MBAR_TO_METER_OF_HEAD
                 + FLOAT_CONVERSION_FACTOR
             )
 
