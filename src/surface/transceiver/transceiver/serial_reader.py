@@ -119,6 +119,10 @@ class SerialReaderPacketHandler:
         q = self.surface_pressures.queue
         avg_pressure = sum(q) / len(q)
         self.surface_pressure = avg_pressure
+
+        if self.surface_pressures.full():
+            float_msg.average_pressure = self.surface_pressure
+
         return float_msg
 
     def message_parser(self, packet: str) -> FloatData:
