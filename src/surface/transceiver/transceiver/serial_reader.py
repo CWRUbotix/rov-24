@@ -110,15 +110,12 @@ class SerialReaderPacketHandler:
                                 time_ms=time_ms,
                                 pressure=pressure)
 
-        if self.surface_pressures.full():
-            float_msg.average_pressure = self.surface_pressure
-            return float_msg
+        if not self.surface_pressures.full():
+            self.surface_pressures.put(pressure)
 
-        self.surface_pressures.put(pressure)
-
-        iterable_queue = self.surface_pressures.queue
-        avg_pressure = sum(iterable_queue) / len(iterable_queue)
-        self.surface_pressure = avg_pressure
+            iterable_queue = self.surface_pressures.queue
+            avg_pressure = sum(iterable_queue) / len(iterable_queue)
+            self.surface_pressure = avg_pressure
 
         if self.surface_pressures.full():
             float_msg.average_pressure = self.surface_pressure
