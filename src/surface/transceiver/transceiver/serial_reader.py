@@ -17,7 +17,7 @@ MBAR_TO_METER_OF_HEAD = 0.010199773339984
 
 AMBIENT_PRESSURE_DEFAULT = 1013.25  # in (mbar)
 
-# Distance from the pressure to the bottom of the float (m)
+# Distance from the pressure sensor to the bottom of the float (m)
 PRESSURE_SENSOR_VERTICAL_OFFSET = 0.635
 
 AVERAGE_QUEUE_LEN = 5
