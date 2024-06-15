@@ -35,14 +35,14 @@ const uint32_t PROFILE_SEGMENT = 60000;
 
 // Schedule (all delays in ms)
 const uint32_t RELEASE_MAX = 300000;
-const uint32_t SUCK_MAX = PRESSURE_READ_INTERVAL;
-const uint32_t DESCEND_TIME = PRESSURE_READ_INTERVAL;
-const uint32_t PUMP_MAX = PRESSURE_READ_INTERVAL;
-const uint32_t ASCEND_TIME = PRESSURE_READ_INTERVAL;
+const uint32_t SUCK_MAX = PROFILE_SEGMENT;
+const uint32_t DESCEND_TIME = PROFILE_SEGMENT;
+const uint32_t PUMP_MAX = PROFILE_SEGMENT;
+const uint32_t ASCEND_TIME = 0;  // Disable ascend times now that we're properly ballasted
 const uint32_t TX_MAX = 60000;
 const uint32_t ONE_HOUR = 360000;
 
-const uint8_t SCHEDULE_LENGTH = 11;
+const size_t SCHEDULE_LENGTH = 12;
 
 enum class StageType { WaitDeploying, WaitTransmitting, WaitProfiling, Suck, Pump };
 enum class OverrideState { NoOverride, Stop, Suck, Pump };
@@ -57,7 +57,10 @@ OverrideState overrideState = OverrideState::NoOverride;
 uint8_t currentStage = 0;
 
 Stage SCHEDULE[SCHEDULE_LENGTH] = {
-  // Wait for max <time> or until surface signal
+  // Pump immediately in case we just rebooted at the bottom of the pool
+  {StageType::Pump,             PUMP_MAX    },
+
+ // Wait for max <time> or until surface signal
   {StageType::WaitDeploying,    RELEASE_MAX },
 
  // Profile 1
@@ -92,6 +95,8 @@ int packetIndex = PKT_HEADER_LEN;
 
 uint8_t profileNum = 0;
 uint8_t profileHalf = 0;
+
+bool isStartingStage = true;
 
 void setup() {
   Serial.begin(115200);
@@ -220,7 +225,9 @@ void loop() {
   bool pumpingHitLimitSwitch = stageIs(StageType::Pump) && !digitalRead(LIMIT_EMPTY);
   bool shouldSubmerge = isSurfaced() && submergeReceived;
 
-  if (shouldSubmerge || stageTimedOut || suckingHitLimitSwitch || pumpingHitLimitSwitch) {
+  if (
+    shouldSubmerge || stageTimedOut || suckingHitLimitSwitch || pumpingHitLimitSwitch ||
+    isStartingStage) {
     serialPrintf(
       "Ending stage #%d, type: %d, start time: %l, max wait time: %l, current time: %l\n",
       currentStage, SCHEDULE[currentStage].type, stageStartTime,
@@ -235,9 +242,11 @@ void loop() {
     }
 
     // === MOVE TO NEXT STAGE ===
-    stageStartTime = millis();
-    currentStage++;
-    stop();
+    if (!isStartingStage) {
+      stageStartTime = millis();
+      currentStage++;
+      stop();
+    }
     // ==========================
 
     // If we signal a third profile, restart the schedule
@@ -252,6 +261,8 @@ void loop() {
     else if (stageIs(StageType::Pump)) {
       pump();
     }
+
+    isStartingStage = false;
   }
 }
 
