@@ -110,7 +110,7 @@ class FloatComm(QWidget):
         self.received_second_half = False
         self.completed_profile_one = False
 
-        counter = 0
+        self.counter = 0
 
     @pyqtSlot(FloatData)
     def handle_data(self, msg: FloatData) -> None:
