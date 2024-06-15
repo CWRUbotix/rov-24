@@ -22,6 +22,7 @@ FLOAT_CONVERSION_FACTOR = 0.635
 
 
 ROS_PACKET = "ROS:"
+ROS_SINGLE = ROS_PACKET + "SINGLE"
 SECTION_SEPARATOR = ":"
 DATA_SEPARATOR = ";"
 COMMA_SEPARATOR = ","
@@ -96,8 +97,7 @@ class SerialReaderPacketHandler:
 
     @staticmethod
     def is_ros_single_message(packet: str) -> bool:
-        ros_single = ROS_PACKET + "SINGLE"
-        return packet[:len(ros_single)] == ros_single
+        return packet[:len(ROS_SINGLE)] == ROS_SINGLE
 
     def handle_ros_single(self, packet: str) -> FloatSingle:
         packet_sections = packet.split(SECTION_SEPARATOR)
