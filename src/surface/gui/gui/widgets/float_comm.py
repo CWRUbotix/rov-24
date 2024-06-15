@@ -110,6 +110,8 @@ class FloatComm(QWidget):
         self.received_second_half = False
         self.completed_profile_one = False
 
+        counter = 0
+
     @pyqtSlot(FloatData)
     def handle_data(self, msg: FloatData) -> None:
         """
@@ -162,11 +164,10 @@ class FloatComm(QWidget):
         self.console.moveCursor(QTextCursor.MoveOperation.End)
         self.console.insertPlainText(f'{msg.serial}\n')
 
-    counter = 0
 
     @pyqtSlot(FloatSingle)
     def handle_single(self, msg: FloatSingle) -> None:
-        FloatComm.counter += 1
+        self.counter += 1
 
         self.team_number.setText(f"Team #: {msg.team_number}")
         self.time.setText(f"Time: {msg.time_ms} (ms)")
@@ -178,4 +179,4 @@ class FloatComm(QWidget):
         if msg.average_pressure != float():
             self.average_pressure.setText(f"Avg Pressure: {avg_pressure} (kPa)")
         else:
-            self.average_pressure.setText(f"Avg Pressure: {FloatComm.counter}/5")
+            self.average_pressure.setText(f"Avg Pressure: {self.counter}/5")
