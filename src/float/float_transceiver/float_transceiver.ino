@@ -225,7 +225,9 @@ void loop() {
   bool pumpingHitLimitSwitch = stageIs(StageType::Pump) && !digitalRead(LIMIT_EMPTY);
   bool shouldSubmerge = isSurfaced() && submergeReceived;
 
-  if (shouldSubmerge || stageTimedOut || suckingHitLimitSwitch || pumpingHitLimitSwitch || isStartingStage) {
+  if (
+    shouldSubmerge || stageTimedOut || suckingHitLimitSwitch || pumpingHitLimitSwitch ||
+    isStartingStage) {
     serialPrintf(
       "Ending stage #%d, type: %d, start time: %l, max wait time: %l, current time: %l\n",
       currentStage, SCHEDULE[currentStage].type, stageStartTime,
