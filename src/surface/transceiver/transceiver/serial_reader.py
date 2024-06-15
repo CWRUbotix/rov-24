@@ -154,7 +154,10 @@ class SerialReaderPacketHandler:
 
             # Starts out as float
             depth_data_list.append(
-                (float(depth_reading) - self.surface_pressure) * MBAR_TO_METER_OF_HEAD)
+                (float(depth_reading) - self.surface_pressure) * MBAR_TO_METER_OF_HEAD
+                + FLOAT_CONVERSION_FACTOR
+            )
+
         msg.time_data = time_data_list
         msg.depth_data = depth_data_list
 
