@@ -6,7 +6,7 @@ from PyQt6.QtWidgets import (QHBoxLayout, QLabel, QPushButton, QTextEdit,
                              QVBoxLayout, QWidget)
 from pyqtgraph import PlotWidget
 
-from rov_msgs.msg import FloatCommand, FloatData, FloatSerial
+from rov_msgs.msg import FloatCommand, FloatData, FloatSerial, FloatSingle
 
 
 class FloatComm(QWidget):
@@ -14,6 +14,7 @@ class FloatComm(QWidget):
 
     handle_data_signal = pyqtSignal(FloatData)
     handle_serial_signal = pyqtSignal(FloatSerial)
+    handle_data_single_signal = pyqtSignal(FloatSingle)
 
     def __init__(self) -> None:
         super().__init__()
@@ -23,26 +24,32 @@ class FloatComm(QWidget):
 
         self.handle_data_signal.connect(self.handle_data)
         self.handle_serial_signal.connect(self.handle_serial)
+        self.handle_data_single_signal.connect(self.handle_single)
         GUIEventSubscriber(FloatData, "transceiver_data", self.handle_data_signal)
         GUIEventSubscriber(FloatSerial, "float_serial", self.handle_serial_signal)
+        GUIEventSubscriber(FloatSingle, "transceiver_single", self.handle_data_single_signal)
 
         command_pub = GUIEventPublisher(FloatCommand, "float_command")
 
         info_layout = QVBoxLayout()
 
-        self.team_number = QLabel('Waiting for Team #')
-        self.profile_number = QLabel("Waiting for profile #")
-        self.profile_half = QLabel("Waiting for profile half")
-
         single_layout = QHBoxLayout()
+
+        self.team_number = QLabel('Waiting for Team #')
+        self.time = QLabel("Waiting for Time")
+        self.pressure = QLabel("Waiting for Pressure")
+        self.average_pressure = QLabel("Waiting for Avg Pressure")
+
+        single_layout.addWidget(self.team_number)
+        single_layout.addWidget(self.time)
+        single_layout.addWidget(self.pressure)
+        single_layout.addWidget(self.average_pressure)
 
         self.single_time = QLabel('Waiting for Time')
         self.single_pressure = QLabel('Waiting for Pressure')
-        single_layout.addWidget(self.team_number)
+        self.profile_number = QLabel("Waiting for profile #")
+        self.profile_half = QLabel("Waiting for profile half")
 
-        left_side_layout = QVBoxLayout()
-
-        left_side_layout.addLayout(single_layout)
         info_layout.addWidget(self.profile_number)
         info_layout.addWidget(self.profile_half)
 
@@ -88,7 +95,9 @@ class FloatComm(QWidget):
 
         self.plots = [PlotWidget(), PlotWidget()]
 
+        left_side_layout = QVBoxLayout()
         left_side_layout.addLayout(info_and_buttons)
+        left_side_layout.addLayout(single_layout)
         left_side_layout.addWidget(self.console)
 
         layout.addLayout(left_side_layout)
@@ -152,3 +161,10 @@ class FloatComm(QWidget):
         """
         self.console.moveCursor(QTextCursor.MoveOperation.End)
         self.console.insertPlainText(f'{msg.serial}\n')
+
+    @pyqtSlot(FloatSingle)
+    def handle_single(self, msg: FloatSingle) -> None:
+        self.team_number.setText(f"Team #: {msg.team_number}")
+        self.time.setText(f"Time: {msg.time_ms} (ms)")
+        self.pressure.setText(f"Pressure: {msg.pressure}")
+        self.average_pressure.setText(f"Avg Pressure: {msg.average_pressure}")

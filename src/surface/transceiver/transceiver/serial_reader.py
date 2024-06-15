@@ -8,7 +8,7 @@ from rclpy.qos import QoSPresetProfiles
 from serial import Serial
 from serial.serialutil import SerialException
 
-from rov_msgs.msg import FloatCommand, FloatData, FloatSerial
+from rov_msgs.msg import FloatCommand, FloatData, FloatSerial, FloatSingle
 
 MILLISECONDS_TO_SECONDS = 1/1000
 SECONDS_TO_MINUTES = 1/60
@@ -35,6 +35,9 @@ class SerialReader(Node):
         super().__init__('serial_reader')
         self.data_publisher = self.create_publisher(FloatData, 'transceiver_data',
                                                     QoSPresetProfiles.SENSOR_DATA.value)
+
+        self.ros_single_publisher = self.create_publisher(FloatSingle, 'transceiver_single',
+                                                          QoSPresetProfiles.SENSOR_DATA.value)
 
         self.create_subscription(FloatCommand, 'float_command', self.send_command,
                                  QoSPresetProfiles.DEFAULT.value)
@@ -75,7 +78,9 @@ class SerialReader(Node):
 
         try:
             if SerialReaderPacketHandler.is_ros_single_message(packet):
-                self.serial_packet_handler.handle_ros_single(packet)
+                single_msg = self.serial_packet_handler.handle_ros_single(packet)
+                if single_msg:
+                    self.ros_single_publisher.publish(single_msg)
             else:
                 msg = self.serial_packet_handler.message_parser(packet)
                 self.data_publisher.publish(msg)
@@ -94,19 +99,25 @@ class SerialReaderPacketHandler:
         ros_single = ROS_PACKET + "SINGLE"
         return packet[:len(ros_single)] == ros_single
 
-    def handle_ros_single(self, packet: str) -> None:
-        if self.surface_pressures.full():
-            return
-
+    def handle_ros_single(self, packet: str) -> FloatSingle | None:
         packet_sections = packet.split(SECTION_SEPARATOR)
+        team_number = packet_sections[2]
         data = packet_sections[3]
+        time_ms = int(data.split(COMMA_SEPARATOR)[0])
         pressure = float(data.split(COMMA_SEPARATOR)[1])
+
+        if self.surface_pressures.full():
+            return FloatSingle(team_number=team_number,
+                               time_ms=time_ms,
+                               pressure=pressure,
+                               average_pressure=self.surface_pressure)
 
         self.surface_pressures.put(pressure)
 
         q = self.surface_pressures.queue
         avg_pressure = sum(q) / len(q)
         self.surface_pressure = avg_pressure
+        return None
 
     def message_parser(self, packet: str) -> FloatData:
         msg = FloatData()
