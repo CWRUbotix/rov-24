@@ -42,7 +42,7 @@ const uint32_t ASCEND_TIME = 0;  // Disable ascend times now that we're properly
 const uint32_t TX_MAX = 60000;
 const uint32_t ONE_HOUR = 360000;
 
-const uint8_t SCHEDULE_LENGTH = 11;
+const uint8_t SCHEDULE_LENGTH = 12;
 
 enum class StageType { WaitDeploying, WaitTransmitting, WaitProfiling, Suck, Pump };
 enum class OverrideState { NoOverride, Stop, Suck, Pump };
@@ -132,6 +132,9 @@ void setup() {
 
   initRadio();
   initPressureSensor();
+
+  // Start our first stage by pumping
+  pump();
 }
 
 void loop() {
