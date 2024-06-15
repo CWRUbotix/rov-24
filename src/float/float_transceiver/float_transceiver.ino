@@ -42,7 +42,7 @@ const uint32_t ASCEND_TIME = 0;  // Disable ascend times now that we're properly
 const uint32_t TX_MAX = 60000;
 const uint32_t ONE_HOUR = 360000;
 
-const uint8_t SCHEDULE_LENGTH = 12;
+const size_t SCHEDULE_LENGTH = 12;
 
 enum class StageType { WaitDeploying, WaitTransmitting, WaitProfiling, Suck, Pump };
 enum class OverrideState { NoOverride, Stop, Suck, Pump };
@@ -96,6 +96,8 @@ int packetIndex = PKT_HEADER_LEN;
 uint8_t profileNum = 0;
 uint8_t profileHalf = 0;
 
+bool isStartingStage = true;
+
 void setup() {
   Serial.begin(115200);
   // Wait until serial console is open; remove if not tethered to computer
@@ -132,9 +134,6 @@ void setup() {
 
   initRadio();
   initPressureSensor();
-
-  // Start our first stage by pumping
-  pump();
 }
 
 void loop() {
@@ -226,7 +225,7 @@ void loop() {
   bool pumpingHitLimitSwitch = stageIs(StageType::Pump) && !digitalRead(LIMIT_EMPTY);
   bool shouldSubmerge = isSurfaced() && submergeReceived;
 
-  if (shouldSubmerge || stageTimedOut || suckingHitLimitSwitch || pumpingHitLimitSwitch) {
+  if (shouldSubmerge || stageTimedOut || suckingHitLimitSwitch || pumpingHitLimitSwitch || isStartingStage) {
     serialPrintf(
       "Ending stage #%d, type: %d, start time: %l, max wait time: %l, current time: %l\n",
       currentStage, SCHEDULE[currentStage].type, stageStartTime,
@@ -241,9 +240,11 @@ void loop() {
     }
 
     // === MOVE TO NEXT STAGE ===
-    stageStartTime = millis();
-    currentStage++;
-    stop();
+    if (!isStartingStage) {
+      stageStartTime = millis();
+      currentStage++;
+      stop();
+    }
     // ==========================
 
     // If we signal a third profile, restart the schedule
@@ -258,6 +259,8 @@ void loop() {
     else if (stageIs(StageType::Pump)) {
       pump();
     }
+
+    isStartingStage = false;
   }
 }
 
