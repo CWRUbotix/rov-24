@@ -17,8 +17,8 @@ MBAR_TO_METER_OF_HEAD = 0.010199773339984
 
 AMBIENT_PRESSURE_DEFAULT = 1013.25  # in (mbar)
 
-# AKA the length of the float in (m)
-FLOAT_CONVERSION_FACTOR = 0.635
+# Distance from the pressure to the bottom of the float (m)
+PRESSURE_SENSOR_VERTICAL_OFFSET = 0.635
 
 AVERAGE_QUEUE_LEN = 5
 
@@ -157,7 +157,7 @@ class SerialReaderPacketHandler:
             # Starts out as float
             depth_data_list.append(
                 (float(pressure_reading) - self.surface_pressure) * MBAR_TO_METER_OF_HEAD
-                + FLOAT_CONVERSION_FACTOR
+                + PRESSURE_SENSOR_VERTICAL_OFFSET
             )
 
         msg.time_data = time_data_list
