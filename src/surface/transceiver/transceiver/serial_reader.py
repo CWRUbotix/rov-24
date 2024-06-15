@@ -116,8 +116,8 @@ class SerialReaderPacketHandler:
 
         self.surface_pressures.put(pressure)
 
-        q = self.surface_pressures.queue
-        avg_pressure = sum(q) / len(q)
+        iterable_queue = self.surface_pressures.queue
+        avg_pressure = sum(iterable_queue) / len(iterable_queue)
         self.surface_pressure = avg_pressure
 
         if self.surface_pressures.full():
