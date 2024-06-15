@@ -164,7 +164,6 @@ class FloatComm(QWidget):
         self.console.moveCursor(QTextCursor.MoveOperation.End)
         self.console.insertPlainText(f'{msg.serial}\n')
 
-
     @pyqtSlot(FloatSingle)
     def handle_single(self, msg: FloatSingle) -> None:
         self.counter += 1
