@@ -21,7 +21,8 @@ ROS_SINGLE_THREE = "ROS:SINGLE:25:16592,992.9600"
 ROS_SINGLE_FOUR = "ROS:SINGLE:25:22112,993.3699"
 ROS_SINGLE_FIVE = "ROS:SINGLE:25:27631,993.2600"
 
-ROS_SINGLE_MSGS = (ROS_SINGLE_ONE, ROS_SINGLE_TWO, ROS_SINGLE_THREE, ROS_SINGLE_FOUR, ROS_SINGLE_FIVE)
+ROS_SINGLE_MSGS = (ROS_SINGLE_ONE, ROS_SINGLE_TWO, ROS_SINGLE_THREE, ROS_SINGLE_FOUR,
+                   ROS_SINGLE_FIVE)
 TEST_VALUES = (992.4500, 994.4299, 992.9600, 993.3699, 993.26)
 EXPECTED_VALUES = (992.4500, 993.43995, 993.27996666666, 993.30245, 993.29396)
 
@@ -52,7 +53,8 @@ def test_message_parser(packet_handler: SerialReaderPacketHandler) -> None:
 def test_handle_ros_single(packet_handler: SerialReaderPacketHandler) -> None:
     test_queue: Queue[float] = Queue(5)
 
-    for ros_single, test_value, expected_value in zip(ROS_SINGLE_MSGS, TEST_VALUES, EXPECTED_VALUES):
+    for ros_single, test_value, expected_value in zip(ROS_SINGLE_MSGS, TEST_VALUES,
+                                                      EXPECTED_VALUES):
         packet_handler.handle_ros_single(ros_single)
         test_queue.put(test_value)
         assert equal(packet_handler.surface_pressures, test_queue)
