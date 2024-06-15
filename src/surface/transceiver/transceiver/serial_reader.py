@@ -92,7 +92,7 @@ class SerialReader(Node):
 
 class SerialReaderPacketHandler:
 
-    def __init__(self, queue_size: int = 5) -> None:
+    def __init__(self, queue_size: int = AVERAGE_QUEUE_LEN) -> None:
         self.surface_pressure = AMBIENT_PRESSURE_DEFAULT
         self.surface_pressures: Queue[float] = Queue(queue_size)
 
