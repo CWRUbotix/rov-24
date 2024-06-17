@@ -4,7 +4,6 @@ name = "rov-24"
 version = "1.1.0"
 
 dependencies = [
-    'numpy < 2.0.0',
     'setuptools',
     'flake8==7.0.0',
     'mypy >= 1.7',
@@ -13,7 +12,7 @@ dependencies = [
     'pyqtgraph',
     'pyqtdarktheme',
     'opencv-python>=4.8.1',
-    'numpy>=1.26',
+    'numpy < 2.0.0',
     'pytest-qt',
     'pytest-xvfb',
     'TCA9555@git+https://github.com/InvincibleRMC/TCA9555',
