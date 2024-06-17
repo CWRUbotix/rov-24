@@ -1,11 +1,6 @@
-"""setup.py for the realsense module."""
-import os
-from glob import glob
-
 from setuptools import setup
 
-PACKAGE_NAME = 'realsense'
-
+PACKAGE_NAME = 'float'
 
 setup(
     name=PACKAGE_NAME,
@@ -15,16 +10,15 @@ setup(
         ('share/ament_index/resource_index/packages',
             ['resource/' + PACKAGE_NAME]),
         ('share/' + PACKAGE_NAME, ['package.xml']),
-        # Include all launch files.
-        (os.path.join('share', PACKAGE_NAME, 'launch'),
-         glob('launch/*launch.[pxy][yma]*'))
     ],
     install_requires=['setuptools'],
     zip_safe=True,
-    maintainer='Michael Carlstrom',
-    maintainer_email='rmc170@case.edu',
-    description='Mate ROV Pi Realsense',
+    maintainer='benjamin',
+    maintainer_email='bwp18@case.edu',
+    description='Mate ROV sub movement controllers',
     license='Apache License 2.0',
     tests_require=['pytest'],
-    entry_points={},
+    entry_points={
+        'console_scripts': [],
+    },
 )

@@ -23,6 +23,12 @@ setup(
         # Include all style files.
         (os.path.join('share', PACKAGE_NAME, 'styles'),
          glob('gui/styles/*.qss')),
+        # Include all images.
+        (os.path.join('share', PACKAGE_NAME, 'images'),
+         glob('gui/images/*')),
+        # Include all sounds.
+        (os.path.join('share', PACKAGE_NAME, 'sounds'),
+         glob('gui/sounds/*')),
     ],
     install_requires=['setuptools'],
     zip_safe=True,
@@ -34,7 +40,6 @@ setup(
     entry_points={
         'console_scripts': ['run_pilot = gui.pilot_app:run_gui_pilot',
                             'run_operator = gui.operator_app:run_gui_operator',
-                            'run_debug = gui.debug_app:run_gui_debug',
                             'run_timer = gui.gui_nodes.auxiliary_nodes.timer:run_timer'],
     },
 )
