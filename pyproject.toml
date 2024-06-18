@@ -1,7 +1,7 @@
 [project]
 name = "rov-24"
 # I know Ben hates this but this required lol
-version = "1.1.0"
+version = "1.2.0"
 
 dependencies = [
     'setuptools',
