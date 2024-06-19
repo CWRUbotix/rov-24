@@ -8,14 +8,15 @@ from rov_msgs.msg import VehicleState
 from mavros_msgs.srv import SetMode
 
 
+ENABLE_REQUEST = SetMode.Request(base_mode=0, custom_mode="ALT_HOLD")
+DISABLE_REQUEST = SetMode.Request(base_mode=0, custom_mode="MANUAL")
+BUTTON_WIDTH = 120
+BUTTON_HEIGHT = 60
+BUTTON_STYLESHEET = 'QPushButton { font-size: 20px; }'
+
+
 class DepthHold(QWidget):
     """Widget for setting the pixhawk's stabilization mode."""
-
-    ENABLE_REQUEST = SetMode.Request(base_mode=0, custom_mode="ALT_HOLD")
-    DISABLE_REQUEST = SetMode.Request(base_mode=0, custom_mode="MANUAL")
-    BUTTON_WIDTH = 120
-    BUTTON_HEIGHT = 60
-    BUTTON_STYLESHEET = 'QPushButton { font-size: 20px; }'
 
     command_response_signal = pyqtSignal(SetMode.Response)
     vehicle_state_signal = pyqtSignal(VehicleState)
@@ -37,14 +38,14 @@ class DepthHold(QWidget):
         self.enable_button.setText("Enable")
         self.disable_button.setText("Disable")
 
-        self.enable_button.setMinimumWidth(self.BUTTON_WIDTH)
-        self.disable_button.setMinimumWidth(self.BUTTON_WIDTH)
+        self.enable_button.setMinimumWidth(BUTTON_WIDTH)
+        self.disable_button.setMinimumWidth(BUTTON_WIDTH)
 
-        self.enable_button.setMinimumHeight(self.BUTTON_HEIGHT)
-        self.disable_button.setMinimumHeight(self.BUTTON_HEIGHT)
+        self.enable_button.setMinimumHeight(BUTTON_HEIGHT)
+        self.disable_button.setMinimumHeight(BUTTON_HEIGHT)
 
-        self.enable_button.setStyleSheet(self.BUTTON_STYLESHEET)
-        self.disable_button.setStyleSheet(self.BUTTON_STYLESHEET)
+        self.enable_button.setStyleSheet(BUTTON_STYLESHEET)
+        self.disable_button.setStyleSheet(BUTTON_STYLESHEET)
         self.enable_button.set_inactive()
         self.disable_button.set_inactive()
 
@@ -71,10 +72,10 @@ class DepthHold(QWidget):
         self.vehicle_state_signal.connect(self.vehicle_state_callback)
 
     def enable_clicked(self) -> None:
-        self.set_mode_callback.send_request_async(self.ENABLE_REQUEST)
+        self.set_mode_callback.send_request_async(ENABLE_REQUEST)
 
     def disable_clicked(self) -> None:
-        self.set_mode_callback.send_request_async(self.DISABLE_REQUEST)
+        self.set_mode_callback.send_request_async(DISABLE_REQUEST)
 
     @pyqtSlot(SetMode.Response)
     def response_callback(self, res: SetMode.Response) -> None:
