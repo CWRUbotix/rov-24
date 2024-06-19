@@ -138,7 +138,10 @@ void setup() {
 }
 
 void loop() {
-  bool submergeReceived = receiveCommand();
+  bool submergeReceived = false;
+  if (!stageIs(StageType::Suck) && !stageIs(StageType::Pump)) {
+    submergeReceived = receiveCommand();
+  }
 
   if (overrideState == OverrideState::Suck) {
     if (digitalRead(LIMIT_FULL) == HIGH) {
