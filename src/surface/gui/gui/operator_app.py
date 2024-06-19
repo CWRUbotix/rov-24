@@ -8,6 +8,7 @@ from gui.widgets.flood_warning import FloodWarning
 from gui.widgets.temperature import TemperatureSensor
 from gui.widgets.heartbeat import HeartbeatWidget
 from gui.widgets.ip_widget import IPWidget
+from gui.widgets.depth_hold import DepthHold
 from PyQt6.QtWidgets import QTabWidget, QWidget, QVBoxLayout, QHBoxLayout
 
 
@@ -40,6 +41,7 @@ class OperatorApp(App):
         right_pane.addWidget(TemperatureSensor())
         right_pane.addWidget(IPWidget())
         right_pane.addStretch()
+        right_pane.addWidget(DepthHold())
         right_pane.addWidget(TaskSelector())
 
         # Add tabs to root
