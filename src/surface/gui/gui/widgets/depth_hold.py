@@ -51,8 +51,8 @@ class DepthHold(QWidget):
         self.enable_button.clicked.connect(self.enable_clicked)
         self.disable_button.clicked.connect(self.disable_clicked)
 
-        h_layout.addWidget(self.enable_button)
         h_layout.addWidget(self.disable_button)
+        h_layout.addWidget(self.enable_button)
 
         layout.addLayout(h_layout)
 
