@@ -72,18 +72,36 @@ class DepthHold(QWidget):
         self.vehicle_state_signal.connect(self.vehicle_state_callback)
 
     def enable_clicked(self) -> None:
+        """Send a mavros service request to enable depth hold
+        """
         self.set_mode_callback.send_request_async(ENABLE_REQUEST)
 
     def disable_clicked(self) -> None:
+        """Send a mavros service request to disable depth hold
+        """
         self.set_mode_callback.send_request_async(DISABLE_REQUEST)
 
     @pyqtSlot(SetMode.Response)
     def response_callback(self, res: SetMode.Response) -> None:
+        """If the service call failed, send a ros warning
+
+        Parameters
+        ----------
+        res : SetMode.Response
+            The mavros service response
+        """
         if not res.mode_sent:
             self.set_mode_callback.get_logger().warn("Failed to set pixhawk mode.")
 
     @pyqtSlot(VehicleState)
     def vehicle_state_callback(self, msg: VehicleState) -> None:
+        """Update the button styles to show the status of the pixhawk
+
+        Parameters
+        ----------
+        msg : VehicleState
+            The mavros vehicle state message
+        """
         if msg.pixhawk_connected:
             if msg.depth_hold_enabled:
                 self.enable_button.set_on()
