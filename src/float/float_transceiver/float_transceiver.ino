@@ -35,13 +35,13 @@ const uint32_t PROFILE_SEGMENT = 60000;
 #endif
 
 // Schedule (all delays in ms)
-const uint32_t RELEASE_MAX = 300000;
+const uint32_t RELEASE_MAX = 8 * 60000;
 const uint32_t SUCK_MAX = PROFILE_SEGMENT;
 const uint32_t DESCEND_TIME = PROFILE_SEGMENT;
 const uint32_t PUMP_MAX = PROFILE_SEGMENT;
 const uint32_t ASCEND_TIME = 0;  // Disable ascend times now that we're properly ballasted
-const uint32_t TX_MAX = 60000;
-const uint32_t ONE_HOUR = 360000;
+const uint32_t TX_MAX = 2 * 60000;
+const uint32_t CODA = 2 * 60000;
 
 const size_t SCHEDULE_LENGTH = 12;
 
@@ -78,7 +78,7 @@ Stage SCHEDULE[SCHEDULE_LENGTH] = {
   {StageType::Pump,             PUMP_MAX    },
   {StageType::WaitProfiling,    ASCEND_TIME },
 
-  {StageType::WaitTransmitting, ONE_HOUR    },
+  {StageType::WaitTransmitting, CODA        },
 };
 
 uint32_t stageStartTime;
@@ -255,7 +255,7 @@ void loop() {
 
     // If we signal a third profile, restart the schedule
     if (currentStage >= SCHEDULE_LENGTH) {
-      currentStage = 1;
+      currentStage = 2;
     }
 
     // Switch to sucking/pumping depending on the stage we're entering
