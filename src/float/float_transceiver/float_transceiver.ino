@@ -34,15 +34,15 @@ const uint32_t PRESSURE_READ_INTERVAL = 5000;
 const uint32_t PROFILE_SEGMENT = 60000;
 #endif
 
-const uint32_t ONE_SECOND = 60000;
+const uint32_t ONE_MINUTE = 60000;
 
 // Schedule (all delays in ms)
-const uint32_t RELEASE_MAX = 8 * ONE_SECOND;
+const uint32_t RELEASE_MAX = 8 * ONE_MINUTE;
 const uint32_t SUCK_MAX = PROFILE_SEGMENT;
 const uint32_t DESCEND_TIME = PROFILE_SEGMENT;
 const uint32_t PUMP_MAX = PROFILE_SEGMENT;
 const uint32_t ASCEND_TIME = 0;  // Disable ascend times now that we're properly ballasted
-const uint32_t TX_MAX_TIME = 2 * ONE_SECOND;
+const uint32_t TX_MAX_TIME = 2 * ONE_MINUTE;
 
 const size_t SCHEDULE_LENGTH = 12;
 
