@@ -46,7 +46,7 @@ DISARM_MESSAGE = CommandBool.Request(value=False)
 
 CONTROLLER_MODE_PARAM = "controller_mode"
 
-NEXT_INSTR_FRAC = 0.1
+NEXT_INSTR_FRAC = 0.05
 PREV_INSTR_FRAC = 1 - NEXT_INSTR_FRAC
 
 
@@ -151,6 +151,8 @@ class ManualControlNode(Node):
             yaw=ManualControlNode.smooth(self.previous_pixhawk_instruction.yaw, instruction.yaw),
             author=PixhawkInstruction.MANUAL_CONTROL
         )
+
+        self.previous_pixhawk_instruction = smoothed_instruction
 
         self.rc_pub.publish(smoothed_instruction)
 
