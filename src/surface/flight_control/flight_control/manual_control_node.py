@@ -46,6 +46,9 @@ DISARM_MESSAGE = CommandBool.Request(value=False)
 
 CONTROLLER_MODE_PARAM = "controller_mode"
 
+NEXT_INSTR_FRAC = 0.1
+PREV_INSTR_FRAC = 1 - NEXT_INSTR_FRAC
+
 
 class ControllerMode(IntEnum):
     ARM = 0
@@ -109,6 +112,16 @@ class ManualControlNode(Node):
         self.seen_right_cam = False
         self.valve_manip_state = False
 
+        self.previous_pixhawk_instruction = PixhawkInstruction(
+            forward=float(0),
+            lateral=float(0),
+            vertical=float(0),
+            roll=float(0),
+            pitch=float(0),
+            yaw=float(0),
+            author=PixhawkInstruction.MANUAL_CONTROL
+        )
+
     def controller_callback(self, msg: Joy) -> None:
         self.joystick_to_pixhawk(msg)
         self.valve_manip_callback(msg)
@@ -129,7 +142,21 @@ class ManualControlNode(Node):
             author=PixhawkInstruction.MANUAL_CONTROL
         )
 
-        self.rc_pub.publish(instruction)
+        smoothed_instruction = PixhawkInstruction(
+            forward=ManualControlNode.smooth(self.previous_pixhawk_instruction.forward, instruction.forward),
+            lateral=ManualControlNode.smooth(self.previous_pixhawk_instruction.lateral, instruction.lateral),
+            vertical=ManualControlNode.smooth(self.previous_pixhawk_instruction.vertical, instruction.vertical),
+            roll=ManualControlNode.smooth(self.previous_pixhawk_instruction.roll, instruction.roll),
+            pitch=ManualControlNode.smooth(self.previous_pixhawk_instruction.pitch, instruction.pitch),
+            yaw=ManualControlNode.smooth(self.previous_pixhawk_instruction.yaw, instruction.yaw),
+            author=PixhawkInstruction.MANUAL_CONTROL
+        )
+
+        self.rc_pub.publish(smoothed_instruction)
+
+    @staticmethod
+    def smooth(prev_value: float, next_value: float) -> float:
+        return PREV_INSTR_FRAC * prev_value + NEXT_INSTR_FRAC * next_value
 
     def manip_callback(self, msg: Joy) -> None:
         buttons: MutableSequence[int] = msg.buttons
