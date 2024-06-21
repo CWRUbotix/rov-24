@@ -399,7 +399,8 @@ MotorState getMotorState() {
 }
 
 bool isMotorMoving() {
-  return getMotorState() == MotorState::Pump && getMotorState() == MotorState::Suck;
+  const MotorState motorState = getMotorState();
+  return motorState == MotorState::Pump || motorState == MotorState::Suck;
 }
 
 bool stageIs(StageType type) { return SCHEDULE[currentStage].type == type; }
