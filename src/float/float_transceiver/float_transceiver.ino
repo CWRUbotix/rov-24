@@ -34,14 +34,15 @@ const uint32_t PRESSURE_READ_INTERVAL = 5000;
 const uint32_t PROFILE_SEGMENT = 60000;
 #endif
 
+const uint32_t ONE_MINUTE = 60000;
+
 // Schedule (all delays in ms)
-const uint32_t RELEASE_MAX = 8 * 60000;
+const uint32_t RELEASE_MAX = 8 * ONE_MINUTE;
 const uint32_t SUCK_MAX = PROFILE_SEGMENT;
 const uint32_t DESCEND_TIME = PROFILE_SEGMENT;
 const uint32_t PUMP_MAX = PROFILE_SEGMENT;
 const uint32_t ASCEND_TIME = 0;  // Disable ascend times now that we're properly ballasted
-const uint32_t TX_MAX = 2 * 60000;
-const uint32_t CODA = 2 * 60000;
+const uint32_t TX_MAX_TIME = 2 * ONE_MINUTE;
 
 const size_t SCHEDULE_LENGTH = 12;
 
@@ -57,7 +58,7 @@ struct Stage {
 OverrideState overrideState = OverrideState::NoOverride;
 uint8_t currentStage = 0;
 
-Stage SCHEDULE[SCHEDULE_LENGTH] = {
+const Stage SCHEDULE[SCHEDULE_LENGTH] = {
   // Pump immediately in case we just rebooted at the bottom of the pool
   {StageType::Pump,             PUMP_MAX    },
 
@@ -70,7 +71,7 @@ Stage SCHEDULE[SCHEDULE_LENGTH] = {
   {StageType::Pump,             PUMP_MAX    },
   {StageType::WaitProfiling,    ASCEND_TIME },
 
-  {StageType::WaitTransmitting, TX_MAX      },
+  {StageType::WaitTransmitting, TX_MAX_TIME },
 
  // Profile 2
   {StageType::Suck,             SUCK_MAX    },
@@ -78,7 +79,7 @@ Stage SCHEDULE[SCHEDULE_LENGTH] = {
   {StageType::Pump,             PUMP_MAX    },
   {StageType::WaitProfiling,    ASCEND_TIME },
 
-  {StageType::WaitTransmitting, CODA        },
+  {StageType::WaitTransmitting, TX_MAX_TIME },
 };
 
 uint32_t stageStartTime;
@@ -139,7 +140,10 @@ void setup() {
 
 void loop() {
   bool submergeReceived = false;
-  if (!stageIs(StageType::Suck) && !stageIs(StageType::Pump)) {
+
+  // Disable command Rx when the motor is moving
+  // Otherwise the motor can overrun the limit switch
+  if (!isMotorMoving()) {
     submergeReceived = receiveCommand();
   }
 
@@ -392,6 +396,11 @@ MotorState getMotorState() {
     case StageType::Suck: return MotorState::Suck;
     case StageType::Pump: return MotorState::Pump;
   }
+}
+
+bool isMotorMoving() {
+  const MotorState motorState = getMotorState();
+  return motorState == MotorState::Pump || motorState == MotorState::Suck;
 }
 
 bool stageIs(StageType type) { return SCHEDULE[currentStage].type == type; }
