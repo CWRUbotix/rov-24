@@ -55,19 +55,19 @@ class PilotApp(App):
                 "Front Camera",
                 1280, 720
             )
-            bottom_cam_description = CameraDescription(
-                bottom_cam_type,
-                BOTTOM_CAM_TOPIC,
-                "Bottom Camera",
-                1280, 720
-            )
+            # bottom_cam_description = CameraDescription(
+            #     bottom_cam_type,
+            #     BOTTOM_CAM_TOPIC,
+            #     "Bottom Camera",
+            #     1280, 720
+            # )
 
             main_layout.addWidget(VideoWidget(front_cam_description),
                                   alignment=Qt.AlignmentFlag.AlignHCenter)
-            main_layout.addWidget(
-                VideoWidget(bottom_cam_description),
-                alignment=Qt.AlignmentFlag.AlignHCenter
-            )
+            # main_layout.addWidget(
+            #     VideoWidget(bottom_cam_description),
+            #     alignment=Qt.AlignmentFlag.AlignHCenter
+            # )
 
             main_layout.addLayout(self.make_bottom_bar())
 
@@ -89,19 +89,19 @@ class PilotApp(App):
                 "Forward Camera",
                 920, 690
             )
-            bottom_cam_description = CameraDescription(
-                bottom_cam_type,
-                BOTTOM_CAM_TOPIC,
-                "Down Camera",
-                920, 690
-            )
+            # bottom_cam_description = CameraDescription(
+            #     bottom_cam_type,
+            #     BOTTOM_CAM_TOPIC,
+            #     "Down Camera",
+            #     920, 690
+            # )
 
             video_layout = QHBoxLayout()
 
             video_layout.addWidget(VideoWidget(front_cam_description),
                                    alignment=Qt.AlignmentFlag.AlignHCenter)
-            video_layout.addWidget(VideoWidget(bottom_cam_description),
-                                   alignment=Qt.AlignmentFlag.AlignHCenter)
+            # video_layout.addWidget(VideoWidget(bottom_cam_description),
+            #                        alignment=Qt.AlignmentFlag.AlignHCenter)
             video_layout.setSpacing(0)
 
             main_layout.addLayout(video_layout)
@@ -116,21 +116,21 @@ class PilotApp(App):
                 "Front Camera",
                 721, 541
             )
-            bottom_cam_description = CameraDescription(
-                bottom_cam_type,
-                BOTTOM_CAM_TOPIC,
-                "Bottom Camera",
-                721, 541
-            )
+            # bottom_cam_description = CameraDescription(
+            #     bottom_cam_type,
+            #     BOTTOM_CAM_TOPIC,
+            #     "Bottom Camera",
+            #     721, 541
+            # )
 
             video_layout = QHBoxLayout()
 
             video_layout.addWidget(VideoWidget(front_cam_description),
                                    alignment=Qt.AlignmentFlag.AlignHCenter)
-            video_layout.addWidget(
-                VideoWidget(bottom_cam_description),
-                alignment=Qt.AlignmentFlag.AlignHCenter
-            )
+            # video_layout.addWidget(
+            #     VideoWidget(bottom_cam_description),
+            #     alignment=Qt.AlignmentFlag.AlignHCenter
+            # )
 
             main_layout.addLayout(video_layout)
             main_layout.addLayout(self.make_bottom_bar())
