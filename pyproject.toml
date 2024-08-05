@@ -5,7 +5,7 @@ version = "1.2.0"
 
 dependencies = [
     'setuptools',
-    'flake8==7.1.0',
+    'flake8==7.1.1',
     'mypy >= 1.7',
     'pynput',
     'pyqt6',
