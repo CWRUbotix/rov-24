@@ -10,7 +10,7 @@ from rov_msgs.msg import PixhawkInstruction
 from rov_msgs.srv import AutonomousFlight
 
 # Brown out protection
-SPEED_THROTTLE = 0.85
+SPEED_THROTTLE = 0.65
 
 # Joystick curve
 JOYSTICK_EXPONENT = 3
